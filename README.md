@@ -1,2 +1,2 @@
-# SPRICED-Server-Side
-Server Side Code for SPRICED
+# spriced-backend
+Backend Code for SPRICED
