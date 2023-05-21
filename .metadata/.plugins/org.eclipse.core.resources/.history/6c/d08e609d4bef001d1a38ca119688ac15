@@ -1,0 +1,61 @@
+package com.sim.spriced.defnition.repo.impl;
+
+import java.util.List;
+
+import org.jooq.impl.DSL;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
+
+import com.sim.spriced.defnition.repo.IGroupRepo;
+import com.sim.spriced.framework.models.Group;
+import com.sim.spriced.framework.repo.BaseRepo;
+
+@Repository
+public class GroupRepo extends BaseRepo implements IGroupRepo {
+	
+	private static final String TABLE="Group";
+
+	@Override
+	public Group create(Group group) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Group> fetchAll(boolean loadDisabled) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Page<Group> fetchAll(boolean loadDisabled, Pageable pagable) {
+		// TODO Auto-generated method stub
+		 List<Group> queryResults = this.context.selectFrom(table(TABLE))
+				 .limit(pagable.getPageSize())
+				 .offset(pagable.getPageNumber()*pagable.getPageSize())
+				 //.orderBy(column(pagable.getSort().))
+				 .fetchInto(Group.class);
+		return new PageImpl<>(queryResults);
+	}
+
+	@Override
+	public Group fetchByName(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Group fetchByEntityName(String entityName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Group updateByName(Group group) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

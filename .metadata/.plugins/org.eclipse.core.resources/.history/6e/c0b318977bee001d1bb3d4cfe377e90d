@@ -1,0 +1,22 @@
+tenants.datasources1.meritor.jdbcUrl: jdbc:postgresql://localhost:5432/spriced?autoreconnect = true
+tenants.datasources1.meritor.driverClassName: org.postgresql.Driver
+tenants.datasources1.meritor.username: postgres
+tenants.datasources1.meritor.password: mysecretpassword
+tenants.datasources1.meritor.connectionTimeout: 30000
+tenants.datasources1.meritor.idleTimeout: 6000
+tenants.datasources1.meritor.maxLifetime: 1800
+tenants.datasources1.meritor.maxPoolSize: 1000
+tenants.datasources1.meritor.validationQuery: SELECT 1
+
+
+tenants.datasources1.mds.jdbcUrl: jdbc:postgresql://localhost:5432/spriced?autoreconnect = true
+tenants.datasources1.mds.driverClassName: org.postgresql.Driver
+tenants.datasources1.mds.username: postgres
+tenants.datasources1.mds.password: mysecretpassword
+tenants.datasources1.mds.connectionTimeout: 30000
+tenants.datasources1.mds.idleTimeout: 6000
+tenants.datasources1.mds.maxLifetime: 1800
+tenants.datasources1.mds.maxPoolSize: 1000
+tenants.datasources1.mds.validationQuery: SELECT 1
+
+

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="EntityRepoTest" project="sim-spriced-defnition" tests="5" started="5" failures="0" errors="0" ignored="0">
+  <testsuite name="com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest" time="0.698" displayname="EntityRepoTest" uniqueid="[engine:junit-jupiter]/[class:com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest]">
+    <testcase name="createTest" classname="com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest" time="0.662" displayname="createTest()" uniqueid="[engine:junit-jupiter]/[class:com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest]/[method:createTest()]"/>
+    <testcase name="updateTest" classname="com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest" time="0.017" displayname="updateTest()" uniqueid="[engine:junit-jupiter]/[class:com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest]/[method:updateTest()]"/>
+    <testcase name="fetchOneTest" classname="com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest" time="0.007" displayname="fetchOneTest()" uniqueid="[engine:junit-jupiter]/[class:com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest]/[method:fetchOneTest()]"/>
+    <testcase name="fetchAllTest" classname="com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest" time="0.006" displayname="fetchAllTest()" uniqueid="[engine:junit-jupiter]/[class:com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest]/[method:fetchAllTest()]"/>
+    <testcase name="DeleteTest" classname="com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest" time="0.006" displayname="DeleteTest()" uniqueid="[engine:junit-jupiter]/[class:com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest]/[method:DeleteTest()]"/>
+  </testsuite>
+</testrun>

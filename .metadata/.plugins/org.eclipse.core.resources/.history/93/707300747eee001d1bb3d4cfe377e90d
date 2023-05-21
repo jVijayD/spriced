@@ -1,0 +1,35 @@
+package com.sim.spriced.framework.multitenancy.unit;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
+
+import com.sim.spriced.framework.MultitenantTestConfiguration;
+import com.sim.spriced.framework.multitenancy.DataSourceConfiguration;
+import com.sim.spriced.framework.multitenancy.TenantDataSources;
+import com.sim.spriced.framework.repo.RepoConfiguration;
+
+
+@SpringBootTest()
+@Import(MultitenantTestConfiguration.class)
+@ContextConfiguration(classes= {TenantDataSources.class,DataSourceConfiguration.class,RepoConfiguration.class}, loader=AnnotationConfigContextLoader.class)
+class BindingPropertiesToTenantDataSourcesTest {
+	
+	
+	@Autowired
+	private TenantDataSources tenantDataSources;
+	
+
+	
+	@Test()
+	void MultitenantDataSourceConfigTest() {
+		assertEquals(2,tenantDataSources.getDatasources().size());
+	}
+
+
+}

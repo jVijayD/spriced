@@ -1,0 +1,13 @@
+eclipse.preferences.version=1
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.artifactId=sim-spriced-data
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.bootVersion=2.7.11
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.description=Project handling the data insertion and validations.
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.groupId=com.sim.spriced.data
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.javaVersion=11
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.language=java
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.name=sim-spriced-data
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.packageName=com.sim.spriced.data
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.packaging=jar
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.type=MAVEN
+org.springframework.ide.eclipse.boot.wizard.PreferredSelections.version=0.0.1
+org.springframework.ide.eclipse.boot.wizard.initializr.url=https\://start.spring.io\n

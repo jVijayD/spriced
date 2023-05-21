@@ -1,0 +1,5 @@
+package com.sim.spriced.framework.exceptions;
+
+public class DataAccessException {
+
+}

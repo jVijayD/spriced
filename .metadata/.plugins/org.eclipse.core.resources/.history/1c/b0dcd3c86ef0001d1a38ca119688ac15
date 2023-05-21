@@ -1,0 +1,21 @@
+package com.sim.spriced.framework.exceptions;
+
+public class InvalidFieldMappingException extends BaseException {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2576592107467874713L;
+	private static final String code="FM - 001";
+
+	public InvalidFieldMappingException(String message) {
+		super(message,code);
+	}
+	
+
+	public InvalidFieldMappingException(String message,Throwable cause) {
+		super(message,cause,code);
+	}
+	
+
+}

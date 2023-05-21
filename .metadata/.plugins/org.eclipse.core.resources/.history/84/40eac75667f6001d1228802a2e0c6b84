@@ -1,0 +1,7 @@
+package com.sim.spriced.defnition.repo;
+
+import com.sim.spriced.framework.models.Entity;
+
+public interface IEntityRepo {
+	public Entity create(Entity entity);
+}

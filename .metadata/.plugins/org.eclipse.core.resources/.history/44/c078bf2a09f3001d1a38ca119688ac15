@@ -1,0 +1,9 @@
+package com.sim.spriced.defnition.repo.impl;
+
+import com.sim.spriced.defnition.repo.IEntityRepo;
+import com.sim.spriced.framework.models.Entity;
+
+public class EntityRepo implements IEntityRepo {
+
+
+}

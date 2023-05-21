@@ -1,0 +1,26 @@
+package com.sim.spriced.framework.exceptions;
+
+public class InvalidFieldMappingException extends BaseException {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2576592107467874713L;
+	private static final String code="DB_FM - 001";
+	private static final String messageFormat= "Error in mapping table-[0] for column-[1].[2]";
+
+	public InvalidFieldMappingException(String message) {
+		super(message,code);
+	}
+	
+	public InvalidFieldMappingException(String table,String column) {
+		super(String.format(messageFormat, table,column),code);
+	}
+	
+
+	public InvalidFieldMappingException(String table,String column,Throwable cause) {
+		super(String.format(messageFormat, table,column,cause.getMessage()),cause,code);
+	}
+	
+
+}

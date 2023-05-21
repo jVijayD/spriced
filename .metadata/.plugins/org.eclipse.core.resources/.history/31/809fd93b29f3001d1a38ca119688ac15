@@ -1,0 +1,38 @@
+package com.sim.spriced.framework.models;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Column;
+
+import com.sim.spriced.framework.annotations.ExtraColumnData;
+import com.sim.spriced.framework.constants.ModelConstants;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+
+@Getter
+@Setter
+@NoArgsConstructor
+public class Entity extends BaseEntity {
+	@ExtraColumnData(isPrimaryKey = true)
+	@Column(name=ModelConstants.NAME)
+	private String name;
+	@ExtraColumnData(isPrimaryKey = true)
+	@Column(name="group")
+	private String group;
+	@Column(name=ModelConstants.VERSION)
+	@ExtraColumnData(isPrimaryKey = true)
+	private Integer version;
+	@Column(name=ModelConstants.IS_DISABLED)
+	private Boolean isDisabled;
+	@Column(name=ModelConstants.ATTRIBUTES)
+	@ExtraColumnData(isPrimaryKey = true)
+	private final List<Attribute> attributes = new ArrayList<>();
+	
+	public Entity(String name){
+		this.name = name;
+	}
+}

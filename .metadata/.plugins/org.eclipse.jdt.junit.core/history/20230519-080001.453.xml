@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="EntityRepoTest" project="sim-spriced-defnition" tests="1" started="1" failures="0" errors="0" ignored="0">
+  <testsuite name="com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest" time="0.503" displayname="EntityRepoTest" uniqueid="[engine:junit-jupiter]/[class:com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest]">
+    <testcase name="createTest" classname="com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest" time="0.503" displayname="createTest()" uniqueid="[engine:junit-jupiter]/[class:com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest]/[method:createTest()]"/>
+  </testsuite>
+</testrun>

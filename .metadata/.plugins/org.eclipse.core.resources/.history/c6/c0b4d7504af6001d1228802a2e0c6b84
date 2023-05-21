@@ -1,0 +1,25 @@
+package com.sim.spriced.framework.exceptions;
+
+public class InvalidEntityFieldMapping extends DataAccessException {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 581412636726932202L;
+	private static final String code="DB_EFM - 003";
+	private static final String formatter= "Error in mapping table-[0] for column-[1].[2]";
+
+	public InvalidEntityFieldMapping(String message) {
+		super(message,code);
+	}
+	
+	public InvalidEntityFieldMapping(String table,String column) {
+		super(String.format(formatter, table,column),code);
+	}
+	
+
+	public InvalidEntityFieldMapping(String table,String column,Throwable cause) {
+		super(String.format(formatter, table,column,cause.getMessage()),cause,code);
+	}
+	
+}

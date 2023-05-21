@@ -1,0 +1,484 @@
+package com.sim.spriced.framework.repo;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.persistence.Column;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.JSON;
+import org.jooq.Param;
+import org.jooq.Record;
+import org.jooq.Record7;
+import org.jooq.Result;
+import org.jooq.Select;
+import org.jooq.SelectConditionStep;
+import org.jooq.SelectField;
+import org.jooq.SortField;
+import org.jooq.Table;
+import org.jooq.TableLike;
+import org.jooq.impl.DSL;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONArray;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sim.spriced.framework.annotations.ExtraColumnData;
+import com.sim.spriced.framework.annotations.IDType;
+import com.sim.spriced.framework.constants.ModelConstants;
+import com.sim.spriced.framework.context.ContextManager;
+import com.sim.spriced.framework.exceptions.InvalidConditionException;
+import com.sim.spriced.framework.exceptions.InvalidEntityFieldMapping;
+import com.sim.spriced.framework.exceptions.InvalidFieldMappingException;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
+public abstract class BaseRepo {
+	
+	private static final String ID_TEMPLATE="<ID>";
+
+	@Autowired
+	protected DSLContext context;
+
+	@Autowired
+	protected ContextManager contextManager;
+
+	protected final Timestamp timeStamp;
+
+	// Default Constructor
+	protected BaseRepo() {
+		this.timeStamp = new Timestamp(System.currentTimeMillis());
+	}
+
+	protected Field<Object> column(String name) {
+		return DSL.field(DSL.name(name));
+	}
+
+	protected <T> Field<T> column(String name, Class<T> type) {
+		return DSL.field(DSL.name(name), type);
+	}
+
+	protected <T> Param<T> constant(T value) {
+		return DSL.val(value);
+	}
+
+	protected <T> Param<T> constant(T value, Class<T> type) {
+		return DSL.val(value, type);
+	}
+
+	protected Field<Object> columnMax(String name) {
+		return DSL.max(DSL.field(DSL.name(name)));
+	}
+
+	protected <T> Field<Object> columnIfNull(String name, T value) {
+		return DSL.coalesce(DSL.field(DSL.name(name)), value);
+	}
+
+	protected <T> Field<Object> columnIfNull(Field<Object> col, T value) {
+		return DSL.coalesce(col, value);
+	}
+
+	protected Table<Record> table(String tableName) {
+		return DSL.table(DSL.name(tableName));
+	}
+	
+	protected JSONArray toJSONArray(Result<Record> result,List<String> colNames) {
+		var list = result.map((record)->{
+			JSONObject obj = new JSONObject();
+			colNames.forEach(cn -> {
+				try {
+					obj.put(cn, record.get(cn));
+				} catch (IllegalArgumentException | JSONException e) {
+					// TODO Auto-generated catch block
+					throw new InvalidEntityFieldMapping("JSONObject",cn,e);
+				}
+			});
+			return obj;
+		});
+		
+		return new JSONArray(list);
+	}
+
+	// Dynamic SQL based on Annotations
+	public <T> T create(T entity) {
+		TableData tableDetails = this.getTableData(entity);
+		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser(), this.timeStamp);
+		return this.create(entity, tableDetails);
+	}
+
+	public <T> T create(T entity, TableData tableDetails) {
+		if (tableDetails.getIdType() == IDType.NONE) {
+			context.insertInto(table(tableDetails.getTableName()), tableDetails.getFields())
+					.values(tableDetails.getValues()).returningResult(tableDetails.getFields()).fetchOne().into(entity);
+		} else {
+
+//			SelectField<?>[] select = this.createDynamicSelectFields(tableDetails);
+//			Table<?> from = table(tableDetails.getTableName());
+//			Condition where = DSL.condition(tableDetails.getPrimaryKeys());
+//			SelectConditionStep<Record> subSelectConditionStep= DSL.select(select).from(from).where(where);
+//			System.out.println(subSelectConditionStep.execute());
+			
+			//context.insertInto(table(tableDetails.getTableName())).columns(tableDetails.getFields()).select(subSelectConditionStep).returningResult(tableDetails.getFields()).fetchOne().into(entity);
+			//context.insertInto(table(tableDetails.getTableName()), tableDetails.getFields())
+			//.select(subSelectConditionStep).returningResult(tableDetails.getFields()).fetchOne().into(entity);
+			
+			
+			Select<Record7<String,String, Integer,Boolean, JSON, String, Timestamp>> subSelectInsertInto =DSL.select(constant("name"),constant("grp"),columnIfNull(columnMax("version").add(1),1).cast(Integer.class),constant(false),constant(JSON.json("[]")),constant("user",String.class),DSL.now()).from(tableDetails.getTableName()).where(column("name").eq("entity1"));
+			
+			Record rec =context.insertInto(table(tableDetails.getTableName())).columns(tableDetails.getFields()).select(subSelectInsertInto).returningResult(tableDetails.getFields()).fetchOne();
+		}
+
+		return entity;
+	}
+	
+	
+	private SelectField<?>[] createDynamicSelectFields(TableData tableDetails) {
+		
+		List<SelectField<?>> slectList = new ArrayList<>();
+		Iterator<Pair<Field<?>, Object>> iter = tableDetails.iterator();
+		while(iter.hasNext()) {
+			var item = iter.next();
+			var value = item.getValue();
+			
+			if(value.equals(ID_TEMPLATE) && tableDetails.getIdType()!=IDType.NONE)  {
+				if(tableDetails.getIdType()==IDType.VERSION_SEQ) {
+					slectList.add(constant(columnIfNull(columnMax(item.getKey().getName()).add(1),1)));
+				} else if(tableDetails.getIdType()==IDType.BUSINESS_SEQ) {
+					//TO DO: Need to change
+					slectList.add(constant(value));
+				} else if(tableDetails.getIdType()==IDType.AUTO) {
+					//TO DO: Need to change
+					slectList.add(constant(value));
+				}
+			}
+			else {
+				slectList.add(constant(value));
+			}
+		}
+		
+		return slectList.toArray(new SelectField<?>[slectList.size()]);
+	}
+	
+
+	
+//	@SuppressWarnings("resource")
+//	private InsertResultStep<Record> createWithAutoGeneratedID(TableData tableDetails) {
+//		Iterator<Pair<Field<?>, Object>> iter = tableDetails.iterator();
+//		SelectSelectStep<Record1<Object>> selectInitialStep = null;
+//		SelectSelectStep<Record> selectNextStep = null;
+//
+//		InsertResultStep<Record> query;
+//		
+//		while(iter.hasNext()) {
+//			var item = iter.next();
+//			var value = item.getValue();
+//			
+//			if(selectInitialStep == null) {
+//				// If AutoID,Version,BusinessID
+//				if(value.equals(ID_TEMPLATE) && tableDetails.getIdType()!=IDType.NONE)  {
+//					if(tableDetails.getIdType()==IDType.VERSION_SEQ) {
+//						selectInitialStep = DSL.select(columnIfNull(columnMax(item.getKey().getName()).add(1),1));
+//					}
+//					
+//				}else {
+//					selectInitialStep = DSL.select(constant(value));
+//				}
+//			}
+//			else {
+//				if(selectNextStep == null) {
+//					if(value.equals(ID_TEMPLATE) && tableDetails.getIdType()!=IDType.NONE)  {
+//						if(tableDetails.getIdType()==IDType.VERSION_SEQ) {
+//							selectNextStep = selectInitialStep.select(columnIfNull(columnMax(item.getKey().getName()).add(1),1));
+//						}
+//					}else {
+//						selectNextStep = selectInitialStep.select(constant(value));
+//					}
+//				}
+//				else {
+//					if(value.equals(ID_TEMPLATE) && tableDetails.getIdType()!=IDType.NONE)  {
+//						if(tableDetails.getIdType()==IDType.VERSION_SEQ) {
+//							selectNextStep = selectNextStep.select(columnIfNull(columnMax(item.getKey().getName()).add(1),1));
+//						}
+//						
+//					}else {
+//						selectNextStep = selectNextStep.select(constant(value));
+//					}
+//				}
+//			}
+//		}
+//		
+//		if(selectInitialStep!=null && selectNextStep==null) {
+//			query = context.insertInto(table(tableDetails.getTableName()), tableDetails.getFields())
+//			.select(selectInitialStep).returningResult(tableDetails.getFields());
+//		}
+//		else {
+//			query = context.insertInto(table(tableDetails.getTableName()), tableDetails.getFields())
+//			.select(selectNextStep).returningResult(tableDetails.getFields());
+//		}
+//		
+//		return query;
+//	}
+
+	
+	public <T> T update(T entity) {
+		TableData tableDetails = this.getTableData(entity);
+		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser(), this.timeStamp);
+		return this.update(entity, tableDetails, null);
+	}
+
+	public <T> T update(T entity, TableData tableDetails, Condition condition) {
+
+		Map<Field<?>, Object> updateMap = new HashMap<>();
+		var iter = tableDetails.iterator();
+		while (iter.hasNext()) {
+			var item = tableDetails.iterator().next();
+			Field<?> colField = item.getKey();
+			Object colValue = item.getValue();
+			if (colValue != null) {
+				updateMap.put(colField, colValue);
+			}
+		}
+
+		if (condition == null && tableDetails.getPrimaryKeys().size() > 0) {
+			condition = DSL.condition(tableDetails.getPrimaryKeys());
+			context.update(table(tableDetails.getTableName())).set(updateMap).where(condition)
+					.returning(tableDetails.getFields()).fetchOne().into(entity);
+		} else {
+			context.update(table(tableDetails.getTableName())).set(updateMap).where(condition)
+					.returning(tableDetails.getFields()).fetchOne().into(entity);
+		}
+
+		return entity;
+	}
+
+	public <T> Page<T> fetchAll(T entity, Class<T> type, Pageable pagable) {
+
+		TableData tableDetails = this.getTableData(entity);
+		Map<Field<?>, Object> conditionMap = new HashMap<>();
+
+		var iter = tableDetails.iterator();
+		while (iter.hasNext()) {
+			var keyVal = iter.next();
+			Object value = keyVal.getValue();
+			if (value != null) {
+				conditionMap.put(keyVal.getKey(), value);
+			}
+		}
+
+		if (conditionMap.size() == 0) {
+			throw new InvalidConditionException(tableDetails.getTableName());
+		}
+
+		List<T> queryResults = this.context.selectFrom(table(tableDetails.getTableName()))
+				.where(DSL.condition(conditionMap)).orderBy(this.getOrderBy(pagable.getSort()))
+				.limit(pagable.getPageSize()).offset(pagable.getOffset()).fetchInto(type);
+
+		return new PageImpl<>(queryResults);
+	}
+
+	protected Collection<SortField<?>> getOrderBy(Sort sort) {
+		return sort.stream().map(order -> {
+			String sortFieldName = order.getProperty();
+			Direction direction = order.getDirection();
+			SortField<?> sortField = (direction == Direction.ASC ? column(sortFieldName).asc()
+					: column(sortFieldName).desc());
+			return sortField;
+		}).collect(Collectors.toList());
+
+	}
+
+	public <T> List<T> fetchMultiple(T entity, Class<T> type) {
+		SelectConditionStep<Record> query = this.fetchQuery(entity);
+		List<T> multiRecords = query.fetchInto(type);
+		return multiRecords;
+	}
+
+	public <T> T fetchOne(T entity) {
+
+		SelectConditionStep<Record> query = this.fetchQuery(entity);
+		var queryResult = query.fetchOne();
+		return queryResult != null ? queryResult.into(entity) : null;
+
+	}
+
+	private <T> SelectConditionStep<Record> fetchQuery(T entity) {
+		TableData tableDetails = this.getTableData(entity);
+		Map<Field<?>, Object> conditionMap = new HashMap<>();
+
+		var iter = tableDetails.iterator();
+		while (iter.hasNext()) {
+			var keyVal = iter.next();
+			Object value = keyVal.getValue();
+			if (value != null) {
+				conditionMap.put(keyVal.getKey(), value);
+			}
+		}
+
+		if (conditionMap.size() == 0) {
+			throw new InvalidConditionException(tableDetails.getTableName());
+		}
+
+		
+		return context.select(tableDetails.getFields()).from(table(tableDetails.getTableName()))
+				.where(DSL.condition(conditionMap));
+	}
+
+	public <T> int delete(T entity) {
+		TableData tableDetails = this.getTableData(entity);
+		return this.delete(tableDetails, null);
+	}
+
+	public int delete(TableData tableDetails, Condition condition) {
+
+		if (condition == null && tableDetails.getPrimaryKeys().size() > 0) {
+			condition = DSL.condition(tableDetails.getPrimaryKeys());
+		}
+		return context.delete(table(tableDetails.getTableName())).where(condition).execute();
+	}
+
+	// Dynamic SQL based on table details from entity
+
+	public <T> Page<T> fetchAll(String tableName, Condition condition, Class<T> type, Pageable pagable) {
+		List<T> queryResults = this.context.selectFrom(table(tableName)).where(condition)
+				.orderBy(this.getOrderBy(pagable.getSort())).limit(pagable.getPageSize()).offset(pagable.getOffset())
+				.fetchInto(type);
+
+		return new PageImpl<>(queryResults);
+	}
+
+	// Table Data details to generate the Query
+	private <T> TableData getTableData(T entity) {
+		TableData tableData = new TableData();
+		Class<?> clazz = entity.getClass();
+		javax.persistence.Table tableAnnotation = clazz.getAnnotation(javax.persistence.Table.class);
+		if (tableAnnotation != null) {
+			String tableName = tableAnnotation.name();
+			tableData.setTableName(tableName);
+			for (java.lang.reflect.Field field : clazz.getDeclaredFields()) {
+				Column col = field.getAnnotation(Column.class);
+				ExtraColumnData extraCol = field.getAnnotation(ExtraColumnData.class);
+				if (col != null) {
+
+					String colName = col.name().toLowerCase();
+					Field<?> colField = column(colName);
+					tableData.getAttriButeNames().add(field.getName());
+					tableData.getFields().add(colField);
+					field.setAccessible(true);
+					try {
+						Object val = field.get(entity);
+						boolean setVal = false;
+						if (extraCol != null) {
+							if (extraCol.isPrimaryKey()) {
+								tableData.getPrimaryKeys().put(colField, val);
+							}
+							// Handling of ID column
+							if (extraCol.id() != null && extraCol.id() != IDType.NONE) {
+								tableData.setIdType(extraCol.id());
+								if (extraCol.id() == IDType.BUSINESS_SEQ) {
+									tableData.businessString = extraCol.businessString();
+								}
+								tableData.getValues().add(ID_TEMPLATE);
+								setVal = true;
+							}
+							// Convert to JSON string
+							if (extraCol.convertToJson() && val != null) {
+								ObjectMapper objectMapper = new ObjectMapper();
+								JSON jsonVal = JSON.json(objectMapper.writeValueAsString(val));
+								tableData.getValues().add(jsonVal);
+								setVal = true;
+							}
+						}
+
+						if (!setVal) {
+							tableData.getValues().add(val);
+						}
+
+					} catch (IllegalArgumentException | IllegalAccessException | JsonProcessingException e) {
+						throw new InvalidFieldMappingException(tableName, colName, e);
+					}
+				}
+			}
+
+			tableData.getAttriButeNames().add("updatedBy");
+			tableData.getAttriButeNames().add("updatedDate");
+
+			tableData.getFields().add(column(ModelConstants.UPDATED_BY));
+			tableData.getFields().add(column(ModelConstants.UPDATED_DATE));
+
+		}
+		return tableData;
+	}
+
+	@Setter
+	@Getter
+	class TableData implements Iterable<Pair<Field<?>, Object>> {
+		private String tableName;
+		private List<String> attriButeNames = new ArrayList<>();
+		private List<Field<?>> fields = new ArrayList<>();
+		private List<Object> values = new ArrayList<>();
+		private Map<Field<?>, Object> primaryKeys = new HashMap<>();
+
+		private IDType idType = IDType.NONE;
+		private String businessString;
+
+		@Getter(value = AccessLevel.NONE)
+		@Setter(value = AccessLevel.NONE)
+		private int currentIndex = 0;
+
+		@Override
+		public Iterator<Pair<Field<?>, Object>> iterator() {
+
+			return new Iterator<Pair<Field<?>, Object>>() {
+
+				@Override
+				public boolean hasNext() {
+					// TODO Auto-generated method stub
+					return currentIndex < fields.size();
+				}
+
+				@Override
+				public Pair<Field<?>, Object> next() {
+					// TODO Auto-generated method stub
+					Object value = null;
+					if (currentIndex < values.size()) {
+						value = values.get(currentIndex);
+					}
+					Pair<Field<?>, Object> item = Pair.of(fields.get(currentIndex), value);
+					currentIndex++;
+					return item;
+
+				}
+
+				@Override
+				public void remove() {
+					currentIndex = 0;
+					Iterator.super.remove();
+				}
+
+			};
+		}
+
+		public void setUpdatedByAndUpdatedDate(String user, Timestamp timeStamp) {
+			this.getValues().add(user);
+			this.getValues().add(timeStamp);
+		}
+	}
+}

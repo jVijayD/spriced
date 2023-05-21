@@ -1,0 +1,14 @@
+package com.sim.spriced.framework.models;
+
+import java.sql.Timestamp;
+
+import javax.persistence.Column;
+
+import com.sim.spriced.framework.constants.ModelConstants;
+
+public class BaseEntity {
+	@Column(name=ModelConstants.UPDATED_DATE)
+	private Timestamp updatedDate;
+	@Column(name=ModelConstants.UPDATED_BY)
+	private String updatedBy;
+}

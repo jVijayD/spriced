@@ -1,0 +1,52 @@
+package com.sim.spriced.defnition.repo.impl.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+
+import com.sim.spriced.defnition.MultitenantTestConfiguration;
+import com.sim.spriced.defnition.repo.impl.GroupRepo;
+import com.sim.spriced.framework.models.Group;
+
+@SpringBootTest
+@Import(MultitenantTestConfiguration.class)
+@TestMethodOrder(OrderAnnotation.class)
+class GroupRepoTest {
+
+	@Autowired
+	GroupRepo grpRepo;
+
+	String grpName;
+
+	@BeforeAll
+	public void setup() {
+		grpName = "FirstGroup1";
+	}
+
+	@Test
+	@Order(1)
+	void createTest() {
+		Group grp = new Group(grpName);
+		grp.setDisabled(false);
+		Group newGrp = this.grpRepo.create(grp);
+		assertEquals(grpName, newGrp.getName());
+	}
+
+	// @Test
+	@Order(2)
+	void updateTest() {
+
+		Group grp = new Group(grpName);
+		grp.setDisabled(true);
+		Group newGrp = this.grpRepo.updateByName(grp);
+		assertEquals(grpName, newGrp.getName());
+	}
+
+}

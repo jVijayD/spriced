@@ -1,0 +1,70 @@
+package com.sim.spriced.defnition.repo.impl.integration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+
+import com.sim.spriced.defnition.MultitenantTestConfiguration;
+import com.sim.spriced.defnition.repo.impl.EntityRepo;
+import com.sim.spriced.framework.models.Entity;
+
+@SpringBootTest
+@Import(MultitenantTestConfiguration.class)
+@TestInstance(Lifecycle.PER_CLASS)
+@TestMethodOrder(OrderAnnotation.class)
+class EntityRepoTest {
+
+	@Autowired
+	EntityRepo entityRepo;
+
+	String entityName;
+
+	@BeforeAll
+	public void setup() {
+		entityName = "Entity1";
+	}
+
+	@Test
+	@Order(1)
+	void createTest() {
+		Entity entity = new Entity(entityName);
+		entity.setGroup("FirstGroup1");
+		entity = this.entityRepo.create(entity);
+		assertTrue(entity.getVersion()!=null);
+	}
+	
+	
+	@Test
+	@Order(2)
+	void updateTest() {
+		Entity entity = new Entity(entityName);
+		entity.setGroup("FirstGroup1");
+		entity.setIsDisabled(true);
+		entity.setGroup("FirstGroup1");
+		entity.setVersion(2);
+		entity = this.entityRepo.update(entity);
+		assertTrue(entity.getIsDisabled()==true);
+	}
+	
+	@Test
+	@Order(4)
+	void DeleteTest() {
+		Entity entity = new Entity(entityName);
+		entity.setGroup("FirstGroup1");
+		entity.setIsDisabled(true);
+		entity.setGroup("FirstGroup1");
+		entity.setVersion(2);
+		this.entityRepo.delete(entity);
+		assertTrue(true);
+	}
+
+}

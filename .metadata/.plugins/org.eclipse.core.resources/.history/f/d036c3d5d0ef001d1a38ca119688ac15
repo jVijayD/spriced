@@ -1,0 +1,11 @@
+tenants.datasources.meritor.jdbcUrl: jdbc:postgresql://localhost:5432/spriced_meritor?autoreconnect = true
+tenants.datasources.meritor.driverClassName: org.postgresql.Driver
+tenants.datasources.meritor.username: postgres
+tenants.datasources.meritor.password: mysecretpassword
+tenants.datasources.meritor.connectionTimeout: 30000
+tenants.datasources.meritor.idleTimeout: 6000
+tenants.datasources.meritor.maxLifetime: 1800
+tenants.datasources.meritor.maxPoolSize: 200
+tenants.datasources.meritor.validationQuery: SELECT 1
+
+

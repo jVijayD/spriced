@@ -1,0 +1,15 @@
+package com.sim.spriced.framework.exceptions;
+
+public class InvalidConditionException extends BaseException {
+
+	private static final long serialVersionUID = -6366463657882645954L;
+	private static final String code="DB_IC - 002";
+	private static final String messageFormat= "Invalid filter criteria for the table-[0] "; 
+
+	public InvalidConditionException(String tableName) {
+		super(String.format(messageFormat, tableName),code);
+	
+	}
+
+
+}

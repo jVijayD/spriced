@@ -1,0 +1,12 @@
+package com.sim.spriced.defnition.repo;
+
+import java.util.List;
+
+import com.sim.spriced.framework.models.Group;
+
+public interface IGroupRepo {
+	public Group create(Group group);
+	public List<Group> fetchAll(boolean loadDisabled);
+	public Group fetchByName(String name);
+	public Group updateByName(Group group);
+}

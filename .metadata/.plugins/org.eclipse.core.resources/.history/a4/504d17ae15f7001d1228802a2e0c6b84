@@ -1,0 +1,11 @@
+package com.sim.spriced.defnition.service.impl;
+
+import org.springframework.stereotype.Service;
+
+import com.sim.spriced.defnition.service.BaseService;
+import com.sim.spriced.defnition.service.IGroupService;
+
+@Service
+public class GroupService extends BaseService implements IGroupService  {
+
+}
