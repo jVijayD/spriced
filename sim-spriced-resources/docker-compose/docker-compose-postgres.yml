@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  postgres:
+    container_name: spriced_postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${POSTGRESQL_USER}
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASS}
+      POSTGRES_DB: ${POSTGRESQL_DB}
+      PGDATA: /var/data/postgres
+    volumes:
+      - postgres:/var/data/postgres
+    ports:
+      - 5432:5432
+    restart: unless-stopped
+    networks:
+      - spriced
+
+  pgadmin:
+    container_name: spriced_pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    restart: unless-stopped
+    networks:
+      - spriced
+
+  redis:
+    image: arm64v8/redis:alpine
+    container_name: spriced_redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    volumes:
+      - redis:/data
+    networks:
+      - spriced
+      
+volumes:
+  postgres:
+  pgadmin:
+  redis:
+
+networks:
+  spriced:
