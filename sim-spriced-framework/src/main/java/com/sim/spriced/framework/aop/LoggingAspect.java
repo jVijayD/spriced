@@ -19,10 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class LoggingAspect {
 
-//	@Pointcut("within(@org.springframework.stereotype.Repository *)"
-//			+ " || within(@org.springframework.stereotype.Service *)"
-//			+ " || within(@org.springframework.web.bind.annotation.RestController *)")
-	@Pointcut("execution(* com.sim.spriced..*.*(..))")
+	private static final String LOG_AOP = "########### AOP ";
+	@Pointcut("within(@org.springframework.stereotype.Repository *) || within(@org.springframework.stereotype.Service *) || within(@org.springframework.web.bind.annotation.RestController *)")
 	public void springBeanPointCut() {
 		// Method is empty as this is just a Pointcut, the implementations are in the
 		// advices.
@@ -37,7 +35,7 @@ public class LoggingAspect {
 		String methodName = methodSignature.getName();
 
 		// Log method input parameters
-		log.info("Enter:Input parameters of " + className + "." + methodName + " :: "
+		log.info(LOG_AOP + "Enter:Input parameters of " + className + "." + methodName + " :: "
 				+ Arrays.toString(proceedingJoinPoint.getArgs()));
 
 		final StopWatch stopWatch = new StopWatch();
@@ -48,15 +46,15 @@ public class LoggingAspect {
 		stopWatch.stop();
 
 		// Log method execution time
-		log.info("Exit:Result of " + className + "." + methodName + " :: " + result);
+		log.info(LOG_AOP + "Exit:Result of " + className + "." + methodName + " :: " + result);
 		// Log method execution time
-		log.info("Time:Execution time of " + className + "." + methodName + " :: " + stopWatch.getTotalTimeMillis()
+		log.info(LOG_AOP + "Time:Execution time of " + className + "." + methodName + " :: " + stopWatch.getTotalTimeMillis()
 				+ " ms");
 
 		return result;
 	}
 
-	@AfterThrowing(pointcut = "springBeanPointcut()", throwing = "e")
+	@AfterThrowing(pointcut = "springBeanPointCut()", throwing = "e")
 	public void logAfterThrowing(JoinPoint joinPoint, Throwable e) {
 		MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
 		// Get intercepted method details
