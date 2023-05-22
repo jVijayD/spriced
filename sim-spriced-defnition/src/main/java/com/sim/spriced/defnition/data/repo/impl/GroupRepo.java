@@ -1,4 +1,4 @@
-package com.sim.spriced.defnition.repo.impl;
+package com.sim.spriced.defnition.data.repo.impl;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import com.sim.spriced.defnition.repo.IGroupRepo;
+import com.sim.spriced.defnition.data.repo.IGroupRepo;
 import com.sim.spriced.framework.constants.ModelConstants;
 import com.sim.spriced.framework.models.Group;
 import com.sim.spriced.framework.repo.BaseRepo;

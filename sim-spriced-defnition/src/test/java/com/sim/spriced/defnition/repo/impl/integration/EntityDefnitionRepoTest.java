@@ -18,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
 import com.sim.spriced.defnition.MultitenantTestConfiguration;
-import com.sim.spriced.defnition.repo.impl.EntityDefnitionRepo;
+import com.sim.spriced.defnition.data.repo.impl.EntityDefnitionRepo;
 import com.sim.spriced.framework.models.EntityDefnition;
 
 @SpringBootTest

@@ -1,12 +1,12 @@
-package com.sim.spriced.defnition.service.impl;
+package com.sim.spriced.defnition.data.service.impl;
 
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.sim.spriced.defnition.service.BaseService;
-import com.sim.spriced.defnition.service.IGroupService;
+import com.sim.spriced.defnition.data.service.BaseService;
+import com.sim.spriced.defnition.data.service.IGroupService;
 import com.sim.spriced.framework.models.Group;
 
 import lombok.extern.slf4j.Slf4j;

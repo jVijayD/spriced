@@ -1,4 +1,4 @@
-package com.sim.spriced.defnition.repo;
+package com.sim.spriced.defnition.data.repo;
 
 import java.util.List;
 

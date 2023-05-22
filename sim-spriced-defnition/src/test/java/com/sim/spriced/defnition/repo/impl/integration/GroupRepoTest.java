@@ -21,7 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.sim.spriced.defnition.MultitenantTestConfiguration;
-import com.sim.spriced.defnition.repo.impl.GroupRepo;
+import com.sim.spriced.defnition.data.repo.impl.GroupRepo;
 import com.sim.spriced.framework.models.Group;
 
 @SpringBootTest

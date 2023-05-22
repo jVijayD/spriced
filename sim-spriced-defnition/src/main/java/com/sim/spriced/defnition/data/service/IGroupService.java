@@ -1,4 +1,4 @@
-package com.sim.spriced.defnition.service;
+package com.sim.spriced.defnition.data.service;
 
 import java.util.List;
 
