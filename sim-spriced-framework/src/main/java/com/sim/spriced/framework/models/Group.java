@@ -23,7 +23,7 @@ public class Group extends BaseEntity {
 	@Column(name="Name")
 	private String name;
 	@Column(name=ModelConstants.IS_DISABLED)
-	private Boolean isDisabled;
+	private Boolean isDisabled=false;
 	private List<EntityDefnition> entities = new ArrayList<>();
 	
 	public Group(String name) {

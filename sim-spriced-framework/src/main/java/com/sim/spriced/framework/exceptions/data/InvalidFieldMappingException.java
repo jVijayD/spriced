@@ -9,7 +9,7 @@ public class InvalidFieldMappingException extends DataAccessException {
 	 */
 	private static final long serialVersionUID = -2576592107467874713L;
 	private static final String CODE="DB_FM - 001";
-	private static final String FORMATTER= "Error in mapping table-[0] for column-[1].[2]";
+	private static final String FORMATTER= "Error in mapping table-[%s] for column-[%s].[%s]";
 
 	public InvalidFieldMappingException(String message) {
 		super(message,CODE);

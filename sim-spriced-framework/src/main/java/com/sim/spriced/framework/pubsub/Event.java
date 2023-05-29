@@ -7,4 +7,5 @@ import lombok.Setter;
 @Setter
 public class Event {
 	private EventType type;
+
 }

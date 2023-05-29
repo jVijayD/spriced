@@ -12,4 +12,5 @@ public interface IEntityDefnitionRepo {
 	public List<EntityDefnition> fetchAll(boolean loadDisabled);
 	public Page<EntityDefnition> fetchAll(boolean loadDisabled,Pageable pagable);
 	public EntityDefnition fetchByName(String name,String group);
+	public List<EntityDefnition> disableEntity(String name);
 }

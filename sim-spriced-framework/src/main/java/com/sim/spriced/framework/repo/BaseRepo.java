@@ -14,6 +14,7 @@ import javax.persistence.Column;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.InsertOnDuplicateStep;
 import org.jooq.JSON;
@@ -43,7 +44,7 @@ import com.sim.spriced.framework.annotations.IDType;
 import com.sim.spriced.framework.constants.ModelConstants;
 import com.sim.spriced.framework.context.ContextManager;
 import com.sim.spriced.framework.exceptions.data.InvalidConditionException;
-import com.sim.spriced.framework.exceptions.data.InvalidEntityFieldMapping;
+import com.sim.spriced.framework.exceptions.data.InvalidEntityFieldMappingException;
 import com.sim.spriced.framework.exceptions.data.InvalidFieldMappingException;
 
 import lombok.AccessLevel;
@@ -75,6 +76,10 @@ public abstract class BaseRepo {
 	protected <T> Field<T> column(String name, Class<T> type) {
 		return DSL.field(DSL.name(name), type);
 	}
+	
+	protected <T> Field<T> column(String name, DataType<T> type) {
+		return DSL.field(DSL.name(name), type);
+	}
 
 	protected <T> Param<T> constant(T value) {
 		return DSL.val(value);
@@ -83,6 +88,7 @@ public abstract class BaseRepo {
 	protected <T> Param<T> constant(T value, Class<T> type) {
 		return DSL.val(value, type);
 	}
+	
 
 	protected Field<Object> columnMax(String name) {
 		return DSL.max(DSL.field(DSL.name(name)));
@@ -101,14 +107,13 @@ public abstract class BaseRepo {
 	}
 
 	protected JSONArray toJSONArray(Result<Record> result, List<String> colNames) {
-		var list = result.map((record) -> {
+		var list = result.map(rec -> {
 			JSONObject obj = new JSONObject();
 			colNames.forEach(cn -> {
 				try {
-					obj.put(cn, record.get(cn));
+					obj.put(cn, rec.get(cn));
 				} catch (IllegalArgumentException | JSONException e) {
-					// TODO Auto-generated catch block
-					throw new InvalidEntityFieldMapping("JSONObject", cn, e);
+					throw new InvalidEntityFieldMappingException("JSONObject", cn, e);
 				}
 			});
 			return obj;
@@ -124,7 +129,7 @@ public abstract class BaseRepo {
 		return this.create(entity, tableDetails);
 	}
 
-	public <T> T create(T entity, TableData tableDetails) {
+	private <T> T create(T entity, TableData tableDetails) {
 		if (tableDetails.getIdType() == IDType.NONE) {
 			context.insertInto(table(tableDetails.getTableName()), tableDetails.getFields())
 					.values(tableDetails.getValues()).returningResult(tableDetails.getFields()).fetchOne().into(entity);
@@ -247,17 +252,16 @@ public abstract class BaseRepo {
 		return sort.stream().map(order -> {
 			String sortFieldName = order.getProperty();
 			Direction direction = order.getDirection();
-			SortField<?> sortField = (direction == Direction.ASC ? column(sortFieldName).asc()
+			return (direction == Direction.ASC ? column(sortFieldName).asc()
 					: column(sortFieldName).desc());
-			return sortField;
+			
 		}).collect(Collectors.toList());
 
 	}
 
 	public <T> List<T> fetchMultiple(T entity, Class<T> type) {
 		SelectConditionStep<Record> query = this.fetchQuery(entity);
-		List<T> multiRecords = query.fetchInto(type);
-		return multiRecords;
+		return query.fetchInto(type);
 	}
 
 	public <T> T fetchOne(T entity) {

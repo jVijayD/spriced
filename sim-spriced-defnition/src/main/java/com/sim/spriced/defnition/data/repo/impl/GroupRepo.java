@@ -21,7 +21,6 @@ public class GroupRepo extends BaseRepo implements IGroupRepo {
 
 	@Override
 	public List<Group> fetchAll(boolean loadDisabled) {
-		// TODO Auto-generated method stub
 		Condition condition = column(ModelConstants.IS_DISABLED).eq(loadDisabled);
 		return super.fetchAll(TABLE, condition, Group.class);
 	}

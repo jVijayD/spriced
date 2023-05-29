@@ -50,7 +50,8 @@ public class RepoConfiguration {
 			@Override
 			public Object invoke(MethodInvocation invocation) throws Throwable {
 				DSLContext ctx=contextMap.computeIfAbsent(contextManager.getRequestContext().getTenant(),key->{
-					Settings settings = new Settings().withRenderMapping(new RenderMapping().withSchemata(new MappedSchema().withInput("master").withOutput(key)));
+					Settings settings = new Settings().withReturnAllOnUpdatableRecord(true).withRenderMapping(new RenderMapping().withSchemata(new MappedSchema().withInput("master").withOutput(key)));
+					
 					//.withExecuteWithOptimisticLocking(true)
 					settings.setRenderQuotedNames(RenderQuotedNames.ALWAYS);
 					settings.setRenderNameCase(RenderNameCase.LOWER);
