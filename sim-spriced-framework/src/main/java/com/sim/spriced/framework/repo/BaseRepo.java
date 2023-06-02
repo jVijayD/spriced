@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
@@ -19,6 +20,7 @@ import org.jooq.Field;
 import org.jooq.InsertOnDuplicateStep;
 import org.jooq.JSON;
 import org.jooq.Param;
+import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
@@ -76,7 +78,7 @@ public abstract class BaseRepo {
 	protected <T> Field<T> column(String name, Class<T> type) {
 		return DSL.field(DSL.name(name), type);
 	}
-	
+
 	protected <T> Field<T> column(String name, DataType<T> type) {
 		return DSL.field(DSL.name(name), type);
 	}
@@ -88,7 +90,6 @@ public abstract class BaseRepo {
 	protected <T> Param<T> constant(T value, Class<T> type) {
 		return DSL.val(value, type);
 	}
-	
 
 	protected Field<Object> columnMax(String name) {
 		return DSL.max(DSL.field(DSL.name(name)));
@@ -122,6 +123,10 @@ public abstract class BaseRepo {
 		return new JSONArray(list);
 	}
 
+	protected int[] batchExqecute(Collection<Query> queries) {
+		return context.batch(queries).execute();
+	}
+	
 	// Dynamic SQL based on Annotations
 	public <T> T create(T entity) {
 		TableData tableDetails = this.getTableData(entity);
@@ -172,7 +177,7 @@ public abstract class BaseRepo {
 			var item = iter.next();
 			var value = item.getValue();
 
-			if (value.equals(ID_TEMPLATE) && tableDetails.getIdType() != IDType.NONE) {
+			if (value!=null && value.equals(ID_TEMPLATE) && tableDetails.getIdType() != IDType.NONE) {
 				if (tableDetails.getIdType() == IDType.VERSION_SEQ) {
 					slectList.add(columnIfNull(columnMax(item.getKey().getName()).add(1), 1));
 				} else if (tableDetails.getIdType() == IDType.BUSINESS_SEQ) {
@@ -205,7 +210,7 @@ public abstract class BaseRepo {
 			Field<?> colField = item.getKey();
 			Object colValue = item.getValue();
 			Props prop = tableDetails.getFieldProps().get(colField.getName());
-			if (colValue != null && (prop==null || !prop.isExclude())) {
+			if (colValue != null && (prop == null || !prop.isExclude())) {
 				updateMap.put(colField, colValue);
 			}
 		}
@@ -232,7 +237,7 @@ public abstract class BaseRepo {
 			var keyVal = iter.next();
 			Object value = keyVal.getValue();
 			Props prop = tableDetails.getFieldProps().get(keyVal.getKey().getName());
-			if (value != null && (prop==null || !prop.isExclude())) {
+			if (value != null && (prop == null || !prop.isExclude())) {
 				conditionMap.put(keyVal.getKey(), value);
 			}
 		}
@@ -248,15 +253,47 @@ public abstract class BaseRepo {
 		return new PageImpl<>(queryResults);
 	}
 
+	public <T> Page<T> fetchAll(T entity, Function<Record, T> converter, Pageable pagable) {
+
+		TableData tableDetails = this.getTableData(entity);
+		Map<Field<?>, Object> conditionMap = new HashMap<>();
+
+		var iter = tableDetails.iterator();
+		while (iter.hasNext()) {
+			var keyVal = iter.next();
+			Object value = keyVal.getValue();
+			Props prop = tableDetails.getFieldProps().get(keyVal.getKey().getName());
+			if (value != null && (prop == null || !prop.isExclude())) {
+				conditionMap.put(keyVal.getKey(), value);
+			}
+		}
+
+		if (conditionMap.size() == 0) {
+			throw new InvalidConditionException(tableDetails.getTableName());
+		}
+
+		Result<Record> result = this.context.selectFrom(table(tableDetails.getTableName()))
+				.where(DSL.condition(conditionMap)).orderBy(this.getOrderBy(pagable.getSort()))
+				.limit(pagable.getPageSize()).offset(pagable.getOffset()).fetch();
+
+		List<T> queryResults = result.map(converter::apply);
+		return new PageImpl<>(queryResults);
+	}
+
 	protected Collection<SortField<?>> getOrderBy(Sort sort) {
 		return sort.stream().map(order -> {
 			String sortFieldName = order.getProperty();
 			Direction direction = order.getDirection();
-			return (direction == Direction.ASC ? column(sortFieldName).asc()
-					: column(sortFieldName).desc());
-			
+			return (direction == Direction.ASC ? column(sortFieldName).asc() : column(sortFieldName).desc());
+
 		}).collect(Collectors.toList());
 
+	}
+
+	public <T> List<T> fetchMultiple(T entity, Function<Record, T> converter) {
+		SelectConditionStep<Record> query = this.fetchQuery(entity);
+		Result<Record> results = query.fetch();
+		return results.map(converter::apply);
 	}
 
 	public <T> List<T> fetchMultiple(T entity, Class<T> type) {
@@ -281,7 +318,7 @@ public abstract class BaseRepo {
 			var keyVal = iter.next();
 			Object value = keyVal.getValue();
 			Props prop = tableDetails.getFieldProps().get(keyVal.getKey().getName());
-			if (value != null && (prop==null || !prop.isExclude())) {
+			if (value != null && (prop == null || !prop.isExclude())) {
 				conditionMap.put(keyVal.getKey(), value);
 			}
 		}
@@ -316,9 +353,26 @@ public abstract class BaseRepo {
 
 		return new PageImpl<>(queryResults);
 	}
-	
+
+	public <T> Page<T> fetchAll(String tableName, Condition condition, Function<Record, T> converter,
+			Pageable pagable) {
+
+		Result<Record> result = this.context.selectFrom(table(tableName)).where(condition)
+				.orderBy(this.getOrderBy(pagable.getSort())).limit(pagable.getPageSize()).offset(pagable.getOffset())
+				.fetch();
+
+		List<T> queryResults = result.map(converter::apply);
+
+		return new PageImpl<>(queryResults);
+	}
+
 	public <T> List<T> fetchAll(String tableName, Condition condition, Class<T> type) {
 		return this.context.selectFrom(table(tableName)).where(condition).fetchInto(type);
+	}
+
+	public <T> List<T> fetchAll(String tableName, Condition condition, Function<Record, T> converter) {
+		Result<Record> result = this.context.selectFrom(table(tableName)).where(condition).fetch();
+		return result.map(converter::apply);
 	}
 
 	// Table Data details to generate the Query
@@ -338,21 +392,20 @@ public abstract class BaseRepo {
 					Field<?> colField = column(colName);
 					tableData.getAttriButeNames().add(field.getName());
 					tableData.getFields().add(colField);
-					
-					
+
 					field.setAccessible(true);
 					try {
 						Object val = field.get(entity);
-						
+
 						boolean setVal = false;
 						if (extraCol != null) {
-							
-							tableData.getFieldProps().put(colName, new Props(val,extraCol.exclude()));
+
+							tableData.getFieldProps().put(colName, new Props(val, extraCol.exclude()));
 							if (extraCol.isPrimaryKey()) {
 								tableData.getPrimaryKeys().put(colField, val);
 							}
 							// Handling of ID column
-							if (extraCol.id() != null && extraCol.id() != IDType.NONE && val ==null) {
+							if (extraCol.id() != null && extraCol.id() != IDType.NONE && val == null) {
 								tableData.setIdType(extraCol.id());
 								tableData.setVersionColumn(colField);
 								if (extraCol.id() == IDType.BUSINESS_SEQ) {
@@ -399,7 +452,7 @@ public abstract class BaseRepo {
 		private List<String> attriButeNames = new ArrayList<>();
 		private List<Field<?>> fields = new ArrayList<>();
 		private List<Object> values = new ArrayList<>();
-		private Map<String,Props> fieldProps= new HashMap<>();
+		private Map<String, Props> fieldProps = new HashMap<>();
 		private Map<Field<?>, Object> primaryKeys = new HashMap<>();
 
 		private IDType idType = IDType.NONE;
@@ -447,13 +500,13 @@ public abstract class BaseRepo {
 			this.getValues().add(timeStamp);
 		}
 	}
-	
+
 	@Getter
 	@Setter
 	class Props {
 		private Object value;
 		private boolean exclude;
-		
+
 		public Props(Object value, boolean exclude) {
 			this.value = value;
 			this.exclude = exclude;

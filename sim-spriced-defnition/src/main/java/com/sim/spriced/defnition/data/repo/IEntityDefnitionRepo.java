@@ -11,6 +11,9 @@ import com.sim.spriced.framework.models.EntityDefnition;
 public interface IEntityDefnitionRepo {
 	public List<EntityDefnition> fetchAll(boolean loadDisabled);
 	public Page<EntityDefnition> fetchAll(boolean loadDisabled,Pageable pagable);
+	public List<EntityDefnition> fetchAll(String group,boolean loadDisabled);
+	public Page<EntityDefnition> fetchAll(String group,boolean loadDisabled,Pageable pagable);
+	public EntityDefnition fetchByName(String name,String group,boolean loadDisabled);
 	public EntityDefnition fetchByName(String name,String group);
 	public List<EntityDefnition> disableEntity(String name);
 }

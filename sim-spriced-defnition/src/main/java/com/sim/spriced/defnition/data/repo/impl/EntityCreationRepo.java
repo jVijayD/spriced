@@ -8,11 +8,13 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.Constraint;
 import org.jooq.CreateTableColumnStep;
 import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.JSON;
+import org.jooq.Query;
 import org.jooq.XML;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
@@ -29,7 +31,7 @@ import com.sim.spriced.framework.repo.BaseRepo;
 @Repository
 public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo {
 
-	private static final EnumMap<AttributeConstants.DataType, QuadFunction<AttributeConstants.DataType, Integer, Boolean,Object, DataType<?>>> dataTypeMapper = new EnumMap<>(
+	private static final EnumMap<AttributeConstants.DataType, QuadFunction<AttributeConstants.DataType, Integer, Boolean, Object, DataType<?>>> dataTypeMapper = new EnumMap<>(
 			AttributeConstants.DataType.class);
 
 	EntityCreationRepo() {
@@ -40,15 +42,15 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 	public int create(EntityDefnition entityDefnition) {
 		List<Attribute> attributes = entityDefnition.getAttributes();
 		String tableName = entityDefnition.getName();
-		
-		// Creating Sequence if Business_Sequence data type 
-		attributes.forEach(attr->{
-			if(attr.getDataType()==AttributeConstants.DataType.BUSINESS_SEQUENCE) {
-				String sequenceName = tableName+"_"+attr.getName();
+
+		// Creating Sequence if Business_Sequence data type
+		attributes.forEach(attr -> {
+			if (attr.getDataType() == AttributeConstants.DataType.BUSINESS_SEQUENCE) {
+				String sequenceName = tableName + "_" + attr.getName();
 				context.createSequenceIfNotExists(sequenceName).execute();
 			}
 		});
-		
+
 		CreateTableColumnStep tableCreationStep = context.createTable(tableName);
 		try {
 
@@ -60,25 +62,180 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 		}
 	}
 
-	@Override
-	public void update(EntityDefnition entityDefnition) {
-		// TODO Auto-generated method stub
-
-	}
+//	@Override
+//	public void update(EntityDefnition entityDefnition) {
+//		List<Attribute> updatedAttributes = entityDefnition.getAttributes().stream().filter(item->item.getChangeType()==ChangeType.UPDATE).collect(Collectors.toList());
+//		List<String> deletedAttributes = entityDefnition.getAttributes().stream().filter(item->item.getChangeType()==ChangeType.DELETE).map(item->item.getName()).collect(Collectors.toList());
+//		List<Field<?>> columns  = this.createColumns(entityDefnition.getAttributes().stream().filter(item->item.getChangeType()==ChangeType.ADD).collect(Collectors.toList()));
+//		String tableName = entityDefnition.getName();
+//		AlterTableStep alterTable = context.alterTableIfExists(tableName);
+//		if (!updatedAttributes.isEmpty()) {
+//			this.alterColumns(alterTable, updatedAttributes);
+//		}
+//		
+//		if(!deletedAttributes.isEmpty()) {
+//			context.alterTableIfExists(tableName).dropColumns(StringUtils.join(deletedAttributes, ",")).execute();
+//		}
+//
+//		if(!columns.isEmpty()) {
+//			context.alterTableIfExists(tableName).add(columns);
+//		}
+//	
+//	}
+//	
+//	
+//	private void alterColumns(AlterTableStep alterTable ,List<Attribute> attributes) {
+//		attributes.forEach(item->{
+//			var name = item.getName();
+//			alterTable.alter(name).set(this.getDataType(item)).execute();
+//			this.setDefaultValue(alterTable, name, item.getDefaultValue());
+//			this.setNullable(alterTable, name, item.isNullable());
+//			
+//			//Rename
+//			//change constraint
+//			
+//			
+//		});
+//	}
+//
+//	private void setNullable(AlterTableStep alterTable,String name,boolean isNullable) {
+//		if(!isNullable) {
+//			alterTable.alter(name).dropNotNull().execute();
+//		}
+//		else {
+//			alterTable.alter(name).setNotNull().execute();
+//		}
+//	}
+//	
+//	private void setDefaultValue(AlterTableStep alterTable,String name,Object defaultValue) {
+//		if(defaultValue==null) {
+//			alterTable.alter(name).dropDefault().execute();
+//		}
+//		else {
+//			alterTable.alter(name).defaultValue(defaultValue).execute();
+//		}
+//	}
 
 	@Override
 	public void delete(EntityDefnition entityDefnition) {
 		List<Attribute> attributes = entityDefnition.getAttributes();
 		String tableName = entityDefnition.getName();
-		
-		// Creating Sequence if Business_Sequence data type 
-		attributes.forEach(attr->{
-			if(attr.getDataType()==AttributeConstants.DataType.BUSINESS_SEQUENCE) {
-				String sequenceName = tableName+"_"+attr.getName();
+
+		// Creating Sequence if Business_Sequence data type
+		attributes.forEach(attr -> {
+			if (attr.getDataType() == AttributeConstants.DataType.BUSINESS_SEQUENCE) {
+				String sequenceName = tableName + "_" + attr.getName();
 				context.dropSequence(sequenceName).execute();
 			}
 		});
 		context.dropTable(tableName).execute();
+
+	}
+
+	@Override
+	public void alterEntityName(String oldName, String newName) {
+		context.alterTableIfExists(oldName).renameTo(newName).execute();
+
+	}
+
+	@Override
+	public void alterAttributeName(String entityName, String oldName, String newName) {
+		context.alterTableIfExists(entityName).renameColumn(oldName).to(newName).execute();
+
+	}
+
+	@Override
+	public void addAttributes(String entityName, List<Attribute> attributes) {
+		context.alterTableIfExists(entityName).add(this.createColumns(attributes)).execute();
+
+	}
+
+	@Override
+	public void deleteAttributes(String entityName, List<String> attributes) {
+		context.alterTableIfExists(entityName).drop(StringUtils.join(attributes, ",")).execute();
+
+	}
+
+	@Override
+	public void alterAttributeDefaultValue(String entityName, String attributeName, Object defaultValue) {
+		if (defaultValue == null) {
+			context.alterTableIfExists(entityName).alter(attributeName).dropDefault().execute();
+		} else {
+			context.alterTableIfExists(entityName).alter(attributeName).setDefault(defaultValue);
+		}
+
+	}
+
+	@Override
+	public void alterAttributeDataType(String entityName, Attribute attribute) {
+		context.alterTableIfExists(entityName).alter(attribute.getName()).set(this.getDataType(attribute)).execute();
+
+	}
+
+	@Override
+	public void alterAttributeNullable(String entityName, Attribute attribute) {
+		if (attribute.isNullable()) {
+			context.alterTableIfExists(entityName).alter(attribute.getName()).dropNotNull();
+		} else {
+			context.alterTableIfExists(entityName).alter(attribute.getName()).setNotNull();
+		}
+	}
+
+	@Override
+	public void alterPrimaryKey(String entityName, List<Attribute> attributes) {
+
+		Collection<Constraint> constraint = new ArrayList<>();
+		Collection<Query> query = new ArrayList<>();
+		String primaryKeys = String.join(",", attributes.stream().map(Attribute::getName).collect(Collectors.toList()));
+
+		constraint.add(DSL.constraint("pk").primaryKey(primaryKeys));
+		query.add(context.alterTableIfExists(entityName).dropPrimaryKey());
+		query.add(context.alterTableIfExists(entityName).add(constraint));
+		context.batch(query).execute();
+	}
+
+	@Override
+	public void alterCompositeUniqueKey(String entityName, List<Attribute> attributes) {
+
+		Collection<Constraint> constraint = new ArrayList<>();
+		Collection<Query> query = new ArrayList<>();
+		String uniqueKeys = String.join(",", attributes.stream().map(Attribute::getName).collect(Collectors.toList()));
+
+		constraint.add(DSL.constraint("uk").unique(uniqueKeys));
+		query.add(context.alterTableIfExists(entityName).dropConstraintIfExists("uk"));
+		query.add(context.alterTableIfExists(entityName).add(constraint));
+
+		context.batch(query).execute();
+	}
+
+	@Override
+	public void alterUniqueKey(String entityName, List<Attribute> addedAttributes, List<Attribute> deletedAttributes) {
+		Collection<Constraint> constraint = new ArrayList<>();
+		String constraintKey = "uk_";
+		Collection<Query> query = new ArrayList<>();
+		deletedAttributes.forEach(item -> query
+				.add(context.alterTableIfExists(entityName).dropConstraint(constraintKey + item.getName())));
+		addedAttributes
+				.forEach(attr -> constraint.add(DSL.constraint(constraintKey + attr.getName()).unique(attr.getName())));
+		query.add(context.alterTableIfExists(entityName).add(constraint));
+		context.batch(query).execute();
+
+	}
+
+	@Override
+	public void alterForeignKey(String entityName, List<Attribute> addedAttributes, List<Attribute> deletedAttributes) {
+		Collection<Constraint> constraint = new ArrayList<>();
+		String constraintKey = "fk_";
+		Collection<Query> query = new ArrayList<>();
+		deletedAttributes.forEach(item -> query
+				.add(context.alterTableIfExists(entityName).dropForeignKey(constraintKey + item.getName())));
+		addedAttributes.forEach(attr -> 
+			constraint.add(DSL.constraint(constraintKey + attr.getName()).foreignKey(attr.getName())
+					.references(attr.getReferencedTable()))
+		);
+		query.add(context.alterTableIfExists(entityName).add(constraint));
+		context.batch(query).execute();
+
 	}
 
 	private Collection<? extends Constraint> createConstraints(List<Attribute> attributes) {
@@ -118,43 +275,63 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 
 	private List<Field<?>> createColumns(List<Attribute> attributes) {
 
-		return attributes.stream().map(item -> column(item.getName(),
-				this.getDataType(item.getDataType(), item.getSize(), item.isNullable(), item.getDefaultValue())))
-				.collect(Collectors.toList());
+		return attributes.stream().map(item -> {
+			var dataType = this.getDataType(item).nullable(item.isNullable());
+			return column(item.getName(), dataType);
+		}).collect(Collectors.toList());
+
 	}
 
 	private void initDataTypeMapping() {
 		if (dataTypeMapper.size() == 0) {
-			dataTypeMapper.put(AttributeConstants.DataType.BOOLEAN, (dataType,size,nullable,defaultValue)-> SQLDataType.BOOLEAN.defaultValue((Boolean)defaultValue));
-			dataTypeMapper.put(AttributeConstants.DataType.BIT, (dataType,size,nullable,defaultValue)-> SQLDataType.BIT.defaultValue((Boolean)defaultValue));
-			dataTypeMapper.put(AttributeConstants.DataType.INTEGER, (dataType,size,nullable,defaultValue)-> SQLDataType.INTEGER.defaultValue((Integer)defaultValue));
-			dataTypeMapper.put(AttributeConstants.DataType.DOUBLE, (dataType,size,nullable,defaultValue)-> SQLDataType.DOUBLE.defaultValue((Double)defaultValue));
-			dataTypeMapper.put(AttributeConstants.DataType.FLOAT, (dataType,size,nullable,defaultValue)-> SQLDataType.FLOAT.defaultValue((Double)defaultValue));
-			dataTypeMapper.put(AttributeConstants.DataType.DECIMAL, (dataType,size,nullable,defaultValue)->SQLDataType.DECIMAL.defaultValue((BigDecimal)defaultValue));
-			dataTypeMapper.put(AttributeConstants.DataType.CHARACTER, (dataType,size,nullable,defaultValue)->SQLDataType.CHAR(1).defaultValue((String)defaultValue));
-			dataTypeMapper.put(AttributeConstants.DataType.STRING, (dataType,size,nullable,defaultValue)->SQLDataType.NVARCHAR.defaultValue((String)defaultValue));
-			dataTypeMapper.put(AttributeConstants.DataType.TEXT, (dataType,size,nullable,defaultValue)->SQLDataType.NVARCHAR.defaultValue((String)defaultValue));
-			dataTypeMapper.put(AttributeConstants.DataType.LINK, (dataType,size,nullable,defaultValue)->SQLDataType.NVARCHAR(500).defaultValue((String)defaultValue));
-			dataTypeMapper.put(AttributeConstants.DataType.STRING_VAR, (dataType,size,nullable,defaultValue)->SQLDataType.NVARCHAR(size).defaultValue((String)defaultValue));
-			dataTypeMapper.put(AttributeConstants.DataType.JSON, (dataType,size,nullable,defaultValue)->SQLDataType.JSON.defaultValue((JSON)defaultValue));
-			dataTypeMapper.put(AttributeConstants.DataType.XML, (dataType,size,nullable,defaultValue)->SQLDataType.XML.defaultValue((XML)defaultValue));
-			dataTypeMapper.put(AttributeConstants.DataType.AUTO, (dataType,size,nullable,defaultValue)->SQLDataType.INTEGER.identity(true));
-			dataTypeMapper.put(AttributeConstants.DataType.BUSINESS_SEQUENCE, (dataType,size,nullable,defaultValue)->SQLDataType.NVARCHAR(20));
+			dataTypeMapper.put(AttributeConstants.DataType.BOOLEAN, (dataType, size, nullable,
+					defaultValue) -> SQLDataType.BOOLEAN.defaultValue((Boolean) defaultValue));
+			dataTypeMapper.put(AttributeConstants.DataType.BIT,
+					(dataType, size, nullable, defaultValue) -> SQLDataType.BIT.defaultValue((Boolean) defaultValue));
+			dataTypeMapper.put(AttributeConstants.DataType.INTEGER, (dataType, size, nullable,
+					defaultValue) -> SQLDataType.INTEGER.defaultValue((Integer) defaultValue));
+			dataTypeMapper.put(AttributeConstants.DataType.DOUBLE,
+					(dataType, size, nullable, defaultValue) -> SQLDataType.DOUBLE.defaultValue((Double) defaultValue));
+			dataTypeMapper.put(AttributeConstants.DataType.FLOAT,
+					(dataType, size, nullable, defaultValue) -> SQLDataType.FLOAT.defaultValue((Double) defaultValue));
+			dataTypeMapper.put(AttributeConstants.DataType.DECIMAL, (dataType, size, nullable,
+					defaultValue) -> SQLDataType.DECIMAL.defaultValue((BigDecimal) defaultValue));
+			dataTypeMapper.put(AttributeConstants.DataType.CHARACTER, (dataType, size, nullable,
+					defaultValue) -> SQLDataType.CHAR(1).defaultValue((String) defaultValue));
+			dataTypeMapper.put(AttributeConstants.DataType.STRING, (dataType, size, nullable,
+					defaultValue) -> SQLDataType.NVARCHAR.defaultValue((String) defaultValue));
+			dataTypeMapper.put(AttributeConstants.DataType.TEXT, (dataType, size, nullable,
+					defaultValue) -> SQLDataType.NVARCHAR.defaultValue((String) defaultValue));
+			dataTypeMapper.put(AttributeConstants.DataType.LINK, (dataType, size, nullable, defaultValue) -> SQLDataType
+					.NVARCHAR(500).defaultValue((String) defaultValue));
+			dataTypeMapper.put(AttributeConstants.DataType.STRING_VAR, (dataType, size, nullable,
+					defaultValue) -> SQLDataType.NVARCHAR(size).defaultValue((String) defaultValue));
+			dataTypeMapper.put(AttributeConstants.DataType.JSON,
+					(dataType, size, nullable, defaultValue) -> SQLDataType.JSON.defaultValue((JSON) defaultValue));
+			dataTypeMapper.put(AttributeConstants.DataType.XML,
+					(dataType, size, nullable, defaultValue) -> SQLDataType.XML.defaultValue((XML) defaultValue));
+			dataTypeMapper.put(AttributeConstants.DataType.AUTO,
+					(dataType, size, nullable, defaultValue) -> SQLDataType.INTEGER.identity(true));
+			dataTypeMapper.put(AttributeConstants.DataType.BUSINESS_SEQUENCE,
+					(dataType, size, nullable, defaultValue) -> SQLDataType.NVARCHAR(20));
+			dataTypeMapper.put(AttributeConstants.DataType.TIME_STAMP,
+					(dataType, size, nullable, defaultValue) -> SQLDataType.TIMESTAMP);
 		}
 	}
 
-	
-	private DataType<?> getDataType(AttributeConstants.DataType dataType, int size, boolean nullable,
-			Object defaultValue) {
-		DataType<?> sqlDataType=dataTypeMapper.get(dataType) == null ? SQLDataType.NVARCHAR(15):dataTypeMapper.get(dataType).apply(dataType, size, nullable, defaultValue);
-		sqlDataType = sqlDataType.nullable(nullable);
-		return sqlDataType;
+	private DataType<?> getDataType(Attribute attribute) {
 
+		AttributeConstants.DataType dataType = attribute.getDataType();
+		int size = attribute.getSize();
+		boolean nullable = attribute.isNullable();
+		Object defaultValue = attribute.getDefaultValue();
+		return dataTypeMapper.get(dataType) == null ? SQLDataType.NVARCHAR(15)
+				: dataTypeMapper.get(dataType).apply(dataType, size, nullable, defaultValue);
 	}
-		
+
 	@FunctionalInterface
-	interface QuadFunction<A,B,C,D,R> {
-	    R apply(A a, B b, C c, D d);
+	interface QuadFunction<A, B, C, D, R> {
+		R apply(A a, B b, C c, D d);
 	}
 
 }

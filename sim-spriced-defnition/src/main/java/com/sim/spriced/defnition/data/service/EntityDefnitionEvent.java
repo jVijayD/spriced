@@ -10,4 +10,5 @@ import lombok.Setter;
 @Setter
 public class EntityDefnitionEvent extends Event {
 	private EntityDefnition entity;
+	private EntityDefnition previousEntity;
 }

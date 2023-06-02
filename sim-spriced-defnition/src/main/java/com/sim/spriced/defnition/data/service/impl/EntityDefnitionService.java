@@ -35,9 +35,10 @@ public class EntityDefnitionService
 	@Transactional
 	public EntityDefnition create(EntityDefnition entityDefnition) {
 		//disable all previous entity definitions
+		entityDefnition.validate();
 		this.disableEntity(entityDefnition.getName());
 		entityDefnition = this.defnitionRepo.create(entityDefnition);
-		this.notifyObservers(this.createEvent(entityDefnition, EventType.ADD));
+		this.notifyObservers(this.createEvent(entityDefnition,null, EventType.ADD));
 		return entityDefnition;
 	}
 
@@ -49,9 +50,20 @@ public class EntityDefnitionService
 		entityDefnition.setVersion(version);
 		entityDefnition.setGroup(grpname);
 		int rows = this.defnitionRepo.delete(entityDefnition);
-		this.notifyObservers(this.createEvent(entityDefnition, EventType.DELETE));
+		this.notifyObservers(this.createEvent(entityDefnition,null, EventType.DELETE));
 		return rows;
 	}
+	
+	@Override
+	@Transactional
+	public EntityDefnition update(EntityDefnition entityDefnition) {
+		entityDefnition.validate();
+		this.defnitionRepo.update(entityDefnition);
+		EntityDefnition previous = this.defnitionRepo.fetchByName(entityDefnition.getName(), entityDefnition.getGroup(),false);
+		this.notifyObservers(this.createEvent(entityDefnition,previous, EventType.UPDATE));
+		return entityDefnition;
+	}
+	
 
 	@Override
 	public EntityDefnition disableEntity(String name,int version,String grpname) {
@@ -60,37 +72,32 @@ public class EntityDefnitionService
 		entityDefnition.setVersion(version);
 		entityDefnition.setGroup(grpname);
 		entityDefnition.setIsDisabled(true);
-		EntityDefnition entityDefnitionUpdated = this.defnitionRepo.update(entityDefnition);
-		this.notifyObservers(this.createEvent(entityDefnition, EventType.UPDATE));
-		return entityDefnitionUpdated;
+		return this.defnitionRepo.update(entityDefnition);
 	}
 
 	@Override
 	public EntityDefnition enableEntity(String name,int version,String grpname) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public EntityDefnition fetchByName(String name, boolean loadDisabled) {
 		EntityDefnition entityDefnition = new EntityDefnition();
 		entityDefnition.setName(name);
+		entityDefnition.setVersion(version);
+		entityDefnition.setGroup(grpname);
 		entityDefnition.setIsDisabled(false);
-		EntityDefnition entityDefnitionUpdated = this.defnitionRepo.update(entityDefnition);
-		this.notifyObservers(this.createEvent(entityDefnition, EventType.UPDATE));
-		return entityDefnitionUpdated;
+		return this.defnitionRepo.update(entityDefnition);
 	}
 
 	@Override
-	public List<EntityDefnition> fetchAll(String name, boolean loadDisabled) {
-		// TODO Auto-generated method stub
-		return null;
+	public EntityDefnition fetchByName(String name,String group, boolean loadDisabled) {
+		return this.defnitionRepo.fetchByName(name, group,loadDisabled);
 	}
 
 	@Override
-	public Page<EntityDefnition> fetchAll(String name, boolean loadDisabled, Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<EntityDefnition> fetchAll(String group, boolean loadDisabled) {
+		return this.defnitionRepo.fetchAll(group, loadDisabled);
+	}
+
+	@Override
+	public Page<EntityDefnition> fetchAll(String group, boolean loadDisabled, Pageable pageable) {
+		return this.fetchAll(group, loadDisabled, pageable);
 	}
 
 	@PreDestroy
@@ -118,16 +125,20 @@ public class EntityDefnitionService
 		}
 	}
 
-	private EntityDefnitionEvent createEvent(EntityDefnition entity, EventType type) {
+
+	private EntityDefnitionEvent createEvent(EntityDefnition entity,EntityDefnition previousEntity, EventType type) {
 		EntityDefnitionEvent arg = new EntityDefnitionEvent();
 		arg.setEntity(entity);
+		arg.setPreviousEntity(previousEntity);
 		arg.setType(type);
 		return arg;
 	}
-
+	
 	@Override
 	public List<EntityDefnition> disableEntity(String name) {
 		return this.defnitionRepo.disableEntity(name);
 		
 	}
+
+
 }

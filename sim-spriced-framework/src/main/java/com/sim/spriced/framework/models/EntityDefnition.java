@@ -29,6 +29,9 @@ public class EntityDefnition extends BaseEntity {
 	@ExtraColumnData(isPrimaryKey = true)
 	@Column(name = ModelConstants.NAME)
 	private String name;
+	
+	@Column(name = ModelConstants.DISPLAY_NAME)
+	private String displayName;
 
 	@ExtraColumnData(isPrimaryKey = true)
 	@Column(name = "group")
@@ -40,6 +43,9 @@ public class EntityDefnition extends BaseEntity {
 
 	@Column(name = ModelConstants.IS_DISABLED)
 	private Boolean isDisabled=false;
+	
+	@Column(name = ModelConstants.ENABLE_AUDIT_TRIAL)
+	private Boolean enableAuditTrial=false;
 
 	@Column(name = ModelConstants.ATTRIBUTES)
 	@ExtraColumnData(convertToJson = true, exclude = true)
@@ -58,12 +64,23 @@ public class EntityDefnition extends BaseEntity {
 		this.name = name;
 		this.isDisabled = isDisabled;
 	}
+	
+	public void addAttributes(List<Attribute> attributes) {
+		this.attributes.addAll(attributes);
+	}
 
 	public boolean validate() {
+		this.validateDisplayName();
 		this.validateAttributes();
 		return true;
 	}
 
+	private void validateDisplayName() {
+		if(this.displayName==null) {
+			this.displayName = this.name;
+		}
+	}
+	
 	private void validateAttributes() {
 		int nameCount = 0;
 		int primaryKeyCount = 0;
@@ -94,5 +111,17 @@ public class EntityDefnition extends BaseEntity {
 			this.attributes.add(1,nameAttr);
 		}
 		
+		Attribute isValidAttr = new Attribute(ModelConstants.IS_VALID,Type.FREE_FORM,DataType.BOOLEAN);
+		isValidAttr.setDefaultValue(true);
+		this.attributes.add(isValidAttr);
+		
+		Attribute updatedDateAttr = new Attribute(ModelConstants.UPDATED_DATE,Type.FREE_FORM,DataType.TIME_STAMP);
+		this.attributes.add(updatedDateAttr);
+		
+		Attribute updatedByAttr = new Attribute(ModelConstants.UPDATED_BY,Type.FREE_FORM,DataType.STRING_VAR,50);
+		this.attributes.add(updatedByAttr);
+		
+		Attribute commentAttr = new Attribute(ModelConstants.COMMENT,Type.FREE_FORM,DataType.STRING_VAR,250);
+		this.attributes.add(commentAttr);
 	}
 }
