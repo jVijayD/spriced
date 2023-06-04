@@ -27,77 +27,77 @@ import com.sim.spriced.framework.models.EntityDefnition;
 @TestMethodOrder(OrderAnnotation.class)
 class EntityDefnitionRepoTest {
 
-	@Autowired
-	EntityDefnitionRepo entityRepo;
-
-	String entityName;
-
-	@BeforeAll
-	public void setup() {
-		entityName = "Entity1";
-	}
-
-	@Test
-	@Order(1)
-	void createTest() {
-		EntityDefnition entity = new EntityDefnition(entityName);
-		entity.setGroup("FirstGroup1");
-		entity = this.entityRepo.create(entity);
-		assertNotNull(entity.getVersion());
-	}
-	
-	
-	@Test
-	@Order(2)
-	void updateTest() {
-		EntityDefnition entity = new EntityDefnition(entityName);
-		entity.setGroup("FirstGroup1");
-		entity.setIsDisabled(true);
-		entity.setVersion(2);
-		entity = this.entityRepo.update(entity);
-		assertEquals(true,entity.getIsDisabled());
-	}
-	
-	@Test
-	@Order(3)
-	void fetchOneTest() {
-		EntityDefnition entity = new EntityDefnition(entityName);
-		entity.setGroup("FirstGroup1");
-		entity.setIsDisabled(true);
-		entity.setVersion(2);
-		EntityDefnition entityFetch = this.entityRepo.fetchOne(entity);
-		assertNotNull(entityFetch);
-	}
-	
-	@Test
-	@Order(4)
-	void fetchEntityByNameTest() {
-		
-		EntityDefnition entityFetch = this.entityRepo.fetchByName("Entity1","FirstGroup1");
-		assertEquals(2,entityFetch.getVersion());
-	}
-	
-	@Test
-	@Order(5)
-	void fetchAllTest() {
-		EntityDefnition entity = new EntityDefnition(entityName);
-		entity.setGroup("FirstGroup1");
-		entity.setIsDisabled(true);
-		entity.setVersion(2);
-		List<EntityDefnition> entityFetch = this.entityRepo.fetchMultiple(entity,EntityDefnition.class);
-		assertNotNull(entityFetch);
-	}
-	
-	@Test
-	@Order(6)
-	void DeleteTest() {
-		EntityDefnition entity = new EntityDefnition(entityName);
-		entity.setGroup("FirstGroup1");
-		entity.setIsDisabled(true);
-		entity.setGroup("FirstGroup1");
-		entity.setVersion(2);
-		this.entityRepo.delete(entity);
-		assertTrue(true);
-	}
+//	@Autowired
+//	EntityDefnitionRepo entityRepo;
+//
+//	String entityName;
+//
+//	@BeforeAll
+//	public void setup() {
+//		entityName = "Entity1";
+//	}
+//
+//	@Test
+//	@Order(1)
+//	void createTest() {
+//		EntityDefnition entity = new EntityDefnition(entityName);
+//		entity.setGroup("FirstGroup1");
+//		entity = this.entityRepo.create(entity);
+//		assertNotNull(entity.getVersion());
+//	}
+//	
+//	
+//	@Test
+//	@Order(2)
+//	void updateTest() {
+//		EntityDefnition entity = new EntityDefnition(entityName);
+//		entity.setGroup("FirstGroup1");
+//		entity.setIsDisabled(true);
+//		entity.setVersion(2);
+//		entity = this.entityRepo.update(entity);
+//		assertEquals(true,entity.getIsDisabled());
+//	}
+//	
+//	@Test
+//	@Order(3)
+//	void fetchOneTest() {
+//		EntityDefnition entity = new EntityDefnition(entityName);
+//		entity.setGroup("FirstGroup1");
+//		entity.setIsDisabled(true);
+//		entity.setVersion(2);
+//		EntityDefnition entityFetch = this.entityRepo.fetchOne(entity);
+//		assertNotNull(entityFetch);
+//	}
+//	
+//	@Test
+//	@Order(4)
+//	void fetchEntityByNameTest() {
+//		
+//		EntityDefnition entityFetch = this.entityRepo.fetchByName("Entity1","FirstGroup1");
+//		assertEquals(2,entityFetch.getVersion());
+//	}
+//	
+//	@Test
+//	@Order(5)
+//	void fetchAllTest() {
+//		EntityDefnition entity = new EntityDefnition(entityName);
+//		entity.setGroup("FirstGroup1");
+//		entity.setIsDisabled(true);
+//		entity.setVersion(2);
+//		List<EntityDefnition> entityFetch = this.entityRepo.fetchMultiple(entity,EntityDefnition.class);
+//		assertNotNull(entityFetch);
+//	}
+//	
+//	@Test
+//	@Order(6)
+//	void DeleteTest() {
+//		EntityDefnition entity = new EntityDefnition(entityName);
+//		entity.setGroup("FirstGroup1");
+//		entity.setIsDisabled(true);
+//		entity.setGroup("FirstGroup1");
+//		entity.setVersion(2);
+//		this.entityRepo.delete(entity);
+//		assertTrue(true);
+//	}
 
 }

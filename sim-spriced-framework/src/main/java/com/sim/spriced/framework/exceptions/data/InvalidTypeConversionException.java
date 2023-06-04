@@ -8,7 +8,7 @@ public class InvalidTypeConversionException extends DataAccessException {
 	 * 
 	 */
 	private static final long serialVersionUID = 4019463252275951603L;
-	private static final String CODE="DB_FM - 001";
+	private static final String CODE="DB_FM - 005";
 	private static final String FORMATTER= "Error in mapping table-[%s] for column-[%s].[%s]";
 
 	public InvalidTypeConversionException(String message) {

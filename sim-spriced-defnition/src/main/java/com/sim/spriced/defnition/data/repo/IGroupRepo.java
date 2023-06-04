@@ -12,4 +12,8 @@ public interface IGroupRepo {
 	public Page<Group> fetchAll(boolean loadDisabled,Pageable pagable);
 	public Group fetchByName(String name);
 
+	public Group changeName(String currentName, String newName);
+	public Group disableGroupByName(String name);
+	public Group enableGroupByName(String name);
+
 }

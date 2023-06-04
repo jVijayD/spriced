@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -12,7 +11,6 @@ import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.DataType;
@@ -28,6 +26,7 @@ import org.jooq.SelectField;
 import org.jooq.SortField;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
@@ -48,9 +47,10 @@ import com.sim.spriced.framework.context.ContextManager;
 import com.sim.spriced.framework.exceptions.data.InvalidConditionException;
 import com.sim.spriced.framework.exceptions.data.InvalidEntityFieldMappingException;
 import com.sim.spriced.framework.exceptions.data.InvalidFieldMappingException;
+import com.sim.spriced.framework.exceptions.data.NotFoundException;
 
-import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Repository
@@ -126,7 +126,7 @@ public abstract class BaseRepo {
 	protected int[] batchExqecute(Collection<Query> queries) {
 		return context.batch(queries).execute();
 	}
-	
+
 	// Dynamic SQL based on Annotations
 	public <T> T create(T entity) {
 		TableData tableDetails = this.getTableData(entity);
@@ -135,15 +135,7 @@ public abstract class BaseRepo {
 	}
 
 	private <T> T create(T entity, TableData tableDetails) {
-		if (tableDetails.getIdType() == IDType.NONE) {
-			context.insertInto(table(tableDetails.getTableName()), tableDetails.getFields())
-					.values(tableDetails.getValues()).returningResult(tableDetails.getFields()).fetchOne().into(entity);
-		} else {
-
-			InsertOnDuplicateStep<Record> query = this.createQueryForGeneratedID(tableDetails);
-			query.returning(tableDetails.getFields()).fetchOne().into(entity);
-		}
-
+		this.createQueryForGeneratedID(tableDetails).returning(tableDetails.getFields()).fetchOne().into(entity);
 		return entity;
 	}
 
@@ -152,17 +144,20 @@ public abstract class BaseRepo {
 		InsertOnDuplicateStep<Record> insertQuery = null;
 		SelectField<?>[] selectFields = this.createDynamicSelectFields(tableDetails);
 		Condition condition = DSL.noCondition();
+		List<Field<?>> fields = tableDetails.getFieldsAfterExclusion();
+		List<Object> values = tableDetails.getValuesAfterExclusion();
 		switch (tableDetails.getIdType()) {
 		case VERSION_SEQ:
-			insertQuery = context.insertInto(table(tableDetails.getTableName()), tableDetails.getFields())
+
+			insertQuery = context.insertInto(table(tableDetails.getTableName()), fields)
 					.select(DSL.select(selectFields).from(table(tableDetails.getTableName()).where(condition)));
 			break;
 		case BUSINESS_SEQ:
+			// To DO
 		case AUTO:
 		case NONE:
 		default:
-			insertQuery = context.insertInto(table(tableDetails.getTableName()), tableDetails.getFields())
-					.values(tableDetails.getValues());
+			insertQuery = context.insertInto(table(tableDetails.getTableName()), fields).values(values);
 			break;
 		}
 
@@ -172,26 +167,20 @@ public abstract class BaseRepo {
 	private SelectField<?>[] createDynamicSelectFields(TableData tableDetails) {
 
 		List<SelectField<?>> slectList = new ArrayList<>();
-		Iterator<Pair<Field<?>, Object>> iter = tableDetails.iterator();
-		while (iter.hasNext()) {
-			var item = iter.next();
-			var value = item.getValue();
-
-			if (value!=null && value.equals(ID_TEMPLATE) && tableDetails.getIdType() != IDType.NONE) {
+		tableDetails.getRecordDataList().forEach(recData -> {
+			Object value = recData.getValue();
+			if (value != null && value.equals(ID_TEMPLATE) && tableDetails.getIdType() != IDType.NONE
+					&& tableDetails.getIdType() != IDType.AUTO) {
 				if (tableDetails.getIdType() == IDType.VERSION_SEQ) {
-					slectList.add(columnIfNull(columnMax(item.getKey().getName()).add(1), 1));
+					slectList.add(columnIfNull(columnMax(recData.getField().getName()).add(1), 1));
 				} else if (tableDetails.getIdType() == IDType.BUSINESS_SEQ) {
-					// TO DO: Need to change
-					slectList.add(constant(value));
-				} else if (tableDetails.getIdType() == IDType.AUTO) {
 					// TO DO: Need to change
 					slectList.add(constant(value));
 				}
 			} else {
 				slectList.add(constant(value));
 			}
-		}
-
+		});
 		return slectList.toArray(new SelectField<?>[slectList.size()]);
 	}
 
@@ -201,46 +190,48 @@ public abstract class BaseRepo {
 		return this.update(entity, tableDetails, null);
 	}
 
+	public <T> T update(T entity, Condition condition) {
+		TableData tableDetails = this.getTableData(entity);
+		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser(), this.timeStamp);
+		return this.update(entity, tableDetails, condition);
+	}
+
+	private Map<Field<?>, Object> getConditionAndValue(TableData tableDetails) {
+		return tableDetails.getRecordDataList().stream().filter(item -> item.getValue() != null)
+				.collect(Collectors.toMap(item -> item.getField(), item -> item.getValue()));
+	}
+	
+	private Map<Field<?>, Object> getUpdateValues(TableData tableDetails) {
+		return tableDetails.getRecordDataList().stream().filter(item -> item.getValue() != null && !item.isPrimaryKey() && !item.isAutoNumber())
+				.collect(Collectors.toMap(item -> item.getField(), item -> item.getValue()));
+	}
+
+	/***
+	 * Update will happen based on the primary key.
+	 * 
+	 * @param <T>
+	 * @param entity
+	 * @param tableDetails
+	 * @param condition
+	 * @return
+	 */
 	public <T> T update(T entity, TableData tableDetails, Condition condition) {
 
-		Map<Field<?>, Object> updateMap = new HashMap<>();
-		var iter = tableDetails.iterator();
-		while (iter.hasNext()) {
-			var item = tableDetails.iterator().next();
-			Field<?> colField = item.getKey();
-			Object colValue = item.getValue();
-			Props prop = tableDetails.getFieldProps().get(colField.getName());
-			if (colValue != null && (prop == null || !prop.isExclude())) {
-				updateMap.put(colField, colValue);
-			}
+		Map<Field<?>, Object> updateMap = this.getUpdateValues(tableDetails);
+		// Update will happen based on primary key
+		Map<Field<?>, Object> primaryKeys = tableDetails.getPrimaryKeys();
+		if (condition == null && primaryKeys.size() > 0) {
+			condition = DSL.condition(primaryKeys);
 		}
-
-		if (condition == null && tableDetails.getPrimaryKeys().size() > 0) {
-			condition = DSL.condition(tableDetails.getPrimaryKeys());
-			context.update(table(tableDetails.getTableName())).set(updateMap).where(condition)
-					.returning(tableDetails.getFields()).fetchOne().into(entity);
-		} else {
-			context.update(table(tableDetails.getTableName())).set(updateMap).where(condition)
-					.returning(tableDetails.getFields()).fetchOne().into(entity);
-		}
-
+		context.update(table(tableDetails.getTableName())).set(updateMap).where(condition)
+				.returning(tableDetails.getFields()).fetchOne().into(entity);
 		return entity;
 	}
 
 	public <T> Page<T> fetchAll(T entity, Class<T> type, Pageable pagable) {
 
 		TableData tableDetails = this.getTableData(entity);
-		Map<Field<?>, Object> conditionMap = new HashMap<>();
-
-		var iter = tableDetails.iterator();
-		while (iter.hasNext()) {
-			var keyVal = iter.next();
-			Object value = keyVal.getValue();
-			Props prop = tableDetails.getFieldProps().get(keyVal.getKey().getName());
-			if (value != null && (prop == null || !prop.isExclude())) {
-				conditionMap.put(keyVal.getKey(), value);
-			}
-		}
+		Map<Field<?>, Object> conditionMap = this.getConditionAndValue(tableDetails);
 
 		if (conditionMap.size() == 0) {
 			throw new InvalidConditionException(tableDetails.getTableName());
@@ -256,18 +247,7 @@ public abstract class BaseRepo {
 	public <T> Page<T> fetchAll(T entity, Function<Record, T> converter, Pageable pagable) {
 
 		TableData tableDetails = this.getTableData(entity);
-		Map<Field<?>, Object> conditionMap = new HashMap<>();
-
-		var iter = tableDetails.iterator();
-		while (iter.hasNext()) {
-			var keyVal = iter.next();
-			Object value = keyVal.getValue();
-			Props prop = tableDetails.getFieldProps().get(keyVal.getKey().getName());
-			if (value != null && (prop == null || !prop.isExclude())) {
-				conditionMap.put(keyVal.getKey(), value);
-			}
-		}
-
+		Map<Field<?>, Object> conditionMap = this.getConditionAndValue(tableDetails);
 		if (conditionMap.size() == 0) {
 			throw new InvalidConditionException(tableDetails.getTableName());
 		}
@@ -291,38 +271,34 @@ public abstract class BaseRepo {
 	}
 
 	public <T> List<T> fetchMultiple(T entity, Function<Record, T> converter) {
-		SelectConditionStep<Record> query = this.fetchQuery(entity);
+		TableData tableDetails = this.getTableData(entity);
+		SelectConditionStep<Record> query = this.fetchQuery(tableDetails);
 		Result<Record> results = query.fetch();
 		return results.map(converter::apply);
 	}
 
 	public <T> List<T> fetchMultiple(T entity, Class<T> type) {
-		SelectConditionStep<Record> query = this.fetchQuery(entity);
+		TableData tableDetails = this.getTableData(entity);
+		SelectConditionStep<Record> query = this.fetchQuery(tableDetails);
 		return query.fetchInto(type);
 	}
 
 	public <T> T fetchOne(T entity) {
 
-		SelectConditionStep<Record> query = this.fetchQuery(entity);
+		TableData tableDetails = this.getTableData(entity);
+		SelectConditionStep<Record> query = this.fetchQuery(tableDetails);
+
 		var queryResult = query.fetchOne();
-		return queryResult != null ? queryResult.into(entity) : null;
+		if (queryResult == null) {
+			throw new NotFoundException(tableDetails.getTableName());
+		}
+		return queryResult.into(entity);
 
 	}
 
-	private <T> SelectConditionStep<Record> fetchQuery(T entity) {
-		TableData tableDetails = this.getTableData(entity);
-		Map<Field<?>, Object> conditionMap = new HashMap<>();
+	private <T> SelectConditionStep<Record> fetchQuery(TableData tableDetails) {
 
-		var iter = tableDetails.iterator();
-		while (iter.hasNext()) {
-			var keyVal = iter.next();
-			Object value = keyVal.getValue();
-			Props prop = tableDetails.getFieldProps().get(keyVal.getKey().getName());
-			if (value != null && (prop == null || !prop.isExclude())) {
-				conditionMap.put(keyVal.getKey(), value);
-			}
-		}
-
+		Map<Field<?>, Object> conditionMap = this.getConditionAndValue(tableDetails);
 		if (conditionMap.size() == 0) {
 			throw new InvalidConditionException(tableDetails.getTableName());
 		}
@@ -337,9 +313,11 @@ public abstract class BaseRepo {
 	}
 
 	public int delete(TableData tableDetails, Condition condition) {
-
-		if (condition == null && tableDetails.getPrimaryKeys().size() > 0) {
-			condition = DSL.condition(tableDetails.getPrimaryKeys());
+		if (condition == null) {
+			Map<Field<?>, Object> map = tableDetails.getRecordDataList().stream()
+					.filter(item -> item.getValue() != null)
+					.collect(Collectors.toMap(item -> item.getField(), item -> item.getValue()));
+			condition = DSL.condition(map);
 		}
 		return context.delete(table(tableDetails.getTableName())).where(condition).execute();
 	}
@@ -377,139 +355,156 @@ public abstract class BaseRepo {
 
 	// Table Data details to generate the Query
 	private <T> TableData getTableData(T entity) {
+
 		TableData tableData = new TableData();
 		Class<?> clazz = entity.getClass();
 		javax.persistence.Table tableAnnotation = clazz.getAnnotation(javax.persistence.Table.class);
+
 		if (tableAnnotation != null) {
+			// Get the table name
 			String tableName = tableAnnotation.name();
 			tableData.setTableName(tableName);
+
+			// Iterate through all the properties/attributes
 			for (java.lang.reflect.Field field : clazz.getDeclaredFields()) {
+				// read column annotations
 				Column col = field.getAnnotation(Column.class);
-				ExtraColumnData extraCol = field.getAnnotation(ExtraColumnData.class);
+
+				// process only if the column data annotation is present
 				if (col != null) {
 
 					String colName = col.name().toLowerCase();
 					Field<?> colField = column(colName);
-					tableData.getAttriButeNames().add(field.getName());
-					tableData.getFields().add(colField);
 
-					field.setAccessible(true);
-					try {
-						Object val = field.get(entity);
+					// create a recordData object to hold the properties of each record
+					RecordData recData = new RecordData();
+					recData.setField(colField);
+					recData.setAttributeName(field.getName());
 
-						boolean setVal = false;
-						if (extraCol != null) {
+					// set the record data
+					this.setExtraColData(entity, tableData, tableName, colName, recData, field, colField);
 
-							tableData.getFieldProps().put(colName, new Props(val, extraCol.exclude()));
-							if (extraCol.isPrimaryKey()) {
-								tableData.getPrimaryKeys().put(colField, val);
-							}
-							// Handling of ID column
-							if (extraCol.id() != null && extraCol.id() != IDType.NONE && val == null) {
-								tableData.setIdType(extraCol.id());
-								tableData.setVersionColumn(colField);
-								if (extraCol.id() == IDType.BUSINESS_SEQ) {
-									tableData.businessString = extraCol.businessString();
-								}
-								tableData.getValues().add(ID_TEMPLATE);
-								// tableData.getValues().add(1);
-								setVal = true;
-							}
-							// Convert to JSON string
-							if (extraCol.convertToJson() && val != null) {
-								ObjectMapper objectMapper = new ObjectMapper();
-								JSON jsonVal = JSON.json(objectMapper.writeValueAsString(val));
-								tableData.getValues().add(jsonVal);
-								setVal = true;
-							}
-						}
-
-						if (!setVal) {
-							tableData.getValues().add(val);
-						}
-
-					} catch (IllegalArgumentException | IllegalAccessException | JsonProcessingException e) {
-						throw new InvalidFieldMappingException(tableName, colName, e);
-					}
 				}
 			}
 
-			tableData.getAttriButeNames().add("updatedBy");
-			tableData.getAttriButeNames().add("updatedDate");
+			// Set updatedBy and updatedDate
+			RecordData updatedBy = new RecordData();
+			updatedBy.setAttributeName("updatedBy");
+			updatedBy.setField(column(ModelConstants.UPDATED_BY));
 
-			tableData.getFields().add(column(ModelConstants.UPDATED_BY));
-			tableData.getFields().add(column(ModelConstants.UPDATED_DATE));
+			RecordData updatedDate = new RecordData();
+			updatedDate.setAttributeName("updatedDate");
+			updatedDate.setField(column(ModelConstants.UPDATED_DATE));
+
+			tableData.getRecordDataList().add(updatedBy);
+			tableData.getRecordDataList().add(updatedDate);
 
 		}
 		return tableData;
 	}
 
+	private <T> RecordData setExtraColData(T entity, TableData tableData, String tableName, String colName,
+			RecordData recData, java.lang.reflect.Field field, Field<?> colField) {
+		try {
+			field.setAccessible(true);
+			// read extra column data annotations
+			ExtraColumnData extraCol = field.getAnnotation(ExtraColumnData.class);
+			Object val = field.get(entity);
+			// process only if extracol annotation is present
+			if (extraCol != null) {
+
+				recData.setExcludeFromSelect(extraCol.exclude());
+				recData.setPrimaryKey(extraCol.isPrimaryKey());
+				recData.setAutoNumber(extraCol.id() == IDType.AUTO);
+
+				// Handling of ID column
+				if (extraCol.id() != null && (extraCol.id() != IDType.NONE && extraCol.id() != IDType.AUTO)
+						&& val == null) {
+					tableData.setIdType(extraCol.id());
+					if (extraCol.id() == IDType.BUSINESS_SEQ) {
+						tableData.businessString = extraCol.businessString();
+					} else if (extraCol.id() == IDType.VERSION_SEQ) {
+						tableData.setVersionColumn(colField);
+					}
+					val = ID_TEMPLATE;
+				}
+
+				// Convert to JSON string
+				if (extraCol.convertToJson() && val != null) {
+					ObjectMapper objectMapper = new ObjectMapper();
+					JSON jsonVal = JSON.json(objectMapper.writeValueAsString(val));
+					val = jsonVal;
+				}
+			}
+
+			// Adding column value
+			recData.setValue(val);
+			tableData.getRecordDataList().add(recData);
+
+		} catch (IllegalArgumentException | IllegalAccessException | JsonProcessingException e) {
+			throw new InvalidFieldMappingException(tableName, colName, e);
+		}
+		return recData;
+	}
+
 	@Setter
 	@Getter
-	class TableData implements Iterable<Pair<Field<?>, Object>> {
+	class TableData {
 		private String tableName;
 		private Field<?> versionColumn;
-		private List<String> attriButeNames = new ArrayList<>();
-		private List<Field<?>> fields = new ArrayList<>();
-		private List<Object> values = new ArrayList<>();
-		private Map<String, Props> fieldProps = new HashMap<>();
-		private Map<Field<?>, Object> primaryKeys = new HashMap<>();
-
+		private final List<RecordData> recordDataList = new ArrayList<>();
 		private IDType idType = IDType.NONE;
 		private String businessString;
 
-		@Getter(value = AccessLevel.NONE)
-		@Setter(value = AccessLevel.NONE)
-		private int currentIndex = 0;
-
-		@Override
-		public Iterator<Pair<Field<?>, Object>> iterator() {
-
-			return new Iterator<Pair<Field<?>, Object>>() {
-
-				@Override
-				public boolean hasNext() {
-					// TODO Auto-generated method stub
-					return currentIndex < fields.size();
+		public void setUpdatedByAndUpdatedDate(String user, Timestamp timeStamp) {
+			this.recordDataList.forEach(item -> {
+				if (item.field.getName().equals(ModelConstants.UPDATED_BY)) {
+					item.setValue(user);
+				} else if (item.field.getName().equals(ModelConstants.UPDATED_DATE)) {
+					item.setValue(timeStamp);
 				}
-
-				@Override
-				public Pair<Field<?>, Object> next() {
-					// TODO Auto-generated method stub
-					Object value = null;
-					if (currentIndex < values.size()) {
-						value = values.get(currentIndex);
-					}
-					Pair<Field<?>, Object> item = Pair.of(fields.get(currentIndex), value);
-					currentIndex++;
-					return item;
-
-				}
-
-				@Override
-				public void remove() {
-					currentIndex = 0;
-					Iterator.super.remove();
-				}
-
-			};
+			});
 		}
 
-		public void setUpdatedByAndUpdatedDate(String user, Timestamp timeStamp) {
-			this.getValues().add(user);
-			this.getValues().add(timeStamp);
+		public List<Field<?>> getFields() {
+			return this.recordDataList.stream().map(item -> item.getField()).collect(Collectors.toList());
+		}
+
+		public List<Object> getValues() {
+			return this.recordDataList.stream().map(item -> item.getValue()).collect(Collectors.toList());
+		}
+
+		public List<Field<?>> getFieldsAfterExclusion() {
+			return this.recordDataList.stream().filter(item -> !item.isAutoNumber() && item.getValue()!=null).map(item -> item.getField())
+					.collect(Collectors.toList());
+		}
+
+		public List<Object> getValuesAfterExclusion() {
+			return this.recordDataList.stream().filter(item -> !item.isAutoNumber() && item.getValue()!=null).map(item -> item.getValue())
+					.collect(Collectors.toList());
+		}
+
+		public Map<Field<?>, Object> getPrimaryKeys() {
+			return this.recordDataList.stream().filter(item -> item.isPrimaryKey())
+					.collect(Collectors.toMap(item -> item.getField(), item -> item.getValue()));
 		}
 	}
 
 	@Getter
 	@Setter
-	class Props {
+	@NoArgsConstructor
+	/***
+	 * Data Structure for holding the selected record
+	 * 
+	 * @author shabeeb
+	 *
+	 */
+	class RecordData {
 		private Object value;
-		private boolean exclude;
-
-		public Props(Object value, boolean exclude) {
-			this.value = value;
-			this.exclude = exclude;
-		}
+		private String attributeName;
+		private Field<?> field;
+		private boolean isAutoNumber = false;
+		private boolean isPrimaryKey = false;
+		private boolean excludeFromSelect = false;
 	}
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sim.spriced.defnition.data.repo.impl.EntityDefnitionRepo;
+import com.sim.spriced.defnition.data.service.BaseService;
 import com.sim.spriced.defnition.data.service.EntityDefnitionEvent;
 import com.sim.spriced.defnition.data.service.IEntityDefnitionService;
 import com.sim.spriced.framework.models.EntityDefnition;
@@ -19,7 +20,7 @@ import com.sim.spriced.framework.pubsub.IObservable;
 import com.sim.spriced.framework.pubsub.IObserver;
 
 @Service
-public class EntityDefnitionService 
+public class EntityDefnitionService  extends BaseService
 		implements IEntityDefnitionService, IObservable<EntityDefnitionEvent> {
 
 	private List<IObserver<EntityDefnitionEvent>> observers = new ArrayList<>();
@@ -47,8 +48,8 @@ public class EntityDefnitionService
 	public int delete(String name,int version,String grpname) {
 		EntityDefnition entityDefnition = new EntityDefnition();
 		entityDefnition.setName(name);
-		entityDefnition.setVersion(version);
-		entityDefnition.setGroup(grpname);
+		//entityDefnition.setVersion(version);
+		//entityDefnition.setGroup(grpname);
 		int rows = this.defnitionRepo.delete(entityDefnition);
 		this.notifyObservers(this.createEvent(entityDefnition,null, EventType.DELETE));
 		return rows;
@@ -59,8 +60,8 @@ public class EntityDefnitionService
 	public EntityDefnition update(EntityDefnition entityDefnition) {
 		entityDefnition.validate();
 		this.defnitionRepo.update(entityDefnition);
-		EntityDefnition previous = this.defnitionRepo.fetchByName(entityDefnition.getName(), entityDefnition.getGroup(),false);
-		this.notifyObservers(this.createEvent(entityDefnition,previous, EventType.UPDATE));
+		//EntityDefnition previous = this.defnitionRepo.fetchByName(entityDefnition.getName(), entityDefnition.getGroup(),false);
+		//this.notifyObservers(this.createEvent(entityDefnition,previous, EventType.UPDATE));
 		return entityDefnition;
 	}
 	
@@ -69,8 +70,8 @@ public class EntityDefnitionService
 	public EntityDefnition disableEntity(String name,int version,String grpname) {
 		EntityDefnition entityDefnition = new EntityDefnition();
 		entityDefnition.setName(name);
-		entityDefnition.setVersion(version);
-		entityDefnition.setGroup(grpname);
+		//entityDefnition.setVersion(version);
+		//entityDefnition.setGroup(grpname);
 		entityDefnition.setIsDisabled(true);
 		return this.defnitionRepo.update(entityDefnition);
 	}
@@ -79,8 +80,8 @@ public class EntityDefnitionService
 	public EntityDefnition enableEntity(String name,int version,String grpname) {
 		EntityDefnition entityDefnition = new EntityDefnition();
 		entityDefnition.setName(name);
-		entityDefnition.setVersion(version);
-		entityDefnition.setGroup(grpname);
+		//entityDefnition.setVersion(version);
+		//entityDefnition.setGroup(grpname);
 		entityDefnition.setIsDisabled(false);
 		return this.defnitionRepo.update(entityDefnition);
 	}

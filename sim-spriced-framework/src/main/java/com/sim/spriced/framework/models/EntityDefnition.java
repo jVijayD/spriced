@@ -27,19 +27,17 @@ public class EntityDefnition extends BaseEntity {
 	private static final String CODE = "code";
 
 	@ExtraColumnData(isPrimaryKey = true)
+	@Column(name = ModelConstants.ID)
+	private int id;
+	
 	@Column(name = ModelConstants.NAME)
 	private String name;
 	
 	@Column(name = ModelConstants.DISPLAY_NAME)
 	private String displayName;
 
-	@ExtraColumnData(isPrimaryKey = true)
-	@Column(name = "group")
-	private String group;
-
-	@Column(name = ModelConstants.VERSION)
-	@ExtraColumnData(isPrimaryKey = true, id = IDType.VERSION_SEQ)
-	private Integer version;
+	@Column(name = "group_id")
+	private String groupId;
 
 	@Column(name = ModelConstants.IS_DISABLED)
 	private Boolean isDisabled=false;
@@ -47,6 +45,10 @@ public class EntityDefnition extends BaseEntity {
 	@Column(name = ModelConstants.ENABLE_AUDIT_TRIAL)
 	private Boolean enableAuditTrial=false;
 
+	
+	@Column(name = "comment")
+	private String comment;
+	
 	@Column(name = ModelConstants.ATTRIBUTES)
 	@ExtraColumnData(convertToJson = true, exclude = true)
 	private final List<Attribute> attributes = new ArrayList<>();
@@ -55,10 +57,6 @@ public class EntityDefnition extends BaseEntity {
 		this.name = name;
 	}
 	
-	public EntityDefnition(String name,String group) {
-		this.name = name;
-		this.group = group;
-	}
 
 	public EntityDefnition(String name, boolean isDisabled) {
 		this.name = name;
@@ -69,6 +67,7 @@ public class EntityDefnition extends BaseEntity {
 		this.attributes.addAll(attributes);
 	}
 
+	@Override
 	public boolean validate() {
 		this.validateDisplayName();
 		this.validateAttributes();

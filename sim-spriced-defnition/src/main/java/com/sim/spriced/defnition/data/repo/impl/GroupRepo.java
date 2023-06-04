@@ -3,6 +3,7 @@ package com.sim.spriced.defnition.data.repo.impl;
 import java.util.List;
 
 import org.jooq.Condition;
+import org.jooq.impl.DSL;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -37,6 +38,32 @@ public class GroupRepo extends BaseRepo implements IGroupRepo {
 		grp.setName(name);
 		return super.fetchOne(grp);
 	}
+
+	@Override
+	public Group changeName(String currentName, String newName) {
+		Condition condition = column(ModelConstants.NAME).eq(currentName);
+		Group grp = new Group();
+		grp.setName(newName);
+		return this.update(grp, condition);
+	}
+
+	@Override
+	public Group disableGroupByName(String name) {
+		Condition condition = column(ModelConstants.NAME).eq(name);
+		Group grp = new Group();
+		grp.setIsDisabled(true);
+		return this.update(grp, condition);
+	}
+
+	@Override
+	public Group enableGroupByName(String name) {
+		Condition condition = column(ModelConstants.NAME).eq(name);
+		Group grp = new Group();
+		grp.setIsDisabled(false);
+		return this.update(grp, condition);
+	}
+
+
 
 
 }

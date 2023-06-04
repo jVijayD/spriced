@@ -13,7 +13,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class BaseEntity {
+public abstract class BaseEntity {
 	@Column(name=ModelConstants.UPDATED_DATE)
 	private Timestamp updatedDate;
 	@Column(name=ModelConstants.UPDATED_BY)
@@ -31,4 +31,6 @@ public class BaseEntity {
 		
 		return value;
 	}
+	
+	abstract boolean validate();
 }
