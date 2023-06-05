@@ -26,9 +26,9 @@ public class EntityDefnition extends BaseEntity {
 	private static final int NAME_SIZE = 25;
 	private static final String CODE = "code";
 
-	@ExtraColumnData(isPrimaryKey = true)
+	@ExtraColumnData(isPrimaryKey = true,id = IDType.AUTO)
 	@Column(name = ModelConstants.ID)
-	private int id;
+	private Integer id;
 	
 	@Column(name = ModelConstants.NAME)
 	private String name;
@@ -37,13 +37,13 @@ public class EntityDefnition extends BaseEntity {
 	private String displayName;
 
 	@Column(name = "group_id")
-	private String groupId;
+	private Integer groupId;
 
 	@Column(name = ModelConstants.IS_DISABLED)
-	private Boolean isDisabled=false;
+	private Boolean isDisabled;
 	
 	@Column(name = ModelConstants.ENABLE_AUDIT_TRIAL)
-	private Boolean enableAuditTrial=false;
+	private Boolean enableAuditTrial;
 
 	
 	@Column(name = "comment")
@@ -53,10 +53,18 @@ public class EntityDefnition extends BaseEntity {
 	@ExtraColumnData(convertToJson = true, exclude = true)
 	private final List<Attribute> attributes = new ArrayList<>();
 
+	public EntityDefnition(int id) {
+		this.id = id;
+	}
+	
 	public EntityDefnition(String name) {
 		this.name = name;
 	}
 	
+	public EntityDefnition(String name,int groupId) {
+		this.name = name;
+		this.groupId = groupId;
+	}
 
 	public EntityDefnition(String name, boolean isDisabled) {
 		this.name = name;

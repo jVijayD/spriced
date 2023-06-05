@@ -49,7 +49,7 @@ class GroupRepoTest {
 		Group grp = new Group(grpName);
 		grp.setDisplayName(grpName);
 		grp.setIsDisabled(false);
-		Group newGrp = this.grpRepo.create(grp);
+		Group newGrp = this.grpRepo.add(grp);
 		assertEquals(grpName, newGrp.getName());
 	}
 

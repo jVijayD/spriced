@@ -48,6 +48,7 @@ import com.sim.spriced.framework.exceptions.data.InvalidConditionException;
 import com.sim.spriced.framework.exceptions.data.InvalidEntityFieldMappingException;
 import com.sim.spriced.framework.exceptions.data.InvalidFieldMappingException;
 import com.sim.spriced.framework.exceptions.data.NotFoundException;
+import com.sim.spriced.framework.exceptions.data.NullPrimaryKeyException;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -128,17 +129,28 @@ public abstract class BaseRepo {
 	}
 
 	// Dynamic SQL based on Annotations
-	public <T> T create(T entity) {
+	protected <T> T create(T entity) {
 		TableData tableDetails = this.getTableData(entity);
 		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser(), this.timeStamp);
 		return this.create(entity, tableDetails);
+	}
+	
+	protected <T> T create(T entity,Function<Record, T> converter) {
+		TableData tableDetails = this.getTableData(entity);
+		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser(), this.timeStamp);
+		return this.create(tableDetails,converter);
 	}
 
 	private <T> T create(T entity, TableData tableDetails) {
 		this.createQueryForGeneratedID(tableDetails).returning(tableDetails.getFields()).fetchOne().into(entity);
 		return entity;
 	}
+	
+	private <T> T create(TableData tableDetails,Function<Record, T> converter) {
+		return converter.apply(this.createQueryForGeneratedID(tableDetails).returning(tableDetails.getFields()).fetchOne());
+	}
 
+	
 	private InsertOnDuplicateStep<Record> createQueryForGeneratedID(TableData tableDetails) {
 
 		InsertOnDuplicateStep<Record> insertQuery = null;
@@ -189,6 +201,12 @@ public abstract class BaseRepo {
 		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser(), this.timeStamp);
 		return this.update(entity, tableDetails, null);
 	}
+	
+	public <T> T update(T entity,Function<Record, T> converter) {
+		TableData tableDetails = this.getTableData(entity);
+		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser(), this.timeStamp);
+		return this.update(tableDetails,converter, null);
+	}
 
 	public <T> T update(T entity, Condition condition) {
 		TableData tableDetails = this.getTableData(entity);
@@ -197,12 +215,13 @@ public abstract class BaseRepo {
 	}
 
 	private Map<Field<?>, Object> getConditionAndValue(TableData tableDetails) {
-		return tableDetails.getRecordDataList().stream().filter(item -> item.getValue() != null)
+		return tableDetails.getRecordDataList().stream().filter(item -> item.getValue() != null && !item.isExcludeFromSelect())
 				.collect(Collectors.toMap(item -> item.getField(), item -> item.getValue()));
 	}
-	
+
 	private Map<Field<?>, Object> getUpdateValues(TableData tableDetails) {
-		return tableDetails.getRecordDataList().stream().filter(item -> item.getValue() != null && !item.isPrimaryKey() && !item.isAutoNumber())
+		return tableDetails.getRecordDataList().stream()
+				.filter(item -> item.getValue() != null && !item.isPrimaryKey() && !item.isAutoNumber())
 				.collect(Collectors.toMap(item -> item.getField(), item -> item.getValue()));
 	}
 
@@ -215,7 +234,21 @@ public abstract class BaseRepo {
 	 * @param condition
 	 * @return
 	 */
-	public <T> T update(T entity, TableData tableDetails, Condition condition) {
+	private <T> T update(TableData tableDetails,Function<Record, T> converter, Condition condition) {
+
+		Map<Field<?>, Object> updateMap = this.getUpdateValues(tableDetails);
+		// Update will happen based on primary key
+		Map<Field<?>, Object> primaryKeys = tableDetails.getPrimaryKeys();
+		if (condition == null && primaryKeys.size() > 0) {
+			condition = DSL.condition(primaryKeys);
+		}
+		return converter.apply(context.update(table(tableDetails.getTableName())).set(updateMap).where(condition)
+				.returning(tableDetails.getFields()).fetchOne());
+
+	}
+	
+
+	private <T> T update(T entity, TableData tableDetails, Condition condition) {
 
 		Map<Field<?>, Object> updateMap = this.getUpdateValues(tableDetails);
 		// Update will happen based on primary key
@@ -227,38 +260,8 @@ public abstract class BaseRepo {
 				.returning(tableDetails.getFields()).fetchOne().into(entity);
 		return entity;
 	}
+	
 
-	public <T> Page<T> fetchAll(T entity, Class<T> type, Pageable pagable) {
-
-		TableData tableDetails = this.getTableData(entity);
-		Map<Field<?>, Object> conditionMap = this.getConditionAndValue(tableDetails);
-
-		if (conditionMap.size() == 0) {
-			throw new InvalidConditionException(tableDetails.getTableName());
-		}
-
-		List<T> queryResults = this.context.selectFrom(table(tableDetails.getTableName()))
-				.where(DSL.condition(conditionMap)).orderBy(this.getOrderBy(pagable.getSort()))
-				.limit(pagable.getPageSize()).offset(pagable.getOffset()).fetchInto(type);
-
-		return new PageImpl<>(queryResults);
-	}
-
-	public <T> Page<T> fetchAll(T entity, Function<Record, T> converter, Pageable pagable) {
-
-		TableData tableDetails = this.getTableData(entity);
-		Map<Field<?>, Object> conditionMap = this.getConditionAndValue(tableDetails);
-		if (conditionMap.size() == 0) {
-			throw new InvalidConditionException(tableDetails.getTableName());
-		}
-
-		Result<Record> result = this.context.selectFrom(table(tableDetails.getTableName()))
-				.where(DSL.condition(conditionMap)).orderBy(this.getOrderBy(pagable.getSort()))
-				.limit(pagable.getPageSize()).offset(pagable.getOffset()).fetch();
-
-		List<T> queryResults = result.map(converter::apply);
-		return new PageImpl<>(queryResults);
-	}
 
 	protected Collection<SortField<?>> getOrderBy(Sort sort) {
 		return sort.stream().map(order -> {
@@ -295,8 +298,21 @@ public abstract class BaseRepo {
 		return queryResult.into(entity);
 
 	}
+	
+	public <T> T fetchOne(T entity,Function<Record, T> converter) {
 
-	private <T> SelectConditionStep<Record> fetchQuery(TableData tableDetails) {
+		TableData tableDetails = this.getTableData(entity);
+		SelectConditionStep<Record> query = this.fetchQuery(tableDetails);
+
+		var queryResult = query.fetchOne();
+		if (queryResult == null) {
+			throw new NotFoundException(tableDetails.getTableName());
+		}
+		return converter.apply(queryResult);
+
+	}
+
+	private  SelectConditionStep<Record> fetchQuery(TableData tableDetails) {
 
 		Map<Field<?>, Object> conditionMap = this.getConditionAndValue(tableDetails);
 		if (conditionMap.size() == 0) {
@@ -315,7 +331,7 @@ public abstract class BaseRepo {
 	public int delete(TableData tableDetails, Condition condition) {
 		if (condition == null) {
 			Map<Field<?>, Object> map = tableDetails.getRecordDataList().stream()
-					.filter(item -> item.getValue() != null)
+					.filter(item -> item.getValue() != null && !item.isExcludeFromSelect())
 					.collect(Collectors.toMap(item -> item.getField(), item -> item.getValue()));
 			condition = DSL.condition(map);
 		}
@@ -324,6 +340,38 @@ public abstract class BaseRepo {
 
 	// Dynamic SQL based on table details from entity
 
+	public <T> Page<T> fetchAll(T entity, Class<T> type, Pageable pagable) {
+
+		TableData tableDetails = this.getTableData(entity);
+		Map<Field<?>, Object> conditionMap = this.getConditionAndValue(tableDetails);
+
+		if (conditionMap.size() == 0) {
+			throw new InvalidConditionException(tableDetails.getTableName());
+		}
+
+		List<T> queryResults = this.context.selectFrom(table(tableDetails.getTableName()))
+				.where(DSL.condition(conditionMap)).orderBy(this.getOrderBy(pagable.getSort()))
+				.limit(pagable.getPageSize()).offset(pagable.getOffset()).fetchInto(type);
+
+		return new PageImpl<>(queryResults);
+	}
+
+	public <T> Page<T> fetchAll(T entity, Function<Record, T> converter, Pageable pagable) {
+
+		TableData tableDetails = this.getTableData(entity);
+		Map<Field<?>, Object> conditionMap = this.getConditionAndValue(tableDetails);
+		if (conditionMap.size() == 0) {
+			throw new InvalidConditionException(tableDetails.getTableName());
+		}
+
+		Result<Record> result = this.context.selectFrom(table(tableDetails.getTableName()))
+				.where(DSL.condition(conditionMap)).orderBy(this.getOrderBy(pagable.getSort()))
+				.limit(pagable.getPageSize()).offset(pagable.getOffset()).fetch();
+
+		List<T> queryResults = result.map(converter::apply);
+		return new PageImpl<>(queryResults);
+	}
+	
 	public <T> Page<T> fetchAll(String tableName, Condition condition, Class<T> type, Pageable pagable) {
 		List<T> queryResults = this.context.selectFrom(table(tableName)).where(condition)
 				.orderBy(this.getOrderBy(pagable.getSort())).limit(pagable.getPageSize()).offset(pagable.getOffset())
@@ -475,18 +523,22 @@ public abstract class BaseRepo {
 		}
 
 		public List<Field<?>> getFieldsAfterExclusion() {
-			return this.recordDataList.stream().filter(item -> !item.isAutoNumber() && item.getValue()!=null).map(item -> item.getField())
-					.collect(Collectors.toList());
+			return this.recordDataList.stream().filter(item -> !item.isAutoNumber() && item.getValue() != null)
+					.map(item -> item.getField()).collect(Collectors.toList());
 		}
 
 		public List<Object> getValuesAfterExclusion() {
-			return this.recordDataList.stream().filter(item -> !item.isAutoNumber() && item.getValue()!=null).map(item -> item.getValue())
-					.collect(Collectors.toList());
+			return this.recordDataList.stream().filter(item -> !item.isAutoNumber() && item.getValue() != null)
+					.map(item -> item.getValue()).collect(Collectors.toList());
 		}
 
 		public Map<Field<?>, Object> getPrimaryKeys() {
-			return this.recordDataList.stream().filter(item -> item.isPrimaryKey())
-					.collect(Collectors.toMap(item -> item.getField(), item -> item.getValue()));
+			return this.recordDataList.stream().filter(item -> {
+				if (item.getValue() == null) {
+					throw new NullPrimaryKeyException(this.tableName, item.getAttributeName());
+				}
+				return item.isPrimaryKey();
+			}).collect(Collectors.toMap(item -> item.getField(), item -> item.getValue()));
 		}
 	}
 

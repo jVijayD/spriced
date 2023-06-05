@@ -21,7 +21,7 @@ public class GroupService extends BaseService implements IGroupService {
 	@Override
 	public Group create(Group group) {
 		group.validate();
-		return this.grpRepo.create(group);
+		return this.grpRepo.add(group);
 	}
 
 	@Override

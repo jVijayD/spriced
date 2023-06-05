@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IGroupRepo {
+	public Group add(Group group);
+	public int remove(Group group);
 	public List<Group> fetchAll(boolean loadDisabled);
 	public Page<Group> fetchAll(boolean loadDisabled,Pageable pagable);
 	public Group fetchByName(String name);

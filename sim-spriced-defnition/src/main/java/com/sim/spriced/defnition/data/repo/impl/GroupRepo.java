@@ -19,6 +19,10 @@ public class GroupRepo extends BaseRepo implements IGroupRepo {
 	private static final String TABLE = "group";
 
 
+	@Override
+	public Group add(Group group) {
+		return super.create(group);
+	}
 
 	@Override
 	public List<Group> fetchAll(boolean loadDisabled) {
@@ -63,7 +67,10 @@ public class GroupRepo extends BaseRepo implements IGroupRepo {
 		return this.update(grp, condition);
 	}
 
-
+	@Override
+	public int remove(Group group) {
+		return super.delete(group);
+	}
 
 
 }
