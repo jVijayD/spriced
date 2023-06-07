@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sim.spriced.defnition.data.repo.impl.EntityCreationRepo;
+import com.sim.spriced.defnition.data.repo.IEntityCreationRepo;
 import com.sim.spriced.defnition.data.service.BaseService;
 import com.sim.spriced.defnition.data.service.EntityDefnitionEvent;
 import com.sim.spriced.defnition.data.service.IEntityCreationService;
@@ -21,7 +20,7 @@ import com.sim.spriced.framework.pubsub.IObserver;
 public class EntityCreationService extends BaseService implements IEntityCreationService, IObserver<EntityDefnitionEvent> {
 
 	@Autowired
-	EntityCreationRepo creationRepo;
+	IEntityCreationRepo creationRepo;
 
 	@Override
 	public void update(EntityDefnitionEvent arg) {

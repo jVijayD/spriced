@@ -3,8 +3,6 @@ package com.sim.spriced.defnition.service.impl.integration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.List;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -33,82 +31,163 @@ import com.sim.spriced.framework.models.Group;
 @TestMethodOrder(OrderAnnotation.class)
 class EntityDefnitionServiceTest {
 
-//	@Autowired
-//	IGroupService grpService;
-//	
-//	@Autowired
-//	IEntityDefnitionService entityService;
-//
-//	String grpName;
-//	String entityName;
-//
-//	@BeforeAll
-//	public void setup() {
-//		grpName = "EntityDefnitionTestGrp";
-//		entityName = "EntityDefnitionTestEntity";
-//		Group grp = new Group(grpName);
-//		grpService.create(grp);
-//	}
-//	
-//	@AfterAll
-//	public void destroy() {
-//		//grpService.delete(grpName);
-//	}
-//	
-//	@Test
-//	@Order(1)
-//	void createTest() {
-//		
-//		EntityDefnition defnition = new EntityDefnition(entityName,grpName);
-//		
-//		Attribute varString = new Attribute("col6",Type.FREE_FORM ,DataType.STRING);
-//		varString.setNullable(false);
-//		varString.setSize(50);
-//		
-//		List<Attribute> attributes = defnition.getAttributes();
-//		Attribute codeAttr = new Attribute("code",Type.FREE_FORM,DataType.BUSINESS_SEQUENCE);
-//		codeAttr.setConstraintType(ConstraintType.PRIMARY_KEY);
-//		codeAttr.setBusinessIdAppender("BID");
-//		attributes.add(codeAttr);
-//
-//		attributes.add(new Attribute("col1",Type.FREE_FORM,DataType.INTEGER));
-//		attributes.add(new Attribute("col2",Type.FREE_FORM,DataType.DOUBLE));
-//		attributes.add(new Attribute("col3",Type.FREE_FORM,DataType.BOOLEAN));
-//		attributes.add(new Attribute("col4",Type.FREE_FORM,DataType.CHARACTER));
-//		attributes.add(new Attribute("col5",Type.FREE_FORM,DataType.STRING_VAR));
-//		attributes.add(new Attribute("col7",Type.FREE_FORM,DataType.INTEGER));
-//		attributes.add(varString);
-//		
-//		defnition = this.entityService.create(defnition);
-//		assertEquals(entityName, defnition.getName());
-//	}
-//	
-//	
-//	@Test
-//	@Order(2)
-//	void fetchDefnitionTest() {
-//		EntityDefnition defnition = this.entityService.fetchByName(entityName,grpName, false);
-//		assertNotNull(defnition);
-//	}
-//
-//	
-//	
-//	//@Test
-//	@Order(4)
-//	void updateDefnitionAddAttributeTest() {
-//		EntityDefnition defnition = this.entityService.fetchByName( entityName,grpName, false);
-//		defnition.getAttributes().add(new Attribute("New1",Type.FREE_FORM,DataType.INTEGER));
-//		defnition.getAttributes().add(new Attribute("New2",Type.FREE_FORM,DataType.BOOLEAN));
-//		defnition = this.entityService.update(defnition);
-//		assertNotNull(defnition);
-//
-//	}
-//	
-//	//@Test
-//	@Order(5)
-//	void deleteTest() {
-//		int rows = this.entityService.delete(entityName,1,grpName);
-//		assertEquals(1,rows);
-//	}
+	@Autowired
+	IGroupService grpService;
+	
+	@Autowired
+	IEntityDefnitionService entityService;
+
+	String grpName;
+	int grpId;
+	String entityName;
+
+	@BeforeAll
+	public void setup() {
+		grpName = "EntityDefnitionTestGrp";
+		entityName = "EntityDefnitionTestEntity";
+		Group grp = new Group(grpName);
+		grp = grpService.create(grp);
+		grpId = grp.getId();
+	}
+	
+	@AfterAll
+	public void destroy() {
+		grpService.deleteByName(grpName);
+	}
+	
+	@Test
+	@Order(1)
+	void createSimpleEntityDefnitionTest() {
+		
+		EntityDefnition defnition = new EntityDefnition(entityName,grpId);
+		defnition.getAttributes().add(new Attribute("first_name", Type.FREE_FORM, DataType.STRING_VAR, 10));
+		defnition.getAttributes().add(new Attribute("last_name", Type.FREE_FORM, DataType.STRING_VAR, 10));
+		defnition.getAttributes().add(new Attribute("age", Type.FREE_FORM, DataType.INTEGER));
+		
+		defnition = this.entityService.create(defnition);
+		assertEquals(entityName, defnition.getName());
+		
+		
+		this.entityService.delete(entityName, grpId);
+	
+	}
+	
+	
+	@Test
+	@Order(2)
+	void fetchDefnitionTest() {
+		EntityDefnition defnition = new EntityDefnition(entityName,grpId);
+		defnition.getAttributes().add(new Attribute("first_name", Type.FREE_FORM, DataType.STRING_VAR, 10));
+		defnition.getAttributes().add(new Attribute("last_name", Type.FREE_FORM, DataType.STRING_VAR, 10));
+		defnition.getAttributes().add(new Attribute("age", Type.FREE_FORM, DataType.INTEGER));
+		
+		defnition = this.entityService.create(defnition);
+		defnition = this.entityService.fetchByName(entityName,grpId);
+		assertNotNull(defnition);
+		this.entityService.delete(entityName, grpId);
+	}
+
+	
+	
+	@Test
+	@Order(3)
+	void updateDefnitionAddAttributeTest() {
+		
+		EntityDefnition defnition = new EntityDefnition(entityName,grpId);
+		defnition.getAttributes().add(new Attribute("first_name", Type.FREE_FORM, DataType.STRING_VAR, 10));
+		defnition.getAttributes().add(new Attribute("last_name", Type.FREE_FORM, DataType.STRING_VAR, 10));
+		defnition.getAttributes().add(new Attribute("age", Type.FREE_FORM, DataType.INTEGER));
+		
+		defnition = this.entityService.create(defnition);
+		
+		defnition = this.entityService.fetchByName( entityName,grpId);
+		defnition.getAttributes().add(new Attribute("New1",Type.FREE_FORM,DataType.INTEGER));
+		defnition.getAttributes().add(new Attribute("New2",Type.FREE_FORM,DataType.BOOLEAN));
+		defnition = this.entityService.update(defnition);
+		assertNotNull(defnition);
+		this.entityService.delete(entityName, grpId);
+	}
+	
+	
+	@Test
+	@Order(4)
+	void createEntityDefnitionWithAutoPrimaryKeyTest() {
+		EntityDefnition defnition = new EntityDefnition(entityName,grpId);
+		Attribute primaryKey = new Attribute("id", Type.FREE_FORM, DataType.AUTO);
+		primaryKey.setConstraintType(ConstraintType.PRIMARY_KEY);
+		
+		defnition.getAttributes().add(primaryKey);
+		defnition.getAttributes().add(new Attribute("first_name", Type.FREE_FORM, DataType.STRING_VAR, 10));
+		defnition.getAttributes().add(new Attribute("last_name", Type.FREE_FORM, DataType.STRING_VAR, 10));
+		defnition.getAttributes().add(new Attribute("age", Type.FREE_FORM, DataType.INTEGER));
+		
+		defnition = this.entityService.create(defnition);
+		assertEquals(entityName, defnition.getName());
+		
+		
+		this.entityService.delete(entityName, grpId);
+	
+	}
+	
+	@Test
+	@Order(5)
+	void createEntityDefnitionWithStringPrimaryKeyTest() {
+		EntityDefnition defnition = new EntityDefnition(entityName,grpId);
+		Attribute primaryKey = new Attribute("id", Type.FREE_FORM, DataType.STRING_VAR,5);
+		primaryKey.setConstraintType(ConstraintType.PRIMARY_KEY);
+		
+		defnition.getAttributes().add(primaryKey);
+		
+		Attribute uniqueKey = new Attribute("first_name", Type.FREE_FORM, DataType.STRING_VAR, 10);
+		uniqueKey.setConstraintType(ConstraintType.UNIQUE_KEY);
+		
+		defnition.getAttributes().add(uniqueKey);
+		defnition.getAttributes().add(new Attribute("last_name", Type.FREE_FORM, DataType.STRING_VAR, 10));
+		defnition.getAttributes().add(new Attribute("age", Type.FREE_FORM, DataType.INTEGER));
+		
+		defnition = this.entityService.create(defnition);
+		assertEquals(entityName, defnition.getName());
+		
+		this.entityService.delete(entityName, grpId);
+	
+	}
+	
+	@Test
+	@Order(6)
+	void createEntityDefnitionWithCodeAsPrimayAndStringDataTypeTest() {
+		EntityDefnition defnition = new EntityDefnition(entityName,grpId);
+		defnition.setAutoNumberCode(false);
+		
+		Attribute uniqueKey = new Attribute("first_name", Type.FREE_FORM, DataType.STRING_VAR, 10);
+		uniqueKey.setConstraintType(ConstraintType.UNIQUE_KEY);
+		
+		defnition.getAttributes().add(uniqueKey);
+		defnition.getAttributes().add(new Attribute("last_name", Type.FREE_FORM, DataType.STRING_VAR, 10));
+		defnition.getAttributes().add(new Attribute("age", Type.FREE_FORM, DataType.INTEGER));
+		
+		defnition = this.entityService.create(defnition);
+		assertEquals(entityName, defnition.getName());
+		
+		this.entityService.delete(entityName, grpId);
+	
+	}
+	
+	@Test
+	@Order(7)
+	void deleteTest() {
+		EntityDefnition defnition = new EntityDefnition(entityName,grpId);
+		defnition.setAutoNumberCode(false);
+		
+		Attribute uniqueKey = new Attribute("first_name", Type.FREE_FORM, DataType.STRING_VAR, 10);
+		uniqueKey.setConstraintType(ConstraintType.UNIQUE_KEY);
+		
+		defnition.getAttributes().add(uniqueKey);
+		defnition.getAttributes().add(new Attribute("last_name", Type.FREE_FORM, DataType.STRING_VAR, 10));
+		defnition.getAttributes().add(new Attribute("age", Type.FREE_FORM, DataType.INTEGER));
+		
+		defnition = this.entityService.create(defnition);
+		int rows = this.entityService.delete(entityName, grpId);
+		assertEquals(1,rows);
+	}
 	
 }

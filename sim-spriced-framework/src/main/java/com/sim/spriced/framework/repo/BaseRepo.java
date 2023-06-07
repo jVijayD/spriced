@@ -534,7 +534,7 @@ public abstract class BaseRepo {
 
 		public Map<Field<?>, Object> getPrimaryKeys() {
 			return this.recordDataList.stream().filter(item -> {
-				if (item.getValue() == null) {
+				if (item.isPrimaryKey() && item.getValue() == null) {
 					throw new NullPrimaryKeyException(this.tableName, item.getAttributeName());
 				}
 				return item.isPrimaryKey();

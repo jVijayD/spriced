@@ -53,6 +53,10 @@ public class EntityDefnition extends BaseEntity {
 	@ExtraColumnData(convertToJson = true, exclude = true)
 	private final List<Attribute> attributes = new ArrayList<>();
 
+	@Column(name = ModelConstants.AUTO_NUMBER)
+	@ExtraColumnData(exclude = true)
+	private Boolean autoNumberCode = true;
+	
 	public EntityDefnition(int id) {
 		this.id = id;
 	}
@@ -88,13 +92,17 @@ public class EntityDefnition extends BaseEntity {
 		}
 	}
 	
+	
 	private void validateAttributes() {
 		int nameCount = 0;
 		int primaryKeyCount = 0;
+		boolean isValidPresent = false;
+		boolean updatedDatePresent = false;
+		boolean updatedByPresent = false;
+		boolean commentPresent = false;
+		
 		for (var attr : this.attributes) {
-			if (attr.getName().equals(ModelConstants.NAME)) {
-				nameCount = nameCount + 1;
-			}
+			
 			if(attr.getConstraintType() == ConstraintType.PRIMARY_KEY) {
 				primaryKeyCount = primaryKeyCount + 1;
 			}
@@ -102,10 +110,32 @@ public class EntityDefnition extends BaseEntity {
 			if(attr.getConstraintType()==ConstraintType.PRIMARY_KEY || attr.getConstraintType()==ConstraintType.FOREIGN_KEY || attr.getDataType()==DataType.BUSINESS_SEQUENCE) {
 				attr.setNullable(false);
 			}
+			
+			if (attr.getName().equals(ModelConstants.NAME)) {
+				nameCount = nameCount + 1;
+			}
+			else if (attr.getName().equals(ModelConstants.IS_VALID)) {
+				isValidPresent = true;
+			}
+			else if (attr.getName().equals(ModelConstants.UPDATED_BY)) {
+				updatedByPresent = true;
+			}
+			else if (attr.getName().equals(ModelConstants.UPDATED_DATE)) {
+				updatedDatePresent = true;
+			}
+			else if (attr.getName().equals(ModelConstants.COMMENT)) {
+				commentPresent = true;
+			}
+			
 		}
 		
 		if(primaryKeyCount==0) {
 			Attribute codeAttr = new Attribute(CODE,Type.FREE_FORM,DataType.AUTO);
+			if(!this.getAutoNumberCode()) {
+				codeAttr.setDataType(DataType.STRING_VAR);
+				codeAttr.setSize(5);
+			}
+			
 			codeAttr.setConstraintType(ConstraintType.PRIMARY_KEY);
 			codeAttr.setNullable(false);
 			this.attributes.add(0,codeAttr);
@@ -118,17 +148,27 @@ public class EntityDefnition extends BaseEntity {
 			this.attributes.add(1,nameAttr);
 		}
 		
-		Attribute isValidAttr = new Attribute(ModelConstants.IS_VALID,Type.FREE_FORM,DataType.BOOLEAN);
-		isValidAttr.setDefaultValue(true);
-		this.attributes.add(isValidAttr);
+		if(!isValidPresent) {
+			Attribute isValidAttr = new Attribute(ModelConstants.IS_VALID,Type.FREE_FORM,DataType.BOOLEAN);
+			isValidAttr.setDefaultValue(true);
+			this.attributes.add(isValidAttr);
+		}
 		
-		Attribute updatedDateAttr = new Attribute(ModelConstants.UPDATED_DATE,Type.FREE_FORM,DataType.TIME_STAMP);
-		this.attributes.add(updatedDateAttr);
+		if(!updatedDatePresent) {
+			Attribute updatedDateAttr = new Attribute(ModelConstants.UPDATED_DATE,Type.FREE_FORM,DataType.TIME_STAMP);
+			this.attributes.add(updatedDateAttr);
+		}
 		
-		Attribute updatedByAttr = new Attribute(ModelConstants.UPDATED_BY,Type.FREE_FORM,DataType.STRING_VAR,50);
-		this.attributes.add(updatedByAttr);
+		if(!updatedByPresent) {
+			Attribute updatedByAttr = new Attribute(ModelConstants.UPDATED_BY,Type.FREE_FORM,DataType.STRING_VAR,50);
+			this.attributes.add(updatedByAttr);
+		}
 		
-		Attribute commentAttr = new Attribute(ModelConstants.COMMENT,Type.FREE_FORM,DataType.STRING_VAR,250);
-		this.attributes.add(commentAttr);
+		if(!commentPresent) {
+			Attribute commentAttr = new Attribute(ModelConstants.COMMENT,Type.FREE_FORM,DataType.STRING_VAR,250);
+			this.attributes.add(commentAttr);
+		}
+		
 	}
+
 }

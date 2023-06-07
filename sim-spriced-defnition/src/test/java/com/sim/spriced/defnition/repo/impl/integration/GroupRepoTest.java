@@ -1,7 +1,6 @@
 package com.sim.spriced.defnition.repo.impl.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -57,74 +56,72 @@ class GroupRepoTest {
 	@Order(2)
 	void updateTest() {
 
-	
 		Group grp = this.grpRepo.fetchByName(grpName);
 		grp.setIsDisabled(true);
 		Group newGrp = this.grpRepo.update(grp);
 		assertEquals(grpName, newGrp.getName());
 		assertEquals(true, newGrp.getIsDisabled());
 	}
-	
+
 	@Test
 	@Order(3)
 	void fetchByNameTest() {
 		Group grp = this.grpRepo.fetchByName(grpName);
 		assertEquals(grpName, grp.getName());
 	}
-	
+
 	@Test
 	@Order(4)
 	void fetchByInvalidNameTest() {
-		Exception exception = assertThrows(NotFoundException.class, ()->{
+		Exception exception = assertThrows(NotFoundException.class, () -> {
 			this.grpRepo.fetchByName("invalidName");
 		});
-		
+
 		String expectedMessage = "Not Found";
 		String actualMessage = exception.getMessage();
 		assertTrue(actualMessage.contains(expectedMessage));
 	}
-	
+
 	@Test
 	@Order(5)
 	void fetchByMultipleConditionTest() {
 		Group grp = new Group(grpName);
 		grp.setIsDisabled(true);
 		grp = this.grpRepo.fetchOne(grp);
-		assertEquals(true,grp.getIsDisabled());
+		assertEquals(true, grp.getIsDisabled());
 	}
-	
-	
+
 	@Test
 	@Order(6)
 	void fetchByMultipleRowsTest() {
 		Group grp = new Group(grpName);
 		grp.setIsDisabled(true);
-		List<Group> grpList = this.grpRepo.fetchMultiple(grp,Group.class);
-		assertEquals(1,grpList.size());
+		List<Group> grpList = this.grpRepo.fetchMultiple(grp, Group.class);
+		assertEquals(1, grpList.size());
 	}
-	
+
 	@Test
 	@Order(7)
 	void fetchAllPagableWithoutSortTest() {
 		Group grp = new Group(grpName);
 		grp.setIsDisabled(true);
 		Pageable pagable = PageRequest.of(0, 10);
-		Page<Group> grpList = this.grpRepo.fetchAll(grp,Group.class,pagable);
-		assertEquals(1,grpList.getTotalElements());
-		assertEquals(grpName,grpList.getContent().get(0).getName());
+		Page<Group> grpList = this.grpRepo.fetchAll(grp, Group.class, pagable);
+		assertEquals(1, grpList.getTotalElements());
+		assertEquals(grpName, grpList.getContent().get(0).getName());
 	}
-	
+
 	@Test
 	@Order(8)
 	void fetchAllPagableWitSortTest() {
 		Group grp = new Group(grpName);
 		grp.setIsDisabled(true);
-		Pageable pagable = PageRequest.of(0,10,Sort.by("name").ascending());
-		Page<Group> grpList = this.grpRepo.fetchAll(grp,Group.class,pagable);
-		assertEquals(1,grpList.getTotalElements());
-		assertEquals(grpName,grpList.getContent().get(0).getName());
+		Pageable pagable = PageRequest.of(0, 10, Sort.by("name").ascending());
+		Page<Group> grpList = this.grpRepo.fetchAll(grp, Group.class, pagable);
+		assertEquals(1, grpList.getTotalElements());
+		assertEquals(grpName, grpList.getContent().get(0).getName());
 	}
-		
+
 	@Test
 	@Order(9)
 	void deleteTest() {

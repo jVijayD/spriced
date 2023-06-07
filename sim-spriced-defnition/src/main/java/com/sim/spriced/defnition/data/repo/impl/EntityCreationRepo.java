@@ -55,7 +55,7 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 		try {
 
 			List<Field<?>> columns = this.createColumns(attributes);
-			Collection<? extends Constraint> constraints = this.createConstraints(attributes);
+			Collection<? extends Constraint> constraints = this.createConstraints(tableName,attributes);
 			return tableCreationStep.columns(columns).constraints(constraints).execute();
 		} finally {
 			tableCreationStep.close();
@@ -120,15 +120,45 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 	public void delete(EntityDefnition entityDefnition) {
 		List<Attribute> attributes = entityDefnition.getAttributes();
 		String tableName = entityDefnition.getName();
+		List<Query> queries = new ArrayList<>();
 
-		// Creating Sequence if Business_Sequence data type
+		// drop sequence Business_Sequence data type
 		attributes.forEach(attr -> {
 			if (attr.getDataType() == AttributeConstants.DataType.BUSINESS_SEQUENCE) {
 				String sequenceName = tableName + "_" + attr.getName();
-				context.dropSequence(sequenceName).execute();
+				queries.add(context.dropSequence(sequenceName));
 			}
 		});
-		context.dropTable(tableName).execute();
+		
+		// drop primary key constraints
+		String primaryKeys = String.join(",", attributes.stream().filter(item->item.getConstraintType()==ConstraintType.PRIMARY_KEY).map(Attribute::getName).collect(Collectors.toList()));
+		String constraintNamePk = "uk_"+tableName+"."+primaryKeys.replace(",", ".");
+		queries.add(context.alterTable(tableName).dropConstraintIfExists(constraintNamePk));
+		// drop foreign key constraints
+		String constraintFk = "fk_"+tableName+".";
+		attributes.forEach(item->{
+			if(item.getConstraintType() == ConstraintType.FOREIGN_KEY) {
+				queries.add(context.alterTable(tableName).dropConstraintIfExists(constraintFk+item.getName()));
+			}
+		});
+		// drop unique key constraints
+		String constraintUk = "uk_"+tableName+".";
+		attributes.forEach(item->{
+			if(item.getConstraintType() == ConstraintType.UNIQUE_KEY) {
+				queries.add(context.alterTable(tableName).dropConstraintIfExists(constraintUk+item.getName()));
+			}
+		});
+		// drop composite unique key constraints
+		var compositeUnique = attributes.stream().filter(item->item.getConstraintType()==ConstraintType.COMPOSITE_UNIQUE_KEY).collect(Collectors.toList());
+		
+		String compositeUniqueKeys = String.join(",",
+				compositeUnique.stream().map(Attribute::getName).collect(Collectors.toList()));
+		String constraintNameUk = "uk_"+tableName+"."+compositeUniqueKeys.replace(",", ".");
+		queries.add(context.alterTable(tableName).dropConstraintIfExists(constraintNameUk));
+		
+		// drop table
+		queries.add(context.dropTable(tableName));
+		this.batchExqecute(queries);
 
 	}
 
@@ -187,8 +217,8 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 		Collection<Constraint> constraint = new ArrayList<>();
 		Collection<Query> query = new ArrayList<>();
 		String primaryKeys = String.join(",", attributes.stream().map(Attribute::getName).collect(Collectors.toList()));
-
-		constraint.add(DSL.constraint("pk").primaryKey(primaryKeys));
+		String constraintNamePk = "uk_"+entityName+"."+primaryKeys.replace(",", ".");
+		constraint.add(DSL.constraint(constraintNamePk).primaryKey(primaryKeys));
 		query.add(context.alterTableIfExists(entityName).dropPrimaryKey());
 		query.add(context.alterTableIfExists(entityName).add(constraint));
 		context.batch(query).execute();
@@ -200,9 +230,9 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 		Collection<Constraint> constraint = new ArrayList<>();
 		Collection<Query> query = new ArrayList<>();
 		String uniqueKeys = String.join(",", attributes.stream().map(Attribute::getName).collect(Collectors.toList()));
-
-		constraint.add(DSL.constraint("uk").unique(uniqueKeys));
-		query.add(context.alterTableIfExists(entityName).dropConstraintIfExists("uk"));
+		String constraintNameUk = "uk_"+entityName+"."+uniqueKeys.replace(",", ".");
+		constraint.add(DSL.constraint(constraintNameUk).unique(uniqueKeys));
+		query.add(context.alterTableIfExists(entityName).dropConstraintIfExists("uk_"+entityName));
 		query.add(context.alterTableIfExists(entityName).add(constraint));
 
 		context.batch(query).execute();
@@ -211,7 +241,7 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 	@Override
 	public void alterUniqueKey(String entityName, List<Attribute> addedAttributes, List<Attribute> deletedAttributes) {
 		Collection<Constraint> constraint = new ArrayList<>();
-		String constraintKey = "uk_";
+		String constraintKey = "uk_"+entityName+".";
 		Collection<Query> query = new ArrayList<>();
 		deletedAttributes.forEach(item -> query
 				.add(context.alterTableIfExists(entityName).dropConstraint(constraintKey + item.getName())));
@@ -225,7 +255,7 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 	@Override
 	public void alterForeignKey(String entityName, List<Attribute> addedAttributes, List<Attribute> deletedAttributes) {
 		Collection<Constraint> constraint = new ArrayList<>();
-		String constraintKey = "fk_";
+		String constraintKey = "fk_"+entityName+".";
 		Collection<Query> query = new ArrayList<>();
 		deletedAttributes.forEach(item -> query
 				.add(context.alterTableIfExists(entityName).dropForeignKey(constraintKey + item.getName())));
@@ -238,7 +268,7 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 
 	}
 
-	private Collection<? extends Constraint> createConstraints(List<Attribute> attributes) {
+	private Collection<? extends Constraint> createConstraints(String entityName,List<Attribute> attributes) {
 		Collection<Constraint> constraint = new ArrayList<>();
 		List<Attribute> primary = attributes.stream()
 				.filter(attr -> attr.getConstraintType() == ConstraintType.PRIMARY_KEY).collect(Collectors.toList());
@@ -251,21 +281,24 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 				.filter(attr -> attr.getConstraintType() == ConstraintType.FOREIGN_KEY).collect(Collectors.toList());
 
 		if (!CollectionUtils.isEmpty(primary)) {
+
 			String primaryKeys = String.join(",",
 					primary.stream().map(Attribute::getName).collect(Collectors.toList()));
-			constraint.add(DSL.constraint("pk").primaryKey(primaryKeys));
+			String constraintNamePk = "pk_"+entityName+"."+primaryKeys.replace(",", ".");
+			constraint.add(DSL.constraint(constraintNamePk).primaryKey(primaryKeys));
 		}
 
 		if (!CollectionUtils.isEmpty(compositeUnique)) {
 			String compositeUniqueKeys = String.join(",",
 					compositeUnique.stream().map(Attribute::getName).collect(Collectors.toList()));
-			constraint.add(DSL.constraint("uk").unique(compositeUniqueKeys));
+			String constraintNameUk = "uk_"+entityName+"."+compositeUniqueKeys.replace(",", ".");
+			constraint.add(DSL.constraint(constraintNameUk).unique(compositeUniqueKeys));
 		}
 
-		unique.forEach(attr -> constraint.add(DSL.constraint("uk_" + attr.getName()).unique(attr.getName())));
+		unique.forEach(attr -> constraint.add(DSL.constraint("uk_"+entityName+ "." + attr.getName()).unique(attr.getName())));
 
 		foreign.forEach(attr -> {
-			Constraint fkConstraint = DSL.constraint("fk_" + attr.getName()).foreignKey(attr.getName())
+			Constraint fkConstraint = DSL.constraint("fk_"+entityName+"." + attr.getName()).foreignKey(attr.getName())
 					.references(attr.getReferencedTable());
 			constraint.add(fkConstraint);
 		});

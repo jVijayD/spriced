@@ -21,7 +21,7 @@ public class AttributeConstants {
 
 	public enum Type {
 
-		FREE_FORM("Free Form"), LOOKUP("Lookup"), FILE("File");
+		FREE_FORM("Free Form"), LOOKUP("Lookup");
 
 		private final String displayName;
 

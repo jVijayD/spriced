@@ -25,11 +25,7 @@ public class EntityDefnitionRepo extends BaseRepo implements IEntityDefnitionRep
 
 	@Override
 	public EntityDefnition add(EntityDefnition defnition) {
-		return this.create(defnition, rec -> {
-			EntityDefnition converted = rec.into(defnition);
-			converted.getAttributes().addAll(this.getAttributeFromJson(rec));
-			return converted;
-		});
+		return super.create(defnition,this::convertToEntityDefnition);
 	}
 
 	@Override
@@ -39,15 +35,11 @@ public class EntityDefnitionRepo extends BaseRepo implements IEntityDefnitionRep
 
 	@Override
 	public EntityDefnition change(EntityDefnition defnition) {
-		return super.update(defnition, rec -> {
-			EntityDefnition converted = rec.into(defnition);
-			converted.getAttributes().addAll(this.getAttributeFromJson(rec));
-			return converted;
-		});
+		return super.update(defnition,this::convertToEntityDefnition);
 	}
 
 	private List<Attribute> getAttributeFromJson(Record recordEntity) {
-		var attributesJson =JSON.json(recordEntity.get(ModelConstants.ATTRIBUTES).toString());
+		var attributesJson = JSON.json(recordEntity.get(ModelConstants.ATTRIBUTES).toString());
 		ObjectMapper mapper = new ObjectMapper();
 		List<Attribute> attributes = new ArrayList<>();
 		try {
@@ -56,6 +48,13 @@ public class EntityDefnitionRepo extends BaseRepo implements IEntityDefnitionRep
 			throw new InvalidTypeConversionException(TABLE, ModelConstants.ATTRIBUTES);
 		}
 		return attributes;
+	}
+	
+	private EntityDefnition convertToEntityDefnition(Record rec) {
+		EntityDefnition result = rec.into(EntityDefnition.class);
+		var attributes = this.getAttributeFromJson(rec);
+		result.getAttributes().addAll(attributes);
+		return result;
 	}
 
 	@Override
@@ -72,11 +71,7 @@ public class EntityDefnitionRepo extends BaseRepo implements IEntityDefnitionRep
 	public EntityDefnition get(int id, boolean loadDisabled) {
 		EntityDefnition defnition = new EntityDefnition(id);
 		defnition.setIsDisabled(loadDisabled);
-		return this.fetchOne(defnition, rec -> {
-			EntityDefnition converted = rec.into(defnition);
-			converted.getAttributes().addAll(this.getAttributeFromJson(rec));
-			return converted;
-		});
+		return super.fetchOne(defnition,this::convertToEntityDefnition);
 	}
 
 	@Override
@@ -84,22 +79,14 @@ public class EntityDefnitionRepo extends BaseRepo implements IEntityDefnitionRep
 		EntityDefnition defnition = new EntityDefnition(name);
 		defnition.setGroupId(groupId);
 		defnition.setIsDisabled(loadDisabled);
-		return this.fetchOne(defnition, rec -> {
-			EntityDefnition converted = rec.into(defnition);
-			converted.getAttributes().addAll(this.getAttributeFromJson(rec));
-			return converted;
-		});
+		return super.fetchOne(defnition, this::convertToEntityDefnition);
 	}
 
 	@Override
 	public List<EntityDefnition> getAll(boolean loadDisabled) {
 		EntityDefnition defnition = new EntityDefnition();
 		defnition.setIsDisabled(loadDisabled);
-		return this.fetchMultiple(defnition, rec -> {
-			EntityDefnition converted = rec.into(defnition);
-			converted.getAttributes().addAll(this.getAttributeFromJson(rec));
-			return converted;
-		});
+		return super.fetchMultiple(defnition, this::convertToEntityDefnition);
 	}
 
 	@Override
@@ -107,22 +94,14 @@ public class EntityDefnitionRepo extends BaseRepo implements IEntityDefnitionRep
 		EntityDefnition defnition = new EntityDefnition();
 		defnition.setGroupId(groupId);
 		defnition.setIsDisabled(loadDisabled);
-		return this.fetchMultiple(defnition, rec -> {
-			EntityDefnition converted = rec.into(defnition);
-			converted.getAttributes().addAll(this.getAttributeFromJson(rec));
-			return converted;
-		});
+		return super.fetchMultiple(defnition, this::convertToEntityDefnition);
 	}
 
 	@Override
 	public Page<EntityDefnition> getAll(boolean loadDisabled, Pageable pagable) {
 		EntityDefnition defnition = new EntityDefnition();
 		defnition.setIsDisabled(loadDisabled);
-		return this.fetchAll(defnition, rec -> {
-			EntityDefnition converted = rec.into(defnition);
-			converted.getAttributes().addAll(this.getAttributeFromJson(rec));
-			return converted;
-		}, pagable);
+		return super.fetchAll(defnition, this::convertToEntityDefnition, pagable);
 	}
 
 	@Override
@@ -130,11 +109,7 @@ public class EntityDefnitionRepo extends BaseRepo implements IEntityDefnitionRep
 		EntityDefnition defnition = new EntityDefnition();
 		defnition.setGroupId(groupId);
 		defnition.setIsDisabled(loadDisabled);
-		return this.fetchAll(defnition, rec -> {
-			EntityDefnition converted = rec.into(defnition);
-			converted.getAttributes().addAll(this.getAttributeFromJson(rec));
-			return converted;
-		}, pagable);
+		return super.fetchAll(defnition, this::convertToEntityDefnition, pagable);
 	}
 
 }

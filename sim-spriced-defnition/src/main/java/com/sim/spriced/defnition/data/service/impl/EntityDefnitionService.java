@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PreDestroy;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sim.spriced.defnition.data.repo.IEntityDefnitionRepo;
-import com.sim.spriced.defnition.data.repo.impl.EntityDefnitionRepo;
 import com.sim.spriced.defnition.data.service.BaseService;
 import com.sim.spriced.defnition.data.service.EntityDefnitionEvent;
 import com.sim.spriced.defnition.data.service.IEntityDefnitionService;
@@ -36,72 +36,84 @@ public class EntityDefnitionService  extends BaseService
 	@Override
 	@Transactional
 	public EntityDefnition create(EntityDefnition entityDefnition) {
-		//disable all previous entity definitions
 		entityDefnition.validate();
-		//this.disableEntity(entityDefnition.getName());
 		entityDefnition = this.defnitionRepo.add(entityDefnition);
 		this.notifyObservers(this.createEvent(entityDefnition,null, EventType.ADD));
 		return entityDefnition;
 	}
 
-//	@Override
-//	@Transactional
-//	public int delete(String name,int version,String grpname) {
-//		EntityDefnition entityDefnition = new EntityDefnition();
-//		entityDefnition.setName(name);
-//		//entityDefnition.setVersion(version);
-//		//entityDefnition.setGroup(grpname);
-//		int rows = this.defnitionRepo.delete(entityDefnition);
-//		this.notifyObservers(this.createEvent(entityDefnition,null, EventType.DELETE));
-//		return rows;
-//	}
-//	
-//	@Override
-//	@Transactional
-//	public EntityDefnition update(EntityDefnition entityDefnition) {
-//		entityDefnition.validate();
-//		this.defnitionRepo.update(entityDefnition);
-//		//EntityDefnition previous = this.defnitionRepo.fetchByName(entityDefnition.getName(), entityDefnition.getGroup(),false);
-//		//this.notifyObservers(this.createEvent(entityDefnition,previous, EventType.UPDATE));
-//		return entityDefnition;
-//	}
-//	
-//
-//	@Override
-//	public EntityDefnition disableEntity(String name,int version,String grpname) {
-//		EntityDefnition entityDefnition = new EntityDefnition();
-//		entityDefnition.setName(name);
-//		//entityDefnition.setVersion(version);
-//		//entityDefnition.setGroup(grpname);
-//		entityDefnition.setIsDisabled(true);
-//		return this.defnitionRepo.update(entityDefnition);
-//	}
-//
-//	@Override
-//	public EntityDefnition enableEntity(String name,int version,String grpname) {
-//		EntityDefnition entityDefnition = new EntityDefnition();
-//		entityDefnition.setName(name);
-//		//entityDefnition.setVersion(version);
-//		//entityDefnition.setGroup(grpname);
-//		entityDefnition.setIsDisabled(false);
-//		return this.defnitionRepo.update(entityDefnition);
-//	}
-//
-//	@Override
-//	public EntityDefnition fetchByName(String name,String group, boolean loadDisabled) {
-//		return this.defnitionRepo.fetchByName(name, group,loadDisabled);
-//	}
-//
-//	@Override
-//	public List<EntityDefnition> fetchAll(String group, boolean loadDisabled) {
-//		return this.defnitionRepo.fetchAll(group, loadDisabled);
-//	}
-//
-//	@Override
-//	public Page<EntityDefnition> fetchAll(String group, boolean loadDisabled, Pageable pageable) {
-//		return this.fetchAll(group, loadDisabled, pageable);
-//	}
+	@Override
+	@Transactional
+	public int delete(String name,int groupId) {
+		EntityDefnition entityDefnition = this.defnitionRepo.getByName(name, groupId);
+		int rows = this.defnitionRepo.remove(entityDefnition);
+		this.notifyObservers(this.createEvent(entityDefnition,null, EventType.DELETE));
+		return rows;
+	}
+	
+	@Override
+	public int delete(EntityDefnition defnition) {
+		int rows = this.defnitionRepo.remove(defnition);
+		this.notifyObservers(this.createEvent(defnition,null, EventType.DELETE));
+		return rows;
+	}
+	
+	@Override
+	@Transactional
+	public EntityDefnition update(EntityDefnition entityDefnition) {
+		entityDefnition.validate();
+		EntityDefnition previous = this.defnitionRepo.getByName(entityDefnition.getName(), entityDefnition.getGroupId(),false);
+		entityDefnition = this.defnitionRepo.change(entityDefnition);
+		
+		this.notifyObservers(this.createEvent(entityDefnition,previous, EventType.UPDATE));
+		return entityDefnition;
+	}
+	
 
+	@Override
+	public EntityDefnition disableEntity(String name,int groupId) {
+		EntityDefnition entityDefnition = new EntityDefnition();
+		entityDefnition.setName(name);
+		entityDefnition.setGroupId(groupId);
+		entityDefnition.setIsDisabled(true);
+		return this.defnitionRepo.change(entityDefnition);
+	}
+
+	@Override
+	public EntityDefnition enableEntity(String name,int groupId) {
+		EntityDefnition entityDefnition = new EntityDefnition();
+		entityDefnition.setName(name);
+		entityDefnition.setGroupId(groupId);
+		entityDefnition.setIsDisabled(false);
+		return this.defnitionRepo.change(entityDefnition);
+	}
+
+	
+	@Override
+	public EntityDefnition fetchByName(String name, int groupId) {
+		return this.defnitionRepo.getByName(name, groupId);
+	}
+
+	@Override
+	public List<EntityDefnition> fetchAll(int groupId, boolean loadDisabled) {
+		return this.defnitionRepo.getAll(groupId, loadDisabled);
+	}
+
+	@Override
+	public List<EntityDefnition> fetchAll(int groupId) {
+		return this.defnitionRepo.getAll(groupId, true);
+	}
+
+	@Override
+	public Page<EntityDefnition> fetchAll(int groupId, boolean loadDisabled, Pageable pageable) {
+		return this.defnitionRepo.getAll(groupId, loadDisabled, pageable);
+	}
+
+	@Override
+	public Page<EntityDefnition> fetchAll(int groupId, Pageable pageable) {
+		return this.defnitionRepo.getAll(groupId, true, pageable);
+	}
+	
 	@PreDestroy
 	private void destroy() {
 		if (this.observers != null) {
@@ -135,18 +147,6 @@ public class EntityDefnitionService  extends BaseService
 		arg.setType(type);
 		return arg;
 	}
-//	
-//	@Override
-//	public List<EntityDefnition> disableEntity(String name) {
-//		return this.defnitionRepo.disableEntity(name);
-//		
-//	}
-
-	@Override
-	public int delete(String name, int groupId) {
-		return 0;
-	}
-
 
 
 }
