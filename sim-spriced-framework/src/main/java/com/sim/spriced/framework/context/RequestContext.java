@@ -24,5 +24,11 @@ public class RequestContext {
 	public <T> T getContextMap(String key) {
 		return (T)this.contextMap.get(key);
 	}
+
+	public RequestContext(String txId, String tenant, String user) {
+		this.tenant = tenant;
+		this.transactionId = txId;
+		this.user = user;
+	}
 	
 }

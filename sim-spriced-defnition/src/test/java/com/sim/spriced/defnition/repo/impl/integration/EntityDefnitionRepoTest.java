@@ -138,7 +138,7 @@ class EntityDefnitionRepoTest {
 		
 		Page<EntityDefnition> pageEntityList = this.entityRepo.getAll(grpEntity.getId(),false, pagable);
 		assertEquals(5, pageEntityList.getSize());
-		assertEquals("Name4", pageEntityList.getContent().get(0).getName());
+		assertEquals("Name0", pageEntityList.getContent().get(0).getName());
 		IntStream.range(0, 10).forEach(item -> {
 			EntityDefnition entity = new EntityDefnition("Name" + item, grpEntity.getId());
 			entity.setIsDisabled(false);

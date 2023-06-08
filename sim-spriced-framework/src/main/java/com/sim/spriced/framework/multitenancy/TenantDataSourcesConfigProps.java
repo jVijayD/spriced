@@ -15,7 +15,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @ConfigurationProperties(prefix = "tenants")
-@PropertySource("tenants.properties")
+@PropertySource("classpath:tenants.properties")
 public class TenantDataSourcesConfigProps {
 
 	private static final String JDBC_URL = "jdbcUrl";

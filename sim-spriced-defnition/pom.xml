@@ -56,6 +56,12 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Test specific Dependency -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>test</scope>
+		</dependency>
 
 
 		<!-- Custom Project Dependency -->
@@ -65,5 +71,27 @@
 			<version>0.0.1</version>
 		</dependency>
 	</dependencies>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+					<exclude>**/tenants.properties</exclude>
+					<exclude>**/logback.xml</exclude>
+					<exclude>**/application.properties</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+					<exclude>**/tenants.properties</exclude>
+					<exclude>**/logback.xml</exclude>
+					<exclude>**/application.properties</exclude>
+				</excludes>
+			</resource>
+		</resources>
+	</build>
 
 </project>

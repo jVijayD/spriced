@@ -1,4 +1,4 @@
-package com.sim.spriced.defnition;
+package com.sim.spriced.defnition.api;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +29,7 @@ public class MultitenantTestConfiguration {
 
 			@Override
 			public String getTenant() {
+				// TODO Auto-generated method stub
 				return contextManager.getRequestContext().getTenant();
 			}
 			
