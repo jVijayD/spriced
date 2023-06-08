@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.sim.spriced.framework.context.ContextManager;
+import com.sim.spriced.framework.context.SPricedContextManager;
 
 @Configuration
 @EnableTransactionManagement
@@ -42,7 +42,7 @@ public class RepoConfiguration {
 	
 	
 	@Bean
-	public DSLContext dsl(ContextManager contextManager){
+	public DSLContext dsl(SPricedContextManager contextManager){
 		
 		return ProxyFactory.getProxy(DSLContext.class, new MethodInterceptor() {
 			

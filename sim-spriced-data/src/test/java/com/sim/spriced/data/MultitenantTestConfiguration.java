@@ -3,7 +3,7 @@ package com.sim.spriced.data;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
-import com.sim.spriced.framework.context.ContextManager;
+import com.sim.spriced.framework.context.SPricedContextManager;
 import com.sim.spriced.framework.context.RequestContext;
 import com.sim.spriced.framework.multitenancy.ITenantManager;
 
@@ -14,8 +14,8 @@ public class MultitenantTestConfiguration {
 	private static final String USER ="test@user.com";
 	
 	@Bean
-	public ContextManager contextManager() {
-		ContextManager contextManager = new ContextManager();
+	public SPricedContextManager contextManager() {
+		SPricedContextManager contextManager = new SPricedContextManager();
 		RequestContext context = new RequestContext();
 		context.setTenant(TENANT);
 		context.setUser(USER);
@@ -24,7 +24,7 @@ public class MultitenantTestConfiguration {
 	}
 	
 	@Bean
-	public ITenantManager getTenantManager(ContextManager contextManager) {
+	public ITenantManager getTenantManager(SPricedContextManager contextManager) {
 		return new ITenantManager() {
 
 			@Override

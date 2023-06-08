@@ -7,11 +7,11 @@ package com.sim.spriced.framework.context;
  * @author shabeeb
  *
  */
-public class ContextManager {
+public class SPricedContextManager {
 	
 	private  static ThreadLocal<RequestContext> requestContext = new ThreadLocal<>();
 	private ApplicationContext appContext;
-	public ContextManager() {
+	public SPricedContextManager() {
 		appContext = ApplicationContext.getInstance();
 	}
 	

@@ -14,6 +14,8 @@ public class RequestContext {
 	private String tenant;
 	private String transactionId;
 	private String user;
+	private String[] roles;
+	private String[] applications;
 	private final HashMap<String,Object> contextMap = new HashMap<>();
 	
 	public void setContextMap(String key,Object value) {
@@ -29,6 +31,14 @@ public class RequestContext {
 		this.tenant = tenant;
 		this.transactionId = txId;
 		this.user = user;
+	}
+	
+	public RequestContext(String txId, String tenant, String user,String[] roles,String[] applications) {
+		this.tenant = tenant;
+		this.transactionId = txId;
+		this.user = user;
+		this.applications = applications;
+		this.roles = roles;
 	}
 	
 }

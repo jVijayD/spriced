@@ -36,10 +36,8 @@ public class TenantDataSourcesConfigProps {
 	}
 
 	public Map<Object, Object> getTenantDataSource() {
-		if(tenantDBSources.size()==0) {
-			dbSources.forEach((key, value) -> {
-				tenantDBSources.put(key, createTenantDatasource(value));
-			});
+		if (tenantDBSources.size() == 0) {
+			dbSources.forEach((key, value) -> tenantDBSources.put(key, createTenantDatasource(value)));
 		}
 		return tenantDBSources;
 	}

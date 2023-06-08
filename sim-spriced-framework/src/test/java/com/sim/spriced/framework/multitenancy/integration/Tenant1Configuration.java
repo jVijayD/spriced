@@ -2,15 +2,15 @@ package com.sim.spriced.framework.multitenancy.integration;
 
 import org.springframework.context.annotation.Bean;
 
-import com.sim.spriced.framework.context.ContextManager;
+import com.sim.spriced.framework.context.SPricedContextManager;
 import com.sim.spriced.framework.context.RequestContext;
 import com.sim.spriced.framework.multitenancy.ITenantManager;
 
 public class Tenant1Configuration {
 	private static final String TENANT ="meritor";
 	@Bean
-	public ContextManager contextManager() {
-		ContextManager contextManager = new ContextManager();
+	public SPricedContextManager contextManager() {
+		SPricedContextManager contextManager = new SPricedContextManager();
 		RequestContext context = new RequestContext();
 		context.setTenant(TENANT);
 		contextManager.setRequestContext(context);
@@ -18,7 +18,7 @@ public class Tenant1Configuration {
 	}
 	
 	@Bean
-	public ITenantManager getTenantManager(ContextManager contextManager) {
+	public ITenantManager getTenantManager(SPricedContextManager contextManager) {
 		return new ITenantManager() {
 
 			@Override

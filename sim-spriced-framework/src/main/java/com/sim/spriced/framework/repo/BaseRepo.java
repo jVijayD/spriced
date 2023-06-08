@@ -43,7 +43,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sim.spriced.framework.annotations.ExtraColumnData;
 import com.sim.spriced.framework.annotations.IDType;
 import com.sim.spriced.framework.constants.ModelConstants;
-import com.sim.spriced.framework.context.ContextManager;
+import com.sim.spriced.framework.context.SPricedContextManager;
 import com.sim.spriced.framework.exceptions.data.InvalidConditionException;
 import com.sim.spriced.framework.exceptions.data.InvalidEntityFieldMappingException;
 import com.sim.spriced.framework.exceptions.data.InvalidFieldMappingException;
@@ -63,7 +63,7 @@ public abstract class BaseRepo {
 	protected DSLContext context;
 
 	@Autowired
-	protected ContextManager contextManager;
+	protected SPricedContextManager contextManager;
 
 	protected final Timestamp timeStamp;
 
