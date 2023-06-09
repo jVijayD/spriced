@@ -63,7 +63,7 @@ public class GroupService extends BaseService implements IGroupService {
 	public Group changeName(int id, String newName) {
 		Group grp = new Group();
 		grp.setId(id);
-		grp.setName(newName);
+		grp.setDisplayName(newName);
 		return this.grpRepo.update(grp);
 	}
 

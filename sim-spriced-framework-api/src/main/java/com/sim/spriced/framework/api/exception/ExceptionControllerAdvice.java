@@ -1,13 +1,17 @@
 package com.sim.spriced.framework.api.exception;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -28,6 +32,7 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 	private static final String UNHANDLED_ERROR = "Un Handled Error.";
 	private static final String RESOURCE_NOT_FOUND_ERROR = "Resource Not Found Error.";
 	private static final String REQUEST_METHOD_NOT_SUPPORTED_ERROR = "Request method not supported.";
+	private static final String BAD_REQUEST_ERROR = "Bad request.";
 
 	@ExceptionHandler(DataAccessException.class)
     public ResponseEntity<?> dataAccessException(DataAccessException ex, WebRequest request) {
@@ -84,6 +89,30 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         log.error(REQUEST_METHOD_NOT_SUPPORTED_ERROR, ex);
         
         return new ResponseEntity<>(errorDetails, HttpStatus.METHOD_NOT_ALLOWED);
+    }
+    
+    @Override
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+			HttpHeaders headers, HttpStatus status, WebRequest request) {
+    	
+    	String errorCode = "VL_001";
+    	String description ="VALIDATION ERROR";
+    	
+    	Map<String, String> errors = new HashMap<>();
+		ex.getBindingResult().getAllErrors().forEach(error ->{
+			
+			String fieldName = ((FieldError) error).getField();
+			String message = error.getDefaultMessage();
+			errors.put(fieldName, message);
+		});
+        
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(),description ,errorCode);
+        errorDetails.setRequestURI(((ServletWebRequest)request).getRequest().getRequestURI());
+        errorDetails.setErrors(errors);
+        
+        log.error(BAD_REQUEST_ERROR, ex);
+        
+        return new ResponseEntity<>(errorDetails,HttpStatus.BAD_REQUEST);
     }
     
 }
