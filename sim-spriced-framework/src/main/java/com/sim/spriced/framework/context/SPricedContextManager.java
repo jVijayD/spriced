@@ -1,7 +1,5 @@
 package com.sim.spriced.framework.context;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 /***
  * ContextManager holds the application context and the Request context data.
  * Makesure that the instance of the ContextManager class is created on request basis

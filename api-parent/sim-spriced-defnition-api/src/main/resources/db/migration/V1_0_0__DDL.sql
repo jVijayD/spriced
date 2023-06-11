@@ -2,7 +2,7 @@
 
 -- DROP TABLE IF EXISTS public."group";
 
-CREATE TABLE IF NOT EXISTS public."group"
+CREATE TABLE IF NOT EXISTS "group"
 (
     id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
     name character varying COLLATE pg_catalog."default" NOT NULL,
@@ -16,14 +16,14 @@ CREATE TABLE IF NOT EXISTS public."group"
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public."group"
+ALTER TABLE IF EXISTS "group"
     OWNER to postgres;
 
 -- Table: public.entity
 
 -- DROP TABLE IF EXISTS public.entity;
 
-CREATE TABLE IF NOT EXISTS public.entity
+CREATE TABLE IF NOT EXISTS entity
 (
     id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
     name character varying COLLATE pg_catalog."default" NOT NULL,
@@ -46,5 +46,5 @@ CREATE TABLE IF NOT EXISTS public.entity
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.entity
+ALTER TABLE IF EXISTS entity
     OWNER to postgres;

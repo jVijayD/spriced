@@ -3,10 +3,12 @@ package com.sim.spriced.framework.repo;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.flywaydb.core.Flyway;
 import org.jooq.ConnectionProvider;
 import org.jooq.DSLContext;
 import org.jooq.ExecuteContext;
@@ -34,6 +36,7 @@ import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.sim.spriced.framework.context.SPricedContextManager;
+import com.sim.spriced.framework.multitenancy.TenantDataSourcesConfigProps;
 
 /***
  * Bean Configuration class for JOOQ and related entities
@@ -49,8 +52,17 @@ public class RepoConfiguration {
 	@Value("${spring.jooq.sql-dialect}")
 	private String sqlDialect;
 
+	@Value("${spring.flyway.migrate.db}")
+	private boolean migrate = false;
+
 	@Autowired
 	DataSource dataSource;
+
+	TenantDataSourcesConfigProps tenantDataSourceConfigProps;
+
+	public RepoConfiguration(TenantDataSourcesConfigProps tenantDataSourceConfigProps) {
+		this.tenantDataSourceConfigProps = tenantDataSourceConfigProps;
+	}
 
 	/***
 	 * JOOQ DSL context bean creation. DSLContext will be created inside a map based
@@ -96,6 +108,11 @@ public class RepoConfiguration {
 		});
 	}
 
+	/**
+	 * Method creating the transaction manager for JOOQ
+	 * 
+	 * @return
+	 */
 	@Bean
 	public TransactionManager transactionManager() {
 		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
@@ -104,6 +121,11 @@ public class RepoConfiguration {
 		return transactionManager;
 	}
 
+	/**
+	 * Method creating connection provider with transactions
+	 * 
+	 * @return
+	 */
 	@Bean
 	public ConnectionProvider connectionProvider() {
 		TransactionAwareDataSourceProxy transactionAwareDataSourceProxy = new TransactionAwareDataSourceProxy(
@@ -111,45 +133,27 @@ public class RepoConfiguration {
 		return new DataSourceConnectionProvider(transactionAwareDataSourceProxy);
 	}
 
-//	@Bean
-//	@Primary
-//	public PlatformTransactionManager transactionManager() {
-//		JpaTransactionManager transactionManager = new JpaTransactionManager();
-//		transactionManager.setDataSource(dataSource);
-//		transactionManager.setRollbackOnCommitFailure(true);
-//        transactionManager.setGlobalRollbackOnParticipationFailure(true);
-//		//transactionManager.setEntityManagerFactory(emf);
-//		return transactionManager;
-//	}
-//
-//	@Bean
-//	@Primary
-//	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-//
-//		Map<String, Object> properties = new HashMap<>();
-//		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-//		
-//	
-//        properties.put(org.hibernate.cfg.Environment.MULTI_TENANT, MultiTenancyStrategy.DATABASE); // or DATABASE
-//        properties.put(org.hibernate.cfg.Environment.MULTI_TENANT_CONNECTION_PROVIDER, connectionProvider());
-//        //properties.put(org.hibernate.cfg.Environment.MULTI_TENANT_IDENTIFIER_RESOLVER, currentTenantIdentifier
-//        		
-//		LocalContainerEntityManagerFactoryBean emfBean = new LocalContainerEntityManagerFactoryBean();
-//		
-//		emfBean.setDataSource(dataSource);
-//		emfBean.setJpaVendorAdapter(vendorAdapter);
-//		emfBean.setPackagesToScan("com.sim.spriced");
-//		emfBean.setJpaPropertyMap(properties);
-//		
-//		//properties.put(MULTI_TENANT, MultiTenancyStrategy.DATABASE);
-//		
-//		
-//		
-//		
-//		
-//		return emfBean;
-//	}
+	/**
+	 * Method to migrate the DB using flyway
+	 */
+	@PostConstruct
+	public void migrate() {
+		if (migrate) {
+			this.tenantDataSourceConfigProps.getTenantDataSource().values().forEach(source -> {
+				DataSource flywaySource = (DataSource) source;
+				Flyway flyway = Flyway.configure().dataSource(flywaySource).load();
+				//flyway.baseline();
+				flyway.migrate();
+			});
+		}
+	}
 
+	/***
+	 * Class implementing Exception translator for JOOQ
+	 * 
+	 * @author shabeeb
+	 *
+	 */
 	class ExceptionTranslator extends DefaultExecuteListener {
 
 		private static final long serialVersionUID = 1L;

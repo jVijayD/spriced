@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sim.spriced.defnition.api.dto.GroupDto;
+import com.sim.spriced.defnition.api.dto.GroupUpdateDto;
 import com.sim.spriced.defnition.api.dto.mapper.GroupDtoMapper;
 import com.sim.spriced.defnition.data.service.IGroupService;
 import com.sim.spriced.framework.models.Group;
@@ -63,9 +64,11 @@ public class GroupController {
 
 	@Timed(value = "group.change.time", description = "Time taken to change group")
 	@PatchMapping("/{id}")
-	public ResponseEntity<GroupDto> update(@RequestBody GroupDto group,@PathVariable int id) {
+	public ResponseEntity<GroupDto> update(@RequestBody GroupUpdateDto group,@PathVariable int id) {
+		
 		Group grp = this.grpService.changeName(id, group.getDisplayName());
 		return new ResponseEntity<>(mapper.toGroupDto(grp), HttpStatus.CREATED);
+
 	}
 
 	@Timed(value = "group.delete.time", description = "Time taken to delete group")

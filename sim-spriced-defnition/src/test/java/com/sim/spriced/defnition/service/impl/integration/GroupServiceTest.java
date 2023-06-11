@@ -19,6 +19,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -141,7 +142,7 @@ class GroupServiceTest {
 	@Order(8)
 	void groupNameUniquenessTest() {
 
-		DataAccessException exception = assertThrows(DataAccessException.class, () -> {
+		DataIntegrityViolationException exception = assertThrows(DataIntegrityViolationException.class, () -> {
 			IntStream.range(0, 2).forEach(item -> {
 				Group grp = new Group(grpName);
 				grp.setIsDisabled(false);
