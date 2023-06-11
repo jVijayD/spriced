@@ -21,35 +21,24 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.sim.spriced.framework.exceptions.DataAccessException;
 
-
-import lombok.extern.slf4j.Slf4j;
-
 @ControllerAdvice
-@Slf4j
 public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 	
-	private static final String DATA_ACCESS_ERROR = "Data Access Error.";
-	private static final String UNHANDLED_ERROR = "Un Handled Error.";
-	private static final String RESOURCE_NOT_FOUND_ERROR = "Resource Not Found Error.";
-	private static final String REQUEST_METHOD_NOT_SUPPORTED_ERROR = "Request method not supported.";
-	private static final String BAD_REQUEST_ERROR = "Bad request.";
 
 	@ExceptionHandler(DataAccessException.class)
     public ResponseEntity<?> dataAccessException(DataAccessException ex, WebRequest request) {
          ErrorDetails errorDetails = new ErrorDetails(new Date(), "DataAccess:"+ex.getMessage(), request.getDescription(false),ex.getErrorCode());
          errorDetails.setRequestURI(((ServletWebRequest)request).getRequest().getRequestURI());
          
-         log.error(DATA_ACCESS_ERROR, ex);
-         
          return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> globleExcpetionHandler(Exception ex, WebRequest request) {
-        ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false),"");
+    	String errorCode = "EX500";
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false),errorCode);
         errorDetails.setRequestURI(((ServletWebRequest)request).getRequest().getRequestURI());
-        
-        log.error(UNHANDLED_ERROR, ex);
+
         
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -62,7 +51,6 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), error, request.getDescription(false),errorCode);
         errorDetails.setRequestURI(((ServletWebRequest)request).getRequest().getRequestURI());
         
-        log.error(RESOURCE_NOT_FOUND_ERROR, ex);
         
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
@@ -85,8 +73,7 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         
         ErrorDetails errorDetails = new ErrorDetails(new Date(), builder.toString(), request.getDescription(false),errorCode);
         errorDetails.setRequestURI(((ServletWebRequest)request).getRequest().getRequestURI());
-        
-        log.error(REQUEST_METHOD_NOT_SUPPORTED_ERROR, ex);
+
         
         return new ResponseEntity<>(errorDetails, HttpStatus.METHOD_NOT_ALLOWED);
     }
@@ -109,8 +96,7 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(),description ,errorCode);
         errorDetails.setRequestURI(((ServletWebRequest)request).getRequest().getRequestURI());
         errorDetails.setErrors(errors);
-        
-        log.error(BAD_REQUEST_ERROR, ex);
+  
         
         return new ResponseEntity<>(errorDetails,HttpStatus.BAD_REQUEST);
     }

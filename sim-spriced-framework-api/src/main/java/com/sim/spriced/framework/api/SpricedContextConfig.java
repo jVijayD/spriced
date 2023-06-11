@@ -2,7 +2,9 @@ package com.sim.spriced.framework.api;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.annotation.RequestScope;
 
+import com.sim.spriced.framework.context.RequestContext;
 import com.sim.spriced.framework.context.SPricedContextManager;
 import com.sim.spriced.framework.multitenancy.ITenantManager;
 
@@ -22,7 +24,19 @@ public class SpricedContextConfig {
 	 */
 	@Bean
 	public SPricedContextManager contextManager() {
-		return new SPricedContextManager();
+		SPricedContextManager contextManager = new SPricedContextManager();
+		contextManager.setRequestContext(requestContext());
+		return contextManager;
+	}
+
+	/***
+	 * Method to create requestContext bean holding the user and tenant details
+	 * @return
+	 */
+	@Bean
+	@RequestScope
+	public RequestContext requestContext() {
+		return new RequestContext();
 	}
 
 	/***

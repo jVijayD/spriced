@@ -11,6 +11,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 	    DataSourceTransactionManagerAutoConfiguration.class, 
 	    HibernateJpaAutoConfiguration.class}, scanBasePackages = { "com.sim.spriced",
 		"com.sim.spriced.*.*" })
+//@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class}, scanBasePackages = { "com.sim.spriced",
+//		"com.sim.spriced.*.*" })
 public class SimSpricedDefnitionApiApplication {
 
 	public static void main(String[] args) {

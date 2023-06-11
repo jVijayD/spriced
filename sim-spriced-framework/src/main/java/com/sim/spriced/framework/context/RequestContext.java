@@ -3,12 +3,10 @@ package com.sim.spriced.framework.context;
 import java.util.HashMap;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
-@NoArgsConstructor
 public class RequestContext {
 	
 	private String tenant;
@@ -17,6 +15,7 @@ public class RequestContext {
 	private String[] roles;
 	private String[] applications;
 	private final HashMap<String,Object> contextMap = new HashMap<>();
+	
 	
 	public void setContextMap(String key,Object value) {
 		this.contextMap.put(key, value);
@@ -27,18 +26,5 @@ public class RequestContext {
 		return (T)this.contextMap.get(key);
 	}
 
-	public RequestContext(String txId, String tenant, String user) {
-		this.tenant = tenant;
-		this.transactionId = txId;
-		this.user = user;
-	}
-	
-	public RequestContext(String txId, String tenant, String user,String[] roles,String[] applications) {
-		this.tenant = tenant;
-		this.transactionId = txId;
-		this.user = user;
-		this.applications = applications;
-		this.roles = roles;
-	}
 	
 }

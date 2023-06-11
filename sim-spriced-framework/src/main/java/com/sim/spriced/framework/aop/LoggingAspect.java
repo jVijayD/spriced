@@ -61,7 +61,7 @@ public class LoggingAspect {
 		String className = methodSignature.getDeclaringType().getSimpleName();
 		String methodName = methodSignature.getName();
 		
-		log.error("Exception in " + className + "." + methodName + " :: " ,e);
+		log.error(LOG_AOP +"Exception in " + className + "." + methodName + " :: " ,e);
 
 	}
 }

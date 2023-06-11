@@ -21,6 +21,8 @@ import com.sim.spriced.defnition.api.dto.mapper.GroupDtoMapper;
 import com.sim.spriced.defnition.data.service.IGroupService;
 import com.sim.spriced.framework.models.Group;
 
+import io.micrometer.core.annotation.Timed;
+
 /**
  * Controller for managing the model
  * 
@@ -37,16 +39,19 @@ public class GroupController {
 	@Autowired
 	private GroupDtoMapper mapper;
 
+	@Timed(value = "group.getAll.time", description = "Time taken to return groups")
 	@GetMapping()
 	public ResponseEntity<List<GroupDto>> get() {
 		return new ResponseEntity<>(mapper.toGroupDtoList(this.grpService.fetchAll(false)), HttpStatus.OK);
 	}
 
+	@Timed(value = "group.get.time", description = "Time taken to return group")
 	@GetMapping("/{id}")
 	public ResponseEntity<GroupDto> get(@PathVariable int id) {
 		return new ResponseEntity<>(mapper.toGroupDto(this.grpService.fetch(id, false)), HttpStatus.OK);
 	}
 
+	@Timed(value = "group.create.time", description = "Time taken to create group")
 	@PostMapping
 	public ResponseEntity<GroupDto> create(@Valid @RequestBody GroupDto group) {
 		Group grp = mapper.toGroup(group);
@@ -56,12 +61,14 @@ public class GroupController {
 		return new ResponseEntity<>(mapper.toGroupDto(grp), HttpStatus.CREATED);
 	}
 
+	@Timed(value = "group.change.time", description = "Time taken to change group")
 	@PatchMapping("/{id}")
 	public ResponseEntity<GroupDto> update(@RequestBody GroupDto group,@PathVariable int id) {
 		Group grp = this.grpService.changeName(id, group.getDisplayName());
 		return new ResponseEntity<>(mapper.toGroupDto(grp), HttpStatus.CREATED);
 	}
 
+	@Timed(value = "group.delete.time", description = "Time taken to delete group")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Integer> remove(@PathVariable int id) {
 		return new ResponseEntity<>(this.grpService.delete(id), HttpStatus.OK);

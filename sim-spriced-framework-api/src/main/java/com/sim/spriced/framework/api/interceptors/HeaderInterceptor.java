@@ -24,6 +24,9 @@ public class HeaderInterceptor implements HandlerInterceptor {
 
 	@Autowired
 	SPricedContextManager contextManager;
+	
+	@Autowired
+	RequestContext requestContext;
 
 	/***
 	 * Handler to read the header.
@@ -38,8 +41,13 @@ public class HeaderInterceptor implements HandlerInterceptor {
 		String[] applications = request.getHeader(APPLICATIONS) != null ? request.getHeader(APPLICATIONS).split(",")
 				: new String[0];
 
-		RequestContext context = new RequestContext(txId, tenant, user, roles, applications);
-		contextManager.setRequestContext(context);
+		requestContext.setApplications(applications);
+		requestContext.setRoles(roles);
+		requestContext.setTenant(tenant);
+		requestContext.setTransactionId(txId);
+		requestContext.setUser(user);
+		
+		contextManager.setRequestContext(requestContext);
 
 		return true;
 	}
