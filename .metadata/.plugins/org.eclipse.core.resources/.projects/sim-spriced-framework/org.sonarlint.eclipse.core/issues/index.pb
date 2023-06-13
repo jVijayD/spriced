@@ -1,6 +1,4 @@
 
-j
-:src/main/java/com/sim/spriced/framework/models/Entity.java,e/c/ec6b0f7dfd6ec5b18e19a5ae8b8730e9c25a6cbf
 m
 =src/main/java/com/sim/spriced/framework/models/Attribute.java,e/c/ecf69268a4565ba47249f4324230924a580eb174
 7
@@ -15,8 +13,6 @@ Y
 )src/test/resources/application.properties,7/5/75fe9d7fbca55a88d01eb60696ec758ea3b4eba0
 {
 Ksrc/main/java/com/sim/spriced/framework/SimSpricedFrameworkApplication.java,3/b/3b79bd8a0f7d758ba9a4f6f632704978ff5dc446
-s
-Csrc/main/java/com/sim/spriced/framework/context/ContextManager.java,2/f/2f9a908cf39e03d2dd34bd5800587be7fd631bea
 x
 Hsrc/main/java/com/sim/spriced/framework/multitenancy/ITenantManager.java,9/9/99562282eab7904056c21a8a5ae9ef35a5210fd5
 Ä
@@ -47,16 +43,10 @@ Xsrc/test/java/com/sim/spriced/framework/multitenancy/integration/Tenant2Loading
 Xsrc/test/java/com/sim/spriced/framework/multitenancy/integration/Tenant1LoadingTest.java,b/1/b14338ecfce4980759a3985a9e756daadb31b226
 h
 8src/main/java/com/sim/spriced/framework/models/User.java,a/0/a0048939ce899003c8f5ff823aaed77d71fb6903
-q
-Asrc/main/java/com/sim/spriced/framework/models/AttributeType.java,0/7/07f5520f1d34eca261f5c756bb28bb290c94b715
 u
 Esrc/main/java/com/sim/spriced/framework/exceptions/BaseException.java,c/0/c0e33e5aac3bc69a8d3b5ca5f82b0fb088717191
 n
 >src/main/java/com/sim/spriced/framework/models/BaseEntity.java,9/e/9e8330121021b1eedd4bec2ed619e018b86ad705
-Å
-Qsrc/main/java/com/sim/spriced/framework/exceptions/InvalidConditionException.java,6/f/6f6a9bcb73eab8a3c6e1f7399b7c2650e5547b88
-Ñ
-Tsrc/main/java/com/sim/spriced/framework/exceptions/InvalidFieldMappingException.java,8/5/8528d0c64a42dba88f7f3be5340ec0bcf8966981
 i
 9src/main/java/com/sim/spriced/framework/models/Group.java,c/6/c6dbd465d7276b4e3fa424abd4a2459462696b30
 u

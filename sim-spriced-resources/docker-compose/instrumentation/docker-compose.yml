@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  prometheus:
+    image: 'prom/prometheus:v2.14.0'
+    #network_mode: host
+    ports:
+      - '9090:9090'
+    command: '--config.file=/etc/prometheus/config.yml'
+    volumes:
+      - './prometheus.yml:/etc/prometheus/config.yml'
+
+  grafana:
+    image: 'grafana/grafana-oss:8.5.2'
+    #network_mode: host
+    container_name: grafana
+    restart: unless-stopped
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SERVER_DOMAIN=localhost
+    ports:
+      - '3000:3000'
+      
+  zipkin:
+    image: openzipkin/zipkin
+    #network_mode: host
+    container_name: grafana
+    container_name: zipkin
+    ports:
+      - '9411:9411'

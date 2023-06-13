@@ -15,7 +15,7 @@
 	<name>sim-spriced-framework-api</name>
 	<description>Project for handling the user and access </description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
