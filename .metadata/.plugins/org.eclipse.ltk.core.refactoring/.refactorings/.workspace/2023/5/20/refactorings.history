@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Delete resource &apos;sim-spriced-resources/sim-spriced-apis&apos;" deleteContents="false" description="Delete resource &apos;sim-spriced-resources/sim-spriced-apis&apos;" element1="/sim-spriced-resources/sim-spriced-apis" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1684593098724"/>
-</session>

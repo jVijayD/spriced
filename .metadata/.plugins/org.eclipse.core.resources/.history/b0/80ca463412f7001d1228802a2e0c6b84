@@ -1,5 +1,0 @@
-package com.sim.spriced.framework.pubsub;
-
-public interface IObserver {
-
-}

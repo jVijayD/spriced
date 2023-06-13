@@ -1,5 +1,0 @@
-package com.sim.spriced.framework.constants;
-
-public class ModelConstants {
-	public static final String UPDATED_DATE="updated_date";
-}

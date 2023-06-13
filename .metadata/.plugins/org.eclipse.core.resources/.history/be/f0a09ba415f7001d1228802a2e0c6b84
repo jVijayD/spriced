@@ -1,8 +1,0 @@
-package com.sim.spriced.defnition.service.impl;
-
-import com.sim.spriced.defnition.service.BaseService;
-import com.sim.spriced.defnition.service.IGroupService;
-
-public class GroupService extends BaseService implements IGroupService  {
-
-}
