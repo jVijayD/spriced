@@ -15,7 +15,7 @@
 	<name>sim-spriced-defnition</name>
 	<description>Project handling the entity defnition and related logics</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>

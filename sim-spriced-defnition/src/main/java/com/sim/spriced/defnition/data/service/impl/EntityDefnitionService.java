@@ -148,5 +148,17 @@ public class EntityDefnitionService  extends BaseService
 		return arg;
 	}
 
+	@Override
+	public EntityDefnition fetch(int id, boolean loadDisabled) {
+		return this.defnitionRepo.get(id, loadDisabled);
+	}
+
+	@Override
+	public int delete(int id) {
+		EntityDefnition defnition = new EntityDefnition();
+		defnition.setId(id);
+		return this.defnitionRepo.remove(defnition);
+	}
+
 
 }

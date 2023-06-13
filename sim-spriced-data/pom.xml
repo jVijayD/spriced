@@ -14,7 +14,7 @@
 	<name>sim-spriced-data</name>
 	<description>Project handling the data insertion and validations.</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -27,6 +27,14 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- Test specific Dependency -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
 		<!-- Custom Project Dependency -->
 		<dependency>
 			<groupId>com.sim.spriced.framework</groupId>

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.sim.spriced.framework.models.EntityDefnition;
+import com.sim.spriced.framework.models.Group;
 
 
 
@@ -15,11 +16,14 @@ public interface IEntityDefnitionService {
 	EntityDefnition update(EntityDefnition entity);
 	int delete(String name,int groupId);
 	int delete(EntityDefnition entity);
+	int delete(int id);
 	
 	EntityDefnition disableEntity(String name,int groupId);
 	EntityDefnition enableEntity(String name,int groupId);
 	
 	EntityDefnition fetchByName(String name,int groupId);
+	
+	EntityDefnition fetch(int id,boolean loadDisabled);
 	
 	List<EntityDefnition> fetchAll(int groupId,boolean loadDisabled);
 	List<EntityDefnition> fetchAll(int groupId);

@@ -73,7 +73,7 @@ public class RepoConfiguration {
 	 * @return DSLContext
 	 */
 	@Bean
-	public DSLContext dsl(SPricedContextManager contextManager) {
+	DSLContext dsl(SPricedContextManager contextManager) {
 
 		return ProxyFactory.getProxy(DSLContext.class, new MethodInterceptor() {
 
@@ -96,8 +96,8 @@ public class RepoConfiguration {
 					jooqConfiguration.setConnectionProvider(connectionProvider());
 
 					jooqConfiguration.setSettings(settings);
-					jooqConfiguration
-							.setExecuteListenerProvider(new DefaultExecuteListenerProvider(new ExceptionTranslator()));
+//					jooqConfiguration
+//							.setExecuteListenerProvider(new DefaultExecuteListenerProvider(new ExceptionTranslator()));
 
 					return new DefaultDSLContext(jooqConfiguration);
 				});
@@ -114,7 +114,7 @@ public class RepoConfiguration {
 	 * @return
 	 */
 	@Bean
-	public TransactionManager transactionManager() {
+	TransactionManager transactionManager() {
 		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
 		transactionManager.setDataSource(dataSource);
 		transactionManager.setRollbackOnCommitFailure(true);
@@ -127,7 +127,7 @@ public class RepoConfiguration {
 	 * @return
 	 */
 	@Bean
-	public ConnectionProvider connectionProvider() {
+	ConnectionProvider connectionProvider() {
 		TransactionAwareDataSourceProxy transactionAwareDataSourceProxy = new TransactionAwareDataSourceProxy(
 				dataSource);
 		return new DataSourceConnectionProvider(transactionAwareDataSourceProxy);
@@ -142,7 +142,6 @@ public class RepoConfiguration {
 			this.tenantDataSourceConfigProps.getTenantDataSource().values().forEach(source -> {
 				DataSource flywaySource = (DataSource) source;
 				Flyway flyway = Flyway.configure().dataSource(flywaySource).load();
-				//flyway.baseline();
 				flyway.migrate();
 			});
 		}
