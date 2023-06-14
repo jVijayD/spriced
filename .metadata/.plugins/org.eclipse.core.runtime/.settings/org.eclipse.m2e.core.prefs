@@ -1,8 +1,0 @@
-eclipse.m2.WorkspacelifecycleMappingsLocation=/Users/shabeeb/work/SIM/sim-workspace/.metadata/.plugins/org.eclipse.m2e.core/lifecycle-mapping-metadata.xml
-eclipse.m2.defaultRuntime=maven-ext
-eclipse.m2.globalUpdatePolicy=false
-eclipse.m2.runtimes=maven-ext
-eclipse.m2.runtimesNodes/maven-ext/location=/Users/shabeeb/ProgramFiles/apache-maven-3.9.1
-eclipse.m2.runtimesNodes/maven-ext/type=EXTERNAL
-eclipse.m2.updateProjects=true
-eclipse.preferences.version=1

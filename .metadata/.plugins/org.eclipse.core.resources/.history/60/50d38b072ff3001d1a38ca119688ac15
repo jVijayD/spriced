@@ -1,9 +1,0 @@
-package com.sim.spriced.framework.annotations;
-
-public enum IdType {
-	NONE,
-	BUSINESS_SEQ,
-	VERSION_SEQ,
-	AUTO,
-	GUID
-}

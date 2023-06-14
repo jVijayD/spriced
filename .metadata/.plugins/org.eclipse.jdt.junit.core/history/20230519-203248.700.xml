@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><testrun name="EntityRepoTest" project="sim-spriced-defnition" tests="3" started="3" failures="0" errors="0" ignored="0">
-  <testsuite name="com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest" time="0.64" displayname="EntityRepoTest" uniqueid="[engine:junit-jupiter]/[class:com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest]">
-    <testcase name="createTest" classname="com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest" time="0.614" displayname="createTest()" uniqueid="[engine:junit-jupiter]/[class:com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest]/[method:createTest()]"/>
-    <testcase name="updateTest" classname="com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest" time="0.018" displayname="updateTest()" uniqueid="[engine:junit-jupiter]/[class:com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest]/[method:updateTest()]"/>
-    <testcase name="DeleteTest" classname="com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest" time="0.008" displayname="DeleteTest()" uniqueid="[engine:junit-jupiter]/[class:com.sim.spriced.defnition.repo.impl.integration.EntityRepoTest]/[method:DeleteTest()]"/>
-  </testsuite>
-</testrun>
