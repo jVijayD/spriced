@@ -7,9 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
 import javax.persistence.Column;
-
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.DataType;
@@ -65,7 +63,6 @@ public abstract class BaseRepo {
 
 	protected final Timestamp timeStamp;
 
-	// Default Constructor
 	protected BaseRepo() {
 		this.timeStamp = new Timestamp(System.currentTimeMillis());
 	}
