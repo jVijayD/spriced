@@ -96,8 +96,8 @@ public class RepoConfiguration {
 					jooqConfiguration.setConnectionProvider(connectionProvider());
 
 					jooqConfiguration.setSettings(settings);
-//					jooqConfiguration
-//							.setExecuteListenerProvider(new DefaultExecuteListenerProvider(new ExceptionTranslator()));
+					jooqConfiguration
+							.setExecuteListenerProvider(new DefaultExecuteListenerProvider(new ExceptionTranslator()));
 
 					return new DefaultDSLContext(jooqConfiguration);
 				});
