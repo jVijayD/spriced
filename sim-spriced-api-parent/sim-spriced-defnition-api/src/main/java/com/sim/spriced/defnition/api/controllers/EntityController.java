@@ -36,7 +36,7 @@ public class EntityController {
 	public EntityDto create(@Valid @RequestBody EntityDto entity) {
 		EntityDefnition defnition= mapper.toEntityDefnition(entity);
 		defnition.setIsDisabled(false);
-		this.entityDefnitionService.create(defnition);
+		defnition = this.entityDefnitionService.create(defnition);
 		return mapper.toEntityDto(defnition);
 	}
 	

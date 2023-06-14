@@ -9,7 +9,8 @@
 	<name>sim-spriced-handler-parent</name>
 	<description>Parent project for the handlers</description>
 	<modules>
-		<module>sim-spriced-injestion-handler</module>
+		<module>sim-spriced-injestion-handler-sink</module>
+		<module>sim-spriced-injestion-handler-source</module>
 	</modules>
 	<dependencies></dependencies>
 </project>

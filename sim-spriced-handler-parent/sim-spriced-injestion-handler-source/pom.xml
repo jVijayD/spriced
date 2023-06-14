@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.sim.spriced.handler</groupId>
-	<artifactId>sim-spriced-injestion-handler</artifactId>
+	<artifactId>sim-spriced-injestion-source</artifactId>
 	<version>0.0.1</version>
-	<name>sim-spriced-injestion-handler</name>
+	<name>sim-spriced-injestion-handler-source</name>
 	<description>Project for data injestion</description>
 	<properties>
 		<java.version>17</java.version>
