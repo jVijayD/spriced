@@ -3,7 +3,6 @@ package com.sim.spriced.defnition.data.repo.impl;
 import java.util.List;
 
 import org.jooq.Condition;
-import org.jooq.impl.DSL;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
