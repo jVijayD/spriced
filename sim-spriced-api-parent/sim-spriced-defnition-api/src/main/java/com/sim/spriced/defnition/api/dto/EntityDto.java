@@ -12,6 +12,7 @@ import com.sim.spriced.framework.models.Attribute;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+
 @NoArgsConstructor
 @AllArgsConstructor
 public class EntityDto {

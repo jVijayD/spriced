@@ -6,8 +6,6 @@ import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-
-
 @NoArgsConstructor
 @AllArgsConstructor
 public class GroupUpdateDto {
