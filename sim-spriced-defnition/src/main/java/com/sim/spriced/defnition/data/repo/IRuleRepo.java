@@ -15,5 +15,6 @@ public interface IRuleRepo {
 	public Page<Rule> fetchAll(Pageable pagable);
 	public Rule fetchByName(String name);
 	public Rule fetch(Integer id);
+	public Rule fetch(Rule rule);
 	public Rule change(Rule rule);
 }

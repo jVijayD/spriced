@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import javax.persistence.Column;
+
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.DataType;
@@ -43,6 +45,7 @@ import com.sim.spriced.framework.context.SPricedContextManager;
 import com.sim.spriced.framework.exceptions.data.InvalidConditionException;
 import com.sim.spriced.framework.exceptions.data.InvalidEntityFieldMappingException;
 import com.sim.spriced.framework.exceptions.data.InvalidFieldMappingException;
+import com.sim.spriced.framework.exceptions.data.InvalidTypeConversionException;
 import com.sim.spriced.framework.exceptions.data.NotFoundException;
 import com.sim.spriced.framework.exceptions.data.NullPrimaryKeyException;
 
@@ -129,23 +132,23 @@ public abstract class BaseRepo {
 		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser(), this.timeStamp);
 		return this.create(entity, tableDetails);
 	}
-	
-	protected <T> T create(T entity,Function<Record, T> converter) {
+
+	protected <T> T create(T entity, Function<Record, T> converter) {
 		TableData tableDetails = this.getTableData(entity);
 		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser(), this.timeStamp);
-		return this.create(tableDetails,converter);
+		return this.create(tableDetails, converter);
 	}
 
 	private <T> T create(T entity, TableData tableDetails) {
 		this.createQueryForGeneratedID(tableDetails).returning(tableDetails.getFields()).fetchOne().into(entity);
 		return entity;
 	}
-	
-	private <T> T create(TableData tableDetails,Function<Record, T> converter) {
-		return converter.apply(this.createQueryForGeneratedID(tableDetails).returning(tableDetails.getFields()).fetchOne());
+
+	private <T> T create(TableData tableDetails, Function<Record, T> converter) {
+		return converter
+				.apply(this.createQueryForGeneratedID(tableDetails).returning(tableDetails.getFields()).fetchOne());
 	}
 
-	
 	private InsertOnDuplicateStep<Record> createQueryForGeneratedID(TableData tableDetails) {
 
 		InsertOnDuplicateStep<Record> insertQuery = null;
@@ -196,11 +199,11 @@ public abstract class BaseRepo {
 		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser(), this.timeStamp);
 		return this.update(entity, tableDetails, null);
 	}
-	
-	public <T> T update(T entity,Function<Record, T> converter) {
+
+	public <T> T update(T entity, Function<Record, T> converter) {
 		TableData tableDetails = this.getTableData(entity);
 		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser(), this.timeStamp);
-		return this.update(tableDetails,converter, null);
+		return this.update(tableDetails, converter, null);
 	}
 
 	public <T> T update(T entity, Condition condition) {
@@ -210,7 +213,8 @@ public abstract class BaseRepo {
 	}
 
 	private Map<Field<?>, Object> getConditionAndValue(TableData tableDetails) {
-		return tableDetails.getRecordDataList().stream().filter(item -> item.getValue() != null && !item.isExcludeFromSelect())
+		return tableDetails.getRecordDataList().stream()
+				.filter(item -> item.getValue() != null && !item.isExcludeFromSelect())
 				.collect(Collectors.toMap(item -> item.getField(), item -> item.getValue()));
 	}
 
@@ -229,7 +233,7 @@ public abstract class BaseRepo {
 	 * @param condition
 	 * @return
 	 */
-	private <T> T update(TableData tableDetails,Function<Record, T> converter, Condition condition) {
+	private <T> T update(TableData tableDetails, Function<Record, T> converter, Condition condition) {
 
 		Map<Field<?>, Object> updateMap = this.getUpdateValues(tableDetails);
 		// Update will happen based on primary key
@@ -241,7 +245,6 @@ public abstract class BaseRepo {
 				.returning(tableDetails.getFields()).fetchOne());
 
 	}
-	
 
 	private <T> T update(T entity, TableData tableDetails, Condition condition) {
 
@@ -255,8 +258,6 @@ public abstract class BaseRepo {
 				.returning(tableDetails.getFields()).fetchOne().into(entity);
 		return entity;
 	}
-	
-
 
 	protected Collection<SortField<?>> getOrderBy(Sort sort) {
 		return sort.stream().map(order -> {
@@ -293,8 +294,8 @@ public abstract class BaseRepo {
 		return queryResult.into(entity);
 
 	}
-	
-	public <T> T fetchOne(T entity,Function<Record, T> converter) {
+
+	public <T> T fetchOne(T entity, Function<Record, T> converter) {
 
 		TableData tableDetails = this.getTableData(entity);
 		SelectConditionStep<Record> query = this.fetchQuery(tableDetails);
@@ -307,7 +308,7 @@ public abstract class BaseRepo {
 
 	}
 
-	private  SelectConditionStep<Record> fetchQuery(TableData tableDetails) {
+	private SelectConditionStep<Record> fetchQuery(TableData tableDetails) {
 
 		Map<Field<?>, Object> conditionMap = this.getConditionAndValue(tableDetails);
 		if (conditionMap.size() == 0) {
@@ -366,11 +367,21 @@ public abstract class BaseRepo {
 		List<T> queryResults = result.map(converter::apply);
 		return new PageImpl<>(queryResults);
 	}
-	
+
 	public <T> Page<T> fetchAll(String tableName, Condition condition, Class<T> type, Pageable pagable) {
-		List<T> queryResults = this.context.selectFrom(table(tableName)).where(condition)
-				.orderBy(this.getOrderBy(pagable.getSort())).limit(pagable.getPageSize()).offset(pagable.getOffset())
-				.fetchInto(type);
+		
+		List<T> queryResults = null;
+		if(condition==null) {
+			queryResults = this.context.selectFrom(table(tableName))
+					.orderBy(this.getOrderBy(pagable.getSort())).limit(pagable.getPageSize()).offset(pagable.getOffset())
+					.fetchInto(type);
+		}
+		else {
+			queryResults = this.context.selectFrom(table(tableName)).where(condition)
+					.orderBy(this.getOrderBy(pagable.getSort())).limit(pagable.getPageSize()).offset(pagable.getOffset())
+					.fetchInto(type);
+		}
+		
 
 		return new PageImpl<>(queryResults);
 	}
@@ -378,21 +389,36 @@ public abstract class BaseRepo {
 	public <T> Page<T> fetchAll(String tableName, Condition condition, Function<Record, T> converter,
 			Pageable pagable) {
 
-		Result<Record> result = this.context.selectFrom(table(tableName)).where(condition)
-				.orderBy(this.getOrderBy(pagable.getSort())).limit(pagable.getPageSize()).offset(pagable.getOffset())
-				.fetch();
+		Result<Record> result = null;
+
+		if (condition == null) {
+			result = this.context.selectFrom(table(tableName)).orderBy(this.getOrderBy(pagable.getSort()))
+					.limit(pagable.getPageSize()).offset(pagable.getOffset()).fetch();
+		} else {
+			result = this.context.selectFrom(table(tableName)).where(condition)
+					.orderBy(this.getOrderBy(pagable.getSort())).limit(pagable.getPageSize())
+					.offset(pagable.getOffset()).fetch();
+		}
 
 		List<T> queryResults = result.map(converter::apply);
-
 		return new PageImpl<>(queryResults);
 	}
 
 	public <T> List<T> fetchAll(String tableName, Condition condition, Class<T> type) {
+		if (condition == null) {
+			return this.context.selectFrom(table(tableName)).fetchInto(type);
+		}
 		return this.context.selectFrom(table(tableName)).where(condition).fetchInto(type);
 	}
 
 	public <T> List<T> fetchAll(String tableName, Condition condition, Function<Record, T> converter) {
-		Result<Record> result = this.context.selectFrom(table(tableName)).where(condition).fetch();
+		Result<Record> result = null;
+		if (condition == null) {
+			result = this.context.selectFrom(table(tableName)).fetch();
+		} else {
+			result = this.context.selectFrom(table(tableName)).where(condition).fetch();
+		}
+
 		return result.map(converter::apply);
 	}
 
@@ -490,6 +516,36 @@ public abstract class BaseRepo {
 		return recData;
 	}
 
+	public <T> T convertJsonToObject(Record rec, Class<T> classToConvert, String tableName, String colName) {
+		Object colValue = rec.get(colName);
+		T result = null;
+		if (colValue != null) {
+			var conditionJson = JSON.json(colValue.toString());
+
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				result = mapper.readValue(conditionJson.toString(), classToConvert);
+			} catch (JsonProcessingException e) {
+				throw new InvalidTypeConversionException(tableName, colName);
+			}
+		}
+
+		return result;
+	}
+
+	public <T> List<T> convertJsonToList(Record rec, Class<T> classToConvert, String tableName, String colName) {
+		var conditionJson = JSON.json(rec.get(colName).toString());
+		List<T> result = new ArrayList<>();
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			result = mapper.readerForListOf(classToConvert).readValue(conditionJson.toString());
+		} catch (JsonProcessingException e) {
+			throw new InvalidTypeConversionException(tableName, colName);
+		}
+
+		return result;
+	}
+
 	@Setter
 	@Getter
 	class TableData {
@@ -535,6 +591,7 @@ public abstract class BaseRepo {
 				return item.isPrimaryKey();
 			}).collect(Collectors.toMap(item -> item.getField(), item -> item.getValue()));
 		}
+
 	}
 
 	@Getter
