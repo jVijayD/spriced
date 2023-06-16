@@ -1,5 +1,7 @@
 package com.sim.spriced.defnition.api.dto.mapper;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
@@ -10,4 +12,5 @@ import com.sim.spriced.framework.models.EntityDefnition;
 public interface EntityDtoMapper {
 	EntityDto toEntityDto(EntityDefnition defnition);
 	EntityDefnition toEntityDefnition(EntityDto entityDto);
+	List<EntityDto> toEntityDtoList(List<EntityDefnition> defnitions);
 }
