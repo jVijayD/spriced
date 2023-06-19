@@ -62,7 +62,7 @@ public class EntityController {
 	}
 	
 	@Timed(value = "entity.getAll.time", description = "Time taken to return entities.")
-	@GetMapping("/group/{groupId}/entities")
+	@GetMapping("/models/{groupId}/entities")
 	public ResponseEntity<List<EntityDto>> getAll(@PathVariable int groupId) {
 		return new ResponseEntity<>(mapper.toEntityDtoList(this.entityDefnitionService.fetchAll(groupId)), HttpStatus.OK);
 	}
