@@ -101,7 +101,7 @@ public class EntityDefnitionService  extends BaseService
 
 	@Override
 	public List<EntityDefnition> fetchAll(int groupId) {
-		return this.defnitionRepo.getAll(groupId, true);
+		return this.defnitionRepo.getAll(groupId, false);
 	}
 
 	@Override
