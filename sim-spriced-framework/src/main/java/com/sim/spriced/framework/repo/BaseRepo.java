@@ -25,10 +25,10 @@ import org.jooq.SelectField;
 import org.jooq.SortField;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -107,19 +107,20 @@ public abstract class BaseRepo {
 	}
 
 	protected JSONArray toJSONArray(Result<Record> result, List<String> colNames) {
-		var list = result.map(rec -> {
-			JSONObject obj = new JSONObject();
-			colNames.forEach(cn -> {
-				try {
-					obj.put(cn, rec.get(cn));
-				} catch (IllegalArgumentException | JSONException e) {
-					throw new InvalidEntityFieldMappingException("JSONObject", cn, e);
-				}
-			});
-			return obj;
-		});
-
+		var list = result.map(rec -> this.toJsonObject(rec, colNames));
 		return new JSONArray(list);
+	}
+	
+	protected JSONObject toJsonObject(Record result,List<String> colNames) {
+		JSONObject obj = new JSONObject();
+		colNames.forEach(cn -> {
+			try {
+				obj.put(cn, result.get(cn));
+			} catch (JSONException e) {
+				throw new InvalidEntityFieldMappingException("JSONObject", cn, e);
+			}
+		});
+		return obj;
 	}
 
 	protected int[] batchExqecute(Collection<Query> queries) {

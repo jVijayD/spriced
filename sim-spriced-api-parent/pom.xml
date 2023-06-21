@@ -19,6 +19,8 @@
 		<module>../sim-spriced-framework-api</module>
 		<module>../sim-spriced-defnition</module>
 		<module>sim-spriced-defnition-api</module>
+		<module>../sim-spriced-data</module>
+		<module>sim-spriced-data-api</module>
 	</modules>
 	<dependencies>
 		<dependency>

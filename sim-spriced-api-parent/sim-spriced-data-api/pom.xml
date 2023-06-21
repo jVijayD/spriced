@@ -8,25 +8,29 @@
 		<artifactId>sim-spriced-api-parent</artifactId>
 		<version>0.0.1</version>
 	</parent>
-	<artifactId>sim-spriced-defnition-api</artifactId>
-	<name>sim-spriced-defnition-api</name>
-	<description>Project for handling the user and access </description>
+	<groupId>com.sim.spriced.data.api</groupId>
+	<artifactId>sim-spriced-data-api</artifactId>
+	<name>sim-spriced-data-api</name>
+	<description>Project for data injestion from UI</description>
 	<properties>
 		<java.version>17</java.version>
-		<start-class>com.sim.spriced.defnition.api.SimSpricedDefnitionApiApplication</start-class>
+		<start-class>com.sim.spriced.data.api.SimSpricedDataApiApplication</start-class>
 	</properties>
 	<dependencies>
 
+			<!--<dependency>
+			  <groupId>org.jobrunr</groupId>
+			  <artifactId>jobrunr-spring-boot-2-starter</artifactId>
+			  <version>6.0.0</version>
+			</dependency>-->
+
 		<!-- Custom Dependency -->
 		<dependency>
-			<groupId>com.sim.spriced.defnition</groupId>
-			<artifactId>sim-spriced-defnition</artifactId>
+			<groupId>com.sim.spriced.data</groupId>
+			<artifactId>sim-spriced-data</artifactId>
 			<version>0.0.1</version>
 		</dependency>
-
 	</dependencies>
-
-
 
 	<build>
 		<plugins>
@@ -51,7 +55,7 @@
 							<groupId>org.projectlombok</groupId>  
 							<artifactId>lombok</artifactId>       
 							<version>1.18.28</version>            
-						</path>
+						</path> 
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
