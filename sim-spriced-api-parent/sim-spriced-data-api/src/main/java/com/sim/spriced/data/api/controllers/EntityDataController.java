@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sim.spriced.data.api.dto.EntityDataDto;
@@ -49,12 +50,12 @@ public class EntityDataController {
 
 	@Timed(value = "data.get.time", description = "Time taken to return data")
 	@GetMapping("/{id}")
-	public ResponseEntity<JSONObject> get(@PathVariable String entity, @PathVariable String id) throws ParseException {
+	public ResponseEntity<JSONObject> get(@PathVariable String entity, @PathVariable String id, @RequestParam(required = false) boolean number) throws ParseException {
 		EntityData data = new EntityData();
 		data.setEntityName(entity);
 		List<org.json.JSONObject> jsonArray = new ArrayList<>();
 		org.json.JSONObject jsonObj = new org.json.JSONObject();
-		jsonObj.put("code", id);
+		jsonObj.put("code", number?Integer.parseInt(id):id);
 		jsonArray.add(jsonObj);
 		data.setValues(jsonArray);
 		var result = this.dataService.fetchOne(data);
