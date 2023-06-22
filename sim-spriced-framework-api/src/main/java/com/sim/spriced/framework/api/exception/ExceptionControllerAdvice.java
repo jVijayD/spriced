@@ -20,10 +20,20 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.sim.spriced.framework.exceptions.DataAccessException;
+import com.sim.spriced.framework.exceptions.data.UniqueConstraintException;
 
 @ControllerAdvice
 public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 	
+	
+	@ExceptionHandler(UniqueConstraintException.class)
+    public ResponseEntity<?> uniqueConstraintException(UniqueConstraintException ex, WebRequest request) {
+         ErrorDetails errorDetails = new ErrorDetails(new Date(), "DataAccess:"+ex.getMessage(), request.getDescription(false),ex.getErrorCode());
+         errorDetails.setRequestURI(((ServletWebRequest)request).getRequest().getRequestURI());
+         errorDetails.setDetails(ex.getExtraData());
+         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
+
 
 	@ExceptionHandler(DataAccessException.class)
     public ResponseEntity<?> dataAccessException(DataAccessException ex, WebRequest request) {
@@ -42,6 +52,8 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    
+    
     
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(

@@ -17,11 +17,14 @@ import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.sim.spriced.data.model.EntityData;
 import com.sim.spriced.data.repo.IEntityDataRepo;
+import com.sim.spriced.framework.constants.ModelConstants;
+import com.sim.spriced.framework.exceptions.data.UniqueConstraintException;
 import com.sim.spriced.framework.models.Attribute;
 import com.sim.spriced.framework.models.AttributeConstants.ConstraintType;
 import com.sim.spriced.framework.repo.BaseRepo;
@@ -32,27 +35,36 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 	private static final String CHANGE = "change";
 
 	@Override
-	public int[] upsert(EntityData data) {
+	public int[] upsertBulk(EntityData data) {
 
-		String entityName = data.getEntityName();
-		List<Query> queries = new ArrayList<>();
-		data.getValues().forEach(jsonObj -> {
-			Pair<Map<Field<?>, Object>, Map<Field<?>, Object>> fieldValuesWithPrimaryKey = this
-					.getFieldValues(data.getAttributes(), jsonObj);
-			boolean isChange = jsonObj.has(CHANGE) && jsonObj.getBoolean(CHANGE);
-			queries.add(this.createUpsertQuery(entityName, fieldValuesWithPrimaryKey.getLeft(),
-					fieldValuesWithPrimaryKey.getRight(), isChange));
-		});
-		return this.batchExqecute(queries);
+		int[] rowChanged = new int[0];
+		try {
+			String entityName = data.getEntityName();
+			List<Query> queries = new ArrayList<>();
+			data.getValues().forEach(jsonObj -> {
+
+				Pair<Map<Field<?>, Object>, Map<Field<?>, Object>> fieldValuesWithPrimaryKey = this
+						.getFieldValues(data.getAttributes(), jsonObj);
+
+				boolean isChange = jsonObj.has(CHANGE) && jsonObj.getBoolean(CHANGE);
+
+				queries.add(this.createUpsertQuery(entityName, fieldValuesWithPrimaryKey.getLeft(),
+						fieldValuesWithPrimaryKey.getRight(), isChange));
+			});
+			rowChanged = this.batchExqecute(queries);
+		} catch (DataIntegrityViolationException ex) {
+			throw new UniqueConstraintException(data.getEntityName(), ex);
+		}
+		return rowChanged;
 	}
 
 	@Override
-	public int[] delete(EntityData data) {
+	public int[] deleteBulk(EntityData data) {
 		String entityName = data.getEntityName();
 		List<Query> queries = new ArrayList<>();
 		data.getValues().forEach(row -> {
-			
-			queries.add(this.context.delete(table(entityName)).where(DSL.condition(this.getPrimaryKeyValues(data.getAttributes(), row))));
+			queries.add(this.context.delete(table(entityName))
+					.where(DSL.condition(this.getPrimaryKeyValues(data.getAttributes(), row))));
 		});
 		return this.batchExqecute(queries);
 	}
@@ -70,17 +82,40 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 		return query;
 	}
 
+	private Map<String,Object> executeUpsertQuery(String entityName, Map<Field<?>, Object> fieldValues,
+			Map<Field<?>, Object> fieldValuesPrimaryKey, boolean isChange) {
+		Field<?> col = column("code");
+		Map<String,Object> jsonObj = new HashMap<>();
+		if (!isChange) {
+			Collection<Field<?>> fields = new ArrayList<>(fieldValues.keySet());
+			Collection<Object> values = fieldValues.values();
+			Record rec = this.context.insertInto(table(entityName), fields).values(values).returning(col).fetchOne();
+			jsonObj.put("code", rec.get(0));
+			return jsonObj;
+		} else {
+			Record rec = this.context.update(table(entityName)).set(fieldValues)
+					.where(DSL.condition(fieldValuesPrimaryKey)).returning(col).fetchOne();
+			jsonObj.put("code", rec.get(0));
+			return jsonObj;
+		}
+	}
+
 	private Pair<Map<Field<?>, Object>, Map<Field<?>, Object>> getFieldValues(List<Attribute> attributes,
 			JSONObject jsonObject) {
 		Map<Field<?>, Object> fieldValues = new HashMap<>();
 		Map<Field<?>, Object> primaryKeyValues = new HashMap<>();
 
+		jsonObject.put(ModelConstants.UPDATED_BY, this.contextManager.getRequestContext().getUser());
+		jsonObject.put(ModelConstants.UPDATED_DATE, this.timeStamp);
+
 		attributes.forEach(item -> {
-			boolean isPrimaryKey = item.getConstraintType() == ConstraintType.PRIMARY_KEY;
-			if (!isPrimaryKey) {
-				fieldValues.put(column(item.getName()), jsonObject.get(item.getName()));
-			} else {
-				primaryKeyValues.put(column(item.getName()), jsonObject.get(item.getName()));
+			if (jsonObject.has(item.getName())) {
+				boolean isPrimaryKey = item.getConstraintType() == ConstraintType.PRIMARY_KEY;
+				if (!isPrimaryKey) {
+					fieldValues.put(column(item.getName()), jsonObject.get(item.getName()));
+				} else {
+					primaryKeyValues.put(column(item.getName()), jsonObject.get(item.getName()));
+				}
 			}
 		});
 
@@ -89,83 +124,105 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 
 	private Map<Field<?>, Object> getPrimaryKeyValues(List<Attribute> attributes, JSONObject jsonObject) {
 		return attributes.stream().filter(item -> item.getConstraintType() == ConstraintType.PRIMARY_KEY)
+				.filter(item -> jsonObject.has(item.getName()))
 				.collect(Collectors.toMap(item -> column(item.getName()), item -> jsonObject.get(item.getName())));
 	}
 
 	@Override
 	public JSONArray fetchAll(EntityData data) {
 		String entityName = data.getEntityName();
-		Condition condition =  this.createCondition(data);
-		
+		Condition condition = this.createCondition(data);
+
 		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).fetch();
-		
+
 		List<String> columns = new ArrayList<>();
-		if(data.getAttributes()!=null) {
+		if (data.getAttributes() != null) {
 			columns = data.getAttributes().stream().map(Attribute::getName).toList();
 		}
-		
+
 		return this.toJSONArray(result, columns);
 	}
 
 	@Override
 	public JSONArray fetchAll(EntityData data, Pageable pageable) {
 		String entityName = data.getEntityName();
-		Condition condition =  this.createCondition(data);
-		
-		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).orderBy(this.getOrderBy(pageable.getSort()))
-				.limit(pageable.getPageSize()).offset(pageable.getOffset()).fetch();
-		
-		List<String> columns = result!=null?this.getColumns(data.getAttributes(), result.get(0)):null;
-		
+		Condition condition = this.createCondition(data);
+
+		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition)
+				.orderBy(this.getOrderBy(pageable.getSort())).limit(pageable.getPageSize()).offset(pageable.getOffset())
+				.fetch();
+
+		List<String> columns = result != null ? this.getColumns(data.getAttributes(), result.get(0)) : null;
+
 		return this.toJSONArray(result, columns);
 	}
 
 	@Override
 	public JSONObject fetchOne(EntityData data) {
 		String entityName = data.getEntityName();
-		Condition condition =  this.createCondition(data);
+		Condition condition = this.createCondition(data);
 		Record result = this.context.selectFrom(table(entityName)).where(condition).fetchOne();
 		List<String> columns = data.getAttributes().stream().map(Attribute::getName).toList();
 		return this.toJsonObject(result, columns);
 	}
-	
-	private List<String> getColumns(List<Attribute> attributes,Record rec) {
-		List<String> columns = new ArrayList<>();
-		if(attributes!=null) {
+
+	private List<String> getColumns(List<Attribute> attributes, Record rec) {
+		List<String> columns = null;
+		if (attributes != null) {
 			columns = attributes.stream().map(Attribute::getName).toList();
-		}
-		else {
+		} else {
 			columns = this.extractColumnNames(rec);
 		}
 		return columns;
 	}
-	
+
 	private List<String> extractColumnNames(Record rec) {
 		List<String> cols = new ArrayList<>();
-		JSONObject jsonObj = new JSONObject(rec.formatJSON()); 
+		JSONObject jsonObj = new JSONObject(rec.formatJSON());
 		JSONArray jsonArray = jsonObj.getJSONArray("fields");
 		Iterator<Object> iter = jsonArray.iterator();
-		while(iter.hasNext()) {
-			JSONObject obj = (JSONObject)iter.next();
+		while (iter.hasNext()) {
+			JSONObject obj = (JSONObject) iter.next();
 			cols.add(obj.getString("name"));
 		}
 		return cols;
 	}
-	
+
 	private Condition createCondition(EntityData data) {
 
-		JSONObject jsobObject =data.getValues()!=null?(JSONObject)data.getValues().get(0):null;
+		JSONObject jsobObject = data.getValues() != null ? (JSONObject) data.getValues().get(0) : null;
 		Map<Field<?>, Object> conditionsMap = new HashMap<>();
-		if(jsobObject!=null) {
-			data.getAttributes().stream().forEach(item->{
+		if (jsobObject != null) {
+			data.getAttributes().stream().forEach(item -> {
 				Object value = jsobObject.get(item.getName());
-				if(value!=null) {
-					conditionsMap.put(column(item.getName()),value );
+				if (value != null) {
+					conditionsMap.put(column(item.getName()), value);
 				}
 			});
 		}
-		
-		return conditionsMap.size()==0?DSL.noCondition():DSL.condition(conditionsMap);
+
+		return conditionsMap.size() == 0 ? DSL.noCondition() : DSL.condition(conditionsMap);
+	}
+
+	@Override
+	public Map<String,Object> upsert(EntityData data) {
+
+		try {
+			String entityName = data.getEntityName();
+			JSONObject jsonObj = data.getValues().get(0);
+
+			Pair<Map<Field<?>, Object>, Map<Field<?>, Object>> fieldValuesWithPrimaryKey = this
+					.getFieldValues(data.getAttributes(), jsonObj);
+
+			boolean isChange = jsonObj.has(CHANGE) && jsonObj.getBoolean(CHANGE);
+
+			return this.executeUpsertQuery(entityName, fieldValuesWithPrimaryKey.getLeft(),
+					fieldValuesWithPrimaryKey.getRight(), isChange);
+
+		} catch (DataIntegrityViolationException ex) {
+			throw new UniqueConstraintException(data.getEntityName(), ex);
+		}
+
 	}
 
 }

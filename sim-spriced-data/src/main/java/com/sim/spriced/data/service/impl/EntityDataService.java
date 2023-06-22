@@ -1,5 +1,7 @@
 package com.sim.spriced.data.service.impl;
 
+import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +20,13 @@ public class EntityDataService implements IEntityDataService {
 	IEntityDataRepo dataRepo;
 
 	@Override
-	public EntityDataResult upsert(EntityData data) {
-		return EntityDataResult.builder().rowsChanged(this.dataRepo.upsert(data)).build();
+	public EntityDataResult upsertBulk(EntityData data) {
+		return EntityDataResult.builder().rowsChanged(this.dataRepo.upsertBulk(data)).build();
 	}
 
 	@Override
-	public EntityDataResult delete(EntityData data) {
-		return EntityDataResult.builder().rowsChanged(this.dataRepo.delete(data)).build();
+	public EntityDataResult deleteBulk(EntityData data) {
+		return EntityDataResult.builder().rowsChanged(this.dataRepo.deleteBulk(data)).build();
 	}
 
 	@Override
@@ -40,6 +42,12 @@ public class EntityDataService implements IEntityDataService {
 	@Override
 	public JSONObject fetchOne(EntityData data) {
 		return this.dataRepo.fetchOne(data);
+	}
+
+	@Override
+	public EntityDataResult upsert(EntityData data) {
+		Map<String,Object> jsonObj = this.dataRepo.upsert(data);
+		return EntityDataResult.builder().rowsChanged(new int[] { 1 }).result(jsonObj).build();
 	}
 
 }

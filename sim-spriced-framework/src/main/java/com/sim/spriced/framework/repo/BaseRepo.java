@@ -29,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -48,6 +49,7 @@ import com.sim.spriced.framework.exceptions.data.InvalidFieldMappingException;
 import com.sim.spriced.framework.exceptions.data.InvalidTypeConversionException;
 import com.sim.spriced.framework.exceptions.data.NotFoundException;
 import com.sim.spriced.framework.exceptions.data.NullPrimaryKeyException;
+import com.sim.spriced.framework.exceptions.data.UniqueConstraintException;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -141,13 +143,25 @@ public abstract class BaseRepo {
 	}
 
 	private <T> T create(T entity, TableData tableDetails) {
-		this.createQueryForGeneratedID(tableDetails).returning(tableDetails.getFields()).fetchOne().into(entity);
-		return entity;
+		try {
+			this.createQueryForGeneratedID(tableDetails).returning(tableDetails.getFields()).fetchOne().into(entity);
+			return entity;
+		}
+		catch(DataIntegrityViolationException ex) {
+			throw new UniqueConstraintException(tableDetails.getTableName(), ex);
+		}
+		
 	}
 
 	private <T> T create(TableData tableDetails, Function<Record, T> converter) {
-		return converter
-				.apply(this.createQueryForGeneratedID(tableDetails).returning(tableDetails.getFields()).fetchOne());
+		try {
+			return converter
+					.apply(this.createQueryForGeneratedID(tableDetails).returning(tableDetails.getFields()).fetchOne());
+		}
+		catch(DataIntegrityViolationException ex) {
+			throw new UniqueConstraintException(tableDetails.getTableName(), ex);
+		}
+		
 	}
 
 	private InsertOnDuplicateStep<Record> createQueryForGeneratedID(TableData tableDetails) {
@@ -242,8 +256,14 @@ public abstract class BaseRepo {
 		if (condition == null && primaryKeys.size() > 0) {
 			condition = DSL.condition(primaryKeys);
 		}
-		return converter.apply(context.update(table(tableDetails.getTableName())).set(updateMap).where(condition)
-				.returning(tableDetails.getFields()).fetchOne());
+		try {
+			return converter.apply(context.update(table(tableDetails.getTableName())).set(updateMap).where(condition)
+					.returning(tableDetails.getFields()).fetchOne());
+		}
+		catch(DataIntegrityViolationException ex) {
+			throw new UniqueConstraintException(tableDetails.getTableName(), ex);
+		}
+		
 
 	}
 
@@ -255,8 +275,14 @@ public abstract class BaseRepo {
 		if (condition == null && primaryKeys.size() > 0) {
 			condition = DSL.condition(primaryKeys);
 		}
-		context.update(table(tableDetails.getTableName())).set(updateMap).where(condition)
-				.returning(tableDetails.getFields()).fetchOne().into(entity);
+		try {
+			context.update(table(tableDetails.getTableName())).set(updateMap).where(condition)
+			.returning(tableDetails.getFields()).fetchOne().into(entity);
+		}
+		catch(DataIntegrityViolationException ex) {
+			throw new UniqueConstraintException(tableDetails.getTableName(), ex);
+		}
+		
 		return entity;
 	}
 

@@ -9,7 +9,8 @@ import com.sim.spriced.data.model.EntityDataResult;
 
 public interface IEntityDataService {
 	public EntityDataResult upsert(EntityData data);
-	public EntityDataResult delete(EntityData data);
+	public EntityDataResult upsertBulk(EntityData data);
+	public EntityDataResult deleteBulk(EntityData data);
 	public JSONArray fetchAll(EntityData data);
 	public JSONArray fetchAll(EntityData data,Pageable pageable);
 	public JSONObject fetchOne(EntityData data);
