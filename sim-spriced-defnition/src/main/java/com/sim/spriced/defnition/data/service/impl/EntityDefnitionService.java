@@ -43,13 +43,13 @@ public class EntityDefnitionService  extends BaseService
 	}
 
 	@Override
-	@Transactional
 	public int delete(String name,int groupId) {
 		EntityDefnition entityDefnition = this.defnitionRepo.getByName(name, groupId);
 		return this.delete(entityDefnition);
 	}
 
 	@Override
+	@Transactional
 	public int delete(EntityDefnition defnition) {
 		int rows = this.defnitionRepo.remove(defnition);
 		this.notifyObservers(this.createEvent(defnition,null, EventType.DELETE));
@@ -152,7 +152,6 @@ public class EntityDefnitionService  extends BaseService
 	}
 
 	@Override
-	@Transactional
 	public int delete(int id) {
 		EntityDefnition defnition = defnitionRepo.get(id);
 		return this.delete(defnition);
