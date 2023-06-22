@@ -1,0 +1,49 @@
+_format_version: "2.1"
+_transform: true
+
+services:
+  - name: defnition-api
+    url: http://docker.for.mac.localhost:8080
+    routes:
+      - name: defnition
+        paths:
+          - /api/v1/defnition
+  - name: data-api
+    url: http://docker.for.mac.localhost:8081
+    routes:
+      - name: injestion
+        paths:
+          - /api/v1/injestion
+
+consumers:
+  - username: spriced-ui
+
+jwt_secrets:
+  - algorithm: HS256
+    consumer: spriced-ui
+    key: sp6ic3d-ui-cli3nt
+    secret: sp6ic3d-sec63t
+
+plugins:
+  - name: kong-jwt2header
+    enabled: true
+    config:
+      strip_claims: "true"
+      token_required: "false"
+
+  - name: jwt
+    config:
+      key_claim_name: kid
+
+  - name: rate-limiting
+    config:
+      second: 100
+      minute: 500
+      hour: 1000
+      policy: local
+
+
+
+
+  
+ 
