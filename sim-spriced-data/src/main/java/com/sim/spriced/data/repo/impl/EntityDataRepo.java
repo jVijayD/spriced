@@ -135,10 +135,7 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 
 		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).fetch();
 
-		List<String> columns = new ArrayList<>();
-		if (data.getAttributes() != null) {
-			columns = data.getAttributes().stream().map(Attribute::getName).toList();
-		}
+		List<String> columns = this.getColumns(data.getAttributes(), result==null?null:result.get(0));
 
 		return this.toJSONArray(result, columns);
 	}
@@ -178,13 +175,18 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 
 	private List<String> extractColumnNames(Record rec) {
 		List<String> cols = new ArrayList<>();
-		JSONObject jsonObj = new JSONObject(rec.formatJSON());
-		JSONArray jsonArray = jsonObj.getJSONArray("fields");
-		Iterator<Object> iter = jsonArray.iterator();
-		while (iter.hasNext()) {
-			JSONObject obj = (JSONObject) iter.next();
-			cols.add(obj.getString("name"));
+		if(rec!=null) {
+			for(Field<?> field:rec.fields()) {
+				cols.add(field.getName());
+			}
 		}
+//		JSONObject jsonObj = new JSONObject(rec.formatJSON());
+//		JSONArray jsonArray = jsonObj.getJSONArray("fields");
+//		Iterator<Object> iter = jsonArray.iterator();
+//		while (iter.hasNext()) {
+//			JSONObject obj = (JSONObject) iter.next();
+//			cols.add(obj.getString("name"));
+//		}
 		return cols;
 	}
 
