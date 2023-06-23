@@ -56,7 +56,7 @@ public class GroupService extends BaseService implements IGroupService {
 	public int delete(int id) {
 		Group grp = new Group();
 		grp.setId(id);
-		return this.grpRepo.delete(grp);
+		return this.grpRepo.remove(grp);
 	}
 
 	@Override
