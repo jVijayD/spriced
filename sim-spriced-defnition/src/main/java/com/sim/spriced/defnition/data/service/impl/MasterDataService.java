@@ -4,7 +4,6 @@ import com.sim.spriced.defnition.data.service.IMasterDataService;
 import com.sim.spriced.framework.annotations.IDType;
 import com.sim.spriced.framework.models.AttributeConstants;
 import com.sim.spriced.framework.models.Condition;
-import com.sim.spriced.framework.pubsub.EventType;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -70,8 +69,4 @@ public class MasterDataService implements IMasterDataService {
         return dataMap;
     }
 
-    @Override
-    public List<EventType> getAllEventType() {
-        return Arrays.asList(EventType.values());
-    }
 }

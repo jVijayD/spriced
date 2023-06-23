@@ -4,7 +4,6 @@ import com.sim.spriced.defnition.data.service.IMasterDataService;
 import com.sim.spriced.framework.annotations.IDType;
 import com.sim.spriced.framework.models.AttributeConstants;
 import com.sim.spriced.framework.models.Condition;
-import com.sim.spriced.framework.pubsub.EventType;
 import io.micrometer.core.annotation.Timed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -67,9 +66,4 @@ public class MasterDataController {
         return new ResponseEntity<>(this.masterDataService.getAllOperandType(), HttpStatus.OK);
     }
 
-    @Timed(value = "masterData.getAllEventType.time", description = "Time taken to return all event types.")
-    @GetMapping("/event-types")
-    public ResponseEntity<List<EventType>> getAllEventType() {
-        return new ResponseEntity<>(this.masterDataService.getAllEventType(), HttpStatus.OK);
-    }
 }

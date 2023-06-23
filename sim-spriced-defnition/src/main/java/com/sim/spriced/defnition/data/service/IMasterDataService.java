@@ -3,7 +3,6 @@ package com.sim.spriced.defnition.data.service;
 import com.sim.spriced.framework.annotations.IDType;
 import com.sim.spriced.framework.models.AttributeConstants;
 import com.sim.spriced.framework.models.Condition;
-import com.sim.spriced.framework.pubsub.EventType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,5 +15,4 @@ public interface IMasterDataService {
     HashMap<Condition.ConditionType, String> getAllConditionType();
     HashMap<Condition.OperatorType, String> getAllOperatorType();
     HashMap<Condition.OperandType, String> getAllOperandType();
-    List<EventType> getAllEventType();
 }
