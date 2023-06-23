@@ -2,7 +2,7 @@ package com.sim.spriced.defnition.data.repo.impl;
 
 import java.util.List;
 
-import com.sim.spriced.framework.exceptions.data.DeleteReferencedGroupConstraintException;
+import com.sim.spriced.framework.exceptions.data.ReferentialIntegrityException;
 import org.jooq.Condition;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -73,7 +73,7 @@ public class GroupRepo extends BaseRepo implements IGroupRepo {
 		try {
 			return super.delete(group);
 		}catch (DataIntegrityViolationException ex) {
-			throw new DeleteReferencedGroupConstraintException(group.getId(), ex);
+			throw new ReferentialIntegrityException(group.getId(), ex);
 		}
 	}
 
