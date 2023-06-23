@@ -13,7 +13,7 @@ import com.sim.spriced.framework.models.Group;
 public interface IEntityDefnitionService {
 	
 	EntityDefnition create(EntityDefnition entity);
-	EntityDefnition update(EntityDefnition entity, Integer entityId);
+	EntityDefnition update(EntityDefnition entity);
 	int delete(String name,int groupId);
 	int delete(EntityDefnition entity);
 	int delete(int id);
