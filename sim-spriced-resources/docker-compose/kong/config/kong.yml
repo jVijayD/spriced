@@ -28,12 +28,14 @@ plugins:
   - name: kong-jwt2header
     enabled: true
     config:
-      strip_claims: "true"
+      strip_claims: "false"
       token_required: "false"
 
   - name: jwt
     config:
       key_claim_name: kid
+      claims_to_verify:
+      -	exp
 
   - name: rate-limiting
     config:

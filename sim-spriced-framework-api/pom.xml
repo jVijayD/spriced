@@ -61,6 +61,21 @@
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
 
+		
+
+		<!-- Swagger -->
+		<!--<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.4.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.4.0</version>
+		</dependency>-->
+
 		<!-- Custom Project Dependency -->
 		<dependency>
 			<groupId>com.sim.spriced.framework</groupId>
@@ -68,4 +83,6 @@
 			<version>0.0.1</version>
 		</dependency>
 	</dependencies>
+	
+	
 </project>

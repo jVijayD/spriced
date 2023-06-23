@@ -11,7 +11,7 @@ public class UniqueConstraintException extends DataAccessException {
 	 * 
 	 */
 	private static final long serialVersionUID = -8036859605988255958L;
-	private static final String CODE="DB_UK - 008";
+	private static final String CODE="DB_UK-008";
 	private static final String FORMATTER= "Unique constraint violation.[%s]";
 
 

@@ -6,6 +6,7 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.apache.commons.lang3.StringUtils;
 import org.flywaydb.core.Flyway;
 import org.jooq.ConnectionProvider;
 import org.jooq.DSLContext;
@@ -33,7 +34,9 @@ import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+
 import com.sim.spriced.framework.context.SPricedContextManager;
+import com.sim.spriced.framework.exceptions.data.TenantNotPresentException;
 import com.sim.spriced.framework.multitenancy.TenantDataSourcesConfigProps;
 
 /***
@@ -80,7 +83,11 @@ public class RepoConfiguration {
 			@Override
 			public Object invoke(MethodInvocation invocation) throws Throwable {
 
-				DSLContext ctx = contextMap.computeIfAbsent(contextManager.getRequestContext().getTenant(), key -> {
+				String tenant = contextManager.getRequestContext().getTenant();
+				if(StringUtils.isEmpty(tenant)) {
+					throw new TenantNotPresentException("TenantId missing in the context.");
+				}
+				DSLContext ctx = contextMap.computeIfAbsent(tenant, key -> {
 					Settings settings = new Settings().withReturnAllOnUpdatableRecord(true).withRenderMapping(
 							new RenderMapping().withSchemata(new MappedSchema().withInput("master").withOutput(key)));
 

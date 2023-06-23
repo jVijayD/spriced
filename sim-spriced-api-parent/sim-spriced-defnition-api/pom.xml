@@ -15,6 +15,7 @@
 		<java.version>17</java.version>
 		<start-class>com.sim.spriced.defnition.api.SimSpricedDefnitionApiApplication</start-class>
 	</properties>
+	
 	<dependencies>
 
 		<!-- Custom Dependency -->
