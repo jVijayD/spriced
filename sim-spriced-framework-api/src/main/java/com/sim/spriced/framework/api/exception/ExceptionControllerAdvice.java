@@ -59,7 +59,7 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false),ex.getErrorCode());
         errorDetails.setRequestURI(((ServletWebRequest)request).getRequest().getRequestURI());
         errorDetails.setDetails(ex.getExtraData());
-        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(errorDetails, HttpStatus.METHOD_NOT_ALLOWED);
     }
     
     
