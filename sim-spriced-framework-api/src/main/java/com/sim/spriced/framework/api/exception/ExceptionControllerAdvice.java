@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.sim.spriced.framework.exceptions.data.ReferentialIntegrityException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -51,6 +52,14 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 
         
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(ReferentialIntegrityException.class)
+    public ResponseEntity<?> referentialIntegrityException(ReferentialIntegrityException ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false),ex.getErrorCode());
+        errorDetails.setRequestURI(((ServletWebRequest)request).getRequest().getRequestURI());
+        errorDetails.setDetails(ex.getExtraData());
+        return new ResponseEntity<>(errorDetails, HttpStatus.METHOD_NOT_ALLOWED);
     }
     
     

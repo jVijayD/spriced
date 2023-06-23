@@ -2,7 +2,9 @@ package com.sim.spriced.defnition.data.repo.impl;
 
 import java.util.List;
 
+import com.sim.spriced.framework.exceptions.data.ReferentialIntegrityException;
 import org.jooq.Condition;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -68,7 +70,11 @@ public class GroupRepo extends BaseRepo implements IGroupRepo {
 
 	@Override
 	public int remove(Group group) {
-		return super.delete(group);
+		try {
+			return super.delete(group);
+		}catch (DataIntegrityViolationException ex) {
+			throw new ReferentialIntegrityException(group.getId(), ex);
+		}
 	}
 
 
