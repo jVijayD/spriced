@@ -135,7 +135,7 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 
 		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).fetch();
 
-		List<String> columns = this.getColumns(data.getAttributes(), result==null?null:result.get(0));
+		List<String> columns = this.getColumns(data.getAttributes(), result==null || result.isEmpty()?null:result.get(0));
 
 		return this.toJSONArray(result, columns);
 	}
