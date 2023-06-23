@@ -103,7 +103,7 @@ class EntityDefnitionServiceTest {
 		defnition = this.entityService.fetchByName( entityName,grpId);
 		defnition.getAttributes().add(new Attribute("New1",Type.FREE_FORM,DataType.INTEGER));
 		defnition.getAttributes().add(new Attribute("New2",Type.FREE_FORM,DataType.BOOLEAN));
-		defnition = this.entityService.update(defnition);
+		defnition = this.entityService.update(defnition, defnition.getId());
 		assertNotNull(defnition);
 		this.entityService.delete(entityName, grpId);
 	}
