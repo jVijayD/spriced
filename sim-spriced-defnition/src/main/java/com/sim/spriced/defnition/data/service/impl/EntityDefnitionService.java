@@ -43,15 +43,13 @@ public class EntityDefnitionService  extends BaseService
 	}
 
 	@Override
-	@Transactional
 	public int delete(String name,int groupId) {
 		EntityDefnition entityDefnition = this.defnitionRepo.getByName(name, groupId);
-		int rows = this.defnitionRepo.remove(entityDefnition);
-		this.notifyObservers(this.createEvent(entityDefnition,null, EventType.DELETE));
-		return rows;
+		return this.delete(entityDefnition);
 	}
-	
+
 	@Override
+	@Transactional
 	public int delete(EntityDefnition defnition) {
 		int rows = this.defnitionRepo.remove(defnition);
 		this.notifyObservers(this.createEvent(defnition,null, EventType.DELETE));
@@ -62,7 +60,7 @@ public class EntityDefnitionService  extends BaseService
 	@Transactional
 	public EntityDefnition update(EntityDefnition entityDefnition) {
 		entityDefnition.validate();
-		EntityDefnition previous = this.defnitionRepo.getByName(entityDefnition.getName(), entityDefnition.getGroupId(),false);
+		EntityDefnition previous = this.defnitionRepo.get(entityDefnition.getId());
 		entityDefnition = this.defnitionRepo.change(entityDefnition);
 		
 		this.notifyObservers(this.createEvent(entityDefnition,previous, EventType.UPDATE));
@@ -155,9 +153,8 @@ public class EntityDefnitionService  extends BaseService
 
 	@Override
 	public int delete(int id) {
-		EntityDefnition defnition = new EntityDefnition();
-		defnition.setId(id);
-		return this.defnitionRepo.remove(defnition);
+		EntityDefnition defnition = this.defnitionRepo.get(id);
+		return this.delete(defnition);
 	}
 
 
