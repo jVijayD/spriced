@@ -51,6 +51,7 @@ public class EntityController {
 	@PutMapping("/entities/{id}")
 	public ResponseEntity<EntityDto> update(@PathVariable int id,@Valid @RequestBody EntityDto entity) {
 		EntityDefnition defnition = mapper.toEntityDefnition(entity);
+		defnition.setId(id);
 		defnition = this.entityDefnitionService.update(defnition);
 		return new ResponseEntity<>(mapper.toEntityDto(defnition), HttpStatus.CREATED);
 	}

@@ -60,7 +60,7 @@ public class EntityDefnitionService  extends BaseService
 	@Transactional
 	public EntityDefnition update(EntityDefnition entityDefnition) {
 		entityDefnition.validate();
-		EntityDefnition previous = this.defnitionRepo.getByName(entityDefnition.getName(), entityDefnition.getGroupId(),false);
+		EntityDefnition previous = this.defnitionRepo.get(entityDefnition.getId());
 		entityDefnition = this.defnitionRepo.change(entityDefnition);
 		
 		this.notifyObservers(this.createEvent(entityDefnition,previous, EventType.UPDATE));
@@ -153,7 +153,7 @@ public class EntityDefnitionService  extends BaseService
 
 	@Override
 	public int delete(int id) {
-		EntityDefnition defnition = defnitionRepo.get(id);
+		EntityDefnition defnition = this.defnitionRepo.get(id);
 		return this.delete(defnition);
 	}
 
