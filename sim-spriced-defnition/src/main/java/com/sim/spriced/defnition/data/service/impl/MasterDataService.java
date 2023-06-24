@@ -4,69 +4,71 @@ import com.sim.spriced.defnition.data.service.IMasterDataService;
 import com.sim.spriced.framework.annotations.IDType;
 import com.sim.spriced.framework.models.AttributeConstants;
 import com.sim.spriced.framework.models.Condition;
+
+import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 public class MasterDataService implements IMasterDataService {
-    @Override
-    public HashMap<AttributeConstants.DataType, String> getAllDataType() {
-        HashMap<AttributeConstants.DataType, String> dataMap = new HashMap<>();
-        Arrays.asList(AttributeConstants.DataType.values()).forEach(dataType -> {
-            dataMap.put(dataType, dataType.getDisplayName());
-        });
-        return dataMap;
-    }
+	@Override
+	public EnumMap<AttributeConstants.DataType, String> getAllDataType() {
+		EnumMap<AttributeConstants.DataType, String> dataMap = new EnumMap<>(AttributeConstants.DataType.class);
+		Arrays.asList(AttributeConstants.DataType.values())
+				.forEach(dataType -> dataMap.put(dataType, dataType.getDisplayName()));
+		return dataMap;
+	}
 
-    @Override
-    public HashMap<AttributeConstants.Type, String> getAllType() {
-        HashMap<AttributeConstants.Type, String> dataMap = new HashMap<>();
-        Arrays.asList(AttributeConstants.Type.values()).forEach(dataType -> {
-            dataMap.put(dataType, dataType.getDisplayName());
-        });
-        return dataMap;
-    }
+	@Override
+	public EnumMap<AttributeConstants.Type, String> getAllType() {
+		EnumMap<AttributeConstants.Type, String> dataMap = new EnumMap<>(AttributeConstants.Type.class);
+		Arrays.asList(AttributeConstants.Type.values())
+				.forEach(dataType -> dataMap.put(dataType, dataType.getDisplayName()));
+		return dataMap;
+	}
 
-    @Override
-    public HashMap<AttributeConstants.ConstraintType, String> getAllConstraintType() {
-        HashMap<AttributeConstants.ConstraintType, String> dataMap = new HashMap<>();
-        Arrays.asList(AttributeConstants.ConstraintType.values()).forEach(dataType -> {
-            dataMap.put(dataType, dataType.getDisplayName());
-        });
-        return dataMap;
-    }
+	@Override
+	public EnumMap<AttributeConstants.ConstraintType, String> getAllConstraintType() {
+		EnumMap<AttributeConstants.ConstraintType, String> dataMap = new EnumMap<>(
+				AttributeConstants.ConstraintType.class);
+		Arrays.asList(AttributeConstants.ConstraintType.values())
+				.forEach(dataType -> dataMap.put(dataType, dataType.getDisplayName()));
+		return dataMap;
+	}
 
-    @Override
-    public List<IDType> getAllIdType() {
-        return Arrays.asList(IDType.values());
-    }
+	@Override
+	public EnumMap<IDType, String> getAllIdType() {
+		EnumMap<IDType, String> dataMap = new EnumMap<>(IDType.class);
+		Arrays.asList(IDType.values()).forEach(item -> dataMap.put(item, item.toString()));
+		return dataMap;
+	}
 
-    @Override
-    public HashMap<Condition.ConditionType, String> getAllConditionType() {
-        HashMap<Condition.ConditionType, String> dataMap = new HashMap<>();
-        Arrays.asList(Condition.ConditionType.values()).forEach(dataType -> {
-            dataMap.put(dataType, dataType.getValue());
-        });
-        return dataMap;
-    }
+	@Override
+	public EnumMap<Condition.ConditionType, String> getAllConditionType() {
+		EnumMap<Condition.ConditionType, String> dataMap = new EnumMap<>(Condition.ConditionType.class);
+		Arrays.asList(Condition.ConditionType.values()).forEach(dataType -> 
+			dataMap.put(dataType, dataType.getValue())
+		);
+		return dataMap;
+	}
 
-    @Override
-    public HashMap<Condition.OperatorType, String> getAllOperatorType() {
-        HashMap<Condition.OperatorType, String> dataMap = new HashMap<>();
-        Arrays.asList(Condition.OperatorType.values()).forEach(dataType -> {
-            dataMap.put(dataType, dataType.getValue());
-        });
-        return dataMap;
-    }
+	@Override
+	public EnumMap<Condition.OperatorType, String> getAllOperatorType() {
+		EnumMap<Condition.OperatorType, String> dataMap = new EnumMap<>(Condition.OperatorType.class);
+		Arrays.asList(Condition.OperatorType.values()).forEach(dataType -> 
+			dataMap.put(dataType, dataType.getValue())
+		);
+		return dataMap;
+	}
 
-    @Override
-    public HashMap<Condition.OperandType, String> getAllOperandType() {
-        HashMap<Condition.OperandType, String> dataMap = new HashMap<>();
-        Arrays.asList(Condition.OperandType.values()).forEach(dataType -> {
-            dataMap.put(dataType, dataType.getValue());
-        });
-        return dataMap;
-    }
+	@Override
+	public EnumMap<Condition.OperandType, String> getAllOperandType() {
+		EnumMap<Condition.OperandType, String> dataMap = new EnumMap<>(Condition.OperandType.class);
+		Arrays.asList(Condition.OperandType.values()).forEach(dataType -> 
+			dataMap.put(dataType, dataType.getValue())
+		);
+		return dataMap;
+	}
 
 }

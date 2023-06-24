@@ -1,18 +1,25 @@
 package com.sim.spriced.defnition.data.service;
 
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
 import com.sim.spriced.framework.annotations.IDType;
 import com.sim.spriced.framework.models.AttributeConstants;
 import com.sim.spriced.framework.models.Condition;
 
-import java.util.HashMap;
-import java.util.List;
-
 public interface IMasterDataService {
-    HashMap<AttributeConstants.DataType, String> getAllDataType();
-    HashMap<AttributeConstants.Type, String> getAllType();
-    HashMap<AttributeConstants.ConstraintType, String> getAllConstraintType();
-    List<IDType> getAllIdType();
-    HashMap<Condition.ConditionType, String> getAllConditionType();
-    HashMap<Condition.OperatorType, String> getAllOperatorType();
-    HashMap<Condition.OperandType, String> getAllOperandType();
+	EnumMap<AttributeConstants.DataType, String> getAllDataType();
+
+	EnumMap<AttributeConstants.Type, String> getAllType();
+
+	EnumMap<AttributeConstants.ConstraintType, String> getAllConstraintType();
+
+	EnumMap<IDType,String> getAllIdType();
+
+	EnumMap<Condition.ConditionType, String> getAllConditionType();
+
+	EnumMap<Condition.OperatorType, String> getAllOperatorType();
+
+	EnumMap<Condition.OperandType, String> getAllOperandType();
 }

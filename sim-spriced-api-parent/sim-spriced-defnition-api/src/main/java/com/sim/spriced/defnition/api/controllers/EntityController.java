@@ -18,11 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sim.spriced.defnition.api.dto.EntityDto;
-import com.sim.spriced.defnition.api.dto.RuleDto;
 import com.sim.spriced.defnition.api.dto.mapper.EntityDtoMapper;
 import com.sim.spriced.defnition.data.service.IEntityDefnitionService;
 import com.sim.spriced.framework.models.EntityDefnition;
-import com.sim.spriced.framework.models.Rule;
 
 import io.micrometer.core.annotation.Timed;
 
