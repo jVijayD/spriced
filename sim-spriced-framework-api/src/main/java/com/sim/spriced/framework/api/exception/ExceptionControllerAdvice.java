@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.sim.spriced.framework.exceptions.data.NotFoundException;
 import com.sim.spriced.framework.exceptions.data.ReferentialIntegrityException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -71,7 +72,13 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.METHOD_NOT_ALLOWED);
     }
     
-    
+    @ExceptionHandler({ResourceNotFoundException.class,NotFoundException.class})
+    public ResponseEntity<?> resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false),ex.getErrorCode());
+        errorDetails.setRequestURI(((ServletWebRequest)request).getRequest().getRequestURI());
+        errorDetails.setDetails(ex.getExtraData());
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
     
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(
@@ -80,10 +87,10 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         String error = "No handler found for " + ex.getHttpMethod() + " " + ex.getRequestURL();
         ErrorDetails errorDetails = new ErrorDetails(new Date(), error, request.getDescription(false),errorCode);
         errorDetails.setRequestURI(((ServletWebRequest)request).getRequest().getRequestURI());
-        
-        
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
+    
+    
     
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(

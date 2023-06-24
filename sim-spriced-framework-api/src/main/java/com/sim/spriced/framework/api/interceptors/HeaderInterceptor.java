@@ -16,12 +16,12 @@ import com.sim.spriced.framework.context.RequestContext;
  */
 public class HeaderInterceptor implements HandlerInterceptor {
 	
-	private static final String EXTENSION="";//X-Kong-Jwt-Claim-
-	private static final String TENANT = "tenant";
-	private static final String USER = "user";
-	private static final String TRANSACTION_ID = "transactionId";
-	private static final String ROLES = "roles";
-	private static final String APPLICATIONS = "applications";
+	public static final String EXTENSION="";//X-Kong-Jwt-Claim-
+	public static final String TENANT = EXTENSION+"tenant";
+	public static final String USER = EXTENSION+"user";
+	public static final String TRANSACTION_ID = EXTENSION+"transactionId";
+	public static final String ROLES = EXTENSION+"roles";
+	public static final String APPLICATIONS = EXTENSION+"applications";
 
 	@Autowired
 	SPricedContextManager contextManager;
@@ -35,11 +35,11 @@ public class HeaderInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		String tenant = request.getHeader(EXTENSION+TENANT);
-		String user = request.getHeader(EXTENSION+USER);
-		String txId = request.getHeader(EXTENSION+TRANSACTION_ID);
-		String[] roles = request.getHeader(EXTENSION+ROLES) != null ? request.getHeader(EXTENSION+ROLES).split(",") : new String[0];
-		String[] applications = request.getHeader(EXTENSION+APPLICATIONS) != null ? request.getHeader(EXTENSION+APPLICATIONS).split(",")
+		String tenant = request.getHeader(TENANT);
+		String user = request.getHeader(USER);
+		String txId = request.getHeader(TRANSACTION_ID);
+		String[] roles = request.getHeader(ROLES) != null ? request.getHeader(ROLES).split(",") : new String[0];
+		String[] applications = request.getHeader(APPLICATIONS) != null ? request.getHeader(APPLICATIONS).split(",")
 				: new String[0];
 
 		requestContext.setApplications(applications);

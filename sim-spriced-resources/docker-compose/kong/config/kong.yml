@@ -34,6 +34,8 @@ plugins:
   - name: jwt
     config:
       key_claim_name: kid
+      claims_to_verify:
+      - exp
 
   - name: rate-limiting
     config:

@@ -16,6 +16,6 @@ import lombok.NoArgsConstructor;
 public class EntityDataDto {
 	@NotEmpty
 	private List<Object> data;
-	private List<Attribute> attributes;
+	//private List<Attribute> attributes;
 	
 }

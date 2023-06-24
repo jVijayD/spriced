@@ -21,7 +21,9 @@
 		<module>sim-spriced-defnition-api</module>
 		<module>../sim-spriced-data</module>
 		<module>sim-spriced-data-api</module>
+		<module>sim-spriced-reports-api</module>
 	</modules>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -85,15 +87,12 @@
 			<artifactId>mapstruct</artifactId>
 			<version>1.5.3.Final</version>
 		</dependency>
-		
-		<!-- Feign Client-->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-openfeign</artifactId>
-		</dependency>
-		
+
+
+
+
 		<!-- Instrumentation -->
-		
+
 
 		<!-- Custom Dependency -->
 		<dependency>
@@ -108,17 +107,5 @@
 			<version>0.0.1</version>
 		</dependency>
 	</dependencies>
-	<dependencyManagement>
-     <dependencies>
-		 <!-- Feigh Client -->
-         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-dependencies</artifactId>
-            <version>2021.0.1</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
 
 </project>

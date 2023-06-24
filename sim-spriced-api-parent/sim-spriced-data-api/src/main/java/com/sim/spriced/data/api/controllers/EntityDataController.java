@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.hibernate.persister.walking.spi.EntityDefinition;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -23,94 +24,144 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sim.spriced.data.api.clients.IDefnitionService;
 import com.sim.spriced.data.api.dto.EntityDataDto;
 import com.sim.spriced.data.api.dto.EntityDataResultDto;
+import com.sim.spriced.data.api.dto.EntityDto;
 import com.sim.spriced.data.model.EntityData;
 import com.sim.spriced.data.model.EntityDataResult;
 import com.sim.spriced.data.service.IEntityDataService;
+import com.sim.spriced.framework.api.exception.ResourceNotFoundException;
+import com.sim.spriced.framework.exceptions.data.NotFoundException;
+import com.sim.spriced.framework.models.Attribute;
+import com.sim.spriced.framework.models.EntityDefnition;
 
 import io.micrometer.core.annotation.Timed;
 
 @RestController()
-@RequestMapping("/data/{entity}")
+@RequestMapping("/entity/{entityId}/data")
 @CrossOrigin(origins = "*")
 public class EntityDataController {
+	
+	private static final String MESSAGE = "Entity with id -[%d] not present.";
 
 	@Autowired
 	IEntityDataService dataService;
+	
+	@Autowired
+	IDefnitionService defnitionService;
 
 	@Timed(value = "data.getAll.time", description = "Time taken to return all data")
 	@GetMapping("")
-	public ResponseEntity<JSONArray> get(@PathVariable String entity) throws ParseException {
-		EntityData data = new EntityData();
-		data.setEntityName(entity);
-		var result = this.dataService.fetchAll(data);
-		return new ResponseEntity<>(this.convertToSimpleJSONArray(result), HttpStatus.OK);
+	public ResponseEntity<JSONArray> get(@PathVariable int entityId) throws ParseException {
+		EntityDto entityDto = this.getEntity(entityId);
+		if(entityDto!=null) {
+			EntityData data = new EntityData();
+			data.setEntityName(entityDto.getName());
+			data.setAttributes(entityDto.getAttributes());
+			var result = this.dataService.fetchAll(data);
+			return new ResponseEntity<>(this.convertToSimpleJSONArray(result), HttpStatus.OK);
+		}
+		else {
+			throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
+		}
 	}
 
-	@Timed(value = "data.get.time", description = "Time taken to return data")
+	@Timed(value = "data.get.time", description = "Time taken to return data.")
 	@GetMapping("/{id}")
-	public ResponseEntity<JSONObject> get(@PathVariable String entity, @PathVariable String id, @RequestParam(required = false) boolean number) throws ParseException {
-		EntityData data = new EntityData();
-		data.setEntityName(entity);
-		List<org.json.JSONObject> jsonArray = new ArrayList<>();
-		org.json.JSONObject jsonObj = new org.json.JSONObject();
-		jsonObj.put("code", number?Integer.parseInt(id):id);
-		jsonArray.add(jsonObj);
-		data.setValues(jsonArray);
-		var result = this.dataService.fetchOne(data);
-		return new ResponseEntity<>(this.convertToSimpleJSONObject(result), HttpStatus.OK);
+	public ResponseEntity<JSONObject> get(@PathVariable int entityId, @PathVariable String id, @RequestParam(required = false) boolean number) throws ParseException {
+		EntityDto entityDto = this.getEntity(entityId);
+		if(entityDto!=null) {
+			EntityData data = new EntityData();
+			data.setEntityName(entityDto.getName());
+			data.setAttributes(entityDto.getAttributes());
+			
+			List<org.json.JSONObject> jsonArray = new ArrayList<>();
+			org.json.JSONObject jsonObj = new org.json.JSONObject();
+			jsonObj.put("code", number?Integer.parseInt(id):id);
+			jsonArray.add(jsonObj);
+			data.setValues(jsonArray);
+			var result = this.dataService.fetchOne(data);
+			return new ResponseEntity<>(this.convertToSimpleJSONObject(result), HttpStatus.OK);
+		}
+		else {
+			throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
+		}
+		
 	}
 
-	@Timed(value = "data.create-bulk.time", description = "Time taken to create-bulk data")
+	@Timed(value = "data.create-bulk.time", description = "Time taken to create-bulk data.")
 	@PostMapping("/bulk")
-	public ResponseEntity<EntityDataResultDto> createBulk(@Valid @RequestBody EntityDataDto data,
-			@PathVariable String entity) {
-		EntityData convertedData = new EntityData();
-		convertedData.setEntityName(entity);
-		convertedData.setValues(this.convertValuesToJson(data.getData()));
-		convertedData.setAttributes(data.getAttributes());
-		EntityDataResult result = this.dataService.upsertBulk(convertedData);
-		EntityDataResultDto resultDto = new EntityDataResultDto();
-		resultDto.setRowsChanged(result.getRowsChanged().length);
-		return new ResponseEntity<>(resultDto, HttpStatus.CREATED);
+	public ResponseEntity<EntityDataResultDto> createBulk(@PathVariable int entityId,@Valid @RequestBody EntityDataDto data) {
+		EntityDto entityDto = this.getEntity(entityId);
+		if(entityDto!=null) {
+			EntityData convertedData = new EntityData();
+			convertedData.setEntityName(entityDto.getName());
+			convertedData.setValues(this.convertValuesToJson(data.getData()));
+			convertedData.setAttributes(entityDto.getAttributes());
+			EntityDataResult result = this.dataService.upsertBulk(convertedData);
+			EntityDataResultDto resultDto = new EntityDataResultDto();
+			resultDto.setRowsChanged(result.getRowsChanged().length);
+			return new ResponseEntity<>(resultDto, HttpStatus.CREATED);
+		}
+		else {
+			throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
+		}
+		
+		
 	}
 
-	@Timed(value = "data.create.time", description = "Time taken to create data")
+	@Timed(value = "data.create.time", description = "Time taken to create data.")
 	@PostMapping()
 	public ResponseEntity<EntityDataResultDto> create(@Valid @RequestBody EntityDataDto data,
-			@PathVariable String entity) {
-		EntityData convertedData = new EntityData();
-		convertedData.setEntityName(entity);
-		convertedData.setValues(this.convertValuesToJson(data.getData()));
-		convertedData.setAttributes(data.getAttributes());
-		EntityDataResult result = this.dataService.upsert(convertedData);
+			@PathVariable int entityId) {
 
-		EntityDataResultDto resultDto = new EntityDataResultDto();
-		resultDto.setRowsChanged(result.getRowsChanged().length);
-		resultDto.setResult(result.getResult());
+		EntityDto entityDto = this.getEntity(entityId);
+		if(entityDto!=null) {
+			EntityData convertedData = new EntityData();
+			convertedData.setEntityName(entityDto.getName());
+			convertedData.setValues(this.convertValuesToJson(data.getData()));
+			convertedData.setAttributes(entityDto.getAttributes());
+			EntityDataResult result = this.dataService.upsert(convertedData);
 
-		return new ResponseEntity<>(resultDto, HttpStatus.CREATED);
+			EntityDataResultDto resultDto = new EntityDataResultDto();
+			resultDto.setRowsChanged(result.getRowsChanged().length);
+			resultDto.setResult(result.getResult());
+
+			return new ResponseEntity<>(resultDto, HttpStatus.CREATED);
+		}
+		else {
+			throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
+		}
 	}
 
 	@Timed(value = "data.create.time", description = "Time taken to create data")
 	@PutMapping()
 	public ResponseEntity<EntityDataResultDto> update(@Valid @RequestBody EntityDataDto data,
-			@PathVariable String entity) {
-		List<org.json.JSONObject> jsonObjets = this.convertValuesToJson(data.getData());
-		jsonObjets.get(0).put("change", true);
+			@PathVariable int entityId) {
+	
+		EntityDto entityDto = this.getEntity(entityId);
+		if(entityDto!=null) {
+			List<org.json.JSONObject> jsonObjets = this.convertValuesToJson(data.getData());
+			jsonObjets.get(0).put("change", true);
 
-		EntityData convertedData = new EntityData();
-		convertedData.setEntityName(entity);
-		convertedData.setValues(jsonObjets);
-		convertedData.setAttributes(data.getAttributes());
-		EntityDataResult result = this.dataService.upsert(convertedData);
+			EntityData convertedData = new EntityData();
+			convertedData.setEntityName(entityDto.getName());
+			convertedData.setValues(jsonObjets);
+			convertedData.setAttributes(entityDto.getAttributes());
+			EntityDataResult result = this.dataService.upsert(convertedData);
 
-		EntityDataResultDto resultDto = new EntityDataResultDto();
-		resultDto.setRowsChanged(result.getRowsChanged().length);
-		resultDto.setResult(result.getResult());
+			EntityDataResultDto resultDto = new EntityDataResultDto();
+			resultDto.setRowsChanged(result.getRowsChanged().length);
+			resultDto.setResult(result.getResult());
 
-		return new ResponseEntity<>(resultDto, HttpStatus.CREATED);
+			return new ResponseEntity<>(resultDto, HttpStatus.CREATED);
+		}
+		else {
+			throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
+		}
+		
+		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -126,5 +177,9 @@ public class EntityDataController {
 	private JSONObject convertToSimpleJSONObject(org.json.JSONObject result) throws ParseException {
 		JSONParser parser = new JSONParser();
 		return (JSONObject) parser.parse(result.toString());
+	}
+	
+	private EntityDto getEntity(int id) {
+		return this.defnitionService.getEntityById(id).getBody();
 	}
 }

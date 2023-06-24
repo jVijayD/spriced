@@ -6,6 +6,9 @@ import java.util.List;
 import javax.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -43,6 +46,7 @@ public class EntityDefnitionService  extends BaseService
 	}
 
 	@Override
+	@Transactional
 	public int delete(String name,int groupId) {
 		EntityDefnition entityDefnition = this.defnitionRepo.getByName(name, groupId);
 		return this.delete(entityDefnition);
@@ -58,6 +62,7 @@ public class EntityDefnitionService  extends BaseService
 	
 	@Override
 	@Transactional
+	@CachePut(value="entities",key="#entityDefnition.id")
 	public EntityDefnition update(EntityDefnition entityDefnition) {
 		entityDefnition.validate();
 		EntityDefnition previous = this.defnitionRepo.get(entityDefnition.getId());
@@ -146,11 +151,14 @@ public class EntityDefnitionService  extends BaseService
 		return arg;
 	}
 
+	@Cacheable(value="entities",key="#id")
 	@Override
 	public EntityDefnition fetch(int id, boolean loadDisabled) {
 		return this.defnitionRepo.get(id, loadDisabled);
 	}
 
+	@CacheEvict(value="entities",key="#id")
+	@Transactional
 	@Override
 	public int delete(int id) {
 		EntityDefnition defnition = this.defnitionRepo.get(id);
