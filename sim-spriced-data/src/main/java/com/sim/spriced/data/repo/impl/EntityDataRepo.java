@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.sim.spriced.framework.models.AttributeConstants;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -43,10 +44,10 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 			List<Query> queries = new ArrayList<>();
 			data.getValues().forEach(jsonObj -> {
 
-				Pair<Map<Field<?>, Object>, Map<Field<?>, Object>> fieldValuesWithPrimaryKey = this
-						.getFieldValues(data.getAttributes(), jsonObj);
-
 				boolean isChange = jsonObj.has(CHANGE) && jsonObj.getBoolean(CHANGE);
+
+				Pair<Map<Field<?>, Object>, Map<Field<?>, Object>> fieldValuesWithPrimaryKey = this
+						.getFieldValues(data.getAttributes(), jsonObj, isChange);
 
 				queries.add(this.createUpsertQuery(entityName, fieldValuesWithPrimaryKey.getLeft(),
 						fieldValuesWithPrimaryKey.getRight(), isChange));
@@ -101,7 +102,7 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 	}
 
 	private Pair<Map<Field<?>, Object>, Map<Field<?>, Object>> getFieldValues(List<Attribute> attributes,
-			JSONObject jsonObject) {
+			JSONObject jsonObject, Boolean isChange) {
 		Map<Field<?>, Object> fieldValues = new HashMap<>();
 		Map<Field<?>, Object> primaryKeyValues = new HashMap<>();
 
@@ -111,10 +112,15 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 		attributes.forEach(item -> {
 			if (jsonObject.has(item.getName())) {
 				boolean isPrimaryKey = item.getConstraintType() == ConstraintType.PRIMARY_KEY;
+				AttributeConstants.DataType dataType = item.getDataType();
 				if (!isPrimaryKey) {
 					fieldValues.put(column(item.getName()), jsonObject.get(item.getName()));
 				} else {
-					primaryKeyValues.put(column(item.getName()), jsonObject.get(item.getName()));
+					if (!isChange && dataType.equals(AttributeConstants.DataType.STRING_VAR)){
+						fieldValues.put(column(item.getName()), jsonObject.get(item.getName()));
+					} else {
+						primaryKeyValues.put(column(item.getName()), jsonObject.get(item.getName()));
+					}
 				}
 			}
 		});
@@ -201,10 +207,10 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 			String entityName = data.getEntityName();
 			JSONObject jsonObj = data.getValues().get(0);
 
-			Pair<Map<Field<?>, Object>, Map<Field<?>, Object>> fieldValuesWithPrimaryKey = this
-					.getFieldValues(data.getAttributes(), jsonObj);
-
 			boolean isChange = jsonObj.has(CHANGE) && jsonObj.getBoolean(CHANGE);
+
+			Pair<Map<Field<?>, Object>, Map<Field<?>, Object>> fieldValuesWithPrimaryKey = this
+					.getFieldValues(data.getAttributes(), jsonObj, isChange);
 
 			return this.executeUpsertQuery(entityName, fieldValuesWithPrimaryKey.getLeft(),
 					fieldValuesWithPrimaryKey.getRight(), isChange);
