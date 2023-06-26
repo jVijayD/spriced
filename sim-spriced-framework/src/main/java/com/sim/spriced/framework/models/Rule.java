@@ -1,5 +1,7 @@
 package com.sim.spriced.framework.models;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Table;
 
@@ -49,11 +51,11 @@ public class Rule extends BaseEntity {
 	
 	@Column(name=Rule.TableConstants.CONDITION)
 	@ExtraColumnData(convertToJson = true, exclude = true)
-	private Condition condition;
+	private List<Condition> condition;
 	
-	@Column(name=Rule.TableConstants.ACTION)
+	@Column(name=Rule.TableConstants.CONDITIONAL_ACTION)
 	@ExtraColumnData(convertToJson = true, exclude = true)
-	private Action action;
+	private ConditionalAction conditionalAction;
 
 	public Rule(String name) {
 		this.name = name;
@@ -85,6 +87,7 @@ public class Rule extends BaseEntity {
 		public static final String NOTIFICATION = "notification";
 		public static final String CONDITION = "condition";
 		public static final String ACTION = "action";
+		public static final String CONDITIONAL_ACTION= "conditional_action";
 		private TableConstants() {}
 	}
 
