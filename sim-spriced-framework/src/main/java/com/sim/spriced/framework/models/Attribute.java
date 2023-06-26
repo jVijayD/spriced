@@ -30,6 +30,8 @@ public class Attribute {
 	private String referencedTable = null;
 	private String businessIdAppender=null;
 	private Object referencedTableId = null;
+	private String dateFormat = null;
+	private int numberOfDecimalValues = 0;
 	
 	//constraints
 	private ConstraintType constraintType = ConstraintType.NONE;
