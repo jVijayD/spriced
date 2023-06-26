@@ -29,6 +29,7 @@ public class Attribute {
 	
 	private String referencedTable = null;
 	private String businessIdAppender=null;
+	private Object referencedTableId = null;
 	
 	//constraints
 	private ConstraintType constraintType = ConstraintType.NONE;
