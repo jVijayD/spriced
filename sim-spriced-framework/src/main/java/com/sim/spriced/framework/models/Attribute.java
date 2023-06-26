@@ -29,6 +29,10 @@ public class Attribute {
 	
 	private String referencedTable = null;
 	private String businessIdAppender=null;
+	//type of referencedTableId can be string or integer
+	private Object referencedTableId = null;
+	private String formatter = null;
+	private int numberOfDecimalValues = 0;
 	
 	//constraints
 	private ConstraintType constraintType = ConstraintType.NONE;
