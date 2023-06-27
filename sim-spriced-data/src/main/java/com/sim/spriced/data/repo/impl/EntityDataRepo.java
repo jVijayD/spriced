@@ -1,20 +1,12 @@
 package com.sim.spriced.data.repo.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.sim.spriced.framework.models.AttributeConstants;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jooq.Condition;
-import org.jooq.Field;
-import org.jooq.Query;
+import org.jooq.*;
 import org.jooq.Record;
-import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -86,18 +78,17 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 	private Map<String,Object> executeUpsertQuery(String entityName, Map<Field<?>, Object> fieldValues,
 			Map<Field<?>, Object> fieldValuesPrimaryKey, boolean isChange) {
 		Field<?> col = column("code");
-		Map<String,Object> jsonObj = new HashMap<>();
+		Collection<Field<?>> allFields = new ArrayList<>(fieldValues.keySet());
+		if (!fieldValues.containsKey(col)){
+			allFields.add(col);
+		}
 		if (!isChange) {
 			Collection<Field<?>> fields = new ArrayList<>(fieldValues.keySet());
 			Collection<Object> values = fieldValues.values();
-			Record rec = this.context.insertInto(table(entityName), fields).values(values).returning(col).fetchOne();
-			jsonObj.put("code", rec.get(0));
-			return jsonObj;
+			return this.context.insertInto(table(entityName), fields).values(values).returning(allFields).fetchOne().intoMap();
 		} else {
-			Record rec = this.context.update(table(entityName)).set(fieldValues)
-					.where(DSL.condition(fieldValuesPrimaryKey)).returning(col).fetchOne();
-			jsonObj.put("code", rec.get(0));
-			return jsonObj;
+			return this.context.update(table(entityName)).set(fieldValues)
+					.where(DSL.condition(fieldValuesPrimaryKey)).returning(allFields).fetchOne().intoMap();
 		}
 	}
 
