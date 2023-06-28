@@ -89,8 +89,6 @@
 		</dependency>
 
 
-
-
 		<!-- Instrumentation -->
 
 
@@ -107,5 +105,17 @@
 			<version>0.0.1</version>
 		</dependency>
 	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<scope>provided</scope>
+				<version>1.18.28</version>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
 
 </project>

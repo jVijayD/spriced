@@ -51,6 +51,15 @@ services:
   #   networks:
   #     - kong-net
   #   restart: on-failure
+  konga:
+    image: pantsel/konga
+    environment:
+      KONGA_HOOK_TIMEOUT: 10000
+      restart: on-failure
+    ports:
+      - "1337:1337"
+    networks:
+      - kong-net
 
   kong:
     image: spriced-gateway:latest
@@ -95,6 +104,7 @@ services:
       - ./config:/opt/kong
     security_opt:
       - no-new-privileges
+      
 
   # db:
   #   image: postgres:9.5
@@ -122,4 +132,4 @@ services:
 # secrets:
 #   kong_postgres_password:
 #     file: ./POSTGRES_PASSWORD
-
+ 

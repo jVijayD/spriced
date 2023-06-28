@@ -1,19 +1,12 @@
 package com.sim.spriced.data.repo.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.sim.spriced.framework.models.AttributeConstants;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jooq.Condition;
-import org.jooq.Field;
-import org.jooq.Query;
+import org.jooq.*;
 import org.jooq.Record;
-import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -43,10 +36,10 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 			List<Query> queries = new ArrayList<>();
 			data.getValues().forEach(jsonObj -> {
 
-				Pair<Map<Field<?>, Object>, Map<Field<?>, Object>> fieldValuesWithPrimaryKey = this
-						.getFieldValues(data.getAttributes(), jsonObj);
-
 				boolean isChange = jsonObj.has(CHANGE) && jsonObj.getBoolean(CHANGE);
+
+				Pair<Map<Field<?>, Object>, Map<Field<?>, Object>> fieldValuesWithPrimaryKey = this
+						.getFieldValues(data.getAttributes(), jsonObj, isChange);
 
 				queries.add(this.createUpsertQuery(entityName, fieldValuesWithPrimaryKey.getLeft(),
 						fieldValuesWithPrimaryKey.getRight(), isChange));
@@ -85,23 +78,22 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 	private Map<String,Object> executeUpsertQuery(String entityName, Map<Field<?>, Object> fieldValues,
 			Map<Field<?>, Object> fieldValuesPrimaryKey, boolean isChange) {
 		Field<?> col = column("code");
-		Map<String,Object> jsonObj = new HashMap<>();
+		Collection<Field<?>> allFields = new ArrayList<>(fieldValues.keySet());
+		if (!fieldValues.containsKey(col)){
+			allFields.add(col);
+		}
 		if (!isChange) {
 			Collection<Field<?>> fields = new ArrayList<>(fieldValues.keySet());
 			Collection<Object> values = fieldValues.values();
-			Record rec = this.context.insertInto(table(entityName), fields).values(values).returning(col).fetchOne();
-			jsonObj.put("code", rec.get(0));
-			return jsonObj;
+			return this.context.insertInto(table(entityName), fields).values(values).returning(allFields).fetchOne().intoMap();
 		} else {
-			Record rec = this.context.update(table(entityName)).set(fieldValues)
-					.where(DSL.condition(fieldValuesPrimaryKey)).returning(col).fetchOne();
-			jsonObj.put("code", rec.get(0));
-			return jsonObj;
+			return this.context.update(table(entityName)).set(fieldValues)
+					.where(DSL.condition(fieldValuesPrimaryKey)).returning(allFields).fetchOne().intoMap();
 		}
 	}
 
 	private Pair<Map<Field<?>, Object>, Map<Field<?>, Object>> getFieldValues(List<Attribute> attributes,
-			JSONObject jsonObject) {
+			JSONObject jsonObject, Boolean isChange) {
 		Map<Field<?>, Object> fieldValues = new HashMap<>();
 		Map<Field<?>, Object> primaryKeyValues = new HashMap<>();
 
@@ -111,10 +103,15 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 		attributes.forEach(item -> {
 			if (jsonObject.has(item.getName())) {
 				boolean isPrimaryKey = item.getConstraintType() == ConstraintType.PRIMARY_KEY;
+				AttributeConstants.DataType dataType = item.getDataType();
 				if (!isPrimaryKey) {
 					fieldValues.put(column(item.getName()), jsonObject.get(item.getName()));
 				} else {
-					primaryKeyValues.put(column(item.getName()), jsonObject.get(item.getName()));
+					if (!isChange && dataType.equals(AttributeConstants.DataType.STRING_VAR)){
+						fieldValues.put(column(item.getName()), jsonObject.get(item.getName()));
+					} else {
+						primaryKeyValues.put(column(item.getName()), jsonObject.get(item.getName()));
+					}
 				}
 			}
 		});
@@ -201,10 +198,10 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 			String entityName = data.getEntityName();
 			JSONObject jsonObj = data.getValues().get(0);
 
-			Pair<Map<Field<?>, Object>, Map<Field<?>, Object>> fieldValuesWithPrimaryKey = this
-					.getFieldValues(data.getAttributes(), jsonObj);
-
 			boolean isChange = jsonObj.has(CHANGE) && jsonObj.getBoolean(CHANGE);
+
+			Pair<Map<Field<?>, Object>, Map<Field<?>, Object>> fieldValuesWithPrimaryKey = this
+					.getFieldValues(data.getAttributes(), jsonObj, isChange);
 
 			return this.executeUpsertQuery(entityName, fieldValuesWithPrimaryKey.getLeft(),
 					fieldValuesWithPrimaryKey.getRight(), isChange);

@@ -69,7 +69,7 @@ public class EntityDataController {
 
 	@Timed(value = "data.get.time", description = "Time taken to return data.")
 	@GetMapping("/{id}")
-	public ResponseEntity<JSONObject> get(@PathVariable int entityId, @PathVariable String id, @RequestParam(required = false) boolean number) throws ParseException {
+	public ResponseEntity<JSONObject> get(@PathVariable int entityId, @PathVariable String id) throws ParseException {
 		EntityDto entityDto = this.getEntity(entityId);
 		if(entityDto!=null) {
 			EntityData data = new EntityData();
@@ -78,7 +78,7 @@ public class EntityDataController {
 			
 			List<org.json.JSONObject> jsonArray = new ArrayList<>();
 			org.json.JSONObject jsonObj = new org.json.JSONObject();
-			jsonObj.put("code", number?Integer.parseInt(id):id);
+			jsonObj.put("code", entityDto.getAutoNumberCode()?Integer.parseInt(id):id);
 			jsonArray.add(jsonObj);
 			data.setValues(jsonArray);
 			var result = this.dataService.fetchOne(data);
