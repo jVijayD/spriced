@@ -17,4 +17,5 @@ public interface IRuleRepo {
 	public Rule fetch(Integer id);
 	public Rule fetch(Rule rule);
 	public Rule change(Rule rule);
+	public List<Rule> fetchByEntityId(int id);
 }

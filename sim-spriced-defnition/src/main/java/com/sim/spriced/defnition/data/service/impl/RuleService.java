@@ -64,5 +64,10 @@ public class RuleService implements IRuleService {
 	public Page<Rule> fetchAll(Pageable pageable) {
 		return this.ruleRepo.fetchAll(pageable);
 	}
+	
+	@Override
+	public List<Rule> fetchByEntityId(int id) {
+		return this.ruleRepo.fetchByEntityId(id);
+	}
 
 }

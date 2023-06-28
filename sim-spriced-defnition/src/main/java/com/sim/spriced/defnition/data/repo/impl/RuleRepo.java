@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import com.sim.spriced.defnition.data.repo.IRuleRepo;
 import com.sim.spriced.framework.constants.ModelConstants;
-import com.sim.spriced.framework.models.Action;
 import com.sim.spriced.framework.models.Condition;
+import com.sim.spriced.framework.models.ConditionalAction;
 import com.sim.spriced.framework.models.Rule;
 import com.sim.spriced.framework.repo.BaseRepo;
 
@@ -32,6 +32,12 @@ public class RuleRepo extends BaseRepo implements IRuleRepo {
 	@Override
 	public List<Rule> fetchAll() {
 		return super.fetchAll(Rule.TableConstants.TABLE, null, this::convertToRule);
+	}
+	
+	@Override
+	public List<Rule> fetchByEntityId(int id) {
+		var condition = column(Rule.TableConstants.ENTITY_ID).eq(id);
+		return super.fetchAll(Rule.TableConstants.TABLE, condition, this::convertToRule);
 	}
 
 	@Override
@@ -64,8 +70,8 @@ public class RuleRepo extends BaseRepo implements IRuleRepo {
 	private Rule convertToRule(Record rec) {
 		Rule result = new Rule();
 		
-		Condition condition = super.convertJsonToObject(rec, Condition.class, Rule.TableConstants.TABLE, Rule.TableConstants.CONDITION);
-		Action action =  super.convertJsonToObject(rec, Action.class, Rule.TableConstants.TABLE, Rule.TableConstants.ACTION);
+		List<Condition> condition = super.convertJsonToList(rec, Condition.class, Rule.TableConstants.TABLE, Rule.TableConstants.CONDITION);
+		ConditionalAction conditionalAction =  super.convertJsonToObject(rec, ConditionalAction.class, Rule.TableConstants.TABLE, Rule.TableConstants.CONDITIONAL_ACTION);
 		
 		result.setId((Integer)(rec.get(Rule.TableConstants.ID)));
 		result.setDescription((String)rec.get(Rule.TableConstants.DESCRIPTION));
@@ -78,7 +84,7 @@ public class RuleRepo extends BaseRepo implements IRuleRepo {
 		result.setUpdatedBy((String)rec.get(ModelConstants.UPDATED_BY));
 		result.setUpdatedDate((Timestamp)rec.get(ModelConstants.UPDATED_DATE));
 		result.setCondition(condition);
-		result.setAction(action);
+		result.setConditionalAction(conditionalAction);
 		return result;
 	}
 	
