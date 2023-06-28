@@ -15,8 +15,8 @@ import lombok.Setter;
 //@Getter
 //@Setter
 //@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class RuleDto {
 	
 	private Integer id;
