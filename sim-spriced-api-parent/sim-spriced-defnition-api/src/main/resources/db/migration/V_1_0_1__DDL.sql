@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS rule RENAME COLUMN action TO conditional_action
