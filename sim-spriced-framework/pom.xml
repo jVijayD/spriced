@@ -109,13 +109,6 @@
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
-			<!--<dependency>
-				<groupId>org.jooq</groupId>
-				<artifactId>jooq</artifactId>
-				<version>3.18.5</version>
-			</dependency>-->
-
-
 			<dependency>
 				<groupId>org.json</groupId>
 				<artifactId>json</artifactId>

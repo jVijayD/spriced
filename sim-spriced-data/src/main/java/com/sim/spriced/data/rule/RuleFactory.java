@@ -14,13 +14,13 @@ public class RuleFactory {
 	private RuleFactory() {}
 	
 	public IRule<JSONObject> createInstance(Rule rule) {
-		List<IAction<JSONObject>> ifActionList = this.getActionList(rule.getAction());
-		List<IAction<JSONObject>> elseActionList = this.getActionList(rule.getAction());
+		List<IAction<JSONObject>> ifActionList = this.getActionList(rule.getConditionalAction().getIfActions());
+		List<IAction<JSONObject>> elseActionList = this.getActionList(rule.getConditionalAction().getElseActions());
 		return new ConditionalRule(rule,ifActionList,elseActionList);
 	}
 	
 	
-	private List<IAction<JSONObject>> getActionList(Action actions) {
+	private List<IAction<JSONObject>> getActionList(List<Action> actions) {
 		return null;
 	}
 }
