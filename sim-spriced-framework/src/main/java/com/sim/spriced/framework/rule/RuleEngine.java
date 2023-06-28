@@ -27,11 +27,15 @@ public class RuleEngine<T> {
 		rules.put(groupName, groupRules);
 
 	}
+	
+	public void addRules(List<IRule<T>> rule) {
+		rule.forEach(this::addRule);
+	}
 
 	public List<Result<T>> executeRules(T fact) {
 		return rules.keySet().stream().map(item -> {
 			List<IRule<T>> groupRules = rules.get(item);
-			return groupRules.stream().map(rul -> rul.apply(fact)).toList();
+			return groupRules.parallelStream().map(rul -> rul.apply(fact)).toList();
 		}).flatMap(Collection::stream).toList();
 	}
 }

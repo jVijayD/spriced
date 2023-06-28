@@ -109,11 +109,11 @@
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
+			<!--<dependency>
 				<groupId>org.jooq</groupId>
 				<artifactId>jooq</artifactId>
 				<version>3.18.5</version>
-			</dependency>
+			</dependency>-->
 
 
 			<dependency>
