@@ -15,5 +15,6 @@ public interface IRuleService {
 	Rule fetchByName(String name);
 	Rule fetch(int id);
 	List<Rule> fetchAll();
+	List<Rule> fetchByEntityId(int id);
 	Page<Rule> fetchAll(Pageable pageable);
 }

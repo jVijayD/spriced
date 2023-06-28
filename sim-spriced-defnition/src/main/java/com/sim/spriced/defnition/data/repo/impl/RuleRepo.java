@@ -33,6 +33,12 @@ public class RuleRepo extends BaseRepo implements IRuleRepo {
 	public List<Rule> fetchAll() {
 		return super.fetchAll(Rule.TableConstants.TABLE, null, this::convertToRule);
 	}
+	
+	@Override
+	public List<Rule> fetchByEntityId(int id) {
+		var condition = column(Rule.TableConstants.ENTITY_ID).eq(id);
+		return super.fetchAll(Rule.TableConstants.TABLE, condition, this::convertToRule);
+	}
 
 	@Override
 	public Page<Rule> fetchAll(Pageable pagable) {

@@ -42,6 +42,12 @@ public class RuleController {
 		return new ResponseEntity<>(mapper.toRuleDtoList(this.ruleService.fetchAll()), HttpStatus.OK);
 	}
 	
+	@Timed(value = "rule.getAll.time", description = "Time taken to return rules.")
+	@GetMapping("/entityId/{id}")
+	public ResponseEntity<List<RuleDto>> getFromEntityId(@PathVariable int id) {
+		return new ResponseEntity<>(mapper.toRuleDtoList(this.ruleService.fetchByEntityId(id)), HttpStatus.OK);
+	}
+	
 	@Timed(value = "rule.get.time", description = "Time taken to return rule.")
 	@GetMapping("/{id}")
 	public ResponseEntity<RuleDto> get(@PathVariable int id) {
