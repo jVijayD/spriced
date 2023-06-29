@@ -12,8 +12,33 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Action {
 	private String attributeId;
+	private ActionGroup actionGroup = ActionGroup.DEFAULT_VALUE_ACTION;
 	private ActionType actionType = ActionType.NONE;
 	private Object operand = null;
+	
+	public enum ActionGroup {
+		DEFAULT_VALUE_ACTION("default_value_action", "Used to group default actions"),
+		CHANGE_VALUE_ACTION("change_value_action", "Used to group change value actions"),
+		VALIDATION_ACTION("validation_action", "Used to group validating actions"),
+		EXTERNAL_ACTION("external_action", "Used to group external actions to start a workflow"),
+		USER_DEFINED_ACTION_SCRIPT("user_defined_action_script", "Used to group User defined scripts");
+		
+		private final String value;
+		private final String description;
+		
+		private ActionGroup(String value,String description) {
+			this.value = value;
+			this.description = description;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+	}
 	
 	public enum ActionType {
 		NONE("none", "Operator to mark as no operation"),
