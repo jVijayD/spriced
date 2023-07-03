@@ -1,21 +1,12 @@
 package com.sim.spriced.defnition.data.repo.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
+import java.util.*;
 //import java.util.EnumMap;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.Constraint;
-import org.jooq.CreateTableColumnStep;
-import org.jooq.DataType;
-import org.jooq.Field;
-import org.jooq.JSON;
-import org.jooq.Query;
-import org.jooq.XML;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.springframework.stereotype.Repository;
@@ -298,8 +289,9 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 		unique.forEach(attr -> constraint.add(DSL.constraint("uk_"+entityName+ "." + attr.getName()).unique(attr.getName())));
 
 		foreign.forEach(attr -> {
-			Constraint fkConstraint = DSL.constraint("fk_"+entityName+"." + attr.getName()).foreignKey(attr.getName())
-					.references(attr.getReferencedTable());
+			String reference = getReference(attr.getReferencedTable(), attr.getReferencedTableId());
+			Constraint fkConstraint = DSL.constraint("fk_"+entityName+"_" + attr.getName()).foreignKey(attr.getName())
+					.references(reference);
 			constraint.add(fkConstraint);
 		});
 
@@ -365,6 +357,20 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 	@FunctionalInterface
 	interface QuadFunction<A, B, C, D, R> {
 		R apply(A a, B b, C c, D d);
+	}
+
+	private String getReference(String referencedTable, Object referencedTableId) {
+		if (null!=referencedTable){
+			return referencedTable;
+
+		} else {
+			Map<Field<?>, Object> conditionsMap = new HashMap<>();
+			Field<?> idField = column("id");
+			conditionsMap.put(idField, Integer.parseInt(String.valueOf(referencedTableId)));
+			Condition condition = DSL.condition(conditionsMap);
+			Result<?> result = this.context.selectFrom(table("entity")).where(condition).fetch();
+			return String.valueOf(result.get(0).get("name"));
+		}
 	}
 
 }
