@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.sim.spriced.defnition.MultitenantTestConfiguration;
+//import com.sim.spriced.defnition.MultitenantTestConfiguration;
 import com.sim.spriced.defnition.data.repo.IEntityDefnitionRepo;
 import com.sim.spriced.defnition.data.repo.IGroupRepo;
 import com.sim.spriced.defnition.data.repo.IRuleRepo;
@@ -61,12 +62,14 @@ class RuleRepoTest {
 //		rule.setEntityId(1);
 //		rule.setPriority(1);
 //		rule.setStatus("In Progress");
+
 //		Condition condition = new Condition();
 //		condition.setAttributeId("12345678");
 //		condition.setConditionType(ConditionType.AND);
 //		condition.setOperandType(OperandType.CONSTANT);
 //		condition.setOperand("VALUE");
 //		condition.setOperatorType(OperatorType.EQUALS);
+
 //		
 //		rule.setCondition(condition);
 //		rule = this.ruleRepo.add(rule);

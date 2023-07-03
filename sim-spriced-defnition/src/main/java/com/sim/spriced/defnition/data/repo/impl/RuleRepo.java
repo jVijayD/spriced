@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.sim.spriced.defnition.data.repo.IRuleRepo;
 import com.sim.spriced.framework.constants.ModelConstants;
+import com.sim.spriced.framework.models.Action;
 import com.sim.spriced.framework.models.Condition;
 import com.sim.spriced.framework.models.ConditionalAction;
 import com.sim.spriced.framework.models.Rule;
@@ -85,6 +86,7 @@ public class RuleRepo extends BaseRepo implements IRuleRepo {
 		result.setUpdatedDate((Timestamp)rec.get(ModelConstants.UPDATED_DATE));
 		result.setCondition(condition);
 		result.setConditionalAction(conditionalAction);
+		result.setGroup(Action.ActionGroup.valueOf((String)rec.get(Rule.TableConstants.GROUP)));
 		return result;
 	}
 	

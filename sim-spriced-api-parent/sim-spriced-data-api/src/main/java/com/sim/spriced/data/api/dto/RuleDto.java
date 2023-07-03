@@ -1,14 +1,17 @@
-package com.sim.spriced.defnition.api.dto;
+package com.sim.spriced.data.api.dto;
 
 import java.sql.Timestamp;
 import java.util.List;
 
-import com.sim.spriced.framework.models.Action.ActionGroup;
 import com.sim.spriced.framework.models.Condition;
 import com.sim.spriced.framework.models.ConditionalAction;
+import com.sim.spriced.framework.models.Action.ActionGroup;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 //@Getter
 //@Setter
@@ -17,6 +20,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RuleDto {
 	
+
 	private Integer id;
 	private Integer entityId;
 	private Integer priority;
@@ -109,7 +113,6 @@ public class RuleDto {
 	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
 	}
-	
 	
 	
 }

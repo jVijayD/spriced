@@ -7,13 +7,15 @@ import java.util.List;
 import org.json.JSONObject;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 import com.sim.spriced.framework.rule.RuleEngine;
 
-@Configuration
+//@Configuration
 public class RuleConfig {
 
-	@Bean
+	//@Bean
+	//@Scope("prototype")
 	public RuleEngine<JSONObject> ruleEngine() {
 		List<String> groups = new ArrayList<>(Arrays.asList("DEFAULT_VALUE_ACTION", "CHANGE_VALUE_ACTION",
 				"VALIDATION_ACTION", "EXTERNAL_ACTION", "USER_DEFINED_ACTION_SCRIPT"));

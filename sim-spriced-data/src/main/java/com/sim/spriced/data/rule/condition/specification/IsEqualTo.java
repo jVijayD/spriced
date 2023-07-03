@@ -2,10 +2,13 @@ package com.sim.spriced.data.rule.condition.specification;
 
 import org.json.JSONObject;
 
+import com.sim.spriced.framework.models.Condition.ConditionType;
+import com.sim.spriced.framework.models.Condition.OperandType;
+
 public class IsEqualTo extends BaseSpecification  {
 
-	public IsEqualTo(String column,Object value) {
-		super(column,value);
+	public IsEqualTo(String column,Object value,ConditionType conditionType,OperandType operandType) {
+		super(column,value,conditionType,operandType);
 	}
 	
 	@Override

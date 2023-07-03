@@ -5,10 +5,10 @@ import org.json.JSONObject;
 import com.sim.spriced.framework.models.Condition.ConditionType;
 import com.sim.spriced.framework.models.Condition.OperandType;
 
-public class IsGreaterThan extends BaseSpecification {
+public class LessThan extends BaseSpecification {
 
-	public IsGreaterThan(String column, Object value,ConditionType conditionType,OperandType operandType) {
-		super(column, value,conditionType,operandType);
+	protected LessThan(String column, Object value, ConditionType conditionType,OperandType operandType) {
+		super(column, value, conditionType,operandType);
 	}
 
 	@Override
@@ -16,16 +16,16 @@ public class IsGreaterThan extends BaseSpecification {
 		boolean result = false;
 		Object value = this.getValue(input);
 		if(this.isString(value)) {
-			result =  this.convertToString(value).compareTo(this.value.toString()) > 0;
+			result =  this.convertToString(value).compareTo(this.value.toString()) < 0;
 		}
 		else if(this.isNumeric(value)) {
 			result = this.convertToNumber(value) > (double) this.value;
 		}
 		else if(this.isBoolean(value)) {
-			result = (int)value > (int)this.value;
+			result = (int)value < (int)this.value;
 		}
 		else if(this.isDate(value)) {
-			result = (this.convertToDate(value)).compareTo((java.util.Date)this.value) > 0 ;
+			result = (this.convertToDate(value)).compareTo((java.util.Date)this.value) < 0 ;
 		}
 		return result;
 	}

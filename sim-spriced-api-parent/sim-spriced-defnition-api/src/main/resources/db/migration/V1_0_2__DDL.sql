@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS rule ADD COLUMN "group" varchar(25) NOT NULL default 'DEFAULT_VALUE_ACTION';

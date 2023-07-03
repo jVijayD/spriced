@@ -7,6 +7,7 @@ import javax.persistence.Table;
 
 import com.sim.spriced.framework.annotations.ExtraColumnData;
 import com.sim.spriced.framework.annotations.IDType;
+import com.sim.spriced.framework.models.Action.ActionGroup;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,6 +46,9 @@ public class Rule extends BaseEntity {
 	
 	@Column(name=Rule.TableConstants.NOTIFICATION)
 	private String notification;
+	
+	@Column(name=Rule.TableConstants.GROUP)
+	private ActionGroup group;
 	
 //	@Column(name="version")
 //	private Integer version;
@@ -88,6 +92,7 @@ public class Rule extends BaseEntity {
 		public static final String CONDITION = "condition";
 		public static final String ACTION = "action";
 		public static final String CONDITIONAL_ACTION= "conditional_action";
+		public static final String GROUP="group";
 		private TableConstants() {}
 	}
 

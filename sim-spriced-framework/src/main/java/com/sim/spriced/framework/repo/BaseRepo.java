@@ -505,7 +505,8 @@ public abstract class BaseRepo {
 			field.setAccessible(true);
 			// read extra column data annotations
 			ExtraColumnData extraCol = field.getAnnotation(ExtraColumnData.class);
-			Object val = field.get(entity);
+			Object temp = field.get(entity);
+			Object val = temp instanceof Enum<?> ? temp.toString() : temp;
 			// process only if extracol annotation is present
 			if (extraCol != null) {
 

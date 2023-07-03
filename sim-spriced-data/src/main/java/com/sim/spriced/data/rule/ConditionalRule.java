@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.json.JSONObject;
 
+import com.sim.spriced.framework.models.Attribute;
 import com.sim.spriced.framework.models.Rule;
 import com.sim.spriced.framework.rule.IRule;
 import com.sim.spriced.framework.rule.Result;
@@ -13,10 +14,11 @@ public class ConditionalRule implements IRule<JSONObject> {
 	private String name;
 	private String groupName;
 	private int priority;
+	private List<Attribute> attributes;
 
 	private final List<IAction<JSONObject>> ifActionList;
 	private final List<IAction<JSONObject>> elseActionList;
-	private ISpecification<JSONObject> conditions;
+	private final ISpecification<JSONObject> conditions;
 
 	@Override
 	public String getName() {
@@ -31,9 +33,6 @@ public class ConditionalRule implements IRule<JSONObject> {
 		return elseActionList;
 	}
 
-	public void setConditionst(ISpecification<JSONObject> specification) {
-		this.conditions = specification;
-	}
 
 	@Override
 	public String getGroupName() {
@@ -44,13 +43,19 @@ public class ConditionalRule implements IRule<JSONObject> {
 	public int getPriority() {
 		return this.priority;
 	}
+	
+	public List<Attribute> getAttributes() {
+		return this.attributes;
+	}
 
-	protected ConditionalRule(Rule rule, List<IAction<JSONObject>> ifActions, List<IAction<JSONObject>> elseActions) {
+	protected ConditionalRule(Rule rule, List<IAction<JSONObject>> ifActions, List<IAction<JSONObject>> elseActions,List<Attribute> attributes,ISpecification<JSONObject> conditions) {
 		this.name = rule.getName();
-		this.groupName = "";// TO DO Group Name has to be finalized.
+		this.groupName = rule.getGroup().toString();
 		this.priority = rule.getPriority();
 		this.ifActionList = ifActions;
 		this.elseActionList = elseActions;
+		this.conditions = conditions;
+		this.attributes = attributes;
 	}
 
 	@Override
@@ -59,9 +64,11 @@ public class ConditionalRule implements IRule<JSONObject> {
 	}
 
 	@Override
-	public Result<JSONObject> apply(JSONObject input) {
+	public Result apply(JSONObject input) {
 
-		Result<JSONObject> result = new Result<>(this.name, this.groupName);
+		Result result = new Result(this.name, this.groupName);
+		//result.setCode(input.get("code"));
+		
 		if (this.isMatch(input)) {
 			this.checkforEmptyActions(this.ifActionList);
 			this.executeActions(this.ifActionList, input, result);
@@ -75,10 +82,10 @@ public class ConditionalRule implements IRule<JSONObject> {
 	}
 
 	private List<Boolean> executeActions(List<IAction<JSONObject>> actions, JSONObject input,
-			Result<JSONObject> result) {
-		return actions.parallelStream().map(a -> {
+			Result result) {
+		return actions.stream().map(a -> {
 			boolean actionResult = a.apply(input);
-			this.setResultActionMessage(actionResult, this.name, result);
+			this.setResultActionMessage(actionResult, a.getName(), result);
 			if (!actionResult) {
 				result.setSuccess(actionResult);
 			}
@@ -86,11 +93,11 @@ public class ConditionalRule implements IRule<JSONObject> {
 		}).toList();
 	}
 
-	private void setResultActionMessage(boolean actionResult, String actionName, Result<JSONObject> result) {
+	private void setResultActionMessage(boolean actionResult, String actionName, Result result) {
 		if (!actionResult) {
-			result.getActionMessages().put(this.name + "_" + actionName, "Action " + actionName + " failed.");
+			result.getActionMessages().put(actionName, "Action " + actionName + " failed.");
 		} else {
-			result.getActionMessages().put(this.name + "_" + actionName, "Action " + actionName + " is success.");
+			result.getActionMessages().put(actionName, "Action " + actionName + " is success.");
 		}
 	}
 

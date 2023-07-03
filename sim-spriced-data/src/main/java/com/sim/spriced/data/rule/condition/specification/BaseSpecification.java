@@ -5,18 +5,28 @@ import java.sql.Date;
 
 import org.json.JSONObject;
 
+import com.sim.spriced.framework.models.Condition.ConditionType;
+import com.sim.spriced.framework.models.Condition.OperandType;
 import com.sim.spriced.framework.specification.CompositeSpecification;
 import com.sim.spriced.framework.specification.ISpecification;
 
 public abstract class BaseSpecification implements CompositeSpecification<JSONObject> {
 	protected String column;
 	protected Object value; 
+	protected ConditionType conditionType;
+	protected OperandType operandType;
 	
-	protected BaseSpecification(String column,Object value) {
+	protected BaseSpecification(String column,Object value,ConditionType conditionType,OperandType operandType) {
 		this.column = column;
 		this.value = value;
+		this.conditionType = conditionType;
+		this.operandType = operandType;
 	}
 	
+	public ConditionType getConditionType() {
+		return conditionType;
+	}
+
 	protected boolean isNumeric(Object value) {
 		return value instanceof Double || value instanceof Integer || value instanceof Float || value instanceof BigDecimal;
 	}

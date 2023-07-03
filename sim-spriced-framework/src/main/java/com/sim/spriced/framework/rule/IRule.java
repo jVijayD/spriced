@@ -6,5 +6,5 @@ public interface IRule<T> {
 	int getPriority();
 	
 	boolean isMatch(T input);
-	Result<T> apply(T input);
+	Result apply(T input);
 }

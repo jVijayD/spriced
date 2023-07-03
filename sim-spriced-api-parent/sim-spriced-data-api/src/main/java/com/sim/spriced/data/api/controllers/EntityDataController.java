@@ -3,10 +3,11 @@ package com.sim.spriced.data.api.controllers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import javax.validation.Valid;
 
-import org.hibernate.persister.walking.spi.EntityDefinition;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -14,6 +15,7 @@ import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,20 +23,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sim.spriced.data.api.clients.IDefnitionService;
 import com.sim.spriced.data.api.dto.EntityDataDto;
 import com.sim.spriced.data.api.dto.EntityDataResultDto;
 import com.sim.spriced.data.api.dto.EntityDto;
+import com.sim.spriced.data.api.dto.RuleDto;
+import com.sim.spriced.data.api.dto.mapper.RuleDtoMapper;
 import com.sim.spriced.data.model.EntityData;
 import com.sim.spriced.data.model.EntityDataResult;
+import com.sim.spriced.data.service.IEntityDataRuleService;
 import com.sim.spriced.data.service.IEntityDataService;
 import com.sim.spriced.framework.api.exception.ResourceNotFoundException;
-import com.sim.spriced.framework.exceptions.data.NotFoundException;
 import com.sim.spriced.framework.models.Attribute;
-import com.sim.spriced.framework.models.EntityDefnition;
+import com.sim.spriced.framework.models.Rule;
+import com.sim.spriced.framework.rule.IRule;
 
 import io.micrometer.core.annotation.Timed;
 
@@ -42,59 +46,66 @@ import io.micrometer.core.annotation.Timed;
 @RequestMapping("/entity/{entityId}/data")
 @CrossOrigin(origins = "*")
 public class EntityDataController {
-	
+
 	private static final String MESSAGE = "Entity with id -[%d] not present.";
 
 	@Autowired
 	IEntityDataService dataService;
-	
+
 	@Autowired
 	IDefnitionService defnitionService;
 
+	@Autowired
+	RuleDtoMapper ruleDtoMapper;
+
+	@Autowired
+	IEntityDataRuleService dataRuleService;
+
 	@Timed(value = "data.getAll.time", description = "Time taken to return all data")
 	@GetMapping("")
-	public ResponseEntity<JSONArray> get(@PathVariable int entityId) throws ParseException {
-		EntityDto entityDto = this.getEntity(entityId);
-		if(entityDto!=null) {
+	public ResponseEntity<JSONArray> get(@PathVariable int entityId)
+			throws ParseException, InterruptedException, ExecutionException {
+		EntityDto entityDto = this.getEntity(entityId).get();
+		if (entityDto != null) {
 			EntityData data = new EntityData();
 			data.setEntityName(entityDto.getName());
 			data.setAttributes(entityDto.getAttributes());
 			var result = this.dataService.fetchAll(data);
 			return new ResponseEntity<>(this.convertToSimpleJSONArray(result), HttpStatus.OK);
-		}
-		else {
+		} else {
 			throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
 		}
 	}
 
 	@Timed(value = "data.get.time", description = "Time taken to return data.")
 	@GetMapping("/{id}")
-	public ResponseEntity<JSONObject> get(@PathVariable int entityId, @PathVariable String id) throws ParseException {
-		EntityDto entityDto = this.getEntity(entityId);
-		if(entityDto!=null) {
+	public ResponseEntity<JSONObject> get(@PathVariable int entityId, @PathVariable String id)
+			throws ParseException, InterruptedException, ExecutionException {
+		EntityDto entityDto = this.getEntity(entityId).get();
+		if (entityDto != null) {
 			EntityData data = new EntityData();
 			data.setEntityName(entityDto.getName());
 			data.setAttributes(entityDto.getAttributes());
-			
+
 			List<org.json.JSONObject> jsonArray = new ArrayList<>();
 			org.json.JSONObject jsonObj = new org.json.JSONObject();
-			jsonObj.put("code", entityDto.getAutoNumberCode()?Integer.parseInt(id):id);
+			jsonObj.put("code", Boolean.TRUE.equals(entityDto.getAutoNumberCode()) ? Integer.parseInt(id) : id);
 			jsonArray.add(jsonObj);
 			data.setValues(jsonArray);
 			var result = this.dataService.fetchOne(data);
 			return new ResponseEntity<>(this.convertToSimpleJSONObject(result), HttpStatus.OK);
-		}
-		else {
+		} else {
 			throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
 		}
-		
+
 	}
 
 	@Timed(value = "data.create-bulk.time", description = "Time taken to create-bulk data.")
 	@PostMapping("/bulk")
-	public ResponseEntity<EntityDataResultDto> createBulk(@PathVariable int entityId,@Valid @RequestBody EntityDataDto data) {
-		EntityDto entityDto = this.getEntity(entityId);
-		if(entityDto!=null) {
+	public ResponseEntity<EntityDataResultDto> createBulk(@PathVariable int entityId,
+			@Valid @RequestBody EntityDataDto data) throws InterruptedException, ExecutionException {
+		EntityDto entityDto = this.getEntity(entityId).get();
+		if (entityDto != null) {
 			EntityData convertedData = new EntityData();
 			convertedData.setEntityName(entityDto.getName());
 			convertedData.setValues(this.convertValuesToJson(data.getData()));
@@ -103,45 +114,44 @@ public class EntityDataController {
 			EntityDataResultDto resultDto = new EntityDataResultDto();
 			resultDto.setRowsChanged(result.getRowsChanged().length);
 			return new ResponseEntity<>(resultDto, HttpStatus.CREATED);
-		}
-		else {
+		} else {
 			throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
 		}
-		
-		
 	}
 
 	@Timed(value = "data.create.time", description = "Time taken to create data.")
 	@PostMapping()
 	public ResponseEntity<EntityDataResultDto> create(@Valid @RequestBody EntityDataDto data,
-			@PathVariable int entityId) {
+			@PathVariable int entityId) throws InterruptedException, ExecutionException {
 
-		EntityDto entityDto = this.getEntity(entityId);
-		if(entityDto!=null) {
-			EntityData convertedData = new EntityData();
-			convertedData.setEntityName(entityDto.getName());
-			convertedData.setValues(this.convertValuesToJson(data.getData()));
-			convertedData.setAttributes(entityDto.getAttributes());
-			EntityDataResult result = this.dataService.upsert(convertedData);
+		List<org.json.JSONObject> datas = this.convertValuesToJson(data.getData());
+		
+		EntityDto entityDto = this.getEntity(entityId).get();
+		List<IRule<org.json.JSONObject>> rules = this.getRulesByEntityId(entityId, entityDto.getAttributes()).get();
 
-			EntityDataResultDto resultDto = new EntityDataResultDto();
-			resultDto.setRowsChanged(result.getRowsChanged().length);
-			resultDto.setResult(result.getResult());
+		
+		EntityData convertedData = new EntityData();
+		convertedData.setEntityName(entityDto.getName());
+		convertedData.setValues(datas);
+		convertedData.setAttributes(entityDto.getAttributes());
+		EntityDataResult result = this.dataService.upsert(convertedData,rules);
 
-			return new ResponseEntity<>(resultDto, HttpStatus.CREATED);
-		}
-		else {
-			throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
-		}
+		EntityDataResultDto resultDto = new EntityDataResultDto();
+		resultDto.setRowsChanged(result.getRowsChanged().length);
+		resultDto.setResult(result.getResult());
+		resultDto.setRuleValidations(result.getRuleValidations());
+
+		return new ResponseEntity<>(resultDto, HttpStatus.CREATED);
+
 	}
 
 	@Timed(value = "data.create.time", description = "Time taken to create data")
 	@PutMapping()
 	public ResponseEntity<EntityDataResultDto> update(@Valid @RequestBody EntityDataDto data,
-			@PathVariable int entityId) {
-	
-		EntityDto entityDto = this.getEntity(entityId);
-		if(entityDto!=null) {
+			@PathVariable int entityId) throws InterruptedException, ExecutionException {
+
+		EntityDto entityDto = this.getEntity(entityId).get();
+		if (entityDto != null) {
 			List<org.json.JSONObject> jsonObjets = this.convertValuesToJson(data.getData());
 			jsonObjets.get(0).put("change", true);
 
@@ -154,14 +164,13 @@ public class EntityDataController {
 			EntityDataResultDto resultDto = new EntityDataResultDto();
 			resultDto.setRowsChanged(result.getRowsChanged().length);
 			resultDto.setResult(result.getResult());
+			resultDto.setRuleValidations(result.getRuleValidations());
 
 			return new ResponseEntity<>(resultDto, HttpStatus.CREATED);
-		}
-		else {
+		} else {
 			throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
 		}
-		
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -178,8 +187,19 @@ public class EntityDataController {
 		JSONParser parser = new JSONParser();
 		return (JSONObject) parser.parse(result.toString());
 	}
-	
-	private EntityDto getEntity(int id) {
-		return this.defnitionService.getEntityById(id).getBody();
+
+	@Async
+	private CompletableFuture<EntityDto> getEntity(int id) {
+		EntityDto dto = this.defnitionService.getEntityById(id).getBody();
+		return CompletableFuture.completedFuture(dto);
 	}
+
+	@Async
+	private CompletableFuture<List<IRule<org.json.JSONObject>>> getRulesByEntityId(int id, List<Attribute> attributes) {
+		List<RuleDto> ruleDtoList = this.defnitionService.getRuleByEntityId(id).getBody();
+		List<IRule<org.json.JSONObject>> ruleEngineRules = this.dataRuleService
+				.getRuleEngineRules(this.ruleDtoMapper.toRuleList(ruleDtoList), attributes);
+		return CompletableFuture.completedFuture(ruleEngineRules);
+	}
+
 }

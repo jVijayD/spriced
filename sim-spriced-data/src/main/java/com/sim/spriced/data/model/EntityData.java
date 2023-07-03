@@ -19,5 +19,6 @@ public class EntityData {
 	private List<JSONObject> values; 
 	private String entityName;
 	private List<Attribute> attributes;
+	private int entityId;
 	
 }
