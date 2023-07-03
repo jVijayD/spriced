@@ -63,7 +63,7 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 //		if (!updatedAttributes.isEmpty()) {
 //			this.alterColumns(alterTable, updatedAttributes);
 //		}
-//		
+//
 //		if(!deletedAttributes.isEmpty()) {
 //			context.alterTableIfExists(tableName).dropColumns(StringUtils.join(deletedAttributes, ",")).execute();
 //		}
@@ -71,21 +71,21 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 //		if(!columns.isEmpty()) {
 //			context.alterTableIfExists(tableName).add(columns);
 //		}
-//	
+//
 //	}
-//	
-//	
+//
+//
 //	private void alterColumns(AlterTableStep alterTable ,List<Attribute> attributes) {
 //		attributes.forEach(item->{
 //			var name = item.getName();
 //			alterTable.alter(name).set(this.getDataType(item)).execute();
 //			this.setDefaultValue(alterTable, name, item.getDefaultValue());
 //			this.setNullable(alterTable, name, item.isNullable());
-//			
+//
 //			//Rename
 //			//change constraint
-//			
-//			
+//
+//
 //		});
 //	}
 //
@@ -97,7 +97,7 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 //			alterTable.alter(name).setNotNull().execute();
 //		}
 //	}
-//	
+//
 //	private void setDefaultValue(AlterTableStep alterTable,String name,Object defaultValue) {
 //		if(defaultValue==null) {
 //			alterTable.alter(name).dropDefault().execute();
@@ -120,7 +120,7 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 				queries.add(context.dropSequence(sequenceName));
 			}
 		});
-		
+
 		// drop primary key constraints
 		String primaryKeys = String.join(",", attributes.stream().filter(item->item.getConstraintType()==ConstraintType.PRIMARY_KEY).map(Attribute::getName).collect(Collectors.toList()));
 		String constraintNamePk = "uk_"+tableName+"."+primaryKeys.replace(",", ".");
@@ -141,12 +141,12 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 		});
 		// drop composite unique key constraints
 		var compositeUnique = attributes.stream().filter(item->item.getConstraintType()==ConstraintType.COMPOSITE_UNIQUE_KEY).collect(Collectors.toList());
-		
+
 		String compositeUniqueKeys = String.join(",",
 				compositeUnique.stream().map(Attribute::getName).collect(Collectors.toList()));
 		String constraintNameUk = "uk_"+tableName+"."+compositeUniqueKeys.replace(",", ".");
 		queries.add(context.alterTable(tableName).dropConstraintIfExists(constraintNameUk));
-		
+
 		// drop table
 		queries.add(context.dropTable(tableName));
 		this.batchExqecute(queries);
@@ -250,9 +250,9 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 		Collection<Query> query = new ArrayList<>();
 		deletedAttributes.forEach(item -> query
 				.add(context.alterTableIfExists(entityName).dropForeignKey(constraintKey + item.getName())));
-		addedAttributes.forEach(attr -> 
-			constraint.add(DSL.constraint(constraintKey + attr.getName()).foreignKey(attr.getName())
-					.references(attr.getReferencedTable()))
+		addedAttributes.forEach(attr ->
+				constraint.add(DSL.constraint(constraintKey + attr.getName()).foreignKey(attr.getName())
+						.references(attr.getReferencedTable()))
 		);
 		query.add(context.alterTableIfExists(entityName).add(constraint));
 		context.batch(query).execute();
@@ -310,27 +310,27 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 	private void initDataTypeMapping() {
 		if (dataTypeMapper.size() == 0) {
 			dataTypeMapper.put(AttributeConstants.DataType.BOOLEAN, (dataType, size, nullable,
-					defaultValue) -> SQLDataType.BOOLEAN.defaultValue((Boolean) defaultValue));
+																	 defaultValue) -> SQLDataType.BOOLEAN.defaultValue((Boolean) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.BIT,
 					(dataType, size, nullable, defaultValue) -> SQLDataType.BIT.defaultValue((Boolean) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.INTEGER, (dataType, size, nullable,
-					defaultValue) -> SQLDataType.INTEGER.defaultValue((Integer) defaultValue));
+																	 defaultValue) -> SQLDataType.INTEGER.defaultValue((Integer) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.DOUBLE,
 					(dataType, size, nullable, defaultValue) -> SQLDataType.DOUBLE.defaultValue((Double) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.FLOAT,
 					(dataType, size, nullable, defaultValue) -> SQLDataType.FLOAT.defaultValue((Double) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.DECIMAL, (dataType, size, nullable,
-					defaultValue) -> SQLDataType.DECIMAL.defaultValue((BigDecimal) defaultValue));
+																	 defaultValue) -> SQLDataType.DECIMAL.defaultValue((BigDecimal) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.CHARACTER, (dataType, size, nullable,
-					defaultValue) -> SQLDataType.CHAR(1).defaultValue((String) defaultValue));
+																	   defaultValue) -> SQLDataType.CHAR(1).defaultValue((String) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.STRING, (dataType, size, nullable,
-					defaultValue) -> SQLDataType.NVARCHAR.defaultValue((String) defaultValue));
+																	defaultValue) -> SQLDataType.NVARCHAR.defaultValue((String) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.TEXT, (dataType, size, nullable,
-					defaultValue) -> SQLDataType.NVARCHAR.defaultValue((String) defaultValue));
+																  defaultValue) -> SQLDataType.NVARCHAR.defaultValue((String) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.LINK, (dataType, size, nullable, defaultValue) -> SQLDataType
 					.NVARCHAR(500).defaultValue((String) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.STRING_VAR, (dataType, size, nullable,
-					defaultValue) -> SQLDataType.NVARCHAR(size).defaultValue((String) defaultValue));
+																		defaultValue) -> SQLDataType.NVARCHAR(size).defaultValue((String) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.JSON,
 					(dataType, size, nullable, defaultValue) -> SQLDataType.JSON.defaultValue((JSON) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.XML,
@@ -354,11 +354,6 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 				: dataTypeMapper.get(dataType).apply(dataType, size, nullable, defaultValue);
 	}
 
-	@FunctionalInterface
-	interface QuadFunction<A, B, C, D, R> {
-		R apply(A a, B b, C c, D d);
-	}
-
 	private String getReference(String referencedTable, Object referencedTableId) {
 		if (null!=referencedTable){
 			return referencedTable;
@@ -371,6 +366,11 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 			Result<?> result = this.context.selectFrom(table("entity")).where(condition).fetch();
 			return String.valueOf(result.get(0).get("name"));
 		}
+	}
+
+	@FunctionalInterface
+	interface QuadFunction<A, B, C, D, R> {
+		R apply(A a, B b, C c, D d);
 	}
 
 }
