@@ -76,12 +76,18 @@ public class EntityDataService implements IEntityDataService {
 	
 	
 	private EntityDataResult executeUpsert(EntityData data, List<IRule<JSONObject>> rules,Function<EntityData, EntityDataResult> upsertLogic) {
-		List<FactResult<JSONObject>> ruleResults = this.dataRuleService.executeRules(rules, data.getValues());
-		List<JSONObject> succesfullFacts = ruleResults.stream().filter(FactResult::isSucces).map(FactResult::getOutput).toList();
-		data.setValues(succesfullFacts);
-		EntityDataResult result = upsertLogic.apply(data);
-		result.setRuleValidations(ruleResults);
-		return result;
+		if(rules!=null && !rules.isEmpty()) {
+			List<FactResult<JSONObject>> ruleResults = this.dataRuleService.executeRules(rules, data.getValues());
+			List<JSONObject> succesfullFacts = ruleResults.stream().filter(FactResult::isSucces).map(FactResult::getOutput).toList();
+			data.setValues(succesfullFacts);
+			EntityDataResult result = upsertLogic.apply(data);
+			result.setRuleValidations(ruleResults);
+			return result;
+		}
+		else {
+			return upsertLogic.apply(data);
+		}
+		
 	}
 
 }
