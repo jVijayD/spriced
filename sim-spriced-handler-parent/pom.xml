@@ -1,6 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.7.12</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.sim.spriced.handler</groupId>
 	<artifactId>sim-spriced-handler-parent</artifactId>
@@ -12,5 +18,40 @@
 		<module>sim-spriced-injestion-handler-sink</module>
 		<module>sim-spriced-injestion-handler-source</module>
 	</modules>
-	<dependencies></dependencies>
+	<dependencies>
+		<!-- Kafka Connect API -->
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>connect-api</artifactId>
+			<version>3.4.0</version>
+		</dependency>
+
+		<!-- Kafka Connect Runtime -->
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>connect-runtime</artifactId>
+			<version>3.4.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Apache Kafka -->
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-clients</artifactId>
+			<version>3.4.0</version>
+		</dependency>
+
+		<!-- Apache Commons IO -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>32.0.0-jre</version>
+		</dependency>
+	</dependencies>
 </project>

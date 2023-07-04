@@ -16,9 +16,7 @@ public class ServiceBeanConfigurations {
 	@Bean("entityDefnitionObservers")
 	public List<IObserver<EntityDefnitionEvent>> entityDefnitionObservers(Map<String, IObserver<EntityDefnitionEvent>> beansMap) {
 		 List<IObserver<EntityDefnitionEvent>> observers= new ArrayList<>();
-		 beansMap.forEach((k,v)->{
-			 observers.add(v);
-		 });
+		 beansMap.forEach((k,v)->observers.add(v));
 		 return observers;
 	}
 }

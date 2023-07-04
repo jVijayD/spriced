@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.0</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<groupId>com.sim.spriced.handler</groupId>
+		<artifactId>sim-spriced-handler-parent</artifactId>
+		<version>0.0.1</version>
 	</parent>
-	<groupId>com.sim.spriced.handler</groupId>
-	<artifactId>sim-spriced-injestion-source</artifactId>
-	<version>0.0.1</version>
+	<artifactId>sim-spriced-injestion-handler-source</artifactId>
 	<name>sim-spriced-injestion-handler-source</name>
 	<description>Project for data injestion</description>
 	<properties>
@@ -27,13 +25,41 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- SpoolDirCsvSourceConnector -->
+		<dependency>
+			<groupId>com.github.jcustenborder.kafka.connect</groupId>
+			<artifactId>kafka-connect-spooldir</artifactId>
+			<version>1.0.31</version>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.3.0</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>com.sim.spriced.handler.injestion.source.SimSpricedInjestionHandlerSourceApplication</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>assemble-all</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
