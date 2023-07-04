@@ -321,6 +321,7 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 	}
 
 	private void initDataTypeMapping() {
+		
 		if (dataTypeMapper.size() == 0) {
 			dataTypeMapper.put(AttributeConstants.DataType.BOOLEAN, (dataType, size, nullable,
 																	 defaultValue) -> SQLDataType.BOOLEAN.defaultValue((Boolean) defaultValue));
