@@ -107,7 +107,7 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 				if (!isPrimaryKey) {
 					fieldValues.put(column(item.getName()), jsonObject.get(item.getName()));
 				} else {
-					if (!isChange && dataType.equals(AttributeConstants.DataType.STRING_VAR)){
+					if (Boolean.TRUE.equals(!isChange) && dataType.equals(AttributeConstants.DataType.STRING_VAR)){
 						fieldValues.put(column(item.getName()), jsonObject.get(item.getName()));
 					} else {
 						primaryKeyValues.put(column(item.getName()), jsonObject.get(item.getName()));
