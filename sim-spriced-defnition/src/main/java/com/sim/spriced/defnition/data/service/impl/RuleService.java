@@ -3,6 +3,7 @@ package com.sim.spriced.defnition.data.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -65,6 +66,7 @@ public class RuleService implements IRuleService {
 		return this.ruleRepo.fetchAll(pageable);
 	}
 	
+	//@Cacheable(value="rulesByEntity",key="#id")
 	@Override
 	public List<Rule> fetchByEntityId(int id) {
 		return this.ruleRepo.fetchByEntityId(id);
