@@ -67,7 +67,7 @@ public class EntityDataController {
 
 	@Timed(value = "data.getAll.time", description = "Time taken to return all data")
 	@GetMapping("")
-	public ResponseEntity<JSONArray> get(@PathVariable int entityId,@RequestParam int pageNo,@RequestParam int pageSize,@RequestParam String sortBy,@RequestParam String sortDir)
+	public ResponseEntity<JSONArray> get(@PathVariable int entityId,@RequestParam(required = false) Integer pageNo,@RequestParam(required = false) Integer pageSize,@RequestParam(required = false) String sortBy,@RequestParam(required = false) String sortDir)
 			throws ParseException, InterruptedException, ExecutionException {
 		EntityDto entityDto = this.getEntity(entityId).get();
 		if (entityDto != null) {
@@ -75,7 +75,7 @@ public class EntityDataController {
 			data.setEntityName(entityDto.getName());
 			data.setAttributes(entityDto.getAttributes());
 			
-			if(pageSize==0) {
+			if(pageSize==null || pageSize==0) {
 				var result = this.dataService.fetchAll(data);
 				return new ResponseEntity<>(this.convertToSimpleJSONArray(result), HttpStatus.OK);
 			}
