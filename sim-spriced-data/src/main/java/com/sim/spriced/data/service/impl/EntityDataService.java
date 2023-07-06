@@ -9,21 +9,26 @@ import java.util.function.Function;
 
 import javax.transaction.Transactional;
 
+import org.jooq.JSON;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sim.spriced.data.model.EntityData;
 import com.sim.spriced.data.model.EntityDataResult;
 import com.sim.spriced.data.repo.IEntityDataRepo;
 import com.sim.spriced.data.service.IEntityDataRuleService;
 import com.sim.spriced.data.service.IEntityDataService;
+import com.sim.spriced.framework.constants.ModelConstants;
 import com.sim.spriced.framework.models.AttributeConstants;
 import com.sim.spriced.framework.models.AttributeConstants.DataType;
 import com.sim.spriced.framework.rule.FactResult;
 import com.sim.spriced.framework.rule.IRule;
+import com.sim.spriced.framework.rule.Result;
 
 
 @Service
@@ -87,8 +92,12 @@ public class EntityDataService implements IEntityDataService {
 		
 		if(rules!=null && !rules.isEmpty()) {
 			List<FactResult<JSONObject>> ruleResults = this.dataRuleService.executeRules(rules, data.getValues());
-			List<JSONObject> succesfullFacts = ruleResults.stream().filter(FactResult::isSucces).map(FactResult::getOutput).toList();
-			data.setValues(succesfullFacts);
+			//Update is_valid field
+			//ruleResults.stream().filter(item->!item.isSucces()).forEach(item->item.getOutput().put(ModelConstants.IS_VALID, false));
+			
+			List<JSONObject> dataAfterRuleExecution = this.setRuleExecutionErrorStatus(ruleResults);
+			data.setValues(dataAfterRuleExecution);
+			
 			EntityDataResult result = upsertLogic.apply(data);
 			result.setRuleValidations(ruleResults);
 			return result;
@@ -97,6 +106,26 @@ public class EntityDataService implements IEntityDataService {
 			return upsertLogic.apply(data);
 		}
 		
+	}
+	
+	private List<JSONObject> setRuleExecutionErrorStatus(List<FactResult<JSONObject>> ruleResults) {
+		return ruleResults.parallelStream().map(result->{
+			if(!result.isSucces()) {
+				List<Result> item = result.getRuleResults();
+				ObjectMapper objectMapper = new ObjectMapper();
+				try {
+					JSON jsonVal = JSON.json(objectMapper.writeValueAsString(item));
+					result.getOutput().put(ModelConstants.ERROR, jsonVal);
+				} catch (JsonProcessingException e) {
+					//No action if not able to serialize
+				}
+				result.getOutput().put(ModelConstants.IS_VALID, false);
+			}
+			else {
+				result.getOutput().put(ModelConstants.IS_VALID, false);
+			}
+			return result.getOutput();
+		}).toList();
 	}
 	
 	private EntityData setDateTimeValue(EntityData data) {
