@@ -66,59 +66,7 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 		}
 	}
 
-//	@Override
-//	public void update(EntityDefnition entityDefnition) {
-//		List<Attribute> updatedAttributes = entityDefnition.getAttributes().stream().filter(item->item.getChangeType()==ChangeType.UPDATE).collect(Collectors.toList());
-//		List<String> deletedAttributes = entityDefnition.getAttributes().stream().filter(item->item.getChangeType()==ChangeType.DELETE).map(item->item.getName()).collect(Collectors.toList());
-//		List<Field<?>> columns  = this.createColumns(entityDefnition.getAttributes().stream().filter(item->item.getChangeType()==ChangeType.ADD).collect(Collectors.toList()));
-//		String tableName = entityDefnition.getName();
-//		AlterTableStep alterTable = context.alterTableIfExists(tableName);
-//		if (!updatedAttributes.isEmpty()) {
-//			this.alterColumns(alterTable, updatedAttributes);
-//		}
-//
-//		if(!deletedAttributes.isEmpty()) {
-//			context.alterTableIfExists(tableName).dropColumns(StringUtils.join(deletedAttributes, ",")).execute();
-//		}
-//
-//		if(!columns.isEmpty()) {
-//			context.alterTableIfExists(tableName).add(columns);
-//		}
-//
-//	}
-//
-//
-//	private void alterColumns(AlterTableStep alterTable ,List<Attribute> attributes) {
-//		attributes.forEach(item->{
-//			var name = item.getName();
-//			alterTable.alter(name).set(this.getDataType(item)).execute();
-//			this.setDefaultValue(alterTable, name, item.getDefaultValue());
-//			this.setNullable(alterTable, name, item.isNullable());
-//
-//			//Rename
-//			//change constraint
-//
-//
-//		});
-//	}
-//
-//	private void setNullable(AlterTableStep alterTable,String name,boolean isNullable) {
-//		if(!isNullable) {
-//			alterTable.alter(name).dropNotNull().execute();
-//		}
-//		else {
-//			alterTable.alter(name).setNotNull().execute();
-//		}
-//	}
-//
-//	private void setDefaultValue(AlterTableStep alterTable,String name,Object defaultValue) {
-//		if(defaultValue==null) {
-//			alterTable.alter(name).dropDefault().execute();
-//		}
-//		else {
-//			alterTable.alter(name).defaultValue(defaultValue).execute();
-//		}
-//	}
+
 
 	@Override
 	public void delete(EntityDefnition entityDefnition) {
@@ -321,13 +269,14 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 	}
 
 	private void initDataTypeMapping() {
+		
 		if (dataTypeMapper.size() == 0) {
 			dataTypeMapper.put(AttributeConstants.DataType.BOOLEAN, (dataType, size, nullable,
 																	 defaultValue) -> SQLDataType.BOOLEAN.defaultValue((Boolean) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.BIT,
 					(dataType, size, nullable, defaultValue) -> SQLDataType.BIT.defaultValue((Boolean) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.INTEGER, (dataType, size, nullable,
-																	 defaultValue) -> SQLDataType.INTEGER.defaultValue((Integer) defaultValue));
+																	 defaultValue) -> SQLDataType.BIGINT.defaultValue((Long) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.DOUBLE,
 					(dataType, size, nullable, defaultValue) -> SQLDataType.DOUBLE.defaultValue((Double) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.FLOAT,
@@ -354,6 +303,10 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 					(dataType, size, nullable, defaultValue) -> SQLDataType.NVARCHAR(20));
 			dataTypeMapper.put(AttributeConstants.DataType.TIME_STAMP,
 					(dataType, size, nullable, defaultValue) -> SQLDataType.TIMESTAMP);
+			dataTypeMapper.put(AttributeConstants.DataType.DATE,
+					(dataType, size, nullable, defaultValue) -> SQLDataType.DATE);
+			dataTypeMapper.put(AttributeConstants.DataType.DATE_TIME,
+					(dataType, size, nullable, defaultValue) -> SQLDataType.LOCALDATETIME);
 		}
 	}
 
