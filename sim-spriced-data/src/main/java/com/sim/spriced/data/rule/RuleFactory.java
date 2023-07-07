@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.sim.spriced.data.rule.action.DefaultsToAction;
 import com.sim.spriced.data.rule.action.EqualsAction;
+import com.sim.spriced.data.rule.action.IsNotValid;
 import com.sim.spriced.data.rule.action.NoneAction;
 import com.sim.spriced.data.rule.condition.specification.BaseSpecification;
 import com.sim.spriced.data.rule.condition.specification.SpecificationFactory;
@@ -61,7 +62,6 @@ public class RuleFactory {
 	}
 
 	private IAction<JSONObject> createAction(Action action, ActionGroup ruleActionGroup, List<Attribute> attributes) {
-
 		if (!action.getActionGroup().equals(ruleActionGroup)) {
 			throw new IllegalArgumentException("Action Group of rule and action are not matching.");
 		}
@@ -71,6 +71,8 @@ public class RuleFactory {
 			String actionGroup = action.getActionGroup().toString();
 			Object operand = action.getOperand();
 			String colName = column.get().getName();
+			
+			
 			switch (action.getActionType()) {
 			case DEFAULTS_TO:
 				return new DefaultsToAction(operand, colName, actionGroup);
@@ -79,7 +81,8 @@ public class RuleFactory {
 			case EQUALS:
 				return new EqualsAction(operand, colName, actionGroup);
 //					case EQUALS_CONCATENATED_VALUE:
-//					case IS_NOT_VALID:
+			case IS_NOT_VALID:
+				return new IsNotValid(operand, colName, actionGroup);
 //					case IS_REQUIRED:
 //					case MUST_BE_BETWEEN:
 //					case MUST_BE_EQUAL_TO:

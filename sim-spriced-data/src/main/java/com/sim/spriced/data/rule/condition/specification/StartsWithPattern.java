@@ -1,14 +1,16 @@
 package com.sim.spriced.data.rule.condition.specification;
 
+import java.util.regex.Pattern;
+
 import org.json.JSONObject;
 
 import com.sim.spriced.framework.models.Condition;
 import com.sim.spriced.framework.models.Condition.ConditionType;
 import com.sim.spriced.framework.models.Condition.OperandType;
 
-public class LessThan extends BaseSpecification {
+public class StartsWithPattern extends BaseSpecification {
 
-	protected LessThan(String column, Object value, ConditionType conditionType, OperandType operandType) {
+	public StartsWithPattern(String column, Object value, ConditionType conditionType, OperandType operandType) {
 		super(column, value, conditionType, operandType);
 	}
 
@@ -28,17 +30,11 @@ public class LessThan extends BaseSpecification {
 
 		if (value != null) {
 			if (this.isString(value)) {
-				result = this.convertToString(value).compareTo(this.value.toString()) < 0;
-			} else if (this.isNumeric(value)) {
-				result = this.convertToNumber(value) < (double) this.value;
-			} else if (this.isBoolean(value)) {
-				result = (int) value < (int) this.value;
-			} else if (this.isDate(value)) {
-				result = (this.convertToDate(value)).compareTo((java.util.Date) this.value) < 0;
+				Pattern p = Pattern.compile("^" + convertToString(value));
+				result = p.matcher(this.value.toString()).find();
 			}
 		}
 
 		return result;
 	}
-
 }

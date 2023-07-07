@@ -6,9 +6,9 @@ import com.sim.spriced.framework.models.Condition;
 import com.sim.spriced.framework.models.Condition.ConditionType;
 import com.sim.spriced.framework.models.Condition.OperandType;
 
-public class LessThan extends BaseSpecification {
+public class LessThanOrEqualTo extends BaseSpecification {
 
-	protected LessThan(String column, Object value, ConditionType conditionType, OperandType operandType) {
+	protected LessThanOrEqualTo(String column, Object value, ConditionType conditionType, OperandType operandType) {
 		super(column, value, conditionType, operandType);
 	}
 
@@ -16,7 +16,6 @@ public class LessThan extends BaseSpecification {
 	public boolean isSatisfied(JSONObject input) {
 		boolean result = false;
 		Object value = null;
-
 		if (operandType.equals(Condition.OperandType.CONSTANT)) {
 			value = this.getValue(input);
 		} else if (operandType.equals(Condition.OperandType.BLANK)) {
@@ -28,13 +27,13 @@ public class LessThan extends BaseSpecification {
 
 		if (value != null) {
 			if (this.isString(value)) {
-				result = this.convertToString(value).compareTo(this.value.toString()) < 0;
+				result = this.convertToString(value).compareTo(this.value.toString()) <= 0;
 			} else if (this.isNumeric(value)) {
-				result = this.convertToNumber(value) < (double) this.value;
+				result = this.convertToNumber(value) <= (double) this.value;
 			} else if (this.isBoolean(value)) {
-				result = (int) value < (int) this.value;
+				result = (int) value <= (int) this.value;
 			} else if (this.isDate(value)) {
-				result = (this.convertToDate(value)).compareTo((java.util.Date) this.value) < 0;
+				result = (this.convertToDate(value)).compareTo((java.util.Date) this.value) <= 0;
 			}
 		}
 
