@@ -8,7 +8,6 @@ import org.json.JSONObject;
 import com.sim.spriced.framework.models.Condition.ConditionType;
 import com.sim.spriced.framework.models.Condition.OperandType;
 import com.sim.spriced.framework.specification.CompositeSpecification;
-import com.sim.spriced.framework.specification.ISpecification;
 
 public abstract class BaseSpecification implements CompositeSpecification<JSONObject> {
 	protected String column;
