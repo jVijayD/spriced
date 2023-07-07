@@ -130,7 +130,7 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 		String entityName = data.getEntityName();
 		Condition condition = this.createCondition(data);
 
-		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).fetch();
+		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).limit(100).fetch();
 
 		List<String> columns = this.getColumns(data.getAttributes(), result==null || result.isEmpty()?null:result.get(0));
 
