@@ -29,32 +29,32 @@ public class SpecificationFactory {
 				return new ContainsPattern(colName, operand, condition.getConditionType(), condition.getOperandType());
 //			case CONTAINS_SUBSET:
 			case DOES_NOT_CONTAIN_PATTERN:
-				return new DoesNotContainPattern(colName, condition.getOperand(), condition.getConditionType(), condition.getOperandType());
+				return new DoesNotContainPattern(colName, operand, condition.getConditionType(), condition.getOperandType());
 //			case DOES_NOT_CONTAIN_SUBSET:
 			case DOES_NOT_END_WITH:
-				return new DoesNotEndWithPattern(colName, condition.getOperand(), condition.getConditionType(), condition.getOperandType());
+				return new DoesNotEndWithPattern(colName, operand, condition.getConditionType(), condition.getOperandType());
 			case DOES_NOT_START_WITH:
-				return new DoesNotStartWithPattern(colName, condition.getOperand(), condition.getConditionType(), condition.getOperandType());
+				return new DoesNotStartWithPattern(colName, operand, condition.getConditionType(), condition.getOperandType());
 			case EQUALS:
-				return new IsEqualTo(colName, condition.getOperand(), condition.getConditionType(), condition.getOperandType());
+				return new IsEqualTo(colName, operand, condition.getConditionType(), condition.getOperandType());
 			case IS_NOT_EQUAL:
-				return new IsNotEqualTo(colName, condition.getOperand(), condition.getConditionType(), condition.getOperandType());
+				return new IsNotEqualTo(colName, operand, condition.getConditionType(), condition.getOperandType());
 			case GREATER_THAN:
-				return new IsGreaterThan(colName, condition.getOperand(), condition.getConditionType(), condition.getOperandType());
+				return new IsGreaterThan(colName, operand, condition.getConditionType(), condition.getOperandType());
 			case GREATER_THAN_EQUALS:
-				return new IsGreaterThanOrEqualTo(colName, condition.getOperand(), condition.getConditionType(), condition.getOperandType());
+				return new IsGreaterThanOrEqualTo(colName, operand, condition.getConditionType(), condition.getOperandType());
 //			case HAS_CHANGED:
 //			case HAS_NOT_CHANGED:
 			case IS_BETWEEN:
-				return new IsBetween(colName, condition.getOperand(), condition.getConditionType(), condition.getOperandType());
+				return new IsBetween(colName, operand, condition.getConditionType(), condition.getOperandType());
 			case IS_NOT_BETWEEN:
-				return new IsNotBetween(colName, condition.getOperand(), condition.getConditionType(), condition.getOperandType());
+				return new IsNotBetween(colName, operand, condition.getConditionType(), condition.getOperandType());
 			case LESS_THAN:
-				return new LessThan(colName, condition.getOperand(), condition.getConditionType(), condition.getOperandType());
+				return new LessThan(colName, operand, condition.getConditionType(), condition.getOperandType());
 			case LESS_THAN_EQUALS:
-				return new LessThanOrEqualTo(colName, condition.getOperand(), condition.getConditionType(), condition.getOperandType());
+				return new LessThanOrEqualTo(colName, operand, condition.getConditionType(), condition.getOperandType());
 			case STARTS_WITH:
-				return new StartsWithPattern(colName, condition.getOperand(), condition.getConditionType(), condition.getOperandType());
+				return new StartsWithPattern(colName, operand, condition.getConditionType(), condition.getOperandType());
 			case NONE:
 			default:
 				return new None();

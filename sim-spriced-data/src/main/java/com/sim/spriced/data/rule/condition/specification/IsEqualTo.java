@@ -15,25 +15,35 @@ public class IsEqualTo extends BaseSpecification {
 	@Override
 	public boolean isSatisfied(JSONObject input) {
 		boolean result = false;
-		Object value = null;
+		Object value = this.getValue(input);
 
 		if (operandType.equals(Condition.OperandType.CONSTANT)) {
-			value = this.getValue(input);
+			if (value != null) {
+				if (this.isString(value)) {
+					result = this.convertToString(value).equals(this.value.toString());
+				} else if (this.isNumeric(value)) {
+					result = this.convertToNumber(value) == (double) this.value;
+				} else if (this.isBoolean(value)) {
+					result = (int) value == (int) this.value;
+				} else if (this.isDate(value)) {
+					result = (this.convertToDate(value)).compareTo((java.util.Date) this.value) == 0;
+				}
+			}
 		} else if (operandType.equals(Condition.OperandType.BLANK)) {
 			result = this.value == null || this.value.toString().equals("");
 			return result;
 		} else if (operandType.equals(Condition.OperandType.ATTRIBUTE)) {
-			value = input.get(this.value.toString());
-		}
-		if (value != null) {
-			if (this.isString(value)) {
-				result = this.convertToString(value).equals(this.value.toString());
-			} else if (this.isNumeric(value)) {
-				result = this.convertToNumber(value) == (double) this.value;
-			} else if (this.isBoolean(value)) {
-				result = (int) value == (int) this.value;
-			} else if (this.isDate(value)) {
-				result = (this.convertToDate(value)).compareTo((java.util.Date) this.value) == 0;
+			Object colValue = input.get(this.value.toString());
+			if (value != null && colValue != null) {
+				if (this.isString(value) && this.isString(colValue)) {
+					result = this.convertToString(value).equals(this.convertToString(colValue));
+				} else if (this.isNumeric(value) && this.isNumeric(colValue)) {
+					result = this.convertToNumber(value) == (double) colValue;
+				} else if (this.isBoolean(value) && this.isBoolean(colValue)) {
+					result = (int) value == (int) colValue;
+				} else if (this.isDate(value) && this.isDate(colValue)) {
+					result = (this.convertToDate(value)).compareTo((java.util.Date) colValue) == 0;
+				}
 			}
 		}
 		return result;
