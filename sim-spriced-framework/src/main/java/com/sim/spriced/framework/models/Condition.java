@@ -43,6 +43,7 @@ public class Condition {
 	public enum OperatorType {
 		NONE("none", "Operator to mark as no operation"),
 		EQUALS("=", "Operator for equality"),
+		IS_NOT_EQUAL("!=", "Operator for inequality"),
 		GREATER_THAN(">", "Operator to check the greater of the two"),
 		GREATER_THAN_EQUALS(">=", "Operator to check greater than or equal of the two"),
 		LESS_THAN("<", "Operator to check the lesser of the two"),
