@@ -22,7 +22,7 @@ public class IsEqualTo extends BaseSpecification {
 				if (this.isString(value)) {
 					result = this.convertToString(value).equals(this.value.toString());
 				} else if (this.isNumeric(value)) {
-					result = this.convertToNumber(value) == (double) this.value;
+					result = this.convertToNumber(value) ==  this.convertToNumber(this.value);
 				} else if (this.isBoolean(value)) {
 					result = (int) value == (int) this.value;
 				} else if (this.isDate(value)) {

@@ -125,7 +125,7 @@ public class EntityDataService implements IEntityDataService {
 				result.getOutput().put(ModelConstants.IS_VALID, false);
 			}
 			else {
-				result.getOutput().put(ModelConstants.IS_VALID, false);
+				result.getOutput().put(ModelConstants.IS_VALID, true);
 			}
 			return result.getOutput();
 		}).toList();
@@ -143,7 +143,13 @@ public class EntityDataService implements IEntityDataService {
                                 SimpleDateFormat formatter =  new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'");
                                 obj.put(name, new Timestamp(formatter.parse(dateVar).getTime()));
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                try {
+                                	SimpleDateFormat formatter =  new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss+00:00");
+									obj.put(name, new Timestamp(formatter.parse(dateVar).getTime()));
+								} catch (Exception e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
                             }
                         }
                     }

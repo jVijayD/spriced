@@ -74,8 +74,9 @@ public class ConditionalRule implements IRule<JSONObject> {
 			this.executeActions(this.ifActionList, input, result);
 
 		} else {
-			this.checkforEmptyActions(this.elseActionList);
-			this.executeActions(this.elseActionList, input, result);
+			if(!this.elseActionList.isEmpty()) {
+				this.executeActions(this.elseActionList, input, result);
+			}
 		}
 		result.setMessage(this.getMessage(result.isSuccess()));
 		return result;

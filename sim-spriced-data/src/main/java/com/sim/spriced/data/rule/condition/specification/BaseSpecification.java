@@ -1,6 +1,7 @@
 package com.sim.spriced.data.rule.condition.specification;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Date;
 
 import org.json.JSONObject;
@@ -27,7 +28,8 @@ public abstract class BaseSpecification implements CompositeSpecification<JSONOb
 	}
 
 	protected boolean isNumeric(Object value) {
-		return value instanceof Double || value instanceof Integer || value instanceof Float || value instanceof BigDecimal;
+		return value instanceof Double || value instanceof Integer || value instanceof Float
+				|| value instanceof BigDecimal || value instanceof BigInteger;
 	}
 	
 	protected boolean isString(Object value) {
@@ -43,6 +45,13 @@ public abstract class BaseSpecification implements CompositeSpecification<JSONOb
 	}
 	
 	protected double convertToNumber(Object value) {
+		if (value instanceof Integer) {
+			return ((Integer) value).doubleValue();
+		} else if (value instanceof BigInteger) {
+			return ((BigInteger) value).doubleValue();
+		} else if (value instanceof String) {
+			return Double.parseDouble(value.toString());
+		}
 		return (double) value;
 	}
 	
