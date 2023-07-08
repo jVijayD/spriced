@@ -21,6 +21,7 @@ public class Attribute {
 	
 	private String id= UUID.randomUUID().toString();
 	private String name;
+	private String displayName;
 	private DataType dataType=DataType.STRING;
 	private Type type=Type.FREE_FORM;
 	private int size=1;
