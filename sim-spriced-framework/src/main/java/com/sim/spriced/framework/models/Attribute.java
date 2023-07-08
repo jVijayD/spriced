@@ -24,7 +24,7 @@ public class Attribute {
 	private String displayName;
 	private DataType dataType=DataType.STRING;
 	private Type type=Type.FREE_FORM;
-	private int size=1;
+	private int size=25;
 	private boolean nullable = true;
 	private Object defaultValue=null;
 	

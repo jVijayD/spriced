@@ -115,6 +115,31 @@ public class EntityDataController {
 		}
 	}
 	
+	@Timed(value = "data.getAll.time", description = "Time taken to return all data")
+	@GetMapping("/json/items")
+	public ResponseEntity<String> getJsonString(@PathVariable int entityId,@RequestParam(required = false) Integer pageNo,@RequestParam(required = false) Integer pageSize,@RequestParam(required = false) String sortBy,@RequestParam(required = false) String sortDir)
+			throws InterruptedException, ExecutionException {
+		EntityDto entityDto = this.getEntity(entityId).get();
+		if (entityDto != null) {
+			EntityData data = new EntityData();
+			data.setEntityName(entityDto.getName());
+			data.setAttributes(entityDto.getAttributes());
+			
+			if(pageSize==null || pageSize==0) {
+				var result = this.dataService.fetchAllAsJsonString(data);
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
+			else {
+				Pageable pageable = this.createPageable(pageNo, pageSize, sortBy, sortDir);
+				var result = this.dataService.fetchAllAsJsonString(data,pageable);
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}	
+			
+		} else {
+			throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
+		}
+	}
+	
 	@Timed(value = "data.get.time", description = "Time taken to return data.")
 	@GetMapping("/{id}")
 	public ResponseEntity<JSONObject> get(@PathVariable int entityId, @PathVariable String id)
