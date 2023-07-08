@@ -63,7 +63,10 @@ public class EntityController {
 	@Timed(value = "entity.getAll.time", description = "Time taken to return entities.")
 	@GetMapping("/models/{groupId}/entities")
 	public ResponseEntity<List<EntityDto>> getAll(@PathVariable int groupId) {
-		return new ResponseEntity<>(mapper.toEntityDtoList(this.entityDefnitionService.fetchAll(groupId)), HttpStatus.OK);
+		// TO DO: temporary Sorting
+		List<EntityDefnition> entityList = this.entityDefnitionService.fetchAll(groupId);
+		entityList.sort((a,b)->a.getDisplayName().compareTo(b.getDisplayName()));
+		return new ResponseEntity<>(mapper.toEntityDtoList(entityList), HttpStatus.OK);
 	}
 	
 	@Timed(value = "entity.get.time", description = "Time taken to return entity.")
