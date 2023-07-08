@@ -49,6 +49,7 @@ public class RuleRepo extends BaseRepo implements IRuleRepo {
 	@Override
 	public Rule fetchByName(String name) {
 		Rule rule = new Rule(name);
+		rule.setIsExcluded(false);
 		return super.fetchOne(rule,this::convertToRule);
 	}
 	
