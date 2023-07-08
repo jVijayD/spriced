@@ -160,4 +160,23 @@ public class EntityDataService implements IEntityDataService {
         return data;
     }
 
+	@Override
+	public String fetchAllAsJsonString(EntityData data) {
+		return this.dataRepo.fetchAllAsJsonString(data);
+	}
+
+	@Override
+	public String fetchAllAsJsonString(EntityData data, Pageable pageable) {
+		return this.dataRepo.fetchAllAsJsonString(data,pageable);
+	}
+
+	@Override
+	public List<Map<String, Object>> fetchAllAsMap(EntityData data) {
+		return this.dataRepo.fetchAllAsMap(data);
+	}
+
+	@Override
+	public List<Map<String, Object>> fetchAllAsMap(EntityData data, Pageable pageable) {
+		return this.dataRepo.fetchAllAsMap(data, pageable);
+	}
 }
