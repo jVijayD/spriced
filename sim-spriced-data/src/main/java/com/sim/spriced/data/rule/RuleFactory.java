@@ -16,6 +16,7 @@ import com.sim.spriced.data.rule.condition.specification.BaseSpecification;
 import com.sim.spriced.data.rule.condition.specification.SpecificationFactory;
 import com.sim.spriced.framework.models.Action;
 import com.sim.spriced.framework.models.Action.ActionGroup;
+import com.sim.spriced.framework.models.Action.ActionType;
 import com.sim.spriced.framework.models.Attribute;
 import com.sim.spriced.framework.models.Condition;
 import com.sim.spriced.framework.models.Condition.ConditionType;
@@ -62,7 +63,7 @@ public class RuleFactory {
 	}
 
 	private IAction<JSONObject> createAction(Action action, ActionGroup ruleActionGroup, List<Attribute> attributes) {
-		if (!action.getActionGroup().equals(ruleActionGroup)) {
+		if (!action.getActionGroup().equals(ruleActionGroup) && !action.getActionType().equals(ActionType.NONE)) {
 			throw new IllegalArgumentException("Action Group of rule and action are not matching.");
 		}
 		Optional<Attribute> column = attributes.stream().filter(item -> item.getId().equals(action.getAttributeId()))

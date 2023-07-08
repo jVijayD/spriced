@@ -1,6 +1,7 @@
 package com.sim.spriced.data.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,6 +21,10 @@ public interface IEntityDataService {
 	public EntityDataResult deleteBulk(EntityData data);
 	public JSONArray fetchAll(EntityData data);
 	public JSONArray fetchAll(EntityData data,Pageable pageable);
+	public String fetchAllAsJsonString(EntityData data);
+	public String fetchAllAsJsonString(EntityData data,Pageable pageable);
+	public List<Map<String,Object>> fetchAllAsMap(EntityData data);
+	public List<Map<String,Object>> fetchAllAsMap(EntityData data,Pageable pageable);
 	public JSONObject fetchOne(EntityData data);
 }
 

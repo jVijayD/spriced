@@ -5,6 +5,8 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Table;
 
+import org.springframework.util.CollectionUtils;
+
 import com.sim.spriced.framework.annotations.ExtraColumnData;
 import com.sim.spriced.framework.annotations.IDType;
 import com.sim.spriced.framework.models.Action.ActionGroup;
@@ -76,6 +78,14 @@ public class Rule extends BaseEntity {
 	
 	@Override
 	public boolean validate() {
+		if(this.getConditionalAction()!=null && !CollectionUtils.isEmpty(this.getConditionalAction().getIfActions())){
+			this.getConditionalAction().getIfActions().forEach(item->item.setActionGroup(this.group));
+		}
+		
+		if(this.getConditionalAction()!=null && !CollectionUtils.isEmpty(this.getConditionalAction().getElseActions())){
+			this.getConditionalAction().getElseActions().forEach(item->item.setActionGroup(this.group));
+		}
+		
 		return true;
 	}
 	

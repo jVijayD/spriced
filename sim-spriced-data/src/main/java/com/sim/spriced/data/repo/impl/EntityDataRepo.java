@@ -107,7 +107,7 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 				if (!isPrimaryKey) {
 					fieldValues.put(column(item.getName()), jsonObject.get(item.getName()));
 				} else {
-					if (!isChange && dataType.equals(AttributeConstants.DataType.STRING_VAR)){
+					if (Boolean.TRUE.equals(!isChange) && dataType.equals(AttributeConstants.DataType.STRING_VAR)){
 						fieldValues.put(column(item.getName()), jsonObject.get(item.getName()));
 					} else {
 						primaryKeyValues.put(column(item.getName()), jsonObject.get(item.getName()));
@@ -129,11 +129,8 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 	public JSONArray fetchAll(EntityData data) {
 		String entityName = data.getEntityName();
 		Condition condition = this.createCondition(data);
-
-		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).fetch();
-
+		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).limit(100).fetch();
 		List<String> columns = this.getColumns(data.getAttributes(), result==null || result.isEmpty()?null:result.get(0));
-
 		return this.toJSONArray(result, columns);
 	}
 
@@ -210,6 +207,40 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 			throw new UniqueConstraintException(data.getEntityName(), ex);
 		}
 
+	}
+
+	@Override
+	public List<Map<String, Object>> fetchAllAsMap(EntityData data) {
+		String entityName = data.getEntityName();
+		Condition condition = this.createCondition(data);
+		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).limit(100).fetch();
+		return result.intoMaps();
+	}
+
+	@Override
+	public List<Map<String, Object>> fetchAllAsMap(EntityData data, Pageable pageable) {
+		String entityName = data.getEntityName();
+		Condition condition = this.createCondition(data);
+		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).limit(pageable.getPageSize()).offset(pageable.getOffset())
+				.fetch();
+		return result.intoMaps();
+	}
+
+	@Override
+	public String fetchAllAsJsonString(EntityData data) {
+		String entityName = data.getEntityName();
+		Condition condition = this.createCondition(data);
+		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).limit(100).fetch();
+		return result.formatJSON();
+	}
+
+	@Override
+	public String fetchAllAsJsonString(EntityData data, Pageable pageable) {
+		String entityName = data.getEntityName();
+		Condition condition = this.createCondition(data);
+		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).limit(pageable.getPageSize()).offset(pageable.getOffset())
+				.fetch();
+		return result.formatJSON();
 	}
 
 }

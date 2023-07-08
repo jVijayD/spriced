@@ -32,7 +32,7 @@ public class EntityDataRuleService implements IEntityDataRuleService {
 		RuleEngine<JSONObject> engine = this.getRuleEngine();
 		engine.addRules(rules);
 		// To DO: Need to check for running parallel
-		return facts.stream().map(engine::executeRules).toList();
+		return facts.parallelStream().map(engine::executeRules).toList();
 	}
 
 	// TO DO: Correct the Instance creation logic
