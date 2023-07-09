@@ -38,11 +38,11 @@ public class IsEqualTo extends BaseSpecification {
 				if (this.isString(value) && this.isString(colValue)) {
 					result = this.convertToString(value).equals(this.convertToString(colValue));
 				} else if (this.isNumeric(value) && this.isNumeric(colValue)) {
-					result = this.convertToNumber(value) == (double) colValue;
+					result = this.convertToNumber(value) == this.convertToNumber(colValue);
 				} else if (this.isBoolean(value) && this.isBoolean(colValue)) {
 					result = (int) value == (int) colValue;
 				} else if (this.isDate(value) && this.isDate(colValue)) {
-					result = (this.convertToDate(value)).compareTo((java.util.Date) colValue) == 0;
+					result = (this.convertToDate(value)).compareTo(this.convertToDate(colValue)) == 0;
 				}
 			}
 		}

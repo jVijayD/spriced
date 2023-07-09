@@ -22,11 +22,11 @@ public class IsNotEqualTo extends BaseSpecification {
 				if (this.isString(value)) {
 					result = !(this.convertToString(value).equals(this.value.toString()));
 				} else if (this.isNumeric(value)) {
-					result = this.convertToNumber(value) != (double) this.value;
+					result = this.convertToNumber(value) != this.convertToNumber(this.value);
 				} else if (this.isBoolean(value)) {
 					result = (int) value != (int) this.value;
 				} else if (this.isDate(value)) {
-					result = (this.convertToDate(value)).compareTo((java.util.Date) this.value) != 0;
+					result = (this.convertToDate(value)).compareTo(this.convertToDate(this.value)) != 0;
 				}
 			}
 		} else if (operandType.equals(Condition.OperandType.BLANK)) {
@@ -38,11 +38,11 @@ public class IsNotEqualTo extends BaseSpecification {
 				if (this.isString(value) && this.isString(colValue)) {
 					result = !(this.convertToString(value).equals(this.convertToString(colValue)));
 				} else if (this.isNumeric(value) && this.isNumeric(colValue)) {
-					result = this.convertToNumber(value) != (double) colValue;
+					result = this.convertToNumber(value) != this.convertToNumber(colValue);
 				} else if (this.isBoolean(value) && this.isBoolean(colValue)) {
 					result = (int) value != (int) colValue;
 				} else if (this.isDate(value) && this.isDate(colValue)) {
-					result = (this.convertToDate(value)).compareTo((java.util.Date) colValue) != 0;
+					result = (this.convertToDate(value)).compareTo(this.convertToDate(colValue)) != 0;
 				}
 			}
 		}
