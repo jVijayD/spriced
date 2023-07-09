@@ -30,7 +30,7 @@ public class IsNotEqualTo extends BaseSpecification {
 				}
 			}
 		} else if (operandType.equals(Condition.OperandType.BLANK)) {
-			result = value != null && !(value.toString().equals(""));
+			result = !(value == null || value.toString().equals(""));
 			return result;
 		} else if (operandType.equals(Condition.OperandType.ATTRIBUTE)) {
 			Object colValue = input.get(this.value.toString());
