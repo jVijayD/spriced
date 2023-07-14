@@ -1,21 +1,23 @@
 package com.sim.spriced.framework.models.connector;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.json.JSONObject;
 
+import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Sink {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ConnectorClass {
 
     @JsonProperty("name")
     private String name;
 
     @JsonProperty("config")
-    private JSONObject sinkConfig;
+    private Map<String, Object> config;
 }

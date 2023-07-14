@@ -1,17 +1,20 @@
 package com.sim.spriced.defnition.clients;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sim.spriced.defnition.interceptor.FeignClientConfig;
-import org.json.JSONObject;
+import com.sim.spriced.framework.models.connector.ConnectorClass;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.Map;
-
 @FeignClient(name = "connect-api",url="http://localhost:8083",configuration = FeignClientConfig.class)
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public interface IDataIngestionService {
 
     @PostMapping(value = "/connectors", consumes = MediaType.APPLICATION_JSON_VALUE)
-    String sendToConnect(JSONObject data);
+    ResponseEntity<String> sendToConnect(ConnectorClass data);
 }

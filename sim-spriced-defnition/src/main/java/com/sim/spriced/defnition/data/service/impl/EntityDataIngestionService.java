@@ -2,15 +2,14 @@ package com.sim.spriced.defnition.data.service.impl;
 
 import com.sim.spriced.defnition.clients.IDataIngestionService;
 import com.sim.spriced.defnition.data.service.BaseService;
-import com.sim.spriced.defnition.data.service.EntityDefnitionEvent;
 import com.sim.spriced.defnition.data.service.IEntityDataIngestionService;
 import com.sim.spriced.framework.models.Attribute;
 import com.sim.spriced.framework.models.AttributeConstants;
 import com.sim.spriced.framework.models.EntityDefnition;
-import com.sim.spriced.framework.models.connector.SourceSink;
-import com.sim.spriced.framework.pubsub.IObserver;
+import com.sim.spriced.framework.models.connector.ConnectorClass;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -51,17 +50,12 @@ public class EntityDataIngestionService extends BaseService implements IEntityDa
         for (String field: dateFields){
             transformFields.add(field);
         }
-        JSONObject sourceConfig = setSource(fileName, topic, dataTypes, nonNullableFields);
-        JSONObject sinkConfig = setSink(topic, defnition.getName(), attributeNames, transformFields);
+        Map<String, Object> sourceConfig = setSource(fileName, topic, dataTypes, nonNullableFields);
+        Map<String, Object> sinkConfig = setSink(topic, defnition.getName(), attributeNames, transformFields);
 
-        JSONObject source = new JSONObject();
-        source.put("name","csv-source");
-        source.put("config", sourceConfig);
-        JSONObject sink = new JSONObject();
-        sink.put("name", "jdbc-sink");
-        sink.put("config", sinkConfig);
-        SourceSink sourceSink = new SourceSink(source, sink);
-        ingestData(sourceSink);
+        ConnectorClass source = new ConnectorClass("csv-source",sourceConfig);
+        ConnectorClass sink = new ConnectorClass("jdbc-sibk", sinkConfig);
+        ingestData(source, sink);
     }
 
     private Map<String, String> getDataTypes(List<Attribute> attributes) {
@@ -100,8 +94,8 @@ public class EntityDataIngestionService extends BaseService implements IEntityDa
         return sb.toString();
     }
 
-    private JSONObject setSource(String file, String topic, String dataTypes, String nonNullableFields){
-        JSONObject sourceConfig = new JSONObject();
+    private Map<String, Object> setSource(String file, String topic, String dataTypes, String nonNullableFields){
+        Map<String, Object> sourceConfig = new HashMap<>();
         sourceConfig.put("connector.class", "com.sim.spriced.handler.injestion.source.connector.CsvSourceConnector");
         sourceConfig.put("tasks.max", 1);
         sourceConfig.put("input.path", "C:/Risvan/kafka-connect/connect/local-kafka/unprocessed");
@@ -119,8 +113,8 @@ public class EntityDataIngestionService extends BaseService implements IEntityDa
         return sourceConfig;
     }
 
-    private JSONObject setSink(String topic, String table, List<String> attributeNames, List<String> transformFields){
-        JSONObject sinkConfig = new JSONObject();
+    private Map<String, Object> setSink(String topic, String table, List<String> attributeNames, List<String> transformFields){
+        Map<String, Object> sinkConfig = new HashMap<>();
         sinkConfig.put("connector.class","io.confluent.connect.jdbc.JdbcSinkConnector");
         sinkConfig.put("connection.url","jdbc:postgresql://localhost:5432/spriced_meritor");
         sinkConfig.put("connection.user","postgres");
@@ -144,9 +138,10 @@ public class EntityDataIngestionService extends BaseService implements IEntityDa
         return sinkConfig;
     }
 
-    private void ingestData(SourceSink sourceSink){
-        JSONObject sourceClass = sourceSink.getSourceClass();
-        JSONObject sinkClass = sourceSink.getSinkClass();
-        dataIngestionService.sendToConnect(sourceClass);
+    private void ingestData(ConnectorClass sourceClass,ConnectorClass sinkClass){
+        ResponseEntity<String> sourceResponse = dataIngestionService.sendToConnect(sourceClass);
+        if (sourceResponse.getStatusCode().equals(HttpStatus.valueOf(201))){
+            ResponseEntity<String> sinkResponse = dataIngestionService.sendToConnect(sinkClass);
+        }
     }
 }
