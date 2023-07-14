@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.sim.spriced.defnition.data.service.IEntityDataIngestionService;
+import com.sim.spriced.framework.models.connector.SourceSink;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,9 @@ public class EntityController {
 	
 	@Autowired
 	IEntityDefnitionService entityDefnitionService;
+
+	@Autowired
+	IEntityDataIngestionService entityDataIngestionService;
 	
 	@Autowired
 	EntityDtoMapper mapper;
@@ -42,6 +47,7 @@ public class EntityController {
 		EntityDefnition defnition= mapper.toEntityDefnition(entity);
 		defnition.setIsDisabled(false);
 		defnition = this.entityDefnitionService.create(defnition);
+		this.entityDataIngestionService.setConnectorAndIngestData(defnition, entity.getTopic(), entity.getFileName());
 		return mapper.toEntityDto(defnition);
 	}
 	

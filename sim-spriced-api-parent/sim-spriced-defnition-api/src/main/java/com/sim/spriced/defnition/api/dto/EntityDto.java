@@ -30,6 +30,8 @@ public class EntityDto {
 	private Boolean autoNumberCode = true;
 	private Timestamp updatedDate;
 	private String updatedBy;
+	private String fileName;
+	private String topic;
 	public Integer getId() {
 		return id;
 	}
@@ -93,5 +95,11 @@ public class EntityDto {
 	public List<Attribute> getAttributes() {
 		return attributes;
 	}
-	
+	public String getFileName() {
+		return fileName;
+	}
+
+	public String getTopic() {
+		return topic;
+	}
 }
