@@ -43,6 +43,8 @@ import com.sim.spriced.framework.annotations.ExtraColumnData;
 import com.sim.spriced.framework.annotations.IDType;
 import com.sim.spriced.framework.constants.ModelConstants;
 import com.sim.spriced.framework.context.SPricedContextManager;
+import com.sim.spriced.framework.data.filters.Filter;
+import com.sim.spriced.framework.data.filters.FilterGenerator;
 import com.sim.spriced.framework.exceptions.data.InvalidConditionException;
 import com.sim.spriced.framework.exceptions.data.InvalidEntityFieldMappingException;
 import com.sim.spriced.framework.exceptions.data.InvalidFieldMappingException;
@@ -378,6 +380,21 @@ public abstract class BaseRepo {
 
 		return new PageImpl<>(queryResults);
 	}
+        
+        public <T> Page<T> fetchFiltered(T entity, Function<Record, T> converter, Pageable pagable,JSONArray filtersJson) {
+            List<Filter> filters = null;
+            TableData tableDetails = this.getTableData(entity);
+//            Condition conditions = FilterGenerator.generate(filters,tableDetails.getFields());
+		Result<Record> result = this.context.selectFrom(table(tableDetails.getTableName()))
+//                                .orderBy(this.getOrderBy(pagable.getSort()))
+//                                .offset(pagable.getOffset())
+//                                  .where(conditions)
+                                  .limit(pagable.getPageSize())
+                                  .fetch();
+
+                List<T> queryResults = result.map(converter::apply);
+		return new PageImpl<>(queryResults);
+	}
 
 	public <T> Page<T> fetchAll(T entity, Function<Record, T> converter, Pageable pagable) {
 
@@ -576,7 +593,7 @@ public abstract class BaseRepo {
 
 	@Setter
 	@Getter
-	class TableData {
+	public class TableData {
 		private String tableName;
 		private Field<?> versionColumn;
 		private final List<RecordData> recordDataList = new ArrayList<>();

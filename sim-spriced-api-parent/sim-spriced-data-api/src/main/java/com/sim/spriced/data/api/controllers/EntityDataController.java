@@ -7,7 +7,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import javax.validation.Valid;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -41,7 +40,6 @@ import com.sim.spriced.data.service.IEntityDataRuleService;
 import com.sim.spriced.data.service.IEntityDataService;
 import com.sim.spriced.framework.api.exception.ResourceNotFoundException;
 import com.sim.spriced.framework.models.Attribute;
-import com.sim.spriced.framework.models.Rule;
 import com.sim.spriced.framework.rule.IRule;
 
 import io.micrometer.core.annotation.Timed;
@@ -92,7 +90,7 @@ public class EntityDataController {
 
 	@Timed(value = "data.getAll.time", description = "Time taken to return all data")
 	@GetMapping("")
-	public ResponseEntity<List<Map<String,Object>>> get(@PathVariable int entityId,@RequestParam(required = false) Integer pageNo,@RequestParam(required = false) Integer pageSize,@RequestParam(required = false) String sortBy,@RequestParam(required = false) String sortDir)
+	public ResponseEntity<List<Map<String,Object>>> get(@PathVariable int entityId,@RequestParam(required = false) Integer pageNo,@RequestParam(required = false) Integer pageSize,@RequestParam(required = false) String sortBy,@RequestParam(required = false) String sortDir,@RequestParam(required = false)String filters)
 			throws ParseException, InterruptedException, ExecutionException {
 		EntityDto entityDto = this.getEntity(entityId).get();
 		if (entityDto != null) {
@@ -101,12 +99,12 @@ public class EntityDataController {
 			data.setAttributes(entityDto.getAttributes());
 			
 			if(pageSize==null || pageSize==0) {
-				var result = this.dataService.fetchAllAsMap(data);
+				var result = this.dataService.fetchAllAsMap(data,filters);
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			}
 			else {
 				Pageable pageable = this.createPageable(pageNo, pageSize, sortBy, sortDir);
-				var result = this.dataService.fetchAllAsMap(data,pageable);
+				var result = this.dataService.fetchAllAsMap(data,pageable,filters);
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			}	
 			
@@ -117,7 +115,8 @@ public class EntityDataController {
 	
 	@Timed(value = "data.getAll.time", description = "Time taken to return all data")
 	@GetMapping("/json/items")
-	public ResponseEntity<String> getJsonString(@PathVariable int entityId,@RequestParam(required = false) Integer pageNo,@RequestParam(required = false) Integer pageSize,@RequestParam(required = false) String sortBy,@RequestParam(required = false) String sortDir)
+	public ResponseEntity<String> getJsonString(@PathVariable int entityId,@RequestParam(required = false) Integer pageNo,@RequestParam(required = false) Integer pageSize,
+                @RequestParam(required = false) String sortBy,@RequestParam(required = false) String sortDir,@RequestParam(required = false)String filters)
 			throws InterruptedException, ExecutionException {
 		EntityDto entityDto = this.getEntity(entityId).get();
 		if (entityDto != null) {
@@ -126,12 +125,12 @@ public class EntityDataController {
 			data.setAttributes(entityDto.getAttributes());
 			
 			if(pageSize==null || pageSize==0) {
-				var result = this.dataService.fetchAllAsJsonString(data);
+				var result = this.dataService.fetchAllAsJsonString(data,filters);
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			}
 			else {
 				Pageable pageable = this.createPageable(pageNo, pageSize, sortBy, sortDir);
-				var result = this.dataService.fetchAllAsJsonString(data,pageable);
+				var result = this.dataService.fetchAllAsJsonString(data,pageable,filters);
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			}	
 			
@@ -142,7 +141,7 @@ public class EntityDataController {
 	
 	@Timed(value = "data.get.time", description = "Time taken to return data.")
 	@GetMapping("/{id}")
-	public ResponseEntity<JSONObject> get(@PathVariable int entityId, @PathVariable String id)
+	public ResponseEntity<JSONObject> get(@PathVariable int entityId, @PathVariable String id,@RequestParam(required = false)String filters)
 			throws ParseException, InterruptedException, ExecutionException {
 		
 		
@@ -159,7 +158,7 @@ public class EntityDataController {
 			data.setValues(jsonArray);
 			
 			
-			var result = this.dataService.fetchOne(data);
+			var result = this.dataService.fetchOne(data,filters);
 			return new ResponseEntity<>(this.convertToSimpleJSONObject(result), HttpStatus.OK);
 		} else {
 			throw new ResourceNotFoundException(String.format(MESSAGE, entityId));

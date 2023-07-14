@@ -17,6 +17,8 @@ import org.springframework.stereotype.Repository;
 import com.sim.spriced.data.model.EntityData;
 import com.sim.spriced.data.repo.IEntityDataRepo;
 import com.sim.spriced.framework.constants.ModelConstants;
+import com.sim.spriced.framework.data.filters.Filter;
+import com.sim.spriced.framework.data.filters.FilterGenerator;
 import com.sim.spriced.framework.exceptions.data.UniqueConstraintException;
 import com.sim.spriced.framework.models.Attribute;
 import com.sim.spriced.framework.models.AttributeConstants.ConstraintType;
@@ -126,19 +128,22 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 	}
 
 	@Override
-	public JSONArray fetchAll(EntityData data) {
+	public JSONArray fetchAll(EntityData data,String filters) {
 		String entityName = data.getEntityName();
-		Condition condition = this.createCondition(data);
-		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).limit(100).fetch();
+                List<Field<Object>> fieldsList = data.getAttributes().stream().map(e->column(e.getName())).toList();
+                List<Filter> filtersList = FilterGenerator.mapJSONToFilter(filters);
+                Condition condition = FilterGenerator.generate(filtersList,fieldsList);
+		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).limit(2).fetch();
 		List<String> columns = this.getColumns(data.getAttributes(), result==null || result.isEmpty()?null:result.get(0));
 		return this.toJSONArray(result, columns);
 	}
 
 	@Override
-	public JSONArray fetchAll(EntityData data, Pageable pageable) {
+	public JSONArray fetchAll(EntityData data, Pageable pageable,String filters) {
 		String entityName = data.getEntityName();
-		Condition condition = this.createCondition(data);
-
+                List<Field<Object>> fieldsList = data.getAttributes().stream().map(e->column(e.getName())).toList();
+                List<Filter> filtersList = FilterGenerator.mapJSONToFilter(filters);
+                Condition condition = FilterGenerator.generate(filtersList,fieldsList);
 		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition)
 				.orderBy(this.getOrderBy(pageable.getSort())).limit(pageable.getPageSize()).offset(pageable.getOffset())
 				.fetch();
@@ -149,9 +154,11 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 	}
 
 	@Override
-	public JSONObject fetchOne(EntityData data) {
+	public JSONObject fetchOne(EntityData data,String filters) {
 		String entityName = data.getEntityName();
-		Condition condition = this.createCondition(data);
+                List<Field<Object>> fieldsList = data.getAttributes().stream().map(e->column(e.getName())).toList();
+                List<Filter> filtersList = FilterGenerator.mapJSONToFilter(filters);
+                Condition condition = FilterGenerator.generate(filtersList,fieldsList);
 		Record result = this.context.selectFrom(table(entityName)).where(condition).fetchOne();
 		List<String> columns = this.getColumns(data.getAttributes(), result);
 		return this.toJsonObject(result, columns);
@@ -210,34 +217,43 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 	}
 
 	@Override
-	public List<Map<String, Object>> fetchAllAsMap(EntityData data) {
+	public List<Map<String, Object>> fetchAllAsMap(EntityData data,String filters) {
 		String entityName = data.getEntityName();
-		Condition condition = this.createCondition(data);
-		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).limit(100).fetch();
+//		Condition condition = this.createCondition(data);
+                List<Field<Object>> fieldsList = data.getAttributes().stream().map(e->column(e.getName())).toList();
+                List<Filter> filtersList = FilterGenerator.mapJSONToFilter(filters);
+                Condition condition = FilterGenerator.generate(filtersList,fieldsList);
+		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).orderBy(column(ModelConstants.UPDATED_DATE).desc()).limit(2).fetch();
 		return result.intoMaps();
 	}
 
 	@Override
-	public List<Map<String, Object>> fetchAllAsMap(EntityData data, Pageable pageable) {
+	public List<Map<String, Object>> fetchAllAsMap(EntityData data, Pageable pageable,String filters) {
 		String entityName = data.getEntityName();
-		Condition condition = this.createCondition(data);
+		List<Field<Object>> fieldsList = data.getAttributes().stream().map(e->column(e.getName())).toList();
+                List<Filter> filtersList = FilterGenerator.mapJSONToFilter(filters);
+                Condition condition = FilterGenerator.generate(filtersList,fieldsList);
 		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).limit(pageable.getPageSize()).offset(pageable.getOffset())
 				.fetch();
 		return result.intoMaps();
 	}
 
 	@Override
-	public String fetchAllAsJsonString(EntityData data) {
+	public String fetchAllAsJsonString(EntityData data,String filters) {
 		String entityName = data.getEntityName();
-		Condition condition = this.createCondition(data);
-		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).limit(100).fetch();
+		List<Field<Object>> fieldsList = data.getAttributes().stream().map(e->column(e.getName())).toList();
+                List<Filter> filtersList = FilterGenerator.mapJSONToFilter(filters);
+                Condition condition = FilterGenerator.generate(filtersList,fieldsList);
+		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).limit(2).fetch();
 		return result.formatJSON();
 	}
 
 	@Override
-	public String fetchAllAsJsonString(EntityData data, Pageable pageable) {
+	public String fetchAllAsJsonString(EntityData data, Pageable pageable,String filters) {
 		String entityName = data.getEntityName();
-		Condition condition = this.createCondition(data);
+		List<Field<Object>> fieldsList = data.getAttributes().stream().map(e->column(e.getName())).toList();
+                List<Filter> filtersList = FilterGenerator.mapJSONToFilter(filters);
+                Condition condition = FilterGenerator.generate(filtersList,fieldsList);
 		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).limit(pageable.getPageSize()).offset(pageable.getOffset())
 				.fetch();
 		return result.formatJSON();

@@ -56,18 +56,18 @@ public class EntityDataService implements IEntityDataService {
 	}
 
 	@Override
-	public JSONArray fetchAll(EntityData data) {
-		return this.dataRepo.fetchAll(data);
+	public JSONArray fetchAll(EntityData data,String filters) {
+		return this.dataRepo.fetchAll(data,filters);
 	}
 
 	@Override
-	public JSONArray fetchAll(EntityData data, Pageable pageable) {
-		return this.dataRepo.fetchAll(data, pageable);
+	public JSONArray fetchAll(EntityData data, Pageable pageable,String filters) {
+		return this.dataRepo.fetchAll(data, pageable,filters);
 	}
 
 	@Override
-	public JSONObject fetchOne(EntityData data) {
-		return this.dataRepo.fetchOne(data);
+	public JSONObject fetchOne(EntityData data,String filters) {
+		return this.dataRepo.fetchOne(data,filters);
 	}
 
 	@Override
@@ -167,22 +167,22 @@ public class EntityDataService implements IEntityDataService {
     }
 
 	@Override
-	public String fetchAllAsJsonString(EntityData data) {
-		return this.dataRepo.fetchAllAsJsonString(data);
+	public String fetchAllAsJsonString(EntityData data,String filters) {
+		return this.dataRepo.fetchAllAsJsonString(data,filters);
 	}
 
 	@Override
-	public String fetchAllAsJsonString(EntityData data, Pageable pageable) {
-		return this.dataRepo.fetchAllAsJsonString(data,pageable);
+	public String fetchAllAsJsonString(EntityData data, Pageable pageable,String filters) {
+		return this.dataRepo.fetchAllAsJsonString(data,pageable, filters);
 	}
 
 	@Override
-	public List<Map<String, Object>> fetchAllAsMap(EntityData data) {
-		return this.dataRepo.fetchAllAsMap(data);
+	public List<Map<String, Object>> fetchAllAsMap(EntityData data,String filters) {
+		return this.dataRepo.fetchAllAsMap(data,filters);
 	}
 
 	@Override
-	public List<Map<String, Object>> fetchAllAsMap(EntityData data, Pageable pageable) {
-		return this.dataRepo.fetchAllAsMap(data, pageable);
+	public List<Map<String, Object>> fetchAllAsMap(EntityData data, Pageable pageable,String filters) {
+		return this.dataRepo.fetchAllAsMap(data, pageable,filters);
 	}
 }

@@ -13,12 +13,12 @@ public interface IEntityDataRepo {
 	public Map<String,Object> upsert(EntityData data);
 	public int[] upsertBulk(EntityData data);
 	public int[] deleteBulk(EntityData data);
-	public JSONArray fetchAll(EntityData data);
-	public JSONArray fetchAll(EntityData data,Pageable pageable);
-	public List<Map<String,Object>> fetchAllAsMap(EntityData data);
-	public List<Map<String,Object>> fetchAllAsMap(EntityData data,Pageable pageable);
-	public String fetchAllAsJsonString(EntityData data);
-	public String fetchAllAsJsonString(EntityData data,Pageable pageable);
-	public JSONObject fetchOne(EntityData data);
-	
+	public JSONArray fetchAll(EntityData data,String filters);
+	public JSONArray fetchAll(EntityData data,Pageable pageable,String filters);
+	public List<Map<String,Object>> fetchAllAsMap(EntityData data,String filters);
+	public List<Map<String,Object>> fetchAllAsMap(EntityData data,Pageable pageable,String filters);
+	public String fetchAllAsJsonString(EntityData data,String filters);
+	public String fetchAllAsJsonString(EntityData data,Pageable pageable,String filters);
+	public JSONObject fetchOne(EntityData data,String filters);
+        
 }
