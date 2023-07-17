@@ -2,7 +2,6 @@ package com.sim.spriced.defnition.data.service;
 
 import com.sim.spriced.framework.models.EntityDefnition;
 
-public interface IEntityDataIngestionService {
-    void insert(EntityDefnition defnition);
-
+public interface IEntityDataCreationService {
+    void insertData(EntityDefnition entityDefnition);
 }

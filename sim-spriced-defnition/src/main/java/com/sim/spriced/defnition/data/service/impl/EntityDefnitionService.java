@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.PreDestroy;
 
+import com.sim.spriced.defnition.data.service.IEntityDataIngestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -32,6 +33,9 @@ public class EntityDefnitionService  extends BaseService
 	@Autowired
 	IEntityDefnitionRepo defnitionRepo;
 
+	@Autowired
+	IEntityDataIngestionService entityDataIngestionService;
+
 	EntityDefnitionService(List<IObserver<EntityDefnitionEvent>> entityDefnitionObservers) {
 		entityDefnitionObservers.forEach(this::register);
 	}
@@ -42,6 +46,7 @@ public class EntityDefnitionService  extends BaseService
 		entityDefnition.validate();
 		entityDefnition = this.defnitionRepo.add(entityDefnition);
 		this.notifyObservers(this.createEvent(entityDefnition,null, EventType.ADD));
+		this.entityDataIngestionService.insert(entityDefnition);
 		return entityDefnition;
 	}
 

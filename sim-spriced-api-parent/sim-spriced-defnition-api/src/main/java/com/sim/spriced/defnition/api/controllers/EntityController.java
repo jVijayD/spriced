@@ -46,7 +46,6 @@ public class EntityController {
 		EntityDefnition defnition= mapper.toEntityDefnition(entity);
 		defnition.setIsDisabled(false);
 		defnition = this.entityDefnitionService.create(defnition);
-		this.entityDataIngestionService.setConnectorAndIngestData(defnition, entity.getTopic(), entity.getFileName());
 		return mapper.toEntityDto(defnition);
 	}
 	
