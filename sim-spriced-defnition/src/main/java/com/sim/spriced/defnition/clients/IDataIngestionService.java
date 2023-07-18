@@ -9,6 +9,8 @@ import com.sim.spriced.framework.models.connector.ConnectorClass;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @FeignClient(name = "connect-api",url= ConnectConstants.connectBaseUrl,configuration = FeignClientConfig.class)
@@ -17,5 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 public interface IDataIngestionService {
 
     @PostMapping(value = "/connectors", consumes = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<String> sendToConnect(ConnectorClass data);
+    ResponseEntity<String> ingestData(ConnectorClass data);
+
+    @DeleteMapping(value = "/connectors/{connectorName}")
+    ResponseEntity<String> deleteConnector(@PathVariable("connectorName") String connectorName);
 }

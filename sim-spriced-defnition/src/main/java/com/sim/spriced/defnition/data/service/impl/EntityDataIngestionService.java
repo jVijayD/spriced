@@ -29,10 +29,15 @@ public class EntityDataIngestionService extends BaseService implements IEntityDa
 
     @Override
     public void insert(EntityDefnition entityDefnition) {
-        this.notifyObservers(this.createEvent(entityDefnition,null, EventType.ADD));
+        this.notifyObservers(this.createEvent(entityDefnition, EventType.ADD));
     }
 
-    private EntityIngestionEvent createEvent(EntityDefnition entity,EntityDefnition previousEntity, EventType type) {
+    @Override
+    public void deleteConnector(EntityDefnition entityDefnition){
+        this.notifyObservers(this.createEvent(entityDefnition, EventType.DELETE));
+    }
+
+    private EntityIngestionEvent createEvent(EntityDefnition entity, EventType type) {
         EntityIngestionEvent arg = new EntityIngestionEvent();
         arg.setEntity(entity);
         arg.setType(type);

@@ -47,6 +47,14 @@ public class IngestionService implements IIngestionService {
         ConnectorClass sink = new ConnectorClass(setConnectName(defnition.getName(), false), sinkConfig);
         ingestData(source, sink);
     }
+
+    @Override
+    public void deleteConnector(EntityDefnition defnition){
+        String sourceName = setConnectName(defnition.getName(), true);
+        String sinkName = setConnectName(defnition.getName(), false);
+        dataIngestionService.deleteConnector(sourceName);
+        dataIngestionService.deleteConnector(sinkName);
+    }
     private String getFileName(String filName) {
         return "^+"+filName+".*";//^file.*
     }
@@ -140,9 +148,9 @@ public class IngestionService implements IIngestionService {
     }
 
     private void ingestData(ConnectorClass sourceClass,ConnectorClass sinkClass){
-        ResponseEntity<String> sourceResponse = dataIngestionService.sendToConnect(sourceClass);
+        ResponseEntity<String> sourceResponse = dataIngestionService.ingestData(sourceClass);
         if (sourceResponse.getStatusCode().equals(HttpStatus.valueOf(201))){
-            ResponseEntity<String> sinkResponse = dataIngestionService.sendToConnect(sinkClass);
+            ResponseEntity<String> sinkResponse = dataIngestionService.ingestData(sinkClass);
         }
     }
 }

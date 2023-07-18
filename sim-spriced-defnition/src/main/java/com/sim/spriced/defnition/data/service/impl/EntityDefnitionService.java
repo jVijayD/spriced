@@ -62,6 +62,7 @@ public class EntityDefnitionService  extends BaseService
 	public int delete(EntityDefnition defnition) {
 		int rows = this.defnitionRepo.remove(defnition);
 		this.notifyObservers(this.createEvent(defnition,null, EventType.DELETE));
+		this.entityDataIngestionService.deleteConnector(defnition);
 		return rows;
 	}
 	

@@ -4,4 +4,6 @@ import com.sim.spriced.framework.models.EntityDefnition;
 
 public interface IIngestionService {
     void setConnectorAndIngestData(EntityDefnition defnition);
+
+    void deleteConnector(EntityDefnition defnition);
 }

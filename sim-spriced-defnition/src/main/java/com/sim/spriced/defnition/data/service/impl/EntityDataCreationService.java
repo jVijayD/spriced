@@ -19,12 +19,22 @@ public class EntityDataCreationService implements IEntityDataCreationService, IO
         switch (arg.getType()) {
             case ADD:
                 this.insertData(arg.getEntity());
+                break;
+            case DELETE:
+                this.deleteConnector(arg.getEntity());
+                break;
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 
     @Override
     public void insertData(EntityDefnition entityDefnition) {
         this.ingestionService.setConnectorAndIngestData(entityDefnition);
+    }
+
+    public void deleteConnector(EntityDefnition entityDefnition){
+        this.ingestionService.deleteConnector(entityDefnition);
     }
 
 }
