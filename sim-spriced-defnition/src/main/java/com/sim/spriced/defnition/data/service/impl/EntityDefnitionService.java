@@ -46,7 +46,7 @@ public class EntityDefnitionService  extends BaseService
 		entityDefnition.validate();
 		entityDefnition = this.defnitionRepo.add(entityDefnition);
 		this.notifyObservers(this.createEvent(entityDefnition,null, EventType.ADD));
-		this.entityDataIngestionService.insert(entityDefnition);
+		this.entityDataIngestionService.upsert(entityDefnition);
 		return entityDefnition;
 	}
 
@@ -75,6 +75,7 @@ public class EntityDefnitionService  extends BaseService
 		entityDefnition = this.defnitionRepo.change(entityDefnition);
 		
 		this.notifyObservers(this.createEvent(entityDefnition,previous, EventType.UPDATE));
+//		this.entityDataIngestionService.updateSchema(entityDefnition); todo implement DDL
 		return entityDefnition;
 	}
 	

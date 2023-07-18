@@ -28,8 +28,13 @@ public class EntityDataIngestionService extends BaseService implements IEntityDa
 
 
     @Override
-    public void insert(EntityDefnition entityDefnition) {
+    public void upsert(EntityDefnition entityDefnition) {
         this.notifyObservers(this.createEvent(entityDefnition, EventType.ADD));
+    }
+
+    @Override
+    public void updateSchema(EntityDefnition entityDefnition){
+        this.notifyObservers(this.createEvent(entityDefnition, EventType.UPDATE));
     }
 
     @Override

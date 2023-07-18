@@ -18,7 +18,10 @@ public class EntityDataCreationService implements IEntityDataCreationService, IO
     public void update(EntityIngestionEvent arg) {
         switch (arg.getType()) {
             case ADD:
-                this.insertData(arg.getEntity());
+                this.upsert(arg.getEntity());
+                break;
+            case UPDATE:
+                this.updateSchema(arg.getEntity());
                 break;
             case DELETE:
                 this.deleteConnector(arg.getEntity());
@@ -29,12 +32,18 @@ public class EntityDataCreationService implements IEntityDataCreationService, IO
     }
 
     @Override
-    public void insertData(EntityDefnition entityDefnition) {
-        this.ingestionService.setConnectorAndIngestData(entityDefnition);
+    public void upsert(EntityDefnition entityDefnition) {
+        this.ingestionService.createConnectorsAndUpsert(entityDefnition);
     }
 
+    @Override
     public void deleteConnector(EntityDefnition entityDefnition){
         this.ingestionService.deleteConnector(entityDefnition);
+    }
+
+    @Override
+    public void updateSchema(EntityDefnition entityDefnition){
+        this.ingestionService.updateSchema(entityDefnition);
     }
 
 }
