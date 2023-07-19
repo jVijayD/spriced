@@ -1,25 +1,24 @@
 package com.sim.spriced.defnition.data.repo.impl;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 //import java.util.EnumMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.Condition;
 import org.jooq.Constraint;
 import org.jooq.CreateTableColumnStep;
 import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.JSON;
 import org.jooq.Query;
-import org.jooq.XML;
-import org.jooq.Condition;
 import org.jooq.Result;
+import org.jooq.XML;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.springframework.stereotype.Repository;
@@ -281,8 +280,6 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 					(dataType, size, nullable, defaultValue) -> SQLDataType.DOUBLE.defaultValue((Double) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.FLOAT,
 					(dataType, size, nullable, defaultValue) -> SQLDataType.FLOAT.defaultValue((Double) defaultValue));
-			dataTypeMapper.put(AttributeConstants.DataType.DECIMAL, (dataType, size, nullable,
-																	 defaultValue) -> SQLDataType.DECIMAL.defaultValue((BigDecimal) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.CHARACTER, (dataType, size, nullable,
 																	   defaultValue) -> SQLDataType.CHAR(1).defaultValue((String) defaultValue));
 			dataTypeMapper.put(AttributeConstants.DataType.STRING, (dataType, size, nullable,
@@ -307,6 +304,8 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 					(dataType, size, nullable, defaultValue) -> SQLDataType.DATE);
 			dataTypeMapper.put(AttributeConstants.DataType.DATE_TIME,
 					(dataType, size, nullable, defaultValue) -> SQLDataType.LOCALDATETIME);
+			dataTypeMapper.put(AttributeConstants.DataType.DECIMAL, (dataType, size, nullable,
+					 defaultValue) -> SQLDataType.DECIMAL(10, size));
 		}
 	}
 
@@ -316,6 +315,10 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 		int size = attribute.getSize();
 		boolean nullable = attribute.isNullable();
 		Object defaultValue = attribute.getDefaultValue();
+		if(attribute.getDataType().equals(AttributeConstants.DataType.INTEGER) && attribute.getNumberOfDecimalValues()>0 ) {
+			dataType=AttributeConstants.DataType.DECIMAL;
+			size=attribute.getNumberOfDecimalValues();
+		}
 		return dataTypeMapper.get(dataType) == null ? SQLDataType.NVARCHAR(15)
 				: dataTypeMapper.get(dataType).apply(dataType, size, nullable, defaultValue);
 	}
@@ -335,7 +338,7 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 	}
 
 	@FunctionalInterface
-	interface QuadFunction<A, B, C, D, R> {
+	interface QuadFunction<A, B, C, D ,R> {
 		R apply(A a, B b, C c, D d);
 	}
 
