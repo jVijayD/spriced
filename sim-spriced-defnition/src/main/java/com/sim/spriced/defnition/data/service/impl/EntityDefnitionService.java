@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.annotation.PreDestroy;
 
-import com.sim.spriced.defnition.data.service.IEntityDataIngestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -33,9 +32,6 @@ public class EntityDefnitionService  extends BaseService
 	@Autowired
 	IEntityDefnitionRepo defnitionRepo;
 
-	@Autowired
-	IEntityDataIngestionService entityDataIngestionService;
-
 	EntityDefnitionService(List<IObserver<EntityDefnitionEvent>> entityDefnitionObservers) {
 		entityDefnitionObservers.forEach(this::register);
 	}
@@ -46,7 +42,6 @@ public class EntityDefnitionService  extends BaseService
 		entityDefnition.validate();
 		entityDefnition = this.defnitionRepo.add(entityDefnition);
 		this.notifyObservers(this.createEvent(entityDefnition,null, EventType.ADD));
-		this.entityDataIngestionService.upsert(entityDefnition);
 		return entityDefnition;
 	}
 
@@ -62,7 +57,6 @@ public class EntityDefnitionService  extends BaseService
 	public int delete(EntityDefnition defnition) {
 		int rows = this.defnitionRepo.remove(defnition);
 		this.notifyObservers(this.createEvent(defnition,null, EventType.DELETE));
-		this.entityDataIngestionService.deleteConnector(defnition);
 		return rows;
 	}
 	
@@ -75,7 +69,6 @@ public class EntityDefnitionService  extends BaseService
 		entityDefnition = this.defnitionRepo.change(entityDefnition);
 		
 		this.notifyObservers(this.createEvent(entityDefnition,previous, EventType.UPDATE));
-		this.entityDataIngestionService.updateSchema(entityDefnition, previous);
 		return entityDefnition;
 	}
 	

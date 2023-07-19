@@ -1,12 +1,13 @@
 package com.sim.spriced.defnition.data.service.impl;
 
 import com.sim.spriced.defnition.clients.IDataIngestionService;
-import com.sim.spriced.defnition.constants.ConnectConstants;
-import com.sim.spriced.defnition.data.service.IIngestionService;
+import com.sim.spriced.defnition.data.service.EntityDefnitionEvent;
+import com.sim.spriced.defnition.data.service.IEntityIngestionService;
 import com.sim.spriced.framework.models.Attribute;
 import com.sim.spriced.framework.models.AttributeConstants;
 import com.sim.spriced.framework.models.EntityDefnition;
 import com.sim.spriced.framework.models.connector.ConnectorClass;
+import com.sim.spriced.framework.pubsub.IObserver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class IngestionService implements IIngestionService {
+public class EntityIngestionService implements IEntityIngestionService, IObserver<EntityDefnitionEvent> {
 
     @Autowired
     IDataIngestionService dataIngestionService;
@@ -36,7 +37,27 @@ public class IngestionService implements IIngestionService {
     @Value("${connect.input.mount.path}")
     private String connectorInputPath;
 
+    public static final String sourceConnector = "com.sim.spriced.handler.injestion.source.connector.CsvSourceConnector";
+
+    public static final String sinkConnector = "io.confluent.connect.jdbc.JdbcSinkConnector";
+
     @Override
+    public void update(EntityDefnitionEvent arg) {
+        switch (arg.getType()) {
+            case ADD:
+                this.createConnectorsAndUpsert(arg.getEntity());
+                break;
+            case UPDATE:
+                this.updateSchema(arg.getEntity(), arg.getPreviousEntity());
+                break;
+            case DELETE:
+                this.deleteConnector(arg.getEntity());
+                break;
+            default:
+                throw new UnsupportedOperationException();
+        }
+    }
+
     public void createConnectorsAndUpsert(EntityDefnition defnition) {
         Map<String, String> attributeList = getDataTypes(defnition.getAttributes());
         String dataTypes = this.convertPairToComaSeparated(attributeList);
@@ -62,7 +83,6 @@ public class IngestionService implements IIngestionService {
         ingestData(source, sink);
     }
 
-    @Override
     public void deleteConnector(EntityDefnition defnition){
         String sourceName = setConnectName(defnition.getName(), true);
         String sinkName = setConnectName(defnition.getName(), false);
@@ -75,7 +95,6 @@ public class IngestionService implements IIngestionService {
         }
     }
 
-    @Override
     public void updateSchema(EntityDefnition defnition, EntityDefnition previousDefnition){
         String sourceName = setConnectName(previousDefnition.getName(), true);
         String sinkName = setConnectName(previousDefnition.getName(), false);
@@ -123,7 +142,7 @@ public class IngestionService implements IIngestionService {
         attributes.forEach(attribute ->{
             switch (attribute.getDataType()) {
                 case INTEGER, AUTO -> attributeList.put(attribute.getName(), "int64");
-                case DECIMAL -> attributeList.put(attribute.getName(), "float64");
+                case DECIMAL, DOUBLE -> attributeList.put(attribute.getName(), "float64");
             }
         });
         return attributeList;
@@ -168,7 +187,7 @@ public class IngestionService implements IIngestionService {
         }
 
         Map<String, Object> sourceConfig = new HashMap<>();
-        sourceConfig.put("connector.class", ConnectConstants.sourceConnector);
+        sourceConfig.put("connector.class", sourceConnector);
         sourceConfig.put("tasks.max", 1);
         sourceConfig.put("input.path", "/usr/share/file");
         sourceConfig.put("input.file.pattern", file);
@@ -191,7 +210,6 @@ public class IngestionService implements IIngestionService {
             writer.write(fields);
             writer.write("\n");
         } catch (IOException e) {
-            // Handle any exceptions that occur during file creation
             throw new RuntimeException(e);
         }
     }
@@ -202,7 +220,7 @@ public class IngestionService implements IIngestionService {
         attributeNames.add("updated_date");
         attributeNames.add("updated_by");
         attributeNames.add("comment");
-        sinkConfig.put("connector.class",ConnectConstants.sinkConnector);
+        sinkConfig.put("connector.class",sinkConnector);
         sinkConfig.put("connection.url",connectDbUrl);
         sinkConfig.put("connection.user",connectDbUser);
         sinkConfig.put("connection.password",connectDbPassword);
