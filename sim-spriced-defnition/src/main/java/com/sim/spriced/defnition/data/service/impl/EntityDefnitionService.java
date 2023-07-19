@@ -75,7 +75,7 @@ public class EntityDefnitionService  extends BaseService
 		entityDefnition = this.defnitionRepo.change(entityDefnition);
 		
 		this.notifyObservers(this.createEvent(entityDefnition,previous, EventType.UPDATE));
-//		this.entityDataIngestionService.updateSchema(entityDefnition); todo implement DDL
+		this.entityDataIngestionService.updateSchema(entityDefnition, previous);
 		return entityDefnition;
 	}
 	

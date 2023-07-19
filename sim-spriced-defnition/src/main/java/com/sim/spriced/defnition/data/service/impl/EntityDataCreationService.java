@@ -21,7 +21,7 @@ public class EntityDataCreationService implements IEntityDataCreationService, IO
                 this.upsert(arg.getEntity());
                 break;
             case UPDATE:
-                this.updateSchema(arg.getEntity());
+                this.updateSchema(arg.getEntity(), arg.getPreviousEntity());
                 break;
             case DELETE:
                 this.deleteConnector(arg.getEntity());
@@ -42,8 +42,8 @@ public class EntityDataCreationService implements IEntityDataCreationService, IO
     }
 
     @Override
-    public void updateSchema(EntityDefnition entityDefnition){
-        this.ingestionService.updateSchema(entityDefnition);
+    public void updateSchema(EntityDefnition entityDefnition, EntityDefnition previousDefnition){
+        this.ingestionService.updateSchema(entityDefnition, previousDefnition);
     }
 
 }

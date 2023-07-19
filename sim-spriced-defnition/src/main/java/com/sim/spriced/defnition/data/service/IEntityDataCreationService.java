@@ -7,5 +7,5 @@ public interface IEntityDataCreationService {
 
     void deleteConnector(EntityDefnition entityDefnition);
 
-    void updateSchema(EntityDefnition entityDefnition);
+    void updateSchema(EntityDefnition entityDefnition, EntityDefnition previousDefnition);
 }

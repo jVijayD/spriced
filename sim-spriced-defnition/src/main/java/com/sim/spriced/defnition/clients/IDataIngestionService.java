@@ -3,17 +3,19 @@ package com.sim.spriced.defnition.clients;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.sim.spriced.defnition.constants.ConnectConstants;
 import com.sim.spriced.defnition.interceptor.FeignClientConfig;
 import com.sim.spriced.framework.models.connector.ConnectorClass;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-@FeignClient(name = "connect-api",url= ConnectConstants.connectBaseUrl,configuration = FeignClientConfig.class)
+import java.util.List;
+
+@FeignClient(name = "connect-api",url="${connect.url}",configuration = FeignClientConfig.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public interface IDataIngestionService {
@@ -23,4 +25,7 @@ public interface IDataIngestionService {
 
     @DeleteMapping(value = "/connectors/{connectorName}")
     ResponseEntity<String> deleteConnector(@PathVariable("connectorName") String connectorName);
+
+    @GetMapping(value = "/connectors")
+    ResponseEntity<List<String>> getAllConnectors();
 }

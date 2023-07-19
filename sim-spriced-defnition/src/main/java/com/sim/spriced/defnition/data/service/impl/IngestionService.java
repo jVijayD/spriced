@@ -8,10 +8,14 @@ import com.sim.spriced.framework.models.AttributeConstants;
 import com.sim.spriced.framework.models.EntityDefnition;
 import com.sim.spriced.framework.models.connector.ConnectorClass;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +27,15 @@ public class IngestionService implements IIngestionService {
     @Autowired
     IDataIngestionService dataIngestionService;
 
+    @Value("${connect.db.url}")
+    private String connectDbUrl;
+    @Value("${connect.db.user}")
+    private String connectDbUser;
+    @Value("${connect.db.password}")
+    private String connectDbPassword;
+    @Value("${connect.input.mount.path}")
+    private String connectorInputPath;
+
     @Override
     public void createConnectorsAndUpsert(EntityDefnition defnition) {
         Map<String, String> attributeList = getDataTypes(defnition.getAttributes());
@@ -30,15 +43,19 @@ public class IngestionService implements IIngestionService {
         String nonNullableFields = String.join(",", getNotNullableFields(defnition.getAttributes()));
         List<String> attributeNames = new ArrayList<>();
         List<String> dateFields = new ArrayList<>();
+        List<String> primaryKey = new ArrayList<>();
         defnition.getAttributes().forEach(attribute -> {
             attributeNames.add(attribute.getName());
             if (attribute.getDataType().equals(AttributeConstants.DataType.TIME_STAMP)) {
                 dateFields.add(attribute.getName());
             }
+            if (attribute.getConstraintType().equals(AttributeConstants.ConstraintType.PRIMARY_KEY)){
+                primaryKey.add(attribute.getName());
+            }
         });
         List<String> transformFields = new ArrayList<>(dateFields);
-        Map<String, Object> sourceConfig = setSource(getFileName(defnition.getName()), defnition.getName(), dataTypes, nonNullableFields);
-        Map<String, Object> sinkConfig = setSink(defnition.getName(), defnition.getName(), attributeNames, transformFields);
+        Map<String, Object> sourceConfig = setSource(getFileName(defnition.getName()), defnition.getName(), dataTypes, nonNullableFields, attributeNames);
+        Map<String, Object> sinkConfig = setSink(defnition.getName(), defnition.getName(), attributeNames, transformFields, primaryKey);
 
         ConnectorClass source = new ConnectorClass(setConnectName(defnition.getName(), true),sourceConfig);
         ConnectorClass sink = new ConnectorClass(setConnectName(defnition.getName(), false), sinkConfig);
@@ -49,14 +66,19 @@ public class IngestionService implements IIngestionService {
     public void deleteConnector(EntityDefnition defnition){
         String sourceName = setConnectName(defnition.getName(), true);
         String sinkName = setConnectName(defnition.getName(), false);
-        dataIngestionService.deleteConnector(sourceName);
-        dataIngestionService.deleteConnector(sinkName);
+        List<String> availableConnectors = dataIngestionService.getAllConnectors().getBody();
+        if (null!=availableConnectors && availableConnectors.contains(sourceName)){
+            dataIngestionService.deleteConnector(sourceName);
+        }
+        if (null!=availableConnectors && availableConnectors.contains(sinkName)){
+            dataIngestionService.deleteConnector(sinkName);
+        }
     }
 
     @Override
-    public void updateSchema(EntityDefnition defnition){
-        String sourceName = setConnectName(defnition.getName(), true);
-        String sinkName = setConnectName(defnition.getName(), false);
+    public void updateSchema(EntityDefnition defnition, EntityDefnition previousDefnition){
+        String sourceName = setConnectName(previousDefnition.getName(), true);
+        String sinkName = setConnectName(previousDefnition.getName(), false);
         ResponseEntity<String> sourceResponse = dataIngestionService.deleteConnector(sourceName);
         ResponseEntity<String> sinkResponse = dataIngestionService.deleteConnector(sinkName);
         if (sourceResponse.getStatusCode().equals(HttpStatus.valueOf(204)) || sinkResponse.getStatusCode().equals(HttpStatus.valueOf(204))){
@@ -65,17 +87,21 @@ public class IngestionService implements IIngestionService {
             String nonNullableFields = String.join(",", getNotNullableFields(defnition.getAttributes()));
             List<String> attributeNames = new ArrayList<>();
             List<String> dateFields = new ArrayList<>();
+            List<String> primaryKey = new ArrayList<>();
             defnition.getAttributes().forEach(attribute -> {
                 attributeNames.add(attribute.getName());
                 if (attribute.getDataType().equals(AttributeConstants.DataType.TIME_STAMP)) {
                     dateFields.add(attribute.getName());
                 }
+                if (attribute.getConstraintType().equals(AttributeConstants.ConstraintType.PRIMARY_KEY)){
+                    primaryKey.add(attribute.getName());
+                }
             });
             List<String> transformFields = new ArrayList<>(dateFields);
-            Map<String, Object> sourceConfig = setSource(getFileName(defnition.getName()), defnition.getName(), dataTypes, nonNullableFields);
-            Map<String, Object> sinkConfig = setSink(defnition.getName(), defnition.getName(), attributeNames, transformFields);
-            ConnectorClass source = new ConnectorClass(sourceName,sourceConfig);
-            ConnectorClass sink = new ConnectorClass(sinkName,sinkConfig);
+            Map<String, Object> sourceConfig = setSource(getFileName(defnition.getName()), defnition.getName(), dataTypes, nonNullableFields, attributeNames);
+            Map<String, Object> sinkConfig = setSink(defnition.getName(), defnition.getName(), attributeNames, transformFields, primaryKey);
+            ConnectorClass source = new ConnectorClass(setConnectName(defnition.getName(), true),sourceConfig);
+            ConnectorClass sink = new ConnectorClass(setConnectName(defnition.getName(), false),sinkConfig);
             this.ingestData(source, sink);
         }
 
@@ -128,39 +154,65 @@ public class IngestionService implements IIngestionService {
         return sb.toString();
     }
 
-    private Map<String, Object> setSource(String file, String topic, String dataTypes, String nonNullableFields){
+    private Map<String, Object> setSource(String file, String topic, String dataTypes, String nonNullableFields, List<String> attributeNames) {
+        String headerFilePath = connectorInputPath + File.separator + topic;
+        // Check if a file starting with topic exists in the input path
+        File[] files = new File(connectorInputPath).listFiles((dir, name) -> name.startsWith(topic));
+        if (files == null || files.length == 0) {
+            attributeNames.remove("is_valid");
+            attributeNames.remove("updated_date");
+            attributeNames.remove("updated_by");
+            attributeNames.remove("comment");
+            // Create a new file with the specified name in the input path
+            createHeaderFile(headerFilePath, String.join(",", attributeNames));
+        }
+
         Map<String, Object> sourceConfig = new HashMap<>();
         sourceConfig.put("connector.class", ConnectConstants.sourceConnector);
         sourceConfig.put("tasks.max", 1);
-        sourceConfig.put("input.path", "C:/Risvan/kafka-connect/connect/local-kafka/unprocessed");
+        sourceConfig.put("input.path", "/usr/share/file");
         sourceConfig.put("input.file.pattern", file);
-        sourceConfig.put("error.path", "C:/Risvan/kafka-connect/connect/local-kafka/error");
-        sourceConfig.put("finished.path", "C:/Risvan/kafka-connect/connect/local-kafka/processed");
+        sourceConfig.put("error.path", "/usr/share/empty");
+        sourceConfig.put("finished.path", "/usr/share/games");
         sourceConfig.put("topic", topic);
         sourceConfig.put("csv.first.row.as.header", true);
         sourceConfig.put("schema.generation.enabled", true);
         sourceConfig.put("transforms", "castTypes");
         sourceConfig.put("transforms.castTypes.type", "org.apache.kafka.connect.transforms.Cast$Value");
-        sourceConfig.put("transforms.castTypes.spec",dataTypes);
-        sourceConfig.put("csv.null.field.indicator","EMPTY_SEPARATORS");
+        sourceConfig.put("transforms.castTypes.spec", dataTypes);
+        sourceConfig.put("csv.null.field.indicator", "EMPTY_SEPARATORS");
         sourceConfig.put("nullable.fields", nonNullableFields);
         sourceConfig.put("halt.on.error", false);
         return sourceConfig;
     }
 
-    private Map<String, Object> setSink(String topic, String table, List<String> attributeNames, List<String> transformFields){
+    private void createHeaderFile(String filePath, String fields) {
+        try (FileWriter writer = new FileWriter(filePath)) {
+            writer.write(fields);
+            writer.write("\n");
+        } catch (IOException e) {
+            // Handle any exceptions that occur during file creation
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Map<String, Object> setSink(String topic, String table, List<String> attributeNames, List<String> transformFields, List<String> primaryKey){
         Map<String, Object> sinkConfig = new HashMap<>();
+        attributeNames.add("is_valid");
+        attributeNames.add("updated_date");
+        attributeNames.add("updated_by");
+        attributeNames.add("comment");
         sinkConfig.put("connector.class",ConnectConstants.sinkConnector);
-        sinkConfig.put("connection.url","jdbc:postgresql://localhost:5432/spriced_meritor");
-        sinkConfig.put("connection.user","postgres");
-        sinkConfig.put("connection.password","password");
+        sinkConfig.put("connection.url",connectDbUrl);
+        sinkConfig.put("connection.user",connectDbUser);
+        sinkConfig.put("connection.password",connectDbPassword);
         sinkConfig.put("tasks.max",1);
         sinkConfig.put("topics", topic);
         sinkConfig.put("auto.create",true);
         sinkConfig.put("auto.evolve", true);
         sinkConfig.put("insert.mode","upsert");
         sinkConfig.put("pk.mode", "record_value");
-        sinkConfig.put("pk.fields","id");
+        sinkConfig.put("pk.fields",String.join(",", primaryKey));
         sinkConfig.put("table.name.format", table);
         sinkConfig.put("fields.whitelist",String.join(",", attributeNames));
         if (transformFields.size()!=0){

@@ -7,5 +7,5 @@ public interface IIngestionService {
 
     void deleteConnector(EntityDefnition defnition);
 
-    void updateSchema(EntityDefnition defnition);
+    void updateSchema(EntityDefnition defnition, EntityDefnition previousDefnition);
 }

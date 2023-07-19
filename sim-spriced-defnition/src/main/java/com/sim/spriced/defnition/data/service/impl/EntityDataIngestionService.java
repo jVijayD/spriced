@@ -29,22 +29,23 @@ public class EntityDataIngestionService extends BaseService implements IEntityDa
 
     @Override
     public void upsert(EntityDefnition entityDefnition) {
-        this.notifyObservers(this.createEvent(entityDefnition, EventType.ADD));
+        this.notifyObservers(this.createEvent(entityDefnition, null, EventType.ADD));
     }
 
     @Override
-    public void updateSchema(EntityDefnition entityDefnition){
-        this.notifyObservers(this.createEvent(entityDefnition, EventType.UPDATE));
+    public void updateSchema(EntityDefnition entityDefnition, EntityDefnition previousDefnition){
+        this.notifyObservers(this.createEvent(entityDefnition, previousDefnition, EventType.UPDATE));
     }
 
     @Override
     public void deleteConnector(EntityDefnition entityDefnition){
-        this.notifyObservers(this.createEvent(entityDefnition, EventType.DELETE));
+        this.notifyObservers(this.createEvent(entityDefnition, null, EventType.DELETE));
     }
 
-    private EntityIngestionEvent createEvent(EntityDefnition entity, EventType type) {
+    private EntityIngestionEvent createEvent(EntityDefnition entity,EntityDefnition previousEntity, EventType type) {
         EntityIngestionEvent arg = new EntityIngestionEvent();
         arg.setEntity(entity);
+        arg.setPreviousEntity(previousEntity);
         arg.setType(type);
         return arg;
     }
