@@ -11,21 +11,20 @@ import com.sim.spriced.framework.models.SettingsData;
 
 @Service
 public class SettingsService implements ISettingsService {
-	
+
 	@Autowired
 	private ISettingsRepo settingsRepo;
-	
+
 	@Autowired
 	protected SPricedContextManager contextManager;
-	
 
 	String user;
+
 	@Override
-	public Settings addSettings(SettingsData settingsData) {
-		Settings settings = new Settings();
-		settings. setSettingsData(settingsData);
-		settings.setUserId(this.contextManager.getRequestContext().getUser());
-		return settingsRepo.addSettings(settings);
+	public Settings addSettings(Settings settingsData) {
+
+		settingsData.setUserId(this.contextManager.getRequestContext().getUser());
+		return settingsRepo.addSettings(settingsData);
 	}
 
 	@Override
@@ -36,16 +35,11 @@ public class SettingsService implements ISettingsService {
 	}
 
 	@Override
-	public Settings updateSettings( SettingsData settingsData) {
+	public Settings updateSettings(Settings settingsData) {
 
-		Settings settings = new Settings();
-		settings.setUserId(this.contextManager.getRequestContext().getUser());
-		settings=settingsRepo.getSettings(settings);
-		if(settings!=null) {
-			settings.setSettingsData(settingsData);
-		return settingsRepo.updateSettings(settings);
-		}
-		return null;
+		settingsData.setUserId(this.contextManager.getRequestContext().getUser());
+		return settingsRepo.updateSettings(settingsData);
+
 	}
 
 	@Override
@@ -53,6 +47,6 @@ public class SettingsService implements ISettingsService {
 		Settings settings = new Settings();
 		settings.setUserId(this.contextManager.getRequestContext().getUser());
 		return settingsRepo.getSettings(settings);
-		
+
 	}
 }

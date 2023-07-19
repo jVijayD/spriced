@@ -6,11 +6,11 @@ import com.sim.spriced.framework.models.SettingsData;
 public interface ISettingsService {
 
 	
-	public Settings addSettings(SettingsData settingsData);
+	public Settings addSettings(Settings settingsData);
 	
 	public void deleteSettings();
 	
-	public Settings updateSettings(SettingsData settingsData);
+	public Settings updateSettings(Settings settingsData);
 	
 	public Settings getSettings();
 }

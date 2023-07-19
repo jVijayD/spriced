@@ -5,14 +5,16 @@ import javax.persistence.Table;
 
 import com.sim.spriced.framework.annotations.ExtraColumnData;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-
+@Getter 
+@Setter
 @NoArgsConstructor
 @Table(name = "settings")
 public class Settings extends BaseEntity {
 
-	
 	@ExtraColumnData(isPrimaryKey = true)
 	@Column(name="user_id")
 	private String userId;
@@ -20,28 +22,6 @@ public class Settings extends BaseEntity {
 	@Column(name = "settings")
 	@ExtraColumnData(convertToJson = true, exclude = true)
 	private SettingsData settingsData;
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public SettingsData getSettingsData() {
-		return settingsData;
-	}
-
-	public void setSettingsData(SettingsData settingsData) {
-		this.settingsData = settingsData;
-	}
-
-	@Override
-	boolean validate() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	
 	public static class TableConstants {
 		public static final String TABLE = "settings";
@@ -50,5 +30,11 @@ public class Settings extends BaseEntity {
 		public static final String ROW_PAGES="row_pages";		
 		public static final String FREEZ_PAGES="freezPages";
 		private TableConstants() {}
+	}
+
+	@Override
+	boolean validate() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 }
