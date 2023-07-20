@@ -1,0 +1,154 @@
+:root {
+  --primary-light: #da716f;
+  --primary-default: #c4312b;
+  --primary-dark: #a8211a;
+  --primary-disabled: #d56c6baa;
+
+  --secondary-light: #ebeff2;
+  --secondary-default: #d0d9e1;
+  --secondary-dark: #748ea8;
+
+  --warn-light: #fff170;
+  --warn-default: #ffab1f;
+  --warn-dark: #e48000;
+
+  --success-light: #44f5a5;
+  --success-default: #05cc62;
+  --success-dark: #048c1f;
+
+  --error-light: #eb6262;
+  --error-default: #ee3d3d;
+  --error-dark: #f20505;
+
+  --white: #ffffff;
+  --black: #000000;
+  --disabled: rgba(113, 103, 103, 0.604);
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+// @import '../../node_modules/@swimlane/ngx-datatable/assets/icons.css';
+
+//ngx-data-table
+@import '../../node_modules/@swimlane/ngx-datatable/index.scss';
+@import '../../node_modules/@swimlane/ngx-datatable/themes/material.scss';
+
+.ngx-datatable.material.single-selection .datatable-body-row.active:hover,
+.ngx-datatable.material.single-selection
+  .datatable-body-row.active:hover
+  .datatable-row-group,
+.ngx-datatable.material.multi-selection .datatable-body-row.active:hover,
+.ngx-datatable.material.multi-selection
+  .datatable-body-row.active:hover
+  .datatable-row-group,
+.ngx-datatable.material.multi-click-selection .datatable-body-row.active:hover,
+.ngx-datatable.material.multi-click-selection
+  .datatable-body-row.active:hover
+  .datatable-row-group {
+  background-color: var(--secondary-default);
+}
+
+// .ngx-datatable.material.single-selection
+//   .datatable-body-row.active
+//   .datatable-body-cell {
+//   color: var(--white);
+// }
+
+.ngx-datatable.material.single-selection .datatable-body-row.active,
+.ngx-datatable.material.single-selection
+  .datatable-body-row.active
+  .datatable-row-group,
+.ngx-datatable.material.multi-selection .datatable-body-row.active,
+.ngx-datatable.material.multi-selection
+  .datatable-body-row.active
+  .datatable-row-group,
+.ngx-datatable.material.multi-click-selection .datatable-body-row.active,
+.ngx-datatable.material.multi-click-selection
+  .datatable-body-row.active
+  .datatable-row-group {
+  background-color: var(--secondary-default);
+}
+
+.ngx-datatable .datatable-body .datatable-row-wrapper {
+  border-bottom-width: 0.5px;
+}
+
+.ngx-datatable.material
+  .datatable-body
+  .datatable-body-row
+  .datatable-body-cell {
+  padding: 0.5rem 1.2rem;
+}
+
+ngx-datatable.material .datatable-header .datatable-header-cell {
+  padding: 0.5rem 1.2rem !important;
+}
+
+.ngx-datatable.fixed-header
+  .datatable-header
+  .datatable-header-inner
+  .datatable-header-cell {
+  color: var(--white);
+  font-size: 14px;
+  background-color: var(--primary-dark);
+  border-right-color: var(--primary-light);
+  border-style: solid;
+  border-right-width: 0.05px;
+}
+
+.ngx-datatable {
+  .sortable .sort-btn:before {
+    font-family: data-table;
+    content: '\21F5';
+  }
+  .sortable .sort-btn.datatable-icon-down:before {
+    content: '\2193';
+  }
+  .sortable .sort-btn.datatable-icon-up:before {
+    content: '\2191';
+  }
+}
+
+.ngx-datatable.material
+  .datatable-footer
+  .datatable-pager
+  .datatable-icon-prev:before {
+  content: '<<';
+  font-size: small;
+}
+
+.ngx-datatable.material
+  .datatable-footer
+  .datatable-pager
+  .datatable-icon-left:before {
+  content: '<';
+  font-size: medium;
+}
+
+.ngx-datatable.material
+  .datatable-footer
+  .datatable-pager
+  .datatable-icon-right:after {
+  content: '>';
+  font-size: medium;
+}
+
+.ngx-datatable.material
+  .datatable-footer
+  .datatable-pager
+  .datatable-icon-skip:after {
+  content: '>>';
+  font-size: small;
+}
+
+.ngx-datatable .datatable-header .datatable-header-cell .sort-btn {
+  float: right;
+  padding-top: 5px;
+}

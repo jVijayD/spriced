@@ -1,0 +1,28 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@spriced-frontend/shared/spriced-shared-lib": [
+        "libs/shared/spriced-shared-lib/src/index.ts"
+      ],
+      "@spriced-frontend/spriced-common-lib": [
+        "libs/spriced-common-lib/src/index.ts"
+      ],
+      "@spriced-frontend/spriced-ui-lib": ["libs/spriced-ui-lib/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

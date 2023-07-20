@@ -1,0 +1,123 @@
+<!-- <div style="height: 70%; margin: 10px; display: none">
+  <sp-data-grid
+    #dataGrid
+    title="Entity List"
+    [enableRowIndex]="false"
+    [isArray]="true"
+    [headers]="headers"
+    [rows]="rows"
+    [rowHeight]="40"
+    [headerHeight]="40"
+    [footerHeight]="40"
+    [columnMode]="columnMode"
+    [virtualScroll]="false"
+    [selectionType]="selectionType"
+    [limit]="10"
+    [isExternalPaging]="true"
+    [isExternalSorting]="false"
+    [sortType]="sortType"
+    [count]="totalElements"
+    (paginate)="onPaginate($event)"
+    (itemSelected)="onItemSelected($event)"
+    (sort)="onSort($event)"
+  >
+    <ng-container>
+      <sp-header-action
+        icon="add_box"
+        text="Add Record"
+        title="Add Record"
+        (actionClick)="onAddRecord()"
+      ></sp-header-action>
+      <sp-header-action
+        icon="style"
+        text="Add Rule"
+        title="Add Rule"
+        (actionClick)="onAddRule()"
+      ></sp-header-action>
+    </ng-container>
+  </sp-data-grid>
+</div> -->
+<sp-two-col-three-forth [singleColumn]="isFullScreen">
+  <div class="h-full" left>
+    <!-- <sp-data-grid
+      #dataGrid
+      title="Entity List"
+      [enableRowIndex]="false"
+      [isArray]="true"
+      [headers]="headers"
+      [rows]="rows"
+      [rowHeight]="40"
+      [headerHeight]="40"
+      [footerHeight]="40"
+      [columnMode]="columnMode"
+      [virtualScroll]="false"
+      [selectionType]="selectionType"
+      [limit]="10"
+      [isExternalPaging]="true"
+      [isExternalSorting]="false"
+      [sortType]="sortType"
+      [count]="totalElements"
+      (paginate)="onPaginate($event)"
+      (itemSelected)="onItemSelected($event)"
+      (sort)="onSort($event)"
+    >
+      <ng-container>
+        <sp-header-action
+          icon="add_box"
+          text="Add Record"
+          title="Add Record"
+          (actionClick)="onAddRecord()"
+        ></sp-header-action>
+        <sp-header-action
+          icon="style"
+          text="Add Rule"
+          title="Add Rule"
+          (actionClick)="onAddRule()"
+        ></sp-header-action>
+        <sp-header-action
+          *ngIf="!this.isFullScreen"
+          icon="aspect_ratio"
+          text="Full Screen"
+          title="Full Screen"
+          (actionClick)="onFullScreen()"
+        ></sp-header-action>
+        <sp-header-action
+          *ngIf="this.isFullScreen"
+          icon="edit"
+          text="Edit"
+          title="Edit"
+          (actionClick)="onFullScreen()"
+        ></sp-header-action>
+      </ng-container>
+    </sp-data-grid> -->
+    <sp-dynamic-form-container [appForm]="appForm"></sp-dynamic-form-container>
+  </div>
+  <div class="h-full w-full" right>
+    <div>
+      <button mat-raised-button color="primary" (click)="onClick()">
+        Success
+      </button>
+      <button mat-raised-button color="primary" (click)="onWarnClick()">
+        Warn
+      </button>
+      <button mat-raised-button color="primary" (click)="onNotificationClick()">
+        Notification
+      </button>
+      <button mat-raised-button color="primary" (click)="onErrorClick()">
+        Error
+      </button>
+    </div>
+
+    <div>
+      <button mat-raised-button color="primary" (click)="onConfirmClick()">
+        Confirm Dialogue
+      </button>
+
+      <button mat-raised-button color="primary" (click)="onInfoClick()">
+        Info Dialogue
+      </button>
+    </div>
+
+    <sp-dynamic-form-container [appForm]="appForm"></sp-dynamic-form-container>
+  </div>
+</sp-two-col-three-forth>

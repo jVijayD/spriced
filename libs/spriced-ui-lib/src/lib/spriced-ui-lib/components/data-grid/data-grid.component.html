@@ -1,0 +1,70 @@
+<ng-container>
+  <div
+    class="w-full bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5"
+  >
+    <span class="float-left text-white font-medium">{{ title }}</span>
+    <div class="flex flex-row"><ng-content></ng-content></div>
+  </div>
+  <ngx-datatable
+    #table
+    style="height: 100%; width: 100%"
+    class="material"
+    [rows]="rows"
+    [columnMode]="columnMode"
+    [headerHeight]="headerHeight"
+    [footerHeight]="footerHeight"
+    [rowHeight]="rowHeight"
+    [scrollbarV]="virtualScroll"
+    [scrollbarH]="true"
+    [selectionType]="selectionType"
+    [offset]="offset"
+    (page)="onPaginate($event)"
+    (select)="onSelect($event)"
+    [externalSorting]="isExternalSorting"
+    [sortType]="sortType"
+    [externalPaging]="isExternalPaging"
+    [limit]="limit"
+    [count]="count"
+    (sort)="onSort($event)"
+  >
+    <ngx-datatable-column *ngIf="enableRowIndex" name="#">
+      <ng-template
+        let-rowIndex="rowIndex"
+        let-row="row"
+        ngx-datatable-cell-template
+        >{{ rowIndex + 1 }}</ng-template
+      ></ngx-datatable-column
+    >
+
+    <ngx-datatable-column
+      *ngFor="let header of headers; let i = index"
+      [name]="header.name"
+      [flexGrow]="header.flexGrow || 1"
+      [frozenLeft]="header.pinned === 'left' ? true : false"
+      [frozenRight]="header.pinned === 'right' ? true : false"
+      [width]="header.width || 0"
+      [resizeable]="true"
+      [sortable]="true"
+      [draggable]="true"
+      [canAutoResize]="header.canAutoResize || true"
+    >
+      <!-- <ng-template
+        let-column="column"
+        ngx-datatable-header-template
+        let-sort="sortFn"
+      >
+        <div class="reportfilterbackground">
+          <input
+            type="text"
+            class="form-control reportfilter"
+            aria-describedby="basic-addon1"
+          />
+        </div> 
+      </ng-template> -->
+
+      <ng-template let-row="row" ngx-datatable-cell-template>{{
+        isArray ? row[i] : row[header.column]
+      }}</ng-template></ngx-datatable-column
+    >
+  </ngx-datatable>
+</ng-container>

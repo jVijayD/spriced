@@ -1,0 +1,122 @@
+{
+  "name": "spriced-data",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "sp",
+  "sourceRoot": "apps/spriced-data/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:webpack-browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/spriced-data",
+        "index": "apps/spriced-data/src/index.html",
+        "main": "apps/spriced-data/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/spriced-data/tsconfig.app.json",
+        "assets": [
+          "apps/spriced-data/src/favicon.ico",
+          "apps/spriced-data/src/assets"
+        ],
+        "styles": ["apps/spriced-data/src/styles.scss"],
+        "scripts": [],
+        "customWebpackConfig": {
+          "path": "apps/spriced-data/webpack.config.js"
+        }
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "outputHashing": "all",
+          "customWebpackConfig": {
+            "path": "apps/spriced-data/webpack.prod.config.js"
+          }
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@nx/angular:webpack-dev-server",
+      "options": {
+        "port": 4202,
+        "publicHost": "http://localhost:4202"
+      },
+      "configurations": {
+        "production": {
+          "browserTarget": "spriced-data:build:production"
+        },
+        "development": {
+          "browserTarget": "spriced-data:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "spriced-data:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "apps/spriced-data/**/*.ts",
+          "apps/spriced-data/**/*.html"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/spriced-data/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "serve-static": {
+      "executor": "@nx/web:file-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "spriced-data:build",
+        "port": 4202,
+        "watch": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "spriced-data:build:development"
+        },
+        "production": {
+          "buildTarget": "spriced-data:build:production"
+        }
+      }
+    }
+  }
+}

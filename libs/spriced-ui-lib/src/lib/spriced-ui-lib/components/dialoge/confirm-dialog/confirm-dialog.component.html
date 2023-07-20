@@ -1,0 +1,26 @@
+<div>
+  <h1 mat-dialog-title>
+    {{ data.title }}
+  </h1>
+
+  <div mat-dialog-content>
+    <div class="grid grid-flow-row">
+      <mat-icon
+        style="height: 40px; width: 40px; font-size: 40px"
+        class="text-primary-dark justify-self-center"
+        *ngIf="data.icon"
+        >{{ data.icon }}</mat-icon
+      >
+      <span class="font-thin text-base">{{ data.message }}</span>
+    </div>
+  </div>
+
+  <div mat-dialog-actions class="flex flex-row items-end">
+    <button mat-raised-button color="secondary" (click)="onDismiss()">
+      {{ data.no || 'No' }}
+    </button>
+    <button mat-raised-button color="primary" (click)="onConfirm()">
+      {{ data.yes || 'Yes' }}
+    </button>
+  </div>
+</div>

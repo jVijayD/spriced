@@ -1,0 +1,5 @@
+<ng-container *ngFor="let validator of validations">
+  <mat-error *ngIf="errors[validator.name]">
+    <mat-icon>error_outline</mat-icon> <span>{{ validator.message }}</span>
+  </mat-error>
+</ng-container>

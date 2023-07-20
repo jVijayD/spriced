@@ -1,0 +1,6 @@
+{
+  "spriced-data-definition": "http://localhost:4201",
+  "spriced-data": "http://localhost:4202",
+  "spriced-reports": "http://localhost:4203",
+  "spriced-user-management": "http://localhost:4204"
+}

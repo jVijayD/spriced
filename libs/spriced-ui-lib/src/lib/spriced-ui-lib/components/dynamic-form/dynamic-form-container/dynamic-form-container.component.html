@@ -1,0 +1,28 @@
+<div class="container">
+  <sp-dynamic-form [appFormData]="this.currentFormData"></sp-dynamic-form>
+
+  <div class="divider"></div>
+  <div class="button-container">
+    <!-- <button mat-raised-button type="button">Cancel</button> -->
+    <button
+      class="w-24"
+      mat-raised-button
+      color="accent"
+      (click)="onFormReset()"
+    >
+      {{ reset }}
+    </button>
+    <button
+      class="w-24"
+      mat-raised-button
+      color="primary"
+      type="submit"
+      (click)="onFormSubmit()"
+      [disabled]="!this.currentFormData?.form?.valid"
+    >
+      {{ save }}
+    </button>
+  </div>
+</div>
+
+<!-- <pre>{{ this.currentFormData?.form | json }}</pre> -->

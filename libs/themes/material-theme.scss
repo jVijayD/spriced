@@ -1,0 +1,169 @@
+@use '@angular/material' as mat;
+@include mat.core();
+$default-border-radius: 10px 10px 0px 0px;
+
+$mat-red: (
+  light: var(--primary-light),
+  default: var(--primary-default),
+  dark: var(--primary-dark),
+  contrast: (
+    light: rgba(black, 0.87),
+    default: white,
+    dark: white,
+  ),
+);
+
+$mat-accent: (
+  light: var(--secondary-light),
+  default: var(--secondary-default),
+  dark: var(--secondary-dark),
+  contrast: (
+    light: rgba(black, 0.87),
+    default: white,
+    dark: white,
+  ),
+);
+
+$mat-orange: (
+  light: var(--warn-light),
+  default: var(--warn-default),
+  dark: var(--warn-dark),
+  contrast: (
+    light: rgba(black, 0.87),
+    default: white,
+    dark: white,
+  ),
+);
+
+$mat-form-primary: (
+  light: var(--warn-light),
+  default: var(--warn-default),
+  dark: var(--warn-dark),
+  contrast: (
+    light: rgba(black, 0.87),
+    default: white,
+    dark: white,
+  ),
+);
+
+$my-app-primary: mat.define-palette($mat-red, default, light, dark, default);
+$my-app-accent: mat.define-palette($mat-accent, default, light, dark, default);
+$my-app-warn: mat.define-palette($mat-orange, default, light, dark, default);
+$my-formfield-primary: mat.define-palette(
+  $mat-form-primary,
+  default,
+  light,
+  dark
+);
+
+$my-app-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $my-app-primary,
+      accent: $my-app-accent,
+      warn: $my-app-warn,
+    ),
+    density: -1,
+    border-radius: 10px 10px 0px 0px,
+  )
+);
+
+$my-formfield-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $my-formfield-primary,
+      accent: $my-app-accent,
+      warn: $my-app-warn,
+    ),
+    density: -1,
+    border-radius: 10px 10px 0px 0px,
+  )
+);
+$my-app-dark-theme: mat.define-dark-theme(
+  (
+    color: (
+      primary: $my-formfield-primary,
+      accent: $my-app-accent,
+      warn: $my-app-warn,
+    ),
+    density: -1,
+    border-radius: 10px 10px 0px 0px,
+  )
+);
+
+@include mat.all-component-themes($my-app-theme);
+@include mat.form-field-theme($my-formfield-theme);
+@include mat.select-theme($my-formfield-theme);
+@include mat.paginator-theme($my-app-dark-theme);
+
+.mdc-snackbar__label,
+.mdc-snackbar__surface {
+  padding: 0px !important;
+}
+
+.mdc-dialog__title {
+  padding-left: 18px !important;
+}
+
+.mat-mdc-dialog-actions {
+  justify-content: end !important;
+  border-top-width: 0.5px !important;
+  border-top-style: solid !important;
+  border-color: var(--secondary-default) !important;
+}
+
+// Material Buttons
+.mat-mdc-raised-button:not(:disabled) {
+  color: var(--white) !important;
+  font-size: 0.85rem;
+  //font-weight: bold;
+  padding: 18px;
+}
+
+.mat-mdc-raised-button[disabled][disabled] {
+  font-size: 0.85rem;
+  padding: 18px;
+  --mdc-protected-button-disabled-container-color: var(
+    --primary-disabled
+  ) !important;
+  --mdc-protected-button-disabled-label-text-color: var(--disabled) !important;
+}
+
+// Material Input
+.mat-mdc-form-field-hint-wrapper {
+  padding: 0px !important;
+  color: gray;
+  font-size: 10px;
+}
+.mdc-notched-outline__notch {
+  border-right: 0px !important;
+}
+.mdc-notched-outline__trailing {
+  border-left: 0 !important;
+}
+
+.mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+.mat-mdc-form-field-error {
+  font-size: 12px;
+  font-style: italic;
+  padding-bottom: 10px;
+  color: var(--error-dark);
+}
+
+.mat-mdc-form-field-error .mat-icon {
+  font-size: 13px;
+  width: 13px;
+  height: 13px;
+  padding-top: 1px;
+  padding-right: 1px;
+}
+
+// mat-form-field.error {
+//   border-style: solid;
+//   border-width: 1px;
+//   border-color: var(--error-dark);
+//   border-radius: 5px;
+// }

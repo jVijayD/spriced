@@ -1,0 +1,57 @@
+<form
+  [formGroup]="this.appFormData.form"
+  *ngIf="this.appFormData && this.appFormData.form"
+>
+  <div
+    class="@container"
+    *ngFor="let grp of this.appFormData.appForm?.groups; let grpIndex = index"
+  >
+    <label class="grp-label" *ngIf="grp.title && grp.title !== ''">{{
+      grp.title
+    }}</label>
+    <!-- <div
+      class="items-container"
+      *ngFor="let row of getRowAndColumns(grpIndex).rows; let rowIndex = index"
+    >
+      <div
+        class="item"
+        *ngFor="
+          let row of getRowAndColumns(grpIndex).columns;
+          let colIndex = index
+        "
+      >
+        <ng-container *ngIf="this.getControl(rowIndex, colIndex, grpIndex)">
+          <sp-input
+            [control]="this.getControl(rowIndex, colIndex, grpIndex)"
+            [formControlName]="
+              this.getControl(rowIndex, colIndex, grpIndex).name
+            "
+            *ngIf="
+              this.getControl(rowIndex, colIndex, grpIndex).type === 'input'
+            "
+          >
+          </sp-input>
+        </ng-container>
+      </div>
+    </div> -->
+    <div class="items-container">
+      <ng-container *ngFor="let ctrl of grp.formFieldControls">
+        <sp-input
+          class="item"
+          [control]="ctrl"
+          [formControlName]="ctrl.name"
+          *ngIf="ctrl.type === 'input'"
+        >
+        </sp-input>
+
+        <sp-numeric
+          class="item"
+          [control]="ctrl"
+          [formControlName]="ctrl.name"
+          *ngIf="ctrl.type === 'numeric'"
+        >
+        </sp-numeric>
+      </ng-container>
+    </div>
+  </div>
+</form>

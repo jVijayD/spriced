@@ -1,0 +1,30 @@
+<ng-container *ngIf="control.type === 'input' && visible">
+  <mat-form-field
+    [appearance]="'outline'"
+    [ngClass]="frmControl.errors ? 'error' : ''"
+    class="full-width"
+  >
+    <mat-label>{{ control.label }}</mat-label>
+    <input
+      matInput
+      [maxLength]="control.maxLength ? control.maxLength : 50"
+      [placeholder]="control.placeholder || ''"
+      autocomplete="off"
+      [type]="control.subType"
+      [disabled]="disabled"
+      [(ngModel)]="value"
+      (blur)="onTouched()"
+    />
+    <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+    <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
+  </mat-form-field>
+
+  <ng-container>
+    <sp-error
+      *ngIf="frmControl.errors"
+      [validations]="control.validations || []"
+      [errors]="frmControl.errors"
+    ></sp-error>
+    <div *ngIf="!frmControl.errors" style="visibility: hidden">*</div>
+  </ng-container>
+</ng-container>
