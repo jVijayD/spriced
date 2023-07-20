@@ -16,8 +16,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SettingsDto {
 	
-	
-
 	private String userId;
 
 	private SettingsData settingsData;
@@ -25,5 +23,4 @@ public class SettingsDto {
 	private Timestamp updatedDate;
 
 	private String updatedBy;
-
 }

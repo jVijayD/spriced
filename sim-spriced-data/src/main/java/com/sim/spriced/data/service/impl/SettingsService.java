@@ -18,13 +18,11 @@ public class SettingsService implements ISettingsService {
 	@Autowired
 	protected SPricedContextManager contextManager;
 
-	String user;
-
 	@Override
-	public Settings addSettings(Settings settingsData) {
+	public Settings addSettings(Settings settings) {
 
-		settingsData.setUserId(this.contextManager.getRequestContext().getUser());
-		return settingsRepo.addSettings(settingsData);
+		settings.setUserId(this.contextManager.getRequestContext().getUser());
+		return settingsRepo.addSettings(settings);
 	}
 
 	@Override
@@ -35,10 +33,10 @@ public class SettingsService implements ISettingsService {
 	}
 
 	@Override
-	public Settings updateSettings(Settings settingsData) {
+	public Settings updateSettings(Settings settings) {
 
-		settingsData.setUserId(this.contextManager.getRequestContext().getUser());
-		return settingsRepo.updateSettings(settingsData);
+		settings.setUserId(this.contextManager.getRequestContext().getUser());
+		return settingsRepo.updateSettings(settings);
 
 	}
 
