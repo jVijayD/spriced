@@ -33,7 +33,7 @@ import com.sim.spriced.framework.repo.BaseRepo;
 
 @Repository
 public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo {
-private static final int precisionValue=1000;
+private static final int PRECISION_DEFAULT_VALUE=1000;
 	private static final EnumMap<AttributeConstants.DataType, QuadFunction<AttributeConstants.DataType, Integer, Boolean, Object, DataType<?>>> dataTypeMapper = new EnumMap<>(
 			AttributeConstants.DataType.class);
 
@@ -305,7 +305,7 @@ private static final int precisionValue=1000;
 			dataTypeMapper.put(AttributeConstants.DataType.DATE_TIME,
 					(dataType, size, nullable, defaultValue) -> SQLDataType.LOCALDATETIME);
 			dataTypeMapper.put(AttributeConstants.DataType.DECIMAL, (dataType, size, nullable,
-					 defaultValue) -> SQLDataType.DECIMAL(precisionValue, size));
+					 defaultValue) -> SQLDataType.DECIMAL(PRECISION_DEFAULT_VALUE, size));
 		}
 	}
 
