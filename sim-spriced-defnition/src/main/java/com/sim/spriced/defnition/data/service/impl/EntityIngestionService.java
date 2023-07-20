@@ -60,7 +60,7 @@ public class EntityIngestionService implements IEntityIngestionService, IObserve
                     throw new UnsupportedOperationException();
             }
         } catch (Exception e){
-            log.info(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 
