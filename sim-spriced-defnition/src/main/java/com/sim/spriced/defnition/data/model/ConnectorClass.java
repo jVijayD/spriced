@@ -1,4 +1,4 @@
-package com.sim.spriced.framework.models.connector;
+package com.sim.spriced.defnition.data.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

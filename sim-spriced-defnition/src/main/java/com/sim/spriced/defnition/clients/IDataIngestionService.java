@@ -3,7 +3,7 @@ package com.sim.spriced.defnition.clients;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.sim.spriced.framework.models.connector.ConnectorClass;
+import com.sim.spriced.defnition.data.model.ConnectorClass;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

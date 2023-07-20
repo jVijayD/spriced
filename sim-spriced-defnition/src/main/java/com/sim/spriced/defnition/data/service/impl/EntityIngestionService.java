@@ -6,8 +6,9 @@ import com.sim.spriced.defnition.data.service.IEntityIngestionService;
 import com.sim.spriced.framework.models.Attribute;
 import com.sim.spriced.framework.models.AttributeConstants;
 import com.sim.spriced.framework.models.EntityDefnition;
-import com.sim.spriced.framework.models.connector.ConnectorClass;
+import com.sim.spriced.defnition.data.model.ConnectorClass;
 import com.sim.spriced.framework.pubsub.IObserver;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class EntityIngestionService implements IEntityIngestionService, IObserver<EntityDefnitionEvent> {
 
     @Autowired
@@ -43,18 +45,22 @@ public class EntityIngestionService implements IEntityIngestionService, IObserve
 
     @Override
     public void update(EntityDefnitionEvent arg) {
-        switch (arg.getType()) {
-            case ADD:
-                this.createConnectorsAndUpsert(arg.getEntity());
-                break;
-            case UPDATE:
-                this.updateSchema(arg.getEntity(), arg.getPreviousEntity());
-                break;
-            case DELETE:
-                this.deleteConnector(arg.getEntity());
-                break;
-            default:
-                throw new UnsupportedOperationException();
+        try{
+            switch (arg.getType()) {
+                case ADD:
+                    this.createConnectorsAndUpsert(arg.getEntity());
+                    break;
+                case UPDATE:
+                    this.updateSchema(arg.getEntity(), arg.getPreviousEntity());
+                    break;
+                case DELETE:
+                    this.deleteConnector(arg.getEntity());
+                    break;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        } catch (Exception e){
+            log.info(e.getMessage());
         }
     }
 
