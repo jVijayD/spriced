@@ -315,9 +315,6 @@ private static final int precisionValue=1000;
 		int size = attribute.getSize();
 		boolean nullable = attribute.isNullable();
 		Object defaultValue = attribute.getDefaultValue();
-		if(attribute.getDataType().equals(AttributeConstants.DataType.INTEGER) && attribute.getSize()>0 ) {
-			dataType=AttributeConstants.DataType.DECIMAL;
-		}
 		return dataTypeMapper.get(dataType) == null ? SQLDataType.NVARCHAR(15)
 				: dataTypeMapper.get(dataType).apply(dataType, size, nullable, defaultValue);
 	}
