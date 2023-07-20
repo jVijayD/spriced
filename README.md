@@ -1,2 +1,2 @@
-# spriced-ui-fe
+# spriced-ui
 Refined Frontend of SPRICED
