@@ -33,7 +33,7 @@ import com.sim.spriced.framework.repo.BaseRepo;
 
 @Repository
 public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo {
-
+private static final int precisionValue=1000;
 	private static final EnumMap<AttributeConstants.DataType, QuadFunction<AttributeConstants.DataType, Integer, Boolean, Object, DataType<?>>> dataTypeMapper = new EnumMap<>(
 			AttributeConstants.DataType.class);
 
@@ -305,7 +305,7 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 			dataTypeMapper.put(AttributeConstants.DataType.DATE_TIME,
 					(dataType, size, nullable, defaultValue) -> SQLDataType.LOCALDATETIME);
 			dataTypeMapper.put(AttributeConstants.DataType.DECIMAL, (dataType, size, nullable,
-					 defaultValue) -> SQLDataType.DECIMAL(10, size));
+					 defaultValue) -> SQLDataType.DECIMAL(precisionValue, size));
 		}
 	}
 
@@ -315,9 +315,8 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 		int size = attribute.getSize();
 		boolean nullable = attribute.isNullable();
 		Object defaultValue = attribute.getDefaultValue();
-		if(attribute.getDataType().equals(AttributeConstants.DataType.INTEGER) && attribute.getNumberOfDecimalValues()>0 ) {
+		if(attribute.getDataType().equals(AttributeConstants.DataType.INTEGER) && attribute.getSize()>0 ) {
 			dataType=AttributeConstants.DataType.DECIMAL;
-			size=attribute.getNumberOfDecimalValues();
 		}
 		return dataTypeMapper.get(dataType) == null ? SQLDataType.NVARCHAR(15)
 				: dataTypeMapper.get(dataType).apply(dataType, size, nullable, defaultValue);
@@ -338,7 +337,7 @@ public class EntityCreationRepo extends BaseRepo implements IEntityCreationRepo 
 	}
 
 	@FunctionalInterface
-	interface QuadFunction<A, B, C, D ,R> {
+	interface QuadFunction<A, B, C, D, R> {
 		R apply(A a, B b, C c, D d);
 	}
 
