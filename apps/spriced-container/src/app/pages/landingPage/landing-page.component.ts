@@ -1,10 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { APP_INITIALIZER, Component, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { AppCardComponent } from '@spriced-frontend/spriced-ui-lib';
-
+// import { HTTP_INTERCEPTORS } from '@angular/common/http';
+// import { KeycloakService } from 'keycloak-angular';
+// import { initializeKeycloak } from '../../core/init/keycloak-init.factory';
+// import { KeycloakBearerInterceptor } from '../../core/interceptors/keycloakInterceptor';
 // import { KeycloakService } from 'keycloak-angular';
 
 @Component({
@@ -19,6 +22,18 @@ import { AppCardComponent } from '@spriced-frontend/spriced-ui-lib';
   MatMenuModule,
   AppCardComponent
   ],
+  // providers: [   {
+  //   provide: HTTP_INTERCEPTORS,
+  //   useClass: KeycloakBearerInterceptor,
+  //   multi: true,
+  // },
+  // {
+  //   provide: APP_INITIALIZER,
+  //   useFactory: initializeKeycloak,
+  //   multi: true,
+  //   deps: [KeycloakService],
+  // },],
+
 })
 export class LandingPageComponent implements OnInit {
   labels: any;
