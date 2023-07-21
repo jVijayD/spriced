@@ -77,11 +77,8 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 
 	private Map<String,Object> executeUpsertQuery(String entityName, Map<Field<?>, Object> fieldValues,
 			Map<Field<?>, Object> fieldValuesPrimaryKey, boolean isChange) {
-		Field<?> col = column("code");
 		Collection<Field<?>> allFields = new ArrayList<>(fieldValues.keySet());
-		if (!fieldValues.containsKey(col)){
-			allFields.add(col);
-		}
+		allFields.addAll(fieldValuesPrimaryKey.keySet());
 		if (!isChange) {
 			Collection<Field<?>> fields = new ArrayList<>(fieldValues.keySet());
 			Collection<Object> values = fieldValues.values();
@@ -101,7 +98,6 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 		jsonObject.put(ModelConstants.UPDATED_DATE, this.timeStamp);
 
 		attributes.forEach(item -> {
-			if (jsonObject.has(item.getName())) {
 				boolean isPrimaryKey = item.getConstraintType() == ConstraintType.PRIMARY_KEY;
 				AttributeConstants.DataType dataType = item.getDataType();
 				if (!isPrimaryKey) {
@@ -110,10 +106,9 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 					if (Boolean.TRUE.equals(!isChange) && dataType.equals(AttributeConstants.DataType.STRING_VAR)){
 						fieldValues.put(column(item.getName()), jsonObject.get(item.getName()));
 					} else {
-						primaryKeyValues.put(column(item.getName()), jsonObject.get(item.getName()));
+						primaryKeyValues.put(column(item.getName()), jsonObject.has(item.getName())? jsonObject.get(item.getName()):null);
 					}
 				}
-			}
 		});
 
 		return Pair.of(fieldValues, primaryKeyValues);
