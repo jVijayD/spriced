@@ -1,0 +1,59 @@
+<div id="bg">
+  <img src="/assets/images//login-background.png" alt="" />
+</div>
+<div class="content-container">
+  <div class="logo">
+    <div class="logoText">
+      <div class="flex">
+        <button style="margin: 5px" class="ng-tns-c816216012-1">
+          <img
+            src="../../../../assets/images/logo.png"
+            style="width: 30px; height: 30px; max-width: initial"
+          />
+        </button>
+        <h1 class="user">Welcome {{ user }}</h1>
+      </div>
+      <button
+        mat-icon-button
+        [matMenuTriggerFor]="menu"
+        class="btn"
+        aria-label="Example icon-button with a menu"
+      >
+        <mat-icon class="icon-size">account_circle</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="logOut($event)">
+          <mat-icon>power_settings_new</mat-icon>
+          <span>Logout</span>
+        </button>
+
+        <button mat-menu-item>
+          <mat-icon>settings</mat-icon>
+          <span>Settings</span>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="content">
+      <sp-app-card
+        [header]="'Data Definition'"
+        [path]="'/spriced-data-definition'"
+        [image]="'/assets/images/definition.png'"
+      ></sp-app-card>
+
+      <sp-app-card
+        [header]="'Data Access'"
+        [path]="'/spriced-user-management'"
+        [image]="'/assets/images/access.png'"
+      ></sp-app-card>
+
+      <sp-app-card
+        [header]="'Data Reporting'"
+        [path]="'/spriced-reports'"
+        [image]="'/assets/images/reporting.png'"
+      ></sp-app-card>
+    </div>
+  </div>
+</div>

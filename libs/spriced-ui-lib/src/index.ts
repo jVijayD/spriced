@@ -28,3 +28,5 @@ export * from './lib/spriced-ui-lib/components/dynamic-form/dynamic-form.compone
 export * from './lib/spriced-ui-lib/components/dynamic-form/dynamic-form.types';
 export * from './lib/spriced-ui-lib/components/dynamic-form/dynamic-form-container/dynamic-form-container.component';
 export * from './lib/spriced-ui-lib/components/dynamic-form/sub-components/directives/numeric.directive';
+export * from './lib/spriced-ui-lib/components/top-menu/top-menu.component';
+export * from './lib/spriced-ui-lib/components/app-card/app-card.component';

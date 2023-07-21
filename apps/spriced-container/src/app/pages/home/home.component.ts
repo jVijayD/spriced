@@ -19,6 +19,7 @@ import {
   Paginate,
   SnackBarService,
   SnackbarModule,
+  TopMenuComponent,
   TwoColThreeForthComponent,
 } from '@spriced-frontend/spriced-ui-lib';
 import { ColumnMode, SelectionType, SortType } from '@swimlane/ngx-datatable';
@@ -37,6 +38,7 @@ import { FormGroup, Validators } from '@angular/forms';
     SnackbarModule,
     DialogueModule,
     DynamicFormModule,
+    TopMenuComponent
   ],
   providers: [{ provide: FORM_DATA_SERVICE, useValue: null }],
   templateUrl: './home.component.html',
