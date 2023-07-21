@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.sim.spriced.data.rule.action.DefaultsToAction;
 import com.sim.spriced.data.rule.action.EqualsAction;
 import com.sim.spriced.data.rule.action.IsNotValid;
+import com.sim.spriced.data.rule.action.IsValid;
 import com.sim.spriced.data.rule.action.NoneAction;
 import com.sim.spriced.data.rule.condition.specification.BaseSpecification;
 import com.sim.spriced.data.rule.condition.specification.SpecificationFactory;
@@ -53,10 +54,12 @@ public class RuleFactory {
 	private ISpecification<JSONObject> getCondition(List<Condition> conditions, List<Attribute> attributes) {
 
 
-		Optional<CompositeSpecification<JSONObject>> finalCondition = conditions.parallelStream()
-				.map(item -> this.specFactory.createInstance(item, attributes)).reduce((prev, current) -> 
-					 prev == null || ((BaseSpecification)current).getConditionType() == ConditionType.NONE ? current
-							: this.mergeConditions(prev, current)
+		Optional<CompositeSpecification<JSONObject>> finalCondition = conditions.stream()
+				.map(item -> this.specFactory.createInstance(item, attributes))
+				.reduce((prev, current) -> prev == null 
+					|| ((BaseSpecification) current).getConditionType() == ConditionType.NONE 
+					 ? current
+					 : this.mergeConditions(prev, current)
 				);
 		return finalCondition.isPresent() ? finalCondition.get() : this.specFactory.createInstance(null, null);
 
@@ -84,7 +87,8 @@ public class RuleFactory {
 //					case EQUALS_CONCATENATED_VALUE:
 			case IS_NOT_VALID:
 				return new IsNotValid(operand, colName, actionGroup);
-//					case IS_REQUIRED:
+			case IS_REQUIRED:
+				return new IsValid(operand, colName, actionGroup);
 //					case MUST_BE_BETWEEN:
 //					case MUST_BE_EQUAL_TO:
 //					case MUST_BE_GREATER_THAN:
@@ -112,11 +116,11 @@ public class RuleFactory {
 		ConditionType conditionType = ((BaseSpecification) current).getConditionType();
 		switch (conditionType) {
 		case AND:
-			return new AndSpecification<>(prev, current);
+			return new AndSpecification<JSONObject>(prev, current);
 		case OR:
-			return new OrSpecification<>(prev, current);
+			return new OrSpecification<JSONObject>(prev, current);
 		case NOT:
-			return new NotSpecification<>(current); // TO DO: Or Condition Nedd to be validated
+			return new NotSpecification<JSONObject>(current); // TO DO: Or Condition Nedd to be validated
 		default:
 			throw new NotImplementedException("Condition type not implement.");
 
