@@ -1,5 +1,7 @@
 package com.sim.spriced.framework.models;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Getter;
@@ -16,6 +18,8 @@ public class Condition {
 	private OperatorType operatorType = OperatorType.NONE;
 	private Object operand = null;
 	private OperandType operandType = OperandType.BLANK;
+	private ConditionType subConditionType = ConditionType.NONE;
+	private List<Condition> subConditions;
 
 	public enum ConditionType {
 		NONE("none","This is used if we have only one item"),
