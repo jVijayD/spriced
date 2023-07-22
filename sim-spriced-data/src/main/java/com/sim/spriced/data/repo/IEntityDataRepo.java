@@ -8,17 +8,15 @@ import org.json.JSONObject;
 import org.springframework.data.domain.Pageable;
 
 import com.sim.spriced.data.model.EntityData;
+import com.sim.spriced.framework.data.filters.Criteria;
 
 public interface IEntityDataRepo {
 	public Map<String,Object> upsert(EntityData data);
 	public int[] upsertBulk(EntityData data);
 	public int[] deleteBulk(EntityData data);
-	public JSONArray fetchAll(EntityData data,String filters);
-	public JSONArray fetchAll(EntityData data,Pageable pageable,String filters);
-	public List<Map<String,Object>> fetchAllAsMap(EntityData data,String filters);
-	public List<Map<String,Object>> fetchAllAsMap(EntityData data,Pageable pageable,String filters);
-	public String fetchAllAsJsonString(EntityData data,String filters);
-	public String fetchAllAsJsonString(EntityData data,Pageable pageable,String filters);
-	public JSONObject fetchOne(EntityData data,String filters);
+	public JSONArray fetchAll(EntityData data,Criteria criteria);
+	public List<Map<String,Object>> fetchAllAsMap(EntityData data,Criteria criteria);
+	public String fetchAllAsJsonString(EntityData data,Criteria criteria);
+	public JSONObject fetchOne(EntityData data,Criteria criteria);
         
 }

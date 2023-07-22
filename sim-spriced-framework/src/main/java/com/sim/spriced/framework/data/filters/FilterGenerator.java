@@ -1,15 +1,13 @@
 package com.sim.spriced.framework.data.filters;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sim.spriced.framework.exceptions.data.FilterParsingException;
-import java.util.ArrayList;
+import static com.sim.spriced.framework.data.filters.FilterTypes.JoinType.AND;
+import static com.sim.spriced.framework.data.filters.FilterTypes.JoinType.NONE;
+import static com.sim.spriced.framework.data.filters.FilterTypes.JoinType.NOT;
+import static com.sim.spriced.framework.data.filters.FilterTypes.JoinType.OR;
 import java.util.List;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  *
@@ -18,43 +16,21 @@ import org.json.JSONObject;
 public class FilterGenerator {
 
     public static Condition generate(List<Filter> filters, List<Field<Object>> fieldsList) {
-        Condition result = DSL.trueCondition();
+        Condition condition = DSL.noCondition();
         if (filters == null) {
-            return result;
+            return condition;
         }
         for (Filter f : filters) {
-            if (f.getJoinType() == FilterTypes.JoinType.AND) {
-                result = result.and(f.generate(fieldsList));
-            } else {
-                result = result.and(f.generate(fieldsList));
+            if (null != f.getJoinType()) {
+                condition = switch (f.getJoinType()) {
+                    case AND -> condition.and(f.generate(fieldsList));
+                    case OR -> condition.or(f.generate(fieldsList));
+                    case NOT -> condition.andNot(f.generate(fieldsList));
+                    case NONE -> f.generate(fieldsList);
+                    default ->  f.generate(fieldsList);
+                };
             }
         }
-        return result;
+        return condition;
     }
-
-    public static List<Filter> mapJSONToFilter(String filters) throws FilterParsingException {
-        if (filters == null || filters.isEmpty()) {
-            return null;
-        }
-        ObjectMapper objectMapper = new ObjectMapper();
-        List<Filter> listFilters = new ArrayList();
-        try {
-            JSONArray filtersJSON = new JSONArray(filters);
-            for (int i = 0; i < filtersJSON.length(); i++) {
-                JSONObject obj = filtersJSON.getJSONObject(i);
-
-                if (obj.has("filterType") && obj.getString("filterType").equalsIgnoreCase("CONDITIONGROUP")) {
-                    listFilters.add(objectMapper.readValue(obj.toString(), Filter_Group.class));
-                } else {
-                    listFilters.add(objectMapper.readValue(obj.toString(), Filter_Condition.class));
-                }
-            }
-
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            throw new com.sim.spriced.framework.exceptions.data.FilterParsingException("",e);
-        }
-        return listFilters;
-    }
-
 }

@@ -7,6 +7,7 @@ import org.jooq.Field;
 /**
  *
  * @author mukil.manohar_simadv
+ * @param <T>
  */
 public interface IFilter<T> {
     Condition generate(List<Field> fields); 

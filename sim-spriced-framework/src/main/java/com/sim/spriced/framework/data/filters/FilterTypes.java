@@ -7,18 +7,11 @@ package com.sim.spriced.framework.data.filters;
 public class FilterTypes {
 
     public enum JoinType {
-        NONE(" "),
-        OR("OR "),
-        AND("AND ");
+        NONE,
+        OR,
+        NOT,
+        AND;
 
-        private JoinType(String value) {
-            this.value = value;
-        }
-        private final String value;
-
-        public String getValue() {
-            return value;
-        }
     }
 
     public enum FilterType {
@@ -27,7 +20,6 @@ public class FilterTypes {
     }
 
     public enum OperatorType {
-//		NONE("none", "Operator to mark as no operation"),
         EQUALS,
         IN,
         ILIKE,
@@ -39,4 +31,5 @@ public class FilterTypes {
         LESS_THAN_EQUALS;
      
     }
+    
 }

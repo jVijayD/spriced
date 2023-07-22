@@ -43,6 +43,7 @@ import com.sim.spriced.framework.annotations.ExtraColumnData;
 import com.sim.spriced.framework.annotations.IDType;
 import com.sim.spriced.framework.constants.ModelConstants;
 import com.sim.spriced.framework.context.SPricedContextManager;
+import com.sim.spriced.framework.data.filters.Criteria;
 import com.sim.spriced.framework.data.filters.Filter;
 import com.sim.spriced.framework.data.filters.FilterGenerator;
 import com.sim.spriced.framework.exceptions.data.InvalidConditionException;
@@ -56,6 +57,8 @@ import com.sim.spriced.framework.exceptions.data.UniqueConstraintException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jooq.Select;
+import org.jooq.SelectSeekStepN;
 
 @Repository
 public abstract class BaseRepo {
@@ -297,6 +300,12 @@ public abstract class BaseRepo {
 		}).collect(Collectors.toList());
 
 	}
+        
+        protected Collection<SortField<?>> getOrderBy(List<Criteria.Sorter> sorters) {
+            return sorters.stream().map(sorter -> (Criteria.Sorter.Direction.ASC == sorter.getDirection() ?
+                                                   column(sorter.getProperty()).asc() : column(sorter.getProperty()).desc()))
+                    .collect(Collectors.toList());
+        }
 
 	public <T> List<T> fetchMultiple(T entity, Function<Record, T> converter) {
 		TableData tableDetails = this.getTableData(entity);
@@ -381,21 +390,6 @@ public abstract class BaseRepo {
 		return new PageImpl<>(queryResults);
 	}
         
-        public <T> Page<T> fetchFiltered(T entity, Function<Record, T> converter, Pageable pagable,JSONArray filtersJson) {
-            List<Filter> filters = null;
-            TableData tableDetails = this.getTableData(entity);
-//            Condition conditions = FilterGenerator.generate(filters,tableDetails.getFields());
-		Result<Record> result = this.context.selectFrom(table(tableDetails.getTableName()))
-//                                .orderBy(this.getOrderBy(pagable.getSort()))
-//                                .offset(pagable.getOffset())
-//                                  .where(conditions)
-                                  .limit(pagable.getPageSize())
-                                  .fetch();
-
-                List<T> queryResults = result.map(converter::apply);
-		return new PageImpl<>(queryResults);
-	}
-
 	public <T> Page<T> fetchAll(T entity, Function<Record, T> converter, Pageable pagable) {
 
 		TableData tableDetails = this.getTableData(entity);
@@ -447,7 +441,7 @@ public abstract class BaseRepo {
 		List<T> queryResults = result.map(converter::apply);
 		return new PageImpl<>(queryResults);
 	}
-
+        
 	public <T> List<T> fetchAll(String tableName, Condition condition, Class<T> type) {
 		if (condition == null) {
 			return this.context.selectFrom(table(tableName)).fetchInto(type);
@@ -465,7 +459,25 @@ public abstract class BaseRepo {
 
 		return result.map(converter::apply);
 	}
-
+        
+    public Select fetchRecordsByCriteria(String tableName, Criteria searchCriteria, List<Field<Object>> fieldsList) {
+        Criteria.Pager pager = searchCriteria.getPager();
+        List<Criteria.Sorter> sorters = searchCriteria.getSorters();
+        List<Filter> filtersList = searchCriteria.getFilters();
+        Condition condition = FilterGenerator.generate(filtersList, fieldsList);
+        SelectSeekStepN<Record> selectSeek = this
+                .context
+                .selectFrom(table(tableName))
+                .where(condition != null ? condition : DSL.noCondition())
+                .orderBy(this.getOrderBy(sorters));
+        if (pager == null) {
+            return selectSeek;
+        } else {
+            return selectSeek
+                    .limit(pager.getPageSize())
+                    .offset(pager.getOffset());
+        }
+    }
 	// Table Data details to generate the Query
 	private <T> TableData getTableData(T entity) {
 
@@ -590,7 +602,7 @@ public abstract class BaseRepo {
 
 		return result;
 	}
-
+        
 	@Setter
 	@Getter
 	public class TableData {
