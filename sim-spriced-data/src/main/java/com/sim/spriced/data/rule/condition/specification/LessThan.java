@@ -15,29 +15,30 @@ public class LessThan extends BaseSpecification {
 	@Override
 	public boolean isSatisfied(JSONObject input) {
 		boolean result = false;
-		Object value = null;
-
-		if (operandType.equals(Condition.OperandType.CONSTANT)) {
-			value = this.getValue(input);
-		} else if (operandType.equals(Condition.OperandType.BLANK)) {
-			result = this.value == null || this.value.toString().equals("");
-			return result;
+		Object value = this.getValue(input);
+		
+		if (operandType.equals(Condition.OperandType.CONSTANT)) {	
+			if (value != null) {
+				if (this.isString(value)) {
+					result = this.convertToString(this.value).compareTo(this.convertToString(value)) < 0;
+				} else if (this.isNumeric(value)) {
+					result = this.convertToNumber(this.value) < this.convertToNumber(value);
+				} else if (this.isDate(value)) {
+					result = (this.convertToDate(this.value)).compareTo(this.convertToDate(value)) < 0;
+				}
+			}
 		} else if (operandType.equals(Condition.OperandType.ATTRIBUTE)) {
-			value = input.get(this.value.toString());
-		}
-
-		if (value != null) {
-			if (this.isString(value)) {
-				result = this.convertToString(value).compareTo(this.value.toString()) < 0;
-			} else if (this.isNumeric(value)) {
-				result = this.convertToNumber(value) < (double) this.value;
-			} else if (this.isBoolean(value)) {
-				result = (int) value < (int) this.value;
-			} else if (this.isDate(value)) {
-				result = (this.convertToDate(value)).compareTo((java.util.Date) this.value) < 0;
+			Object colValue = input.get(this.value.toString());
+			if (value != null && colValue != null) {
+				if (this.isString(colValue) && this.isString(value)) {
+					result = this.convertToString(colValue).compareTo(this.convertToString(value)) < 0;
+				} else if (this.isNumeric(colValue) && this.isNumeric(value)) {
+					result = this.convertToNumber(colValue) < this.convertToNumber(value);
+				} else if (this.isDate(colValue) && this.isDate(value)) {
+					result = (this.convertToDate(colValue)).compareTo(this.convertToDate(value)) < 0;
+				}
 			}
 		}
-
 		return result;
 	}
 

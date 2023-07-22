@@ -93,5 +93,4 @@ public class EntityDto {
 	public List<Attribute> getAttributes() {
 		return attributes;
 	}
-	
 }
