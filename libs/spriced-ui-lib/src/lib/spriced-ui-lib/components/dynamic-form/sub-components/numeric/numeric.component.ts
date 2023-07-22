@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   Inject,
   Injector,
@@ -6,16 +7,17 @@ import {
   OnDestroy,
   OnInit,
   forwardRef,
-} from '@angular/core';
-import { BaseComponent } from '../../base.component';
-import { DynamicFormService } from '../../service/dynamic-form.service';
-import { GenericControl } from '../../dynamic-form.types';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+} from "@angular/core";
+import { BaseComponent } from "../../base.component";
+import { DynamicFormService } from "../../service/dynamic-form.service";
+import { GenericControl } from "../../dynamic-form.types";
+import { NG_VALUE_ACCESSOR } from "@angular/forms";
 
 @Component({
-  selector: 'sp-numeric',
-  templateUrl: './numeric.component.html',
-  styleUrls: ['./numeric.component.scss'],
+  selector: "sp-numeric",
+  templateUrl: "./numeric.component.html",
+  styleUrls: ["./numeric.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

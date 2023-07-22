@@ -1,12 +1,12 @@
-import { Subject, Subscription } from 'rxjs';
-import { BaseComponent } from './base.component';
-import { DynamicFormService } from './service/dynamic-form.service';
-import { DataControl, IData } from './dynamic-form.types';
+import { Subject, Subscription } from "rxjs";
+import { BaseComponent } from "./base.component";
+import { DynamicFormService } from "./service/dynamic-form.service";
+import { DataControl, IData } from "./dynamic-form.types";
 
 export abstract class BaseDataComponent extends BaseComponent {
   dataPopulation$: Subject<unknown[]> = new Subject();
   private _dataSubscriptions: Subscription[] = [];
-  source: unknown[] = [];
+  source: any[] = [];
 
   constructor(dynamicService: DynamicFormService) {
     super(dynamicService);
@@ -20,12 +20,12 @@ export abstract class BaseDataComponent extends BaseComponent {
     result: any;
   }): void {
     if (
-      (event.result.type === 'display' || event.result.type === 'load') &&
+      (event.result.type === "display" || event.result.type === "load") &&
       event.isSuccess
     ) {
       if (event.result.params.display) {
         const controlData = this._control as DataControl;
-        if (controlData.data.api && !controlData.data.api?.isFixed) {
+        if (controlData.data.api && !controlData.data.api?.onLoad) {
           this._getDataSource(controlData.data);
         }
       }
@@ -51,11 +51,21 @@ export abstract class BaseDataComponent extends BaseComponent {
   populateSource() {
     const controlData = this._control as DataControl;
     if (controlData.data.api) {
-      if (controlData.data.api?.isFixed) {
+      if (controlData.data.api?.onLoad) {
         this._getDataSource(controlData.data);
       }
     } else {
       this.source = controlData.data.options || [];
+    }
+  }
+
+  populateSourceOnDemand() {
+    const controlData = this._control as DataControl;
+    if (
+      controlData.data.api &&
+      (this.source.length == 0 || !controlData.data.api?.isFixed)
+    ) {
+      this._getDataSource(controlData.data);
     }
   }
 

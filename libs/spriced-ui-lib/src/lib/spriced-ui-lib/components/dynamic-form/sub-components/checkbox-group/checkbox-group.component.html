@@ -1,1 +1,41 @@
-<p>checkbox-group works!</p>
+<div class="checkbox-grp-section full-width" *ngIf="visible">
+  <mat-label>{{ control.label }}</mat-label>
+  <span
+    [ngClass]="{
+      'checkbox-grp-items-vertical':
+        !control.orientation || control.orientation === 'vertical',
+      'checkbox-grp-items-horizontal': control.orientation === 'horizontal'
+    }"
+  >
+    <mat-checkbox
+      *ngFor="let item of source"
+      (click)="$event.stopPropagation()"
+      (change)="
+        $event
+          ? control.valueProp
+            ? setSelection(item[control.valueProp])
+            : setSelection(item)
+          : null
+      "
+      [checked]="
+        control.valueProp
+          ? selection.isSelected(item[control.valueProp])
+          : selection.isSelected(item)
+      "
+      [disabled]="disabled"
+      class="full-width"
+    >
+      {{ control.displayProp ? item[control.displayProp] : item }}
+    </mat-checkbox>
+  </span>
+  <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
+
+  <ng-container>
+    <sp-error
+      *ngIf="frmControl.errors"
+      [validations]="control.validations || []"
+      [errors]="frmControl.errors"
+    ></sp-error>
+    <div *ngIf="!frmControl.errors" style="visibility: hidden">*</div>
+  </ng-container>
+</div>

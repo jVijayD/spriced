@@ -7,12 +7,13 @@
     <mat-label>{{ control.label }}</mat-label>
     <input
       spNumeric
+      [decimals]="control.decimalCount"
       matInput
       [maxLength]="control.maxLength ? control.maxLength : 50"
       [placeholder]="control.placeholder || ''"
       autocomplete="off"
       [type]="control.subType"
-      [disabled]="disabled"
+      [disabled]="control.readOnly || disabled"
       [(ngModel)]="value"
       (blur)="onTouched()"
     />

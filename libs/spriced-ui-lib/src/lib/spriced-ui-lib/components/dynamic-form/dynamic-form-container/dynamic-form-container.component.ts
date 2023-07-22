@@ -1,20 +1,14 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
-import { AppForm } from '../dynamic-form.types';
-import { AppFormData } from '../dynamic-form.component';
-import { FormControl, FormGroup } from '@angular/forms';
-import { DynamicFormService } from '../service/dynamic-form.service';
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { AppForm } from "../dynamic-form.types";
+import { AppFormData } from "../dynamic-form.component";
+import { FormControl, FormGroup } from "@angular/forms";
+import { DynamicFormService } from "../service/dynamic-form.service";
 
 @Component({
-  selector: 'sp-dynamic-form-container',
-  templateUrl: './dynamic-form-container.component.html',
-  styleUrls: ['./dynamic-form-container.component.scss'],
-  providers: [DynamicFormService],
+  selector: "sp-dynamic-form-container",
+  templateUrl: "./dynamic-form-container.component.html",
+  styleUrls: ["./dynamic-form-container.component.scss"],
+  //providers: [DynamicFormService],
   //changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DynamicFormContainerComponent {
@@ -43,10 +37,10 @@ export class DynamicFormContainerComponent {
   }
 
   @Input()
-  save = 'Save';
+  save = "Save";
 
   @Input()
-  reset = 'Reset';
+  reset = "Reset";
 
   constructor(private dynamicService: DynamicFormService) {
     this.setCurrentFormData();
@@ -97,7 +91,7 @@ export class DynamicFormContainerComponent {
   private itemsNotReset() {
     const hiddenItems: Record<string, any> = {};
     this.getAllFormFields(this._appForm).forEach((item) => {
-      if (item.type === 'input' && item.subType === 'hidden') {
+      if (item.type === "input" && item.subType === "hidden") {
         hiddenItems[item.name] = item.value;
       }
     });

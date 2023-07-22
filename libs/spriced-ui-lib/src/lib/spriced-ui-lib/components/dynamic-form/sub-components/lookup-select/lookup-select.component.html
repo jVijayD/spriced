@@ -1,0 +1,60 @@
+<ng-container *ngIf="control.type === 'lookup-select' && visible">
+  <div class="flex flex-row space-x-1 justify-between items-center">
+    <mat-form-field
+      class="flex-grow"
+      appearance="outline"
+      [ngClass]="frmControl.errors ? 'error' : ''"
+    >
+      <mat-label>{{ control.label }}</mat-label>
+
+      <select
+        matNativeControl
+        (blur)="onTouched()"
+        [(ngModel)]="value"
+        [disabled]="control.readOnly || disabled"
+        (click)="onClick()"
+      >
+        <option [value]="control.placeholder.value" *ngIf="control.placeholder">
+          {{ control.placeholder.displayText }}
+        </option>
+
+        <option
+          *ngFor="let option of source"
+          [value]="control.valueProp ? option[control.valueProp] : option"
+        >
+          {{ control.displayProp ? option[control.displayProp] : option }}
+        </option>
+      </select>
+
+      <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+      <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
+    </mat-form-field>
+    <button
+      mat-raised-button
+      color="primary"
+      class="square-button"
+      (click)="onClearClick()"
+      [disabled]="control.readOnly || disabled"
+    >
+      <mat-icon>blur_on</mat-icon>
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      class="square-button"
+      (click)="onNavigateClick()"
+      [disabled]="control.readOnly || disabled"
+    >
+      <mat-icon>grid_on</mat-icon>
+    </button>
+  </div>
+
+  <ng-container>
+    <sp-error
+      *ngIf="frmControl.errors"
+      [validations]="control.validations || []"
+      [errors]="frmControl.errors"
+    ></sp-error>
+    <div *ngIf="!frmControl.errors" style="visibility: hidden">*</div>
+  </ng-container>
+</ng-container>

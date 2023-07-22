@@ -11,7 +11,7 @@
       [placeholder]="control.placeholder || ''"
       autocomplete="off"
       [type]="control.subType"
-      [disabled]="disabled"
+      [disabled]="control.readOnly || disabled"
       [(ngModel)]="value"
       (blur)="onTouched()"
     />

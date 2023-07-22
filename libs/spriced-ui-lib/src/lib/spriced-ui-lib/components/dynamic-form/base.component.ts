@@ -1,4 +1,4 @@
-import { Injector } from '@angular/core';
+import { Injector } from "@angular/core";
 import {
   ControlValueAccessor,
   FormControl,
@@ -7,11 +7,11 @@ import {
   FormGroupDirective,
   NgControl,
   NgModel,
-} from '@angular/forms';
-import { Engine as RuleEngine } from 'json-rules-engine';
-import { Subject, Subscription } from 'rxjs';
-import { GenericControl, IRule } from './dynamic-form.types';
-import { DynamicFormService } from './service/dynamic-form.service';
+} from "@angular/forms";
+import { Engine as RuleEngine } from "json-rules-engine";
+import { Subject, Subscription } from "rxjs";
+import { GenericControl, IRule } from "./dynamic-form.types";
+import { DynamicFormService } from "./service/dynamic-form.service";
 
 export abstract class BaseComponent implements ControlValueAccessor {
   private _value: unknown;
@@ -64,10 +64,10 @@ export abstract class BaseComponent implements ControlValueAccessor {
 
   constructor(protected dynamicFormService: DynamicFormService) {
     this.onChange = (value: unknown) => {
-      console.log('default implementation-' + value);
+      console.log("default implementation-" + value);
     };
     this.onTouched = (value: unknown) => {
-      console.log('default implementation-' + value);
+      console.log("default implementation-" + value);
     };
     this.initRuleEngine();
   }
@@ -149,19 +149,19 @@ export abstract class BaseComponent implements ControlValueAccessor {
       allowUndefinedFacts: true,
     });
 
-    this._ruleEngine.on('success', (eventResult: unknown) => {
+    this._ruleEngine.on("success", (eventResult: unknown) => {
       this.displayRule(eventResult, true);
       this.ruleExecution$.next({ isSuccess: true, result: eventResult });
     });
 
-    this._ruleEngine.on('failure', (eventResult) => {
+    this._ruleEngine.on("failure", (eventResult) => {
       this.displayRule(eventResult, false);
       this.ruleExecution$.next({ isSuccess: false, result: eventResult });
     });
   }
 
   private displayRule(eventResult: any, success: boolean): void {
-    if (eventResult.type === 'display') {
+    if (eventResult.type === "display") {
       if (eventResult.params.display !== undefined) {
         const isVisible = eventResult.params.display;
         this.visible = success ? isVisible : !isVisible;
@@ -180,7 +180,7 @@ export abstract class BaseComponent implements ControlValueAccessor {
 
   private runRule(facts: any): void {
     this._ruleEngine.run(facts).catch((error) => {
-      console.log('Rule Execution Error:', error);
+      console.log("Rule Execution Error:", error);
     });
   }
 
