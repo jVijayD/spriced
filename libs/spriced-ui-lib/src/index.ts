@@ -34,6 +34,7 @@ export * from "./lib/spriced-ui-lib/components/dynamic-form/sub-components/radio
 export * from "./lib/spriced-ui-lib/components/dynamic-form/sub-components/date-picker/date-picker.component";
 export * from "./lib/spriced-ui-lib/components/dynamic-form/sub-components/date-time-picker/date-time-picker.component";
 export * from "./lib/spriced-ui-lib/components/dynamic-form/sub-components/date-range/date-range.component";
+export * from "./lib/spriced-ui-lib/components/dynamic-form/sub-components/numeric/numeric.component";
 
 export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/dateformat-yyyymmdd.directive";
 export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/dateformat-MMddyy.directive";
@@ -45,3 +46,13 @@ export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/dateforma
 export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/dateformat-yy-MM-dd.directive";
 export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/dateformat-yyyy-MM-dd.directive";
 export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/dateformat-dd-MM-yy.directive";
+export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/dateformat-dd-MM-yyyy.directive";
+export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/dateformat-yy.MM.dd.directive";
+export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/dateformat-yyyy-MM-dd.directive";
+export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/dateformat-yyyy.mm.dd.directive";
+export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/dateformat.MMDDyy.directive";
+export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/dateformat-DDMMMyy.directive";
+export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/DD-MMM-YYYY.directive";
+export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/YYYY-DD-MMM.directive";
+export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/MMM-DD-YYYY.directive";
+export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/dateformat.MMDDyyyy.directive";

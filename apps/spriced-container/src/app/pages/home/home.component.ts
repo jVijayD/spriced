@@ -822,6 +822,11 @@ export class HomeComponent implements OnInit {
 
       this.roles = ["admin", "editor"];
     }, 500);
+
+    console.log(
+      ">>> NX_API_DEFINITION_URL",
+      process.env["NX_API_DEFINITION_URL"]
+    );
   }
   //Dynamic UI
 
