@@ -1,4 +1,4 @@
-@use '@angular/material' as mat;
+@use "@angular/material" as mat;
 @include mat.core();
 $default-border-radius: 10px 10px 0px 0px;
 
@@ -130,6 +130,7 @@ $my-app-dark-theme: mat.define-dark-theme(
 }
 
 // Material Input
+.mat-mdc-form-field-hint,
 .mat-mdc-form-field-hint-wrapper {
   padding: 0px !important;
   color: gray;
@@ -159,6 +160,20 @@ $my-app-dark-theme: mat.define-dark-theme(
   height: 13px;
   padding-top: 1px;
   padding-right: 1px;
+}
+
+// Background border
+.mat-checkbox .mat-checkbox-frame {
+  border-color: black;
+  background-color: #dddddd;
+}
+
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background,
+.mat-checkbox-checked.mat-accent .mat-checkbox-background {
+  margin-top: 1px;
+  margin-left: 1px;
+  width: 18px;
+  height: 18px;
 }
 
 // mat-form-field.error {

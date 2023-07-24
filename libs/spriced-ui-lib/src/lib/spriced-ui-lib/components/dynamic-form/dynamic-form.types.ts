@@ -1,4 +1,4 @@
-import { RuleProperties } from 'json-rules-engine';
+import { RuleProperties } from "json-rules-engine";
 
 export type IAccessControl = {
   disabled: string[];
@@ -20,6 +20,7 @@ export type IRule = {
 export type IData = {
   options?: any[];
   api?: {
+    onLoad: boolean;
     isFixed: boolean;
     provider: string;
     method: string;
@@ -32,7 +33,7 @@ export type IColumn = {
   label: string;
   type?: string;
   width?: string;
-  align?: 'left' | 'center' | 'right';
+  align?: "left" | "center" | "right";
 };
 
 export type IStyle = {
@@ -45,15 +46,16 @@ export type IGroup = {
 };
 
 export type InputControl = {
-  type: 'input';
-  subType: 'email' | 'password' | 'number' | 'text' | 'hidden';
+  type: "input";
+  subType: "email" | "password" | "number" | "text" | "hidden";
   label: string;
   placeholder?: string;
   icon?: string;
   hint?: string;
   name: string;
   value?: any;
-  hidden?: boolean;
+  visible?: boolean;
+  readOnly?: boolean;
   hiddenDefault?: any;
   maxLength?: number;
   validations?: IValidator[];
@@ -64,16 +66,17 @@ export type InputControl = {
 };
 
 export type NumericControl = {
-  type: 'numeric';
-  subType: 'text';
-  decimalCount?: number;
+  type: "numeric";
+  subType: "text";
+  decimalCount: number;
   label: string;
   placeholder?: string;
   icon?: string;
   hint?: string;
   name: string;
   value?: any;
-  hidden?: boolean;
+  visible?: boolean;
+  readOnly?: boolean;
   hiddenDefault?: any;
   maxLength?: number;
   validations?: IValidator[];
@@ -84,8 +87,8 @@ export type NumericControl = {
 };
 
 export type InputPickerControl = {
-  type: 'input-picker';
-  subType: 'email' | 'number' | 'text';
+  type: "input-picker";
+  subType: "email" | "number" | "text";
   label: string;
   placeholder?: string;
   hint?: string;
@@ -93,7 +96,8 @@ export type InputPickerControl = {
   name: string;
   value?: any;
   valueProp: string;
-  hidden?: boolean;
+  visible?: boolean;
+  readOnly?: boolean;
   hiddenDefault?: any;
   maxLength?: number;
   isMultiSelect: boolean;
@@ -108,7 +112,7 @@ export type InputPickerControl = {
 };
 
 export type CheckboxGroupControl = {
-  type: 'checkbox-group';
+  type: "checkbox-group";
   label: string;
   hint?: string;
   name: string;
@@ -116,9 +120,10 @@ export type CheckboxGroupControl = {
   valueProp?: string;
   displayProp?: string;
   selProp?: string;
-  hidden?: boolean;
+  visible?: boolean;
+  readOnly?: boolean;
   hiddenDefault?: any;
-  orientation?: 'vertical' | 'horizontal';
+  orientation?: "vertical" | "horizontal";
   data: IData;
   validations?: IValidator[];
   asyncValidations?: IValidator[];
@@ -128,7 +133,7 @@ export type CheckboxGroupControl = {
 };
 
 export type RadioButtonGroupControl = {
-  type: 'radio-group';
+  type: "radio-group";
   label: string;
   hint?: string;
   name: string;
@@ -136,9 +141,10 @@ export type RadioButtonGroupControl = {
   valueProp?: string;
   displayProp?: string;
   selProp?: string;
-  hidden?: boolean;
+  visible?: boolean;
+  readOnly?: boolean;
   hiddenDefault?: any;
-  orientation?: 'vertical' | 'horizontal';
+  orientation?: "vertical" | "horizontal";
   data: IData;
   validations?: IValidator[];
   asyncValidations?: IValidator[];
@@ -148,15 +154,16 @@ export type RadioButtonGroupControl = {
 };
 
 export type TextControl = {
-  type: 'input';
-  subType: 'text';
+  type: "input";
+  subType: "text";
   label: string;
   placeholder?: string;
   icon?: string;
   hint?: string;
   name: string;
   value?: any;
-  hidden?: boolean;
+  visible?: boolean;
+  readOnly?: boolean;
   hiddenDefault?: any;
   rows?: number;
   column?: number;
@@ -169,8 +176,9 @@ export type TextControl = {
 };
 
 export type DateControl = {
-  type: 'date';
-  subType?: '';
+  type: "date";
+  format: string;
+  subType?: "";
   label: string;
   placeholder?: string;
   icon?: string;
@@ -178,8 +186,9 @@ export type DateControl = {
   name: string;
   value?: any;
   startDate: string;
-  startView: 'month' | 'year' | 'multi-year';
-  hidden?: boolean;
+  startView: "month" | "year" | "multi-year";
+  visible?: boolean;
+  readOnly?: boolean;
   hiddenDefault?: any;
   validations?: IValidator[];
   asyncValidations?: IValidator[];
@@ -189,7 +198,7 @@ export type DateControl = {
 };
 
 export type SelectControl = {
-  type: 'select';
+  type: "select";
   label: string;
   icon?: string;
   hint?: string;
@@ -197,7 +206,8 @@ export type SelectControl = {
   valueProp?: string;
   displayProp?: string;
   value?: any;
-  hidden?: boolean;
+  visible?: boolean;
+  readOnly?: boolean;
   hiddenDefault?: any;
   //disabled?: boolean;
   placeholder?: {
@@ -212,8 +222,34 @@ export type SelectControl = {
   style?: IStyle;
 };
 
+export type LookupSelectControl = {
+  type: "lookup-select";
+  label: string;
+  icon?: string;
+  hint?: string;
+  name: string;
+  valueProp?: string;
+  displayProp?: string;
+  value?: any;
+  visible?: boolean;
+  readOnly?: boolean;
+  hiddenDefault?: any;
+  placeholder?: {
+    value?: any;
+    displayText: string;
+  };
+  eventValue: string;
+  eventType: string;
+  data: IData;
+  validations?: IValidator[];
+  asyncValidations?: IValidator[];
+  accessControl?: IAccessControl;
+  rule?: IRule;
+  style?: IStyle;
+};
+
 export type SelectExtendedControl = {
-  type: 'select-extended';
+  type: "select-extended";
   label: string;
   icon?: string;
   hint?: string;
@@ -221,7 +257,8 @@ export type SelectExtendedControl = {
   valueProp: string;
   displayProp: string;
   value?: any;
-  hidden?: boolean;
+  visible?: boolean;
+  readOnly?: boolean;
   hiddenDefault?: any;
   //disabled?: boolean;
   placeholder?: {
@@ -237,7 +274,7 @@ export type SelectExtendedControl = {
 };
 
 export type MultiSelectControl = {
-  type: 'multiselect';
+  type: "multiselect";
   label: string;
   hint?: string;
   name: string;
@@ -245,7 +282,8 @@ export type MultiSelectControl = {
   valueProp?: string;
   displayProp?: string;
   selProp?: string;
-  hidden?: boolean;
+  visible?: boolean;
+  readOnly?: boolean;
   hiddenDefault?: any;
   placeholder?: {
     value?: any;
@@ -260,8 +298,8 @@ export type MultiSelectControl = {
 };
 
 export type SliderControl = {
-  type: 'slider';
-  orientation: 'vertical' | 'horizontal';
+  type: "slider";
+  orientation: "vertical" | "horizontal";
   label: string;
   placeholder?: string;
   icon?: string;
@@ -271,7 +309,8 @@ export type SliderControl = {
   max?: number;
   step?: number;
   value?: number;
-  hidden?: boolean;
+  visible?: boolean;
+  readOnly?: boolean;
   hiddenDefault?: any;
   length?: number;
   validations?: IValidator[];
@@ -282,8 +321,8 @@ export type SliderControl = {
 };
 
 export type RangeControl = {
-  type: 'range-slider';
-  orientation: 'vertical' | 'horizontal';
+  type: "range-slider";
+  orientation: "vertical" | "horizontal";
   label: string;
   placeholder?: string;
   icon?: string;
@@ -297,6 +336,8 @@ export type RangeControl = {
     end: number;
   };
   hiddenDefault?: any;
+  visible?: boolean;
+  readOnly?: boolean;
   length?: number;
   validations?: IValidator[];
   asyncValidations?: IValidator[];
@@ -307,6 +348,7 @@ export type RangeControl = {
 
 export type DataControl =
   | SelectControl
+  | LookupSelectControl
   | SelectExtendedControl
   | MultiSelectControl
   | InputPickerControl
@@ -334,7 +376,7 @@ export type FormFieldGroup = {
 
 export type AppForm = {
   title: string;
-  columns: number;
+  //columns: number;
   groups: IGroup[];
   validations: IValidator[];
   asyncValidations: IValidator[];

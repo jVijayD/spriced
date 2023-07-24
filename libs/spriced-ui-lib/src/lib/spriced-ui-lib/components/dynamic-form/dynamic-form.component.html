@@ -9,48 +9,75 @@
     <label class="grp-label" *ngIf="grp.title && grp.title !== ''">{{
       grp.title
     }}</label>
-    <!-- <div
-      class="items-container"
-      *ngFor="let row of getRowAndColumns(grpIndex).rows; let rowIndex = index"
-    >
-      <div
-        class="item"
-        *ngFor="
-          let row of getRowAndColumns(grpIndex).columns;
-          let colIndex = index
-        "
-      >
-        <ng-container *ngIf="this.getControl(rowIndex, colIndex, grpIndex)">
-          <sp-input
-            [control]="this.getControl(rowIndex, colIndex, grpIndex)"
-            [formControlName]="
-              this.getControl(rowIndex, colIndex, grpIndex).name
-            "
-            *ngIf="
-              this.getControl(rowIndex, colIndex, grpIndex).type === 'input'
-            "
-          >
-          </sp-input>
-        </ng-container>
-      </div>
-    </div> -->
+
     <div class="items-container">
       <ng-container *ngFor="let ctrl of grp.formFieldControls">
-        <sp-input
-          class="item"
-          [control]="ctrl"
-          [formControlName]="ctrl.name"
-          *ngIf="ctrl.type === 'input'"
-        >
-        </sp-input>
+        <ng-container *ngIf="ctrl.visible == null || ctrl.visible">
+          <!--Remove if marked hidden-->
+          <sp-input
+            class="item"
+            [control]="ctrl"
+            [formControlName]="ctrl.name"
+            *ngIf="ctrl.type === 'input'"
+          >
+          </sp-input>
 
-        <sp-numeric
-          class="item"
-          [control]="ctrl"
-          [formControlName]="ctrl.name"
-          *ngIf="ctrl.type === 'numeric'"
-        >
-        </sp-numeric>
+          <sp-numeric
+            class="item"
+            [control]="ctrl"
+            [formControlName]="ctrl.name"
+            *ngIf="ctrl.type === 'numeric'"
+          >
+          </sp-numeric>
+
+          <sp-select
+            class="item"
+            [control]="ctrl"
+            [formControlName]="ctrl.name"
+            *ngIf="ctrl.type === 'select'"
+          >
+          </sp-select>
+
+          <sp-lookup-select
+            class="item"
+            [control]="ctrl"
+            [formControlName]="ctrl.name"
+            *ngIf="ctrl.type === 'lookup-select'"
+          >
+          </sp-lookup-select>
+
+          <sp-select-extended
+            class="item"
+            [control]="ctrl"
+            [formControlName]="ctrl.name"
+            *ngIf="ctrl.type === 'select-extended'"
+          >
+          </sp-select-extended>
+
+          <sp-date-picker
+            class="item"
+            [control]="ctrl"
+            [formControlName]="ctrl.name"
+            *ngIf="ctrl.type === 'date'"
+          >
+          </sp-date-picker>
+
+          <sp-checkbox-group
+            class="item"
+            [control]="ctrl"
+            [formControlName]="ctrl.name"
+            *ngIf="ctrl.type === 'checkbox-group'"
+          >
+          </sp-checkbox-group>
+
+          <sp-radio-group
+            class="item"
+            [control]="ctrl"
+            [formControlName]="ctrl.name"
+            *ngIf="ctrl.type === 'radio-group'"
+          >
+          </sp-radio-group>
+        </ng-container>
       </ng-container>
     </div>
   </div>

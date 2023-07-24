@@ -1,1 +1,35 @@
-<p>radio-group works!</p>
+<ng-container *ngIf="visible">
+  <mat-radio-group
+    aria-label="Select an option"
+    [(ngModel)]="value"
+    [disabled]="disabled"
+  >
+    <mat-label>{{ control.label }}</mat-label>
+    <div
+      [ngClass]="{
+        'radio-grp-items-vertical':
+          !control.orientation || control.orientation === 'vertical',
+        'radio-grp-items-horizontal': control.orientation === 'horizontal'
+      }"
+    >
+      <mat-radio-button
+        *ngFor="let item of source"
+        [value]="control.valueProp ? item[control.valueProp] : item"
+        class="full-width"
+        >{{
+          control.displayProp ? item[control.displayProp] : item
+        }}</mat-radio-button
+      >
+    </div>
+
+    <mat-hint *ngIf="control.hint">{{ control.hint }}</mat-hint>
+  </mat-radio-group>
+  <ng-container>
+    <sp-error
+      *ngIf="frmControl.errors"
+      [validations]="control.validations || []"
+      [errors]="frmControl.errors"
+    ></sp-error>
+    <div *ngIf="!frmControl.errors" style="visibility: hidden">*</div>
+  </ng-container>
+</ng-container>
