@@ -1,4 +1,4 @@
-import {  APP_INITIALIZER, Component } from '@angular/core';
+import {   Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LoaderComponent } from '@spriced-frontend/spriced-ui-lib';
 import {  KeycloakAngularModule } from 'keycloak-angular';

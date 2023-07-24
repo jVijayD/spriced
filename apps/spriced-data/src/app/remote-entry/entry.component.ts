@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, importProvidersFrom } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { NxWelcomeComponent } from "./nx-welcome.component";
 
@@ -10,9 +10,8 @@ import { NxWelcomeComponent } from "./nx-welcome.component";
 })
 export class RemoteEntryComponent implements OnInit {
   ngOnInit(): void {
-    debugger;
     console.log(
-      ">>> NX_API_DEFINITION_URL_DATA",
+      ">>> NX_API_DEFINITION_URL_DATA-RemoteEntryComponent",
       process.env["NX_API_DEFINITION_URL"]
     );
   }
