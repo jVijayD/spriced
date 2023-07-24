@@ -1,5 +1,5 @@
 <sp-loader />
-<div style="height: 75vh">
+<!-- <div style="height: 75vh">
   <ul class="remote-menu">
     <li><a routerLink="/">Home</a></li>
     <li><a routerLink="spriced-data-definition">SpricedDataDefinition</a></li>
@@ -8,4 +8,22 @@
     <li><a routerLink="spriced-user-management">SpricedUserManagement</a></li>
   </ul>
   <router-outlet></router-outlet>
+</div> -->
+<div>
+  <div *ngIf="path !== '/'" class="flex flex-row h-screen">
+    <sp-sidebar
+      [data]="sidebarData"
+      (onToggleSideNav)="onToggleSideNav($event)"
+    />
+    <div class="flex flex-col flex-grow h-screen">
+      <sp-header [appname]="currentAppName" [menuData]="menuData" />
+      <sp-body [collapsed]="isSideNavCollapsed" [screenWidth]="screenWidth">
+        <router-outlet (activate)="changeOfRoutes()"></router-outlet>
+      </sp-body>
+      <sp-footer></sp-footer>
+    </div>
+  </div>
+  <div *ngIf="path === '/'">
+    <router-outlet (activate)="changeOfRoutes()"></router-outlet>
+  </div>
 </div>

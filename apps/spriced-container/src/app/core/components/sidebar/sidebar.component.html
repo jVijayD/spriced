@@ -1,0 +1,35 @@
+<!-- <body class="dark:bg-zinc-800"> -->
+<!--Main Navigation-->
+<!-- <header> -->
+<!-- Navbar -->
+<div [class]="collapsed ? 'sidenav sidenav-collapsed' : 'sidenav'">
+  <div class="logo-container">
+    <button style="margin: 5px" (click)="toggleCollapse()">
+      <img
+        src="../../../../assets/images/logo.png"
+        style="width: 30px; height: 30px; max-width: initial"
+      />
+      <!-- <mat-icon @rotate *ngIf="collapsed">chevron_left</mat-icon>
+      <mat-icon @rotate *ngIf="!collapsed">chevron_right</mat-icon> -->
+    </button>
+    <div class="logo-text" @fadeInOut *ngIf="collapsed">Spriced</div>
+  </div>
+  <mat-divider
+    style="border-top-color: rgb(0 0 0 / 24%); border-top-width: 3px"
+  ></mat-divider>
+  <ul class="sidenav-nav">
+    <li class="sidenav-nav-item" *ngFor="let item of data">
+      <a
+        class="sidenav-nav-link"
+        routerLinkActive="active"
+        routerLink="{{ item.path }}"
+      >
+        <img class="sidenav-link-icon" src="{{ item.icon }}" />
+        <!-- <i class="sidenav-link-icon" [class]="item.icon"></i> -->
+        <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
+          {{ item.name }}
+        </span>
+      </a>
+    </li>
+  </ul>
+</div>

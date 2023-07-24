@@ -13,6 +13,8 @@ export * from "./lib/spriced-ui-lib/components/dialoge/dialoge.module";
 export * from "./lib/spriced-ui-lib/components/dialoge/confirm-dialog/confirm-dialog.component";
 export * from "./lib/spriced-ui-lib/components/dialoge/info-dialog/info-dialog.component";
 export * from "./lib/spriced-ui-lib/components/dialoge/dialog.service";
+export * from "./lib/spriced-ui-lib/components/app-card/app-card.component";
+export * from "./lib/spriced-ui-lib/components/top-menu/top-menu.component";
 
 export * from "./lib/spriced-ui-lib/components/dynamic-form/dynamic-form.module";
 export * from "./lib/spriced-ui-lib/components/dynamic-form/service/dynamic-form.service";

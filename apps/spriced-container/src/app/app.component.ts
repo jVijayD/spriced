@@ -2,29 +2,51 @@ import {  APP_INITIALIZER, Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LoaderComponent } from '@spriced-frontend/spriced-ui-lib';
 import {  KeycloakAngularModule } from 'keycloak-angular';
-// import { HTTP_INTERCEPTORS } from '@angular/common/http';
-// import { KeycloakService } from 'keycloak-angular';
-// import { initializeKeycloak } from './core/init/keycloak-init.factory';
-// import { KeycloakBearerInterceptor } from './core/interceptors/keycloakInterceptor';
+import { HeaderComponent } from './core/components/header/header.component';
+import { SidebarComponent } from './core/components/sidebar/sidebar.component';
+import { BodyComponent } from './core/components/body/body.component';
+import { FooterComponent } from './core/components/footer/footer.component';
+import { CommonModule } from '@angular/common';
+
 
 @Component({
   standalone: true,
-  imports: [RouterModule, LoaderComponent,KeycloakAngularModule],
+  imports: [CommonModule, RouterModule, LoaderComponent,KeycloakAngularModule,HeaderComponent,SidebarComponent,BodyComponent,FooterComponent],
   selector: 'sp-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  // providers: [  {
-  //     provide: HTTP_INTERCEPTORS,
-  //     useClass: KeycloakBearerInterceptor,
-  //     multi: true,
-  //   },
-  //   {
-  //     provide: APP_INITIALIZER,
-  //     useFactory: initializeKeycloak,
-  //     multi: true,
-  //     deps: [KeycloakService],
-  //   },]
+
 })
+
 export class AppComponent {
   title = 'Spriced';
+  currentAppName: any = 'Spriced';
+  path = location.pathname;
+  sidebarData = [
+    {
+      name: 'Data Definition',
+      icon: '/assets/images/definition.png',
+      path: '/spriced-data-definition',
+    },
+    {
+      name: 'Data Access',
+      icon: '/assets/images/access.png',
+      path: '/',
+    },
+    {
+      name: 'Data Reporting',
+      icon: '/assets/images/reporting.png',
+      path: '/spriced-reports',
+    },
+  ];
+  isSideNavCollapsed = false;
+  screenWidth = 0;
+  menuData?: any[];
+  onToggleSideNav(data: any): void {
+    this.screenWidth = data.screenWidth;
+    this.isSideNavCollapsed = data.collapsed;
+  }
+  changeOfRoutes() {
+    this.path = location.pathname;
+  }
 }
