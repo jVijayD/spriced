@@ -1,5 +1,4 @@
 .box {
-    background: white;
     width: 205px;
     box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.15);
     border-radius: 8px;
@@ -9,11 +8,11 @@
         font-style: normal;
         font-size: 18px;
         text-align: center;
-        color: #000000;
+    
         padding: 2rem 0 2rem 0;
 
         .img-container {
-            background-color: white;
+          
             justify-content: center;
             display: flex;
         }

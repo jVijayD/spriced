@@ -12,7 +12,7 @@ export const appRoutes: Route[] = [
       loadRemoteModule("spriced-user-management", "./Routes").then(
         (m) => m.remoteRoutes
       ),
-    canActivate: [AuthGuard],
+  //canActivate: [AuthGuard],
   },
   {
     path: "spriced-reports",
@@ -20,13 +20,13 @@ export const appRoutes: Route[] = [
       loadRemoteModule("spriced-reports", "./Routes").then(
         (m) => m.remoteRoutes
       ),
-    canActivate: [AuthGuard],
+  //canActivate: [AuthGuard],
   },
   {
     path: "spriced-data",
     loadChildren: () =>
       loadRemoteModule("spriced-data", "./Routes").then((m) => m.remoteRoutes),
-    canActivate: [AuthGuard],
+  //canActivate: [AuthGuard],
   },
   {
     path: "spriced-data-definition",
@@ -34,17 +34,17 @@ export const appRoutes: Route[] = [
       loadRemoteModule("spriced-data-definition", "./Routes").then(
         (m) => m.remoteRoutes
       ),
-    canActivate: [AuthGuard],
+  //canActivate: [AuthGuard],
   },
   {
     path: "home",
     component: HomeComponent,
-    canActivate: [AuthGuard],
+  //canActivate: [AuthGuard],
   },
   {
     path: "",
     component: LandingPageComponent,
-    canActivate: [AuthGuard],
+  //canActivate: [AuthGuard],
   },
   {
     path: "**",
