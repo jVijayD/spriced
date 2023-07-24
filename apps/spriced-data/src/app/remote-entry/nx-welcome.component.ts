@@ -855,7 +855,6 @@ nx affected:e2e</pre>
 })
 export class NxWelcomeComponent implements OnInit {
   ngOnInit(): void {
-    debugger;
     console.log(
       ">>> NX_API_DEFINITION_URL_DATA",
       process.env["NX_API_DEFINITION_URL"]
