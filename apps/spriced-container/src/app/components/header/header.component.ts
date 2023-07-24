@@ -39,7 +39,6 @@ export class HeaderComponent {
       // });
       e.preventDefault();
       e.stopPropagation();
-
       this.keycloakService.logout();
 
     }
