@@ -5,8 +5,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { TopMenuComponent } from '@spriced-frontend/spriced-ui-lib';
 // import { menuItem } from '@spriced-frontend/shared/data-store';
-import { KeycloakService } from 'keycloak-angular';
 // import { NgxIndexedDBService } from 'ngx-indexed-db';
+import { KeycloakService } from 'keycloak-angular';
 
 @Component({
   selector: 'sp-header',
@@ -21,11 +21,11 @@ export class HeaderComponent {
   @Input() menuData: any;
   user='';
   constructor(
-    // private keycloakService: KeycloakService,
+    private keycloakService: KeycloakService,
     //  private dbService: NgxIndexedDBService,
      ) {
-    // this.user = this.keycloakService.getUsername();
-    // this.user = this.capitalizeFirstLetter(this.user);
+    this.user = this.keycloakService.getUsername();
+    this.user = this.capitalizeFirstLetter(this.user);
   }
 
   public logOut(e: any) {
@@ -40,7 +40,7 @@ export class HeaderComponent {
       e.preventDefault();
       e.stopPropagation();
 
-      // this.keycloakService.logout();
+      this.keycloakService.logout();
 
     }
   }
