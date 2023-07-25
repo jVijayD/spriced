@@ -1,4 +1,10 @@
 import { Injectable } from "@angular/core";
 
-@Injectable()
-export class ModelService {}
+@Injectable({ providedIn: "root" })
+export class ModelService {
+  add() {}
+  delete() {}
+  edit() {}
+  load(id: number) {}
+  loadAllModels() {}
+}
