@@ -99,8 +99,9 @@ export class ModelAddComponent {
 
   onSubmit(data: FormGroup<any>) {
     if (data.valid) {
-      //data.value;
-      this.snackbarService.success("Succesfully created");
+      this.modelService.createModel(data.value).subscribe((results: any) => {
+        this.snackbarService.success("Succesfully created");
+      });
       this.onClose();
     }
   }
