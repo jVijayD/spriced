@@ -46,7 +46,7 @@ export class ModelAddComponent {
         {
           name: "minlength",
           message: "Min length should be 5.",
-          validator: Validators.minLength(3),
+          validator: Validators.minLength(5),
         },
       ],
     },
@@ -66,7 +66,7 @@ export class ModelAddComponent {
         {
           name: "minlength",
           message: "Min length should be 5.",
-          validator: Validators.minLength(3),
+          validator: Validators.minLength(5),
         },
       ],
     },
@@ -99,7 +99,7 @@ export class ModelAddComponent {
 
   onSubmit(data: FormGroup<any>) {
     if (data.valid) {
-      this.modelService.createModel(data.value).subscribe((results: any) => {
+      this.modelService.add(data.value).subscribe((results: any) => {
         this.snackbarService.success("Succesfully created");
       });
       this.onClose();
