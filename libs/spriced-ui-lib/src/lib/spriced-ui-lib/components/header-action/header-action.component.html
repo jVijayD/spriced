@@ -1,9 +1,10 @@
-<div
+<button
   style="border-right-width: 1px"
   class="text-white h-full flex flex-row cursor-pointer pl-2 pr-1 border-r-primary-light border-solid"
   (click)="onClick()"
   [title]="title || text"
+  [disabled]="disabled"
 >
   <mat-icon class="mt-auto">{{ icon }}</mat-icon>
   <span class="text-xs self-end">{{ text }}</span>
-</div>
+</button>

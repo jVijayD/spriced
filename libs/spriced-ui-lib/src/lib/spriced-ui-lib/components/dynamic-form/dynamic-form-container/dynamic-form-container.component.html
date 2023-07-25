@@ -1,3 +1,12 @@
+<label
+  class="text-secondary-dark m-5 font-bold text-lg"
+  *ngIf="
+    this.currentFormData.appForm?.title &&
+    this.currentFormData.appForm?.title != ''
+  "
+  >{{ this.currentFormData.appForm?.title }}</label
+>
+
 <div class="container">
   <sp-dynamic-form [appFormData]="this.currentFormData"></sp-dynamic-form>
 

@@ -7,30 +7,30 @@ import {
   Output,
   PipeTransform,
   ViewChild,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
 import {
   ColumnMode,
   DatatableComponent,
   NgxDatatableModule,
   SelectionType,
   SortType,
-} from '@swimlane/ngx-datatable';
+} from "@swimlane/ngx-datatable";
 
 @Component({
-  selector: 'sp-data-grid',
+  selector: "sp-data-grid",
   standalone: true,
   imports: [CommonModule, NgxDatatableModule],
-  templateUrl: './data-grid.component.html',
-  styleUrls: ['./data-grid.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: "./data-grid.component.html",
+  styleUrls: ["./data-grid.component.scss"],
+  //changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataGridComponent implements AfterViewInit {
   @ViewChild(DatatableComponent)
   table!: DatatableComponent;
 
   @Input()
-  title = '';
+  title = "";
 
   @Input()
   headerHeight = 40;
@@ -51,7 +51,7 @@ export class DataGridComponent implements AfterViewInit {
   enableRowIndex = true;
 
   @Input()
-  rowHeight: number | 'auto' = 'auto';
+  rowHeight: number | "auto" = "auto";
 
   @Input()
   columnMode: ColumnMode = ColumnMode.standard;
@@ -119,11 +119,11 @@ export interface Header {
   column: string;
   width?: number;
   hidden?: boolean;
-  pinned?: 'left' | 'right';
+  pinned?: "left" | "right";
   flexGrow?: number;
   isSortable?: boolean;
   isFilterable?: boolean;
-  sortDirection?: 'asc' | 'desc';
+  sortDirection?: "asc" | "desc";
   canAutoResize?: boolean;
   pipe?: PipeTransform;
 }
