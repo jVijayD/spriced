@@ -31,14 +31,14 @@ body {
 }
 body {
   margin: 0;
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 // @import '../../node_modules/@swimlane/ngx-datatable/assets/icons.css';
 
 //ngx-data-table
-@import '../../node_modules/@swimlane/ngx-datatable/index.scss';
-@import '../../node_modules/@swimlane/ngx-datatable/themes/material.scss';
+@import "../../node_modules/@swimlane/ngx-datatable/index.scss";
+@import "../../node_modules/@swimlane/ngx-datatable/themes/material.scss";
 
 .ngx-datatable.material.single-selection .datatable-body-row.active:hover,
 .ngx-datatable.material.single-selection
@@ -106,13 +106,13 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
 .ngx-datatable {
   .sortable .sort-btn:before {
     font-family: data-table;
-    content: '\21F5';
+    content: "\21F5";
   }
   .sortable .sort-btn.datatable-icon-down:before {
-    content: '\2193';
+    content: "\2193";
   }
   .sortable .sort-btn.datatable-icon-up:before {
-    content: '\2191';
+    content: "\2191";
   }
 }
 
@@ -120,7 +120,7 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   .datatable-footer
   .datatable-pager
   .datatable-icon-prev:before {
-  content: '<<';
+  content: "<<";
   font-size: small;
 }
 
@@ -128,7 +128,7 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   .datatable-footer
   .datatable-pager
   .datatable-icon-left:before {
-  content: '<';
+  content: "<";
   font-size: medium;
 }
 
@@ -136,7 +136,7 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   .datatable-footer
   .datatable-pager
   .datatable-icon-right:after {
-  content: '>';
+  content: ">";
   font-size: medium;
 }
 
@@ -144,11 +144,26 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   .datatable-footer
   .datatable-pager
   .datatable-icon-skip:after {
-  content: '>>';
+  content: ">>";
   font-size: small;
 }
 
 .ngx-datatable .datatable-header .datatable-header-cell .sort-btn {
   float: right;
   padding-top: 5px;
+}
+.ngx-datatable.material .empty-row {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 300px;
+  @apply text-secondary-default;
+}
+.ngx-datatable.material .empty-row::after {
+  font-family: "Material Icons";
+  font-size: 100px;
+  @apply text-secondary-default font-extrabold;
+  content: "\e4f5";
 }
