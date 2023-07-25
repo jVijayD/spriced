@@ -1,0 +1,41 @@
+.box {
+    width: 205px;
+    box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    cursor: pointer;
+
+    .header {
+        font-style: normal;
+        font-size: 18px;
+        text-align: center;
+    
+        padding: 2rem 0 2rem 0;
+
+        .img-container {
+          
+            justify-content: center;
+            display: flex;
+        }
+
+        .category-img {
+            width: 61px;
+            height: 61px;
+        }
+    }
+
+}
+
+.box:hover {
+    .header {
+        font-style: normal;
+        font-size: 19px;
+        text-align: center;
+        color: #ed1c24;
+
+        .img-container {
+            background-color: lightgray;
+            justify-content: center;
+            display: flex;
+        }
+    }
+}

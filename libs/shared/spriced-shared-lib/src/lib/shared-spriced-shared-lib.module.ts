@@ -6,7 +6,6 @@ import { KeycloakAngularModule, KeycloakService } from "keycloak-angular";
 @NgModule({
   imports: [CommonModule, KeycloakAngularModule],
   providers: [
-    KeycloakService,
     {
       provide: APP_INITIALIZER,
       useFactory: initializeKeycloak,

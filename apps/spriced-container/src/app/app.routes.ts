@@ -2,6 +2,7 @@ import { Route } from "@angular/router";
 import { loadRemoteModule } from "@nx/angular/mf";
 import { HomeComponent } from "./pages/home1/home.component";
 import { PageNotFoundComponent } from "./pages/page-not-found/page-not-found/page-not-found.component";
+import { LandingPageComponent } from "./pages/landingPage/landing-page.component";
 
 export const appRoutes: Route[] = [
   {
@@ -31,9 +32,14 @@ export const appRoutes: Route[] = [
       ),
   },
   {
-    path: "",
+    path: "home",
     component: HomeComponent,
   },
+  {
+    path: "",
+    component: LandingPageComponent,
+  },
+
   {
     path: "**",
     component: PageNotFoundComponent,

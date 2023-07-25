@@ -16,6 +16,7 @@ import {
   DialogueModule,
   SnackBarService,
   SnackbarModule,
+  TopMenuComponent,
   TwoColThreeForthComponent,
 } from "@spriced-frontend/spriced-ui-lib";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
@@ -35,6 +36,7 @@ import { of } from "rxjs";
     SnackbarModule,
     DialogueModule,
     DynamicFormModule,
+    TopMenuComponent
   ],
   providers: [
     {

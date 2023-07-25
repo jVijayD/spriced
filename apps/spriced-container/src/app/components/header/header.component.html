@@ -1,0 +1,42 @@
+<!-- Main navigation container -->
+<nav
+  class="top-header relative flex py-2 z-[1000] shadow-md shadow-black/5 dark:bg-neutral-600 dark:shadow-black/10 lg:flex-wrap lg:justify-start lg:py-[1.19rem]"
+  data-te-navbar-ref
+>
+  <!-- <div class="flex w-full flex-wrap items-center justify-between px-3"> -->
+  <sp-top-menu [menuData]="menuData"></sp-top-menu>
+
+  <!-- Logo -->
+  <!-- <a
+        class="mb-2 mr-2 mt-2 flex items-center text-neutral-900 hover:text-neutral-900 focus:text-neutral-900 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:text-neutral-400 lg:mb-0 lg:mt-0"
+        href="/"
+      >
+
+      </a> -->
+  <!-- </div> -->
+
+  <!-- Right elements -->
+  <div class="relative flex items-center">
+    <span class="text-white">Hi, {{ user }} </span>
+    <div class="vl"></div>
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="menu"
+      class="btn"
+      aria-label="Example icon-button with a menu"
+    >
+      <mat-icon class="icon-size">account_circle</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="logOut($event)">
+        <mat-icon>power_settings_new</mat-icon>
+        <span>Logout</span>
+      </button>
+
+      <button mat-menu-item>
+        <mat-icon>settings</mat-icon>
+        <span>Settings</span>
+      </button>
+    </mat-menu>
+  </div>
+</nav>
