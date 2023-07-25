@@ -3,9 +3,9 @@ import { bootstrapApplication } from "@angular/platform-browser";
 import { RouterModule } from "@angular/router";
 import { appRoutes } from "./app/app.routes";
 import { SharedSpricedSharedLibModule } from "@spriced-frontend/shared/spriced-shared-lib";
-import { EntityComponent } from "./app/pages/entity/entity.component";
+import { ModelComponent } from "./app/pages/model/model.component";
 
-bootstrapApplication(EntityComponent, {
+bootstrapApplication(ModelComponent, {
   providers: [
     importProvidersFrom(SharedSpricedSharedLibModule),
     importProvidersFrom(

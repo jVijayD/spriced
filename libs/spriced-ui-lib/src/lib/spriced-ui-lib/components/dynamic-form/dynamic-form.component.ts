@@ -12,7 +12,7 @@ import { FormBuilder, FormGroup } from "@angular/forms";
   selector: "sp-dynamic-form",
   templateUrl: "./dynamic-form.component.html",
   styleUrls: ["./dynamic-form.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  //changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DynamicFormComponent {
   private _appFormData: AppFormData = {

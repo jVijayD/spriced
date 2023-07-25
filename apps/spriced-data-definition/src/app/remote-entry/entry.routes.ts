@@ -1,4 +1,4 @@
 import { Route } from "@angular/router";
-import { EntityComponent } from "../pages/entity/entity.component";
+import { ModelComponent } from "../pages/model/model.component";
 
-export const remoteRoutes: Route[] = [{ path: "", component: EntityComponent }];
+export const remoteRoutes: Route[] = [{ path: "", component: ModelComponent }];
