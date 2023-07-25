@@ -41,6 +41,6 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([loaderInterceptor])
     ),
     LoaderService,
-    //importProvidersFrom(SharedSpricedSharedLibModule),
+    importProvidersFrom(SharedSpricedSharedLibModule),
   ],
 };
