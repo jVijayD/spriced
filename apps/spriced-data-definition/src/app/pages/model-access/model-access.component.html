@@ -15,7 +15,7 @@
     <button mat-raised-button color="primary" (click)="onSaveClick()">
       Save
     </button>
-    <button mat-raised-button color="primary" (click)="onSaveClick()">
+    <button mat-raised-button color="primary" (click)="onClearClick()">
       Clear
     </button>
   </sp-hbox>
@@ -46,7 +46,7 @@
 
           <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-min">
             <mat-select (selectionChange)="updateValue($event, rowIndex,row)"
-              [value]="value">
+              [value]="row.permission">
               <ng-container *ngFor="let item of getPermissions() ">
                 <mat-option value="{{item}}" *ngIf="(row.level < 2 && item === 'PARTIAL')"
                   disabled>{{item}}</mat-option>

@@ -25,7 +25,7 @@ import {
   AttributeDTO,
 } from "./models/ModelAccesTypes.class";
 // import { ModelData } from '../model-view/model-view.component';
-
+const POPULATE_ATTRIBUTES = true; 
 @Component({
   selector: "sp-model-access",
   standalone: true,
@@ -46,14 +46,15 @@ import {
   styleUrls: ["./model-access.component.scss"],
 })
 export class ModelAccessComponent {
+
   ColumnMode = ColumnMode;
   SelectionType = SelectionType;
 
   treeStore: TreeStore = new TreeStore();
-  selectedRole!: RoleDTO;
+  selectedRole!: RoleDTO | null;
+  selectedModel!: ModelDTO | null;
   modelList: ModelDTO[] = [];
-  selectedModel!: ModelDTO;
-  entitiesList: EntityDTO[] = [];
+  modelListBkp: ModelDTO[] = [];
   roleList: RoleDTO[] = [];
 
   constructor(
@@ -61,19 +62,28 @@ export class ModelAccessComponent {
     private service: DataDefListService,
     private myService: ModelAccessService // private service: DataDefListService
   ) {
-    this.roleList = myService.getRoles();
-
+    this.onInit();
+  }
+  onInit() {
+    this.roleList = this.myService.getRoles();
     this.service.getModels().subscribe((data: ModelDTO[]) => {
-      this.modelList = data;
-      // this.modelList.length > 0
-      //   ? (this.selectedModel = this.modelList[0])
-      //   : null;
+      this.modelList = data.map(m=>new ModelDTO().parse(m));
+      this.modelListBkp = data.map(m=>new ModelDTO().parse(m));
     });
   }
+
   getPermissions() {
     return Object.keys(PERMISSIONS);
   }
+
   onSaveClick() {}
+
+  onClearClick() {
+    this.selectedRole = null;
+    this.selectedModel = null;
+    this.treeStore = new TreeStore();
+    this.modelList = this.modelListBkp;
+  }
 
   onSelectModel(event: MatSelectChange) {
     if (this.hasModified()) {
@@ -94,42 +104,38 @@ export class ModelAccessComponent {
     throw new Error("Method not implemented.");
   }
   hasModified() {
-    return false;
+    return this.treeStore.data.find((node: TreeNode) => node.hasModified);
   }
 
   private populateEntities(model: ModelDTO) {
     this.service.getEntities(model.id).subscribe((data: EntityDTO[]) => {
-      this.entitiesList = data.map((d: EntityDTO) => {
+      let entitiesList = data.map((d: EntityDTO) => {
         d.parentId = model.id;
         d.id = d.name + d.id;
-        return d;
+        return new EntityDTO().parse(d);
       });
-      this.treeStore.appendData(this.entitiesList);
+      this.treeStore.appendData(entitiesList);
+      if(POPULATE_ATTRIBUTES){
+        this.treeStore.appendData(entitiesList.flatMap(e=>e.attributes).filter(a=>a));
+      }
     });
   }
 
   onTreeAction(event: any) {
     const row: TreeNode = event.row;
+    if (row.expandable == false) return;
     if (row.expandedOnce !== true) {
       if (row.level == 0) {
         const model: ModelDTO = event.row;
         this.populateEntities(model);
       } else {
         const entity: EntityDTO = event.row;
-        this.treeStore.appendData(entity.attributes.map((d: AttributeDTO) => {
-          d.expanded = false;
-          d.expandable = false;
-          d.parentId = entity.id;
-          row.treeStatus="disabled"
-          d.displayName=d.name;
-          d.icon = "view_column";
-          return d;
-        }));
+        this.treeStore.appendData(entity.attributes);
       }
-      row.expandedOnce = true;
+      // row.expandedOnce = true;
     }
     row.expanded = !row.expanded;
-    row.treeStatus = row.expanded ? "expanded" : "collapsed";
+    // row.treeStatus = row.expanded ? "expanded" : "collapsed";
     this.treeStore.refreshData();
     this.cd.detectChanges();
   }
@@ -166,6 +172,8 @@ export class ModelAccessComponent {
   updateChildren(record: TreeNode) {
     this.treeStore.getChildren(record).forEach((node: TreeNode) => {
       node.permission = record.permission;
+      
+      this.updateChildren(node);
     });
   }
 }

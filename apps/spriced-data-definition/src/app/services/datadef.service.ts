@@ -45,7 +45,7 @@ export class DataDefListService {
   public getEntities(id: any): Observable<EntityDTO[]> {
     return this.http.get(`${this.api_url}/models/${id}/entities`, {
       headers: headers,
-    }).pipe(Object.assign);
+    }).pipe(Object.assign);;
   }
   public createEntity(body: any): Observable<any> {
     return this.http.post(`${this.api_url}/entities`, body, {
