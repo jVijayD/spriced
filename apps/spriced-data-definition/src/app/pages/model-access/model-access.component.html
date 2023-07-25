@@ -1,0 +1,62 @@
+<sp-vbox>
+  <sp-hbox>
+    <mat-form-field appearance="outline">
+      <mat-label>User Role</mat-label>
+      <mat-select [(value)]="selectedRole">
+        <mat-option *ngFor="let item of roleList" [value]="item">{{item.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Model</mat-label>
+      <mat-select (selectionChange)="onSelectModel($event)" [(value)]="selectedModel">
+        <mat-option *ngFor="let item of modelList" [value]="item">{{item.displayName}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="onSaveClick()">
+      Save
+    </button>
+    <button mat-raised-button color="primary" (click)="onSaveClick()">
+      Clear
+    </button>
+  </sp-hbox>
+  <sp-vbox [noGap]="true" [marginX]="true">
+    <mat-toolbar color="primary">
+      <span>Model View</span>
+    </mat-toolbar>
+    <ngx-datatable class="material striped tableScroll" style="height: 500px;" [columnMode]="ColumnMode.flex"
+      [headerHeight]="50" [footerHeight]="0" [rowHeight]="60" [rows]="treeStore.data" [scrollbarV]="true" [scrollbarH]="true"
+      [treeFromRelation]="'parentId'" [treeToRelation]="'id'" (treeAction)="onTreeAction($event)">
+      <!-- <ngx-datatable-column name="Id" [width]="80"></ngx-datatable-column> -->
+      <ngx-datatable-column name="Display Name" prop="displayName" [isTreeColumn]="true" [flexGrow]="3"
+        [treeLevelIndent]="20">
+        <ng-template let-row="row" let-value="value" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+          <span style="display: inline-flex" class="ml-5">
+            <mat-icon>{{ row.icon }}</mat-icon>
+            <span class="ml-2" *ngIf="row.level < 2">
+              {{ row.displayName }}</span>
+            <span class="ml-2" *ngIf="row.level === 2"> {{ row.name }}</span>
+          </span>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Permission" prop="permission" [flexGrow]="1">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-row="row" let-value="value">
+          <!-- <span (dblclick)="editing[rowIndex] = true" style="width: 300px;" *ngIf="!editing[rowIndex]">
+              {{ value }}
+            </span>   *ngIf="editing[rowIndex]"   (blur)="editing[rowIndex] = false"-->
+
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-min">
+            <mat-select (selectionChange)="updateValue($event, rowIndex,row)"
+              [value]="value">
+              <ng-container *ngFor="let item of getPermissions() ">
+                <mat-option value="{{item}}" *ngIf="(row.level < 2 && item === 'PARTIAL')"
+                  disabled>{{item}}</mat-option>
+                <mat-option value="{{item}}" *ngIf="!(row.level < 2 && item === 'PARTIAL')">{{item}}</mat-option>
+              </ng-container>
+            </mat-select>
+          </mat-form-field>
+        </ng-template>
+      </ngx-datatable-column>
+    </ngx-datatable>
+  </sp-vbox>
+  <!-- </sp-hbox> -->
+</sp-vbox>
