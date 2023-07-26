@@ -1,4 +1,4 @@
-<div>
+<div class="container">
   <h1 mat-dialog-title>
     {{ data.title }}
   </h1>
@@ -17,10 +17,10 @@
 
   <div mat-dialog-actions class="flex flex-row items-end">
     <button mat-raised-button color="secondary" (click)="onDismiss()">
-      {{ data.no || 'No' }}
+      {{ data.no || "No" }}
     </button>
     <button mat-raised-button color="primary" (click)="onConfirm()">
-      {{ data.yes || 'Yes' }}
+      {{ data.yes || "Yes" }}
     </button>
   </div>
 </div>
