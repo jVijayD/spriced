@@ -20,8 +20,22 @@ export class ModelService {
       headers: headers,
     });
   }
-  delete() {}
-  edit() {}
-  load(id: number) {}
-  loadAllModels() {}
+  delete(id:number) {
+    return this.http.delete(`${this.api_url}/models/${id}`, {
+      headers: headers,
+    });
+  }
+  edit(body: any,id:number) {
+    return this.http.patch(`${this.api_url}/models/${id}`, {displayName:body.displayName}, {
+      headers: headers,
+    });
+  }
+  load(id: number) {
+    return this.http.delete(`${this.api_url}/models/${id}`, {
+      headers: headers,
+    });
+  }
+  loadAllModels() {
+    return this.http.get(`${this.api_url}/models`, { headers: headers });
+  }
 }

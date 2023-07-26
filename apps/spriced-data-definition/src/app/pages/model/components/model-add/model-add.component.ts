@@ -1,6 +1,11 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  Optional,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { MatDialogRef } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import {
   AppForm,
   DynamicFormModule,
@@ -29,14 +34,36 @@ import { ModelService } from "apps/spriced-data-definition/src/app/services/mode
 })
 export class ModelAddComponent {
   formData = {};
+  constructor(
+    public dialogRef: MatDialogRef<ModelAddComponent>,
+    private modelService: ModelService,
+    private snackbarService: SnackBarService,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    this.dialogRef.disableClose = true;
+    this.appForm = {
+      title: "Add/Edit Model",
+      //columns: 4,
+      groups: [
+        {
+          title: "",
+          formFieldControls: [...this.formFields],
+        },
+      ],
+      asyncValidations: [],
+      validations: [],
+    };
+  }
   private formFields: FormFieldControls = [
     {
       type: "input",
       subType: "text",
       name: "name",
+      value: this.data.value?.name || "",
       placeholder: "Name",
       icon: "phone",
       label: "Name",
+      readOnly: this.data.action == "Edit" ? true : false,
       validations: [
         {
           name: "required",
@@ -54,6 +81,7 @@ export class ModelAddComponent {
       type: "input",
       subType: "text",
       name: "displayName",
+      value: this.data.value?.displayName || "",
       placeholder: "DisplayName",
       icon: "phone",
       label: "DisplayName",
@@ -73,35 +101,28 @@ export class ModelAddComponent {
   ];
 
   appForm!: AppForm;
-  constructor(
-    public dialogRef: MatDialogRef<ModelAddComponent>,
-    private modelService: ModelService,
-    private snackbarService: SnackBarService
-  ) {
-    this.dialogRef.disableClose = true;
-    this.appForm = {
-      title: "Add/Edit Model",
-      //columns: 4,
-      groups: [
-        {
-          title: "",
-          formFieldControls: [...this.formFields],
-        },
-      ],
-      asyncValidations: [],
-      validations: [],
-    };
-  }
 
   onClose() {
     this.dialogRef.close();
   }
-
+  onDelete() {
+      this.modelService.delete(this.data.value.id).subscribe((results: any) => {
+        this.snackbarService.success("Succesfully Deleted");
+      });
+      this.onClose();
+  }
   onSubmit(data: FormGroup<any>) {
     if (data.valid) {
-      this.modelService.add(data.value).subscribe((results: any) => {
-        this.snackbarService.success("Succesfully created");
-      });
+      if (this.data.action == "Add") {
+        this.modelService.add(data.value).subscribe((results: any) => {
+          this.snackbarService.success("Succesfully Created");
+        });
+      
+      } else if (this.data.action == "Edit") {
+        this.modelService.edit(data.value,this.data.value.id).subscribe((results: any) => {
+          this.snackbarService.success("Succesfully Updated");
+        });
+      }
       this.onClose();
     }
   }

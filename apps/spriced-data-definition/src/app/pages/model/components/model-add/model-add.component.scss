@@ -1,5 +1,5 @@
 .container {
-  width: 300px;
+  width: 310px;
   height: 300px;
   padding: 10px;
 }
@@ -12,4 +12,25 @@
 
 .mat-mdc-icon-button ::ng-deep .mat-mdc-button-persistent-ripple {
   display: none;
+}
+.dltContainer
+{
+  width: 310px;
+  height: 200px;
+  padding: 10px;
+  margin-top: 1rem;
+}
+.delete
+{
+  padding: 20px;
+}
+.button-container {
+  @apply flex flex-row justify-center gap-5;
+}
+.divider {
+  height: 0.5px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;
+  @apply bg-secondary-default mb-5;
 }
