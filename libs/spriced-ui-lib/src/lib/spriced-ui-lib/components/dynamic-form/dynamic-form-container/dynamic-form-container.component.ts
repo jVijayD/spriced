@@ -54,6 +54,7 @@ export class DynamicFormContainerComponent {
   }
 
   onFormReset() {
+    debugger;
     this.formSubmitAttempt = false;
     this.currentFormData?.form?.reset({ ...this.itemsNotReset() });
   }
