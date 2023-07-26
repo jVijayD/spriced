@@ -119,7 +119,7 @@ export class ModelAddComponent {
         });
       
       } else if (this.data.action == "Edit") {
-        this.modelService.edit(data.value,this.data.value.id).subscribe((results: any) => {
+        this.modelService.edit(data.value,this.data.value).subscribe((results: any) => {
           this.snackbarService.success("Succesfully Updated");
         });
       }

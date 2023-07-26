@@ -20,15 +20,19 @@ export class ModelService {
       headers: headers,
     });
   }
-  delete(id:number) {
+  delete(id: number) {
     return this.http.delete(`${this.api_url}/models/${id}`, {
       headers: headers,
     });
   }
-  edit(body: any,id:number) {
-    return this.http.patch(`${this.api_url}/models/${id}`, {displayName:body.displayName}, {
-      headers: headers,
-    });
+  edit(body: any, value: any) {
+    return this.http.patch(
+      `${this.api_url}/models/${value.id}`,
+      { displayName: body.displayName, name: body.name, id: value.id },
+      {
+        headers: headers,
+      }
+    );
   }
   load(id: number) {
     return this.http.delete(`${this.api_url}/models/${id}`, {

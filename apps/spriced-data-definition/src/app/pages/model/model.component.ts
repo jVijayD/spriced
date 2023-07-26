@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   DataGridComponent,
@@ -35,7 +40,13 @@ import { ModelService } from "../../services/model.service";
   //changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModelComponent implements OnInit {
-  headers: Header[] = [{column:'name',name:'name'},{column:'displayName',name:'displayName'}];
+  headers: Header[] = [
+    { column: "id", name: "id" },
+    { column: "name", name: "name" },
+    { column: "displayName", name: "displayName" },
+    { column: "updatedBy", name: "updatedBy" },
+    { column: "updatedDate", name: "updatedDate" },
+  ];
   columnMode: ColumnMode = ColumnMode.force;
   selectionType: SelectionType = SelectionType.single;
   sortType = SortType.single;
@@ -52,50 +63,45 @@ export class ModelComponent implements OnInit {
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
     private modelService: ModelService
-  ) {
-  
+  ) {}
+  ngOnInit(): void {
+    this.load();
   }
-ngOnInit(): void {
-  this.load()
-}
-load()
-{
-  console.log('load')
-  this.modelService.loadAllModels().subscribe((results: any) => {
-    this.rows =results;
-  });
-}
+  load() {
+    console.log("load");
+    this.modelService.loadAllModels().subscribe((results: any) => {
+      this.rows = results;
+    });
+  }
   onAdd() {
     this.dataGrid.clearSelection();
-    const dialogRef=this.dialog.open(ModelAddComponent, {
-      data:{action:'Add'},
+    const dialogRef = this.dialog.open(ModelAddComponent, {
+      data: { action: "Add" },
       //maxWidth: "300px",
       //maxHeight: "400px",
     });
     dialogRef.afterClosed().subscribe(() => {
-      this.load()
-    })
+      this.load();
+    });
   }
 
   onRefresh() {}
 
   onEdit() {
-   const dialogRef= this.dialog.open(ModelAddComponent, {
-      data:{action:'Edit',value:this.selectedItem},
-      
+    const dialogRef = this.dialog.open(ModelAddComponent, {
+      data: { action: "Edit", value: this.selectedItem },
     });
     dialogRef.afterClosed().subscribe(() => {
-      this.load()
-    })
-   
+      this.load();
+    });
   }
   onDelete() {
-    const dialogRef=this.dialog.open(ModelAddComponent, {
-      data:{action:'Delete',value:this.selectedItem},
+    const dialogRef = this.dialog.open(ModelAddComponent, {
+      data: { action: "Delete", value: this.selectedItem },
     });
     dialogRef.afterClosed().subscribe(() => {
-      this.load()
-    })
+      this.load();
+    });
     this.selectedItem = null;
     this.dataGrid.clearSelection();
   }
@@ -104,7 +110,7 @@ load()
   }
 
   onItemSelected(e: any) {
-    console.log(e)
+    console.log(e);
     this.selectedItem = e;
   }
 
