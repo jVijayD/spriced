@@ -21,12 +21,13 @@ import {
   withXsrfConfiguration,
 } from "@angular/common/http";
 import { loaderInterceptor } from "./interceptors/loader.interceptor";
-
+const loaderService = new LoaderService();
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
     provideAnimations(),
     provideNoopAnimations(),
+    { provide: LoaderService, useValue: loaderService },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: KeycloakBearerInterceptor,
@@ -38,9 +39,8 @@ export const appConfig: ApplicationConfig = {
         cookieName: "XSRF-TOKEN",
         headerName: "X-XSRF-TOKEN",
       }),
-      withInterceptors([loaderInterceptor])
+      withInterceptors([loaderInterceptor(loaderService)])
     ),
-    LoaderService,
     importProvidersFrom(SharedSpricedSharedLibModule),
   ],
 };

@@ -1,20 +1,16 @@
-import { HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
-import { Inject } from "@angular/core";
+import { HttpHandlerFn, HttpRequest } from "@angular/common/http";
 import { LoaderService } from "@spriced-frontend/spriced-ui-lib";
-import { Observable, finalize } from "rxjs";
+import { finalize } from "rxjs";
 
-export function loaderInterceptor(
-  req: HttpRequest<unknown>,
-  next: HttpHandlerFn
-): Observable<HttpEvent<unknown>> {
-  const loderService = Inject(LoaderService);
-  console.log("Loader Interceptor");
-  // loderService.show();
-  return next(req).pipe(
-    finalize(() => {
-      loderService.hide();
-    })
-  );
+export function loaderInterceptor(loaderService: LoaderService) {
+  return (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
+    loaderService.show();
+    return next(req).pipe(
+      finalize(() => {
+        loaderService.hide();
+      })
+    );
+  };
 }
 
 //OperatorFunction<unknown, HttpEvent<unknown>>

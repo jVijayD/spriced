@@ -1,4 +1,5 @@
-<div>
+<ng-container>
+  <sp-loader />
   <div *ngIf="path !== '/'" class="flex flex-row h-screen">
     <sp-sidebar
       [data]="sidebarData"
@@ -8,7 +9,6 @@
       <sp-header [appname]="currentAppName" [menuData]="menuData" />
 
       <sp-body [collapsed]="isSideNavCollapsed" [screenWidth]="screenWidth">
-        <sp-loader />
         <!-- <ul class="remote-menu">
           <li><a routerLink="home">Home</a></li>
           <li>
@@ -25,7 +25,7 @@
       <sp-footer></sp-footer>
     </div>
   </div>
-  <div *ngIf="path === '/'">
+  <ng-container *ngIf="path === '/'">
     <router-outlet (activate)="changeOfRoutes()"></router-outlet>
-  </div>
-</div>
+  </ng-container>
+</ng-container>

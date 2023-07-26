@@ -15,8 +15,8 @@ export class ModelService {
     this.api_url = process.env["NX_API_DEFINITION_URL"] as string;
   }
 
-  add(body: any) {
-    return this.http.post(`${this.api_url}/models`, body, {
+  add(model: any) {
+    return this.http.post(`${this.api_url}/models`, model, {
       headers: headers,
     });
   }
@@ -25,10 +25,10 @@ export class ModelService {
       headers: headers,
     });
   }
-  edit(body: any, value: any) {
+  edit(model: any, value: any) {
     return this.http.patch(
       `${this.api_url}/models/${value.id}`,
-      { displayName: body.displayName, name: body.name, id: value.id },
+      { displayName: model.displayName, name: model.name, id: value.id },
       {
         headers: headers,
       }

@@ -41,11 +41,26 @@ import { ModelService } from "../../services/model.service";
 })
 export class ModelComponent implements OnInit {
   headers: Header[] = [
-    { column: "id", name: "id" },
-    { column: "name", name: "name" },
-    { column: "displayName", name: "displayName" },
-    { column: "updatedBy", name: "updatedBy" },
-    { column: "updatedDate", name: "updatedDate" },
+    { column: "id", name: "Id", canAutoResize: true, isSortable: true },
+    { column: "name", name: "Name", canAutoResize: true, isSortable: true },
+    {
+      column: "displayName",
+      name: "Display Name",
+      canAutoResize: true,
+      isSortable: true,
+    },
+    {
+      column: "updatedBy",
+      name: "Updated By",
+      canAutoResize: true,
+      isSortable: true,
+    },
+    {
+      column: "updatedDate",
+      name: "Updated Date",
+      canAutoResize: true,
+      isSortable: true,
+    },
   ];
   columnMode: ColumnMode = ColumnMode.force;
   selectionType: SelectionType = SelectionType.single;
@@ -96,14 +111,19 @@ export class ModelComponent implements OnInit {
     });
   }
   onDelete() {
-    const dialogRef = this.dialog.open(ModelAddComponent, {
-      data: { action: "Delete", value: this.selectedItem },
+    this.dialogService.openConfirmDialoge({
+      message: "Do you want to delete?",
+      title: "Delete Model",
+      icon: "delete",
     });
-    dialogRef.afterClosed().subscribe(() => {
-      this.load();
-    });
-    this.selectedItem = null;
-    this.dataGrid.clearSelection();
+    // const dialogRef = this.dialog.open(ModelAddComponent, {
+    //   data: { action: "Delete", value: this.selectedItem },
+    // });
+    // dialogRef.afterClosed().subscribe(() => {
+    //   this.load();
+    // });
+    // this.selectedItem = null;
+    // this.dataGrid.clearSelection();
   }
   onPaginate(e: Paginate) {
     //this.rows = this.getData(e.limit, e.offset);
