@@ -59,3 +59,6 @@ export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/YYYY-DD-M
 export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/MMM-DD-YYYY.directive";
 export * from "./lib/spriced-ui-lib/components/dynamic-form/directives/dateformat.MMDDyyyy.directive";
 export * from "./lib/spriced-ui-lib/layouts/one-col/one-col.component";
+export * from "./lib/spriced-ui-lib/layouts/hbox/hbox.component";
+export * from "./lib/spriced-ui-lib/layouts/vbox/vbox.component";
+
