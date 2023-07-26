@@ -9,7 +9,7 @@ export function loaderInterceptor(
 ): Observable<HttpEvent<unknown>> {
   const loderService = Inject(LoaderService);
   console.log("Loader Interceptor");
-  loderService.show();
+  // loderService.show();
   return next(req).pipe(
     finalize(() => {
       loderService.hide();
