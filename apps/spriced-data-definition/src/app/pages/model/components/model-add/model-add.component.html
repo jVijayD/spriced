@@ -1,10 +1,33 @@
-<div class="container">
+<div class="{{ data.action !== 'Delete' ? 'container' : 'dltContainer' }}">
   <!-- <label>Add/Edit Entity</label> -->
   <button mat-icon-button color="transparent" class="close" (click)="onClose()">
     <mat-icon>close</mat-icon>
   </button>
   <sp-dynamic-form-container
+    *ngIf="data.action != 'Delete'; else elseTemplate"
     [appForm]="appForm"
     (submitEvent)="onSubmit($event)"
   ></sp-dynamic-form-container>
+  <ng-template #elseTemplate >
+    <div class="delete">
+    <div class="mb-4">
+      Sure to delete <b>{{ data.value.name }}</b
+      >?
+    </div>
+    <div class="divider"></div>
+  </div>
+  <div class="button-container">
+    <button class="w-24" mat-raised-button color="accent" (click)="onClose()">
+      Cancel
+    </button>
+    <button
+      class="w-24"
+      mat-raised-button
+      color="primary"
+      type="submit"
+      (click)="onDelete()"
+    >
+      Delete
+    </button></div></ng-template
+  >
 </div>
