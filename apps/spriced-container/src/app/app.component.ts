@@ -53,4 +53,6 @@ export class AppComponent {
   changeOfRoutes() {
     this.path = location.pathname;
   }
+
+  constructor() {}
 }

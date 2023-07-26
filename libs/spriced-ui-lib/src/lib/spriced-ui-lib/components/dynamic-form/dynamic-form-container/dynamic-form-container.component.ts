@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from "@angular/core";
 import { AppForm } from "../dynamic-form.types";
 import { AppFormData } from "../dynamic-form.component";
 import { FormControl, FormGroup } from "@angular/forms";
@@ -9,7 +15,7 @@ import { DynamicFormService } from "../service/dynamic-form.service";
   templateUrl: "./dynamic-form-container.component.html",
   styleUrls: ["./dynamic-form-container.component.scss"],
   //providers: [DynamicFormService],
-  //changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class DynamicFormContainerComponent {
   private _appForm!: AppForm;
@@ -54,7 +60,6 @@ export class DynamicFormContainerComponent {
   }
 
   onFormReset() {
-    debugger;
     this.formSubmitAttempt = false;
     this.currentFormData?.form?.reset({ ...this.itemsNotReset() });
   }
