@@ -1,0 +1,67 @@
+
+<sp-one-col>
+    <mat-form-field appearance="outline" class="mb-2">
+        <mat-label>Model</mat-label>
+        <mat-select (selectionChange)="load($event)" [(value)]="groupId">
+          <mat-option *ngFor="let item of modelList" [value]="item.id"
+            >{{item.displayName}}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+    <sp-data-grid
+      class="w-full h-full"
+      #dataGrid
+      title="Entity List"
+      [enableRowIndex]="false"
+      [isArray]="true"
+      [headers]="headers"
+      [rows]="rows"
+      [rowHeight]="40"
+      [headerHeight]="40"
+      [footerHeight]="40"
+      [columnMode]="columnMode"
+      [virtualScroll]="false"
+      [selectionType]="selectionType"
+      [limit]="10"
+      [isExternalPaging]="true"
+      [isExternalSorting]="false"
+      [sortType]="sortType"
+      [count]="totalElements"
+      (paginate)="onPaginate($event)"
+      (itemSelected)="onItemSelected($event)"
+      (sort)="onSort($event)"
+    >
+      <ng-container>
+        <sp-header-action
+          icon="add_box"
+          text="Add"
+          title="Add Entity"
+          (actionClick)="onAdd()"
+        ></sp-header-action>
+  
+        <sp-header-action
+          icon="sync"
+          text="Refresh"
+          title="Refresh"
+          (actionClick)="onRefresh()"
+        ></sp-header-action>
+  
+        <sp-header-action
+          icon="edit"
+          text="Edit"
+          title="Edit Entity"
+          [disabled]="selectedItem == null"
+          (actionClick)="onEdit()"
+        ></sp-header-action>
+  
+        <sp-header-action
+          icon="delete"
+          text="Delete"
+          title="Delete Entity"
+          [disabled]="selectedItem == null"
+          (actionClick)="onDelete()"
+        ></sp-header-action>
+      </ng-container>
+    </sp-data-grid>
+  </sp-one-col>
+  
