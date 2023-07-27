@@ -1,0 +1,300 @@
+<div class="container">
+<h1 mat-dialog-title>
+    <strong>{{ action }} Entity</strong>
+  </h1>
+  
+  <div mat-dialog-content class="content">
+    <div class="namegrid">
+      <div>
+        <form
+          [formGroup]="entityForm"
+          class="form d-flex flex-column flex-lg-row"
+        >
+          <div>
+            <mat-form-field appearance="outline">
+              <mat-label>Entity Name</mat-label>
+              <input formControlName="name" matInput />
+            </mat-form-field>
+            <div class="error">
+              <mat-error
+                class="text-sm italic text-red-500"
+                *ngIf="
+                  entityForm.controls['name'].hasError('required') &&
+                  (entityForm.controls['name'].dirty ||
+                    entityForm.controls['name'].touched)
+                "
+                >Name is required</mat-error
+              >
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="ml-4">
+        <mat-form-field
+          appearance="outline"
+         
+        >
+          <mat-label>Display Name</mat-label>
+          <input matInput [(ngModel)]="local_data.displayName" />
+        </mat-form-field>
+      </div>
+      <mat-checkbox
+    
+        checked="true"
+        [(ngModel)]="local_data.autoNumberCode"
+        >Auto generate Code</mat-checkbox
+      >
+  
+    </div>
+ 
+    <mat-card
+      style="padding: 10px;height: 450px;overflow-y: auto;"
+      class="drop-shadow"
+    >
+      <div class="box">
+        <div class="box1">
+        <sp-data-grid
+        class="w-full h-full"
+        #dataGrid
+        title="Model List"
+        [enableRowIndex]="false"
+        [isArray]="false"
+        [headers]="headers"
+        [rows]="rows"
+        [rowHeight]="40"
+        [headerHeight]="40"
+        [footerHeight]="40"
+        [columnMode]="columnMode"
+        [virtualScroll]="true"
+        [selectionType]="selectionType"
+        [limit]="10"
+        [isExternalPaging]="true"
+        [isExternalSorting]="false"
+        [sortType]="sortType"
+        [count]="totalElements"
+        (paginate)="onPaginate($event)"
+        (itemSelected)="onItemSelected($event)"
+        (sort)="onSort($event)"
+      >
+        <ng-container>
+          <sp-header-action
+            icon="add_box"
+            text="Add"
+            title="Add Entity"
+            (actionClick)="onAdd()"
+          ></sp-header-action>
+    
+          <sp-header-action
+            icon="sync"
+            text="Refresh"
+            title="Refresh"
+            (actionClick)="onRefresh()"
+          ></sp-header-action>
+    
+          <sp-header-action
+            icon="edit"
+            text="Edit"
+            title="Edit Entity"
+            [disabled]="selectedItem == null || selectedItem.editable==false"
+            (actionClick)="onEdit()"
+          ></sp-header-action>
+    
+          <sp-header-action
+            icon="delete"
+            text="Delete"
+            title="Delete Entity"
+            [disabled]="selectedItem == null  || selectedItem.editable==false"
+            (actionClick)="onDelete()"
+          ></sp-header-action>
+        </ng-container>
+      </sp-data-grid>
+    </div>
+        <div class="flex" style="flex-direction: column; height: 375px">
+          <mat-form-field appearance="outline" class="mb-2">
+            <mat-label>Attribute Name</mat-label>
+            <input
+              [disabled]="attAction === 'Edit'"
+              matInput
+              [(ngModel)]="attDetails.name"
+            />
+          </mat-form-field>
+  
+          <mat-form-field appearance="outline" class="mb-2">
+            <mat-label>Display Name</mat-label>
+            <input matInput [(ngModel)]="attDetails.displayName" />
+          </mat-form-field>
+          <div class="flex flex-row mb-2">
+            <!-- <mat-label>Type</mat-label> -->
+            <mat-radio-group
+              aria-label="Select an option"
+              [(ngModel)]="attDetails.type"
+              [value]="type"
+              (change)="radioButtonChanged($event)"
+            >
+              <mat-radio-button value="FREE_FORM">Free Form</mat-radio-button>
+              <mat-radio-button value="LOOKUP">Domain Based</mat-radio-button>
+            </mat-radio-group>
+          </div>
+          <mat-form-field
+            appearance="outline"
+            class="mb-2"
+            *ngIf="attDetails.type === 'LOOKUP'"
+          >
+            <mat-label>Entity</mat-label>
+  
+            <mat-select
+              [(ngModel)]="attDetails.referencedTableId"
+              (selectionChange)="selectedEntity($event)"
+            >
+              <mat-option
+                *ngFor="let item of entityList"
+                [value]="item.id"
+                [disabled]="local_data.id === item.id"
+                >{{ item.name }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+          <mat-checkbox
+            *ngIf="attDetails.type !== 'LOOKUP'"
+            class="mb-2"
+            style="margin-top: 12px; margin-bottom: 21px"
+            [(ngModel)]="constraintType"
+            >Is Unique</mat-checkbox
+          >
+          <mat-form-field
+            appearance="outline"
+            class="mb-2"
+            *ngIf="attDetails.type === 'FREE_FORM'"
+          >
+            <mat-label>Data Type</mat-label>
+            <mat-select [(ngModel)]="attDetails.dataType">
+              <mat-option value="STRING_VAR">Fixed Length String</mat-option>
+              <mat-option value="TEXT">Text</mat-option>
+              <mat-option value="INTEGER">Number</mat-option>
+              <mat-option value="LINK">Link</mat-option>
+              <mat-option value="TIME_STAMP">Date Time</mat-option>
+              <mat-option value="BOOLEAN">Boolean</mat-option>
+            </mat-select>
+          </mat-form-field>
+  
+          <mat-form-field
+            appearance="outline"
+            class="mb-2"
+            *ngIf="
+              attDetails.dataType === 'TEXT' ||
+              (attDetails.dataType === 'LINK' && attDetails.type === 'FREE_FORM')
+            "
+          >
+            <mat-label>Length</mat-label
+            ><input matInput type="number"  min="0" [(ngModel)]="attDetails.size"
+          /></mat-form-field>
+          <div
+            *ngIf="
+              attDetails.dataType === 'INTEGER' && attDetails.type === 'FREE_FORM'
+            "
+            style="display: contents"
+          >
+            <mat-form-field appearance="outline"  class="mb-2">
+              <mat-label>Decimels</mat-label
+              ><input
+                matInput
+                type="number"
+                min="0"
+                [(ngModel)]="attDetails.size"
+            /></mat-form-field>
+          </div>
+          <div
+            *ngIf="
+              attDetails.dataType === 'TIME_STAMP' &&
+              attDetails.type === 'FREE_FORM'
+            "
+            style="display: contents"
+          >
+            <mat-form-field appearance="outline" class="mb-2"
+              ><mat-label>Input Mask</mat-label>
+  
+              <mat-select [(ngModel)]="attDetails.formatter">
+                <mat-option value="MM/dd/yy">MM/dd/yy</mat-option>
+                <mat-option value="MM/dd/yyyy">MM/dd/yyyy</mat-option>
+                <mat-option value="dd/MM/yy">dd/MM/yy</mat-option>
+                <mat-option value="dd/MM/yyyy">dd/MM/yyyy</mat-option>
+                <mat-option value="yy/MM/dd">yy/MM/dd</mat-option>
+                <mat-option value="yyyy/MM/dd">yyyy/MM/dd</mat-option>
+                <mat-option value="dd-MM-yy">dd-MM-yy</mat-option>
+                <mat-option value="dd-MM-yyyy">dd-MM-yyyy</mat-option>
+                <mat-option value="d-M-y">d-M-y</mat-option>
+                <mat-option value="d-M-yyyy">d-M-yyyy</mat-option>
+                <mat-option value="yy-MM-dd">yy-MM-dd</mat-option>
+                <mat-option value="yyyy-MM-dd">yyyy-MM-dd</mat-option>
+                <mat-option value="d-M-yy">d-M-yy</mat-option>
+                <mat-option value="d-M-yyyy">d-M-yyyy</mat-option>
+                <mat-option value="MM/yyyy">MM/yyyy</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <mat-form-field
+            appearance="outline"
+            class="mb-2"
+            *ngIf="
+              attDetails.dataType === 'INTEGER' && attDetails.type === 'FREE_FORM'
+            "
+            ><mat-label>Input Mask</mat-label>
+            <mat-select [(ngModel)]="attDetails.formatter">
+              <mat-option value="option1">-####</mat-option>
+              <mat-option value="option2">(####)</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-divider></mat-divider>
+          <div class="flex justify-end p-5">
+            <button
+              mat-flat-button
+              type="button"
+              color="primary"
+              class="savebtn"
+              (click)="updateRowData(attDetails)"
+              [disabled]="
+                attDetails.name === '' ||
+                attDetails.name === undefined ||
+                attDetails.editable === false
+              "
+            >
+              {{ attAction }}
+            </button>
+            <button
+              mat-flat-button
+              class="savebtn"
+              color="accent"
+              type="button"
+              (click)="clear()"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+  <div mat-dialog-actions class="actions">
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      (click)="doAction()"
+      class="form d-flex flex-column flex-lg-row mr-2"
+      [disabled]="
+        entityForm.invalid && action !== 'Edit'
+      "
+    >
+      {{ action }}
+    </button>
+    <button
+      mat-button
+      (click)="closeDialog()"
+      mat-flat-button
+      color="accent"
+      type="button"
+    >
+      Cancel
+    </button>
+  </div>
+</div>

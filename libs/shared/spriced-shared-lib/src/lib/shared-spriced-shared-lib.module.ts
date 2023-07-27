@@ -3,9 +3,11 @@ import { CommonModule } from "@angular/common";
 import { initializeKeycloak } from "./auth/keycloak-init.factory";
 import { KeycloakAngularModule, KeycloakService } from "keycloak-angular";
 import { AppDataService } from "./app-data/app-data.service";
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
+import { headerInterceptor } from "./auth/header-interceptor";
 
 @NgModule({
-  imports: [CommonModule, KeycloakAngularModule],
+  imports: [CommonModule, KeycloakAngularModule,HttpClientModule],
   providers: [
     KeycloakService,
     {
@@ -13,6 +15,11 @@ import { AppDataService } from "./app-data/app-data.service";
       useFactory: initializeKeycloak,
       multi: true,
       deps: [KeycloakService],
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: headerInterceptor,
+      multi: true,
     },
     AppDataService,
   ],

@@ -105,25 +105,22 @@ export class ModelAddComponent {
   onClose() {
     this.dialogRef.close();
   }
-  onDelete() {
-      this.modelService.delete(this.data.value.id).subscribe((results: any) => {
-        this.snackbarService.success("Succesfully Deleted");
-      });
-      this.onClose();
-  }
+
   onSubmit(data: FormGroup<any>) {
     if (data.valid) {
       if (this.data.action == "Add") {
         this.modelService.add(data.value).subscribe((results: any) => {
           this.snackbarService.success("Succesfully Created");
+          this.onClose();
         });
       
       } else if (this.data.action == "Edit") {
         this.modelService.edit(data.value,this.data.value).subscribe((results: any) => {
           this.snackbarService.success("Succesfully Updated");
+          this.onClose();
         });
       }
-      this.onClose();
+    
     }
   }
 }
