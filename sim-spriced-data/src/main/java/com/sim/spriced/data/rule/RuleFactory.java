@@ -1,7 +1,9 @@
 package com.sim.spriced.data.rule;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Stack;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.json.JSONObject;
@@ -51,18 +53,64 @@ public class RuleFactory {
 		return actions.parallelStream().map(item -> this.createAction(item, ruleActionGroup, attributes)).toList();
 	}
 
+//	private ISpecification<JSONObject> getCondition(List<Condition> conditions, List<Attribute> attributes) {
+//
+//
+//		Optional<CompositeSpecification<JSONObject>> finalCondition = conditions.stream()
+//				.map(item -> this.specFactory.createInstance(item, attributes))
+//				.reduce((prev, current) -> prev == null 
+//					|| ((BaseSpecification) current).getConditionType() == ConditionType.NONE 
+//					 ? current
+//					 : this.mergeConditions(prev, current)
+//				);
+//		return finalCondition.isPresent() ? finalCondition.get() : this.specFactory.createInstance(null, null);
+//
+//	}
+	
 	private ISpecification<JSONObject> getCondition(List<Condition> conditions, List<Attribute> attributes) {
-
-
-		Optional<CompositeSpecification<JSONObject>> finalCondition = conditions.stream()
+		List<CompositeSpecification<JSONObject>> finalList = new ArrayList<>();
+		for(Condition condition: conditions) {
+			Stack<List<Condition>> conditionStack = new Stack<>();
+			Condition.getSubConditionsRecursively(condition, conditionStack);
+			List<CompositeSpecification<JSONObject>> compositeList = resolveGroups(conditionStack, attributes);
+			Optional<CompositeSpecification<JSONObject>> intermediateCondition = compositeList.stream().reduce((prev, current) -> prev == null 
+							|| ((BaseSpecification) current).getConditionType() == ConditionType.NONE 
+							 ? current
+							 : this.mergeConditions(prev, current)
+					);
+			if(intermediateCondition.isPresent()) {
+				CompositeSpecification<JSONObject> remainingCondition = this.specFactory.createInstance(condition, attributes);
+				CompositeSpecification<JSONObject> finalCondition = this.mergeSubConditions(remainingCondition, intermediateCondition.get());
+				if(finalCondition != null) {
+					finalList.add(finalCondition);
+				}
+			}
+		}
+		Optional<CompositeSpecification<JSONObject>> completeCondition = finalList.stream().reduce((prev, current) -> prev == null 
+				|| ((BaseSpecification) current).getConditionType() == ConditionType.NONE 
+				 ? current
+				 : this.mergeConditions(prev, current)
+		);
+		return completeCondition.isPresent() ? completeCondition.get() : this.specFactory.createInstance(null, null);
+	}
+	
+	private List<CompositeSpecification<JSONObject>> resolveGroups(Stack<List<Condition>> conditionStack, List<Attribute> attributes) {
+		List<CompositeSpecification<JSONObject>> compositeList = new ArrayList<>();
+		
+		while(!conditionStack.isEmpty()) {
+			var groupedCondition = conditionStack.pop();
+			Optional<CompositeSpecification<JSONObject>> temp =  groupedCondition.stream()
 				.map(item -> this.specFactory.createInstance(item, attributes))
 				.reduce((prev, current) -> prev == null 
-					|| ((BaseSpecification) current).getConditionType() == ConditionType.NONE 
-					 ? current
-					 : this.mergeConditions(prev, current)
+						|| ((BaseSpecification) current).getConditionType() == ConditionType.NONE 
+						 ? current
+						 : this.mergeConditions(prev, current)
 				);
-		return finalCondition.isPresent() ? finalCondition.get() : this.specFactory.createInstance(null, null);
-
+			if(temp.isPresent()) {
+				compositeList.add(temp.get());
+			}
+		}
+		return compositeList;
 	}
 
 	private IAction<JSONObject> createAction(Action action, ActionGroup ruleActionGroup, List<Attribute> attributes) {
@@ -120,7 +168,23 @@ public class RuleFactory {
 		case OR:
 			return new OrSpecification<JSONObject>(prev, current);
 		case NOT:
-			return new NotSpecification<JSONObject>(current); // TO DO: Or Condition Nedd to be validated
+			return new NotSpecification<JSONObject>(current); // TO DO: Or Condition Need to be validated
+		default:
+			throw new NotImplementedException("Condition type not implement.");
+
+		}
+	}
+	
+	private CompositeSpecification<JSONObject> mergeSubConditions(CompositeSpecification<JSONObject> prev,
+			CompositeSpecification<JSONObject> current) {
+		ConditionType subConditionType = ((BaseSpecification) prev).getSubConditionType();
+		switch (subConditionType) {
+		case AND:
+			return new AndSpecification<JSONObject>(prev, current);
+		case OR:
+			return new OrSpecification<JSONObject>(prev, current);
+		case NOT:
+			return new NotSpecification<JSONObject>(current); // TO DO: Or Condition Need to be validated
 		default:
 			throw new NotImplementedException("Condition type not implement.");
 

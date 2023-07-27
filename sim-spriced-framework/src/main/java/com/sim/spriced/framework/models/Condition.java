@@ -1,9 +1,11 @@
 package com.sim.spriced.framework.models;
 
 import java.util.List;
+import java.util.Stack;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Condition {
 	private ConditionType conditionType = ConditionType.NONE;
@@ -103,4 +106,13 @@ public class Condition {
 			return description;
 		}
 	}
+
+	public static void getSubConditionsRecursively(Condition condition, Stack<List<Condition>> stack) {
+        if(condition.getSubConditions() != null && !condition.getSubConditions().isEmpty()) {
+            stack.add(condition.getSubConditions());
+            for(Condition subCondition: condition.getSubConditions()) {
+                getSubConditionsRecursively(subCondition, stack);
+            }
+        }
+    }
 }

@@ -8,8 +8,8 @@ import com.sim.spriced.framework.models.Condition.OperandType;
 
 public class LessThan extends BaseSpecification {
 
-	protected LessThan(String column, Object value, ConditionType conditionType, OperandType operandType) {
-		super(column, value, conditionType, operandType);
+	protected LessThan(String column, Object value, ConditionType conditionType, OperandType operandType, ConditionType subConditionType) {
+		super(column, value, conditionType, operandType, subConditionType);
 	}
 
 	@Override

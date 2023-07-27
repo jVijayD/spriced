@@ -12,8 +12,8 @@ public class IsNotBetween extends BaseSpecification {
 
 	public static final String COMMA = ",";
 
-	public IsNotBetween(String column, Object value, ConditionType conditionType, OperandType operandType) {
-		super(column, value, conditionType, operandType);
+	public IsNotBetween(String column, Object value, ConditionType conditionType, OperandType operandType, ConditionType subConditionType) {
+		super(column, value, conditionType, operandType, subConditionType);
 	}
 
 	@Override

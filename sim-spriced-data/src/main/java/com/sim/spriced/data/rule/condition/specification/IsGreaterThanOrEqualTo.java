@@ -8,8 +8,8 @@ import com.sim.spriced.framework.models.Condition.OperandType;
 
 public class IsGreaterThanOrEqualTo extends BaseSpecification {
 
-	public IsGreaterThanOrEqualTo(String column, Object value, ConditionType conditionType, OperandType operandType) {
-		super(column, value, conditionType, operandType);
+	public IsGreaterThanOrEqualTo(String column, Object value, ConditionType conditionType, OperandType operandType, ConditionType subConditionType) {
+		super(column, value, conditionType, operandType,subConditionType);
 	}
 
 	@Override
