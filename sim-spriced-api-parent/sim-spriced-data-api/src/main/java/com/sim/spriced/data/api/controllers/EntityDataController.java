@@ -7,6 +7,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import javax.validation.Valid;
+
+
+import com.sim.spriced.framework.models.AttributeConstants;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -134,7 +137,13 @@ public class EntityDataController {
 
 			List<org.json.JSONObject> jsonArray = new ArrayList<>();
 			org.json.JSONObject jsonObj = new org.json.JSONObject();
-			jsonObj.put("code", Boolean.TRUE.equals(entityDto.getAutoNumberCode()) ? Integer.parseInt(id) : id);
+			data.getAttributes().stream()
+					.filter(attribute -> attribute.getConstraintType().equals(AttributeConstants.ConstraintType.PRIMARY_KEY))
+					.forEach(attribute -> {
+						String attributeName = attribute.getName();
+						Object attributeValue = entityDto.getAutoNumberCode() ? Integer.parseInt(id) : id;
+						jsonObj.put(attributeName, attributeValue);
+					});
 			jsonArray.add(jsonObj);
 			data.setValues(jsonArray);
 			var result = this.dataService.fetchOne(data,searchCriteria);
