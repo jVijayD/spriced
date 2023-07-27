@@ -105,13 +105,7 @@ export class ModelAddComponent {
   onClose() {
     this.dialogRef.close();
   }
-  onDelete() {
-      this.modelService.delete(this.data.value.id).subscribe((results: any) => {
-        this.snackbarService.success("Succesfully Deleted");
-        this.onClose();
-      });
-     
-  }
+
   onSubmit(data: FormGroup<any>) {
     if (data.valid) {
       if (this.data.action == "Add") {

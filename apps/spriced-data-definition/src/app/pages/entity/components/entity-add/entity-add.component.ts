@@ -9,7 +9,6 @@ import {
   ViewChild,
 } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { MatTable, MatTableModule } from "@angular/material/table";
 import {
   FormBuilder,
   FormGroup,
@@ -27,7 +26,15 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { MatInputModule } from '@angular/material/input';
+import { MatInputModule } from "@angular/material/input";
+import {
+  DataGridComponent,
+  Header,
+  HeaderActionComponent,
+  OneColComponent,
+  Paginate,
+} from "@spriced-frontend/spriced-ui-lib";
+import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 
 export interface PeriodicElement {
   name: string;
@@ -50,7 +57,6 @@ export interface UsersData {
   standalone: true,
   imports: [
     CommonModule,
-    MatTableModule,
     FormsModule,
     ReactiveFormsModule,
     MatIconModule,
@@ -63,7 +69,11 @@ export interface UsersData {
     MatFormFieldModule,
     // MatRadioGroup,
     MatCheckboxModule,
-    MatSelectModule,MatInputModule
+    MatSelectModule,
+    MatInputModule,
+    HeaderActionComponent,
+    OneColComponent,
+    DataGridComponent,
   ],
   templateUrl: "./entity-add.component.html",
   styleUrls: ["./entity-add.component.scss"],
@@ -72,19 +82,34 @@ export class EntityAddComponent implements OnInit {
   action: string;
   attAction = "Add";
   local_data: any;
-  attSource: any = {};
+  rows: any = {};
   attDetails: any = {};
   entityForm!: FormGroup;
   displayedColumns: string[] = ["name", "displayName", "action"];
   type = "FREE_FORM";
   dataType = "STRING_VAR";
-  @ViewChild("attrtable")
-  table!: MatTable<any>;
   entityList: any;
   referencedTable: any;
   @Output() dataChange = new EventEmitter<any>();
   constraintType = false;
+  headers: Header[] = [
+    { column: "name", name: "Name", canAutoResize: true, isSortable: true },
+    {
+      column: "displayName" || 'name',
+      name: "Display Name",
+      canAutoResize: true,
+      isSortable: true,
+    },
+  ];
+  columnMode: ColumnMode = ColumnMode.force;
+  selectionType: SelectionType = SelectionType.single;
+  sortType = SortType.single;
+  isFullScreen = false;
+  totalElements = 10000;
+  selectedItem: any = null;
 
+  @ViewChild(DataGridComponent)
+  dataGrid!: DataGridComponent;
   constructor(
     public dialogRef: MatDialogRef<EntityAddComponent>,
     //@Optional() is used to prevent error if no data is passed
@@ -103,18 +128,19 @@ export class EntityAddComponent implements OnInit {
     }
 
     this.action = data.action;
-    this.attSource = this.local_data?.attributes || [];
+    this.rows = this.local_data?.attributes || [];
   }
   ngOnInit(): void {
     this.initForm();
   }
   doAction() {
-    this.local_data.attributes = this.attSource;
+    console.log("action");
+    this.local_data.attributes = this.rows;
     if (this.action == "Add") {
       this.local_data.name = this.entityForm.controls["name"].value;
     }
-    // this.dialogRef.close({ event: this.action, data: this.local_data });
-    this.dataChange.emit({ event: this.action, data: this.local_data });
+    console.log(this.local_data);
+    this.dataChange.emit(this.local_data);
   }
 
   closeDialog() {
@@ -124,17 +150,7 @@ export class EntityAddComponent implements OnInit {
   radioButtonChanged(event: any) {
     this.type = event.value;
   }
-  viewAtt(element: any) {
-    if (element.dataType == "DECIMAL" && element.size > 0) {
-      element.dataType = "INTEGER";
-    }
-    this.attDetails = {};
-    this.attAction = "Update";
-    this.type = element.type;
-    this.constraintType = element.constraintType == "UNIQUE_KEY" ? true : false;
-    this.attDetails = { ...element };
-    this.attDetails.displayName = element.displayName || element.name;
-  }
+
   clear() {
     this.attAction = "Add";
     this.attDetails = {};
@@ -150,20 +166,17 @@ export class EntityAddComponent implements OnInit {
       row_obj.dataType = "DECIMAL";
     }
     if (this.attAction == "Update") {
-      this.attSource.map((value: any, index: number) => {
+      this.rows.map((value: any, index: number) => {
         if (value.name == row_obj.name) {
-          this.attSource[index] = row_obj;
-          this.table.renderRows();
+          this.rows[index] = row_obj;
         }
         return true;
       });
+      this.rows=[...this.rows]
     }
     if (this.attAction == "Add") {
-      if (row_obj.dataType == "INTEGER" && row_obj.size > 0) {
-        row_obj.dataType = "DECIMAL";
-      }
       if (row_obj.type == "FREE_FORM") {
-        this.attSource.push({
+        this.rows.push({
           id: row_obj.id,
           name: row_obj.name,
           displayName: row_obj.displayName || row_obj.name,
@@ -176,7 +189,7 @@ export class EntityAddComponent implements OnInit {
             : row_obj.constraintType,
         });
       } else {
-        this.attSource.push({
+        this.rows.push({
           id: row_obj.id,
           name: row_obj.name,
           displayName: row_obj.displayName || row_obj.name,
@@ -185,15 +198,11 @@ export class EntityAddComponent implements OnInit {
           referencedTable: this.referencedTable,
         });
       }
-      this.table.renderRows();
+      this.rows=[...this.rows]
     }
     this.clear();
   }
-  deleteAtt(row_obj: any) {
-    this.attSource = this.attSource.filter((value: any) => {
-      return value.name != row_obj.name;
-    });
-  }
+
   initForm() {
     if (this.action == "Edit") {
       this.entityForm = this.fb.group({
@@ -205,4 +214,36 @@ export class EntityAddComponent implements OnInit {
       });
     }
   }
+
+  onRefresh() {}
+
+  onEdit() {
+    if (this.selectedItem.dataType == "DECIMAL" && this.selectedItem.size > 0) {
+      this.selectedItem.dataType = "INTEGER";
+    }
+    this.attDetails = {};
+    this.attAction = "Update";
+    this.type = this.selectedItem.type;
+    this.constraintType =
+      this.selectedItem.constraintType == "UNIQUE_KEY" ? true : false;
+    this.attDetails = { ...this.selectedItem };
+    this.attDetails.displayName =
+      this.selectedItem.displayName || this.selectedItem.name;
+  }
+  onAdd() {}
+  onDelete() {
+    this.rows = this.rows.filter((value: any) => {
+      return value.name != this.selectedItem.name;
+    });
+  }
+  onPaginate(e: Paginate) {
+    //this.rows = this.getData(e.limit, e.offset);
+  }
+
+  onItemSelected(e: any) {
+    console.log(e);
+    this.selectedItem = e;
+  }
+
+  onSort(e: any) {}
 }

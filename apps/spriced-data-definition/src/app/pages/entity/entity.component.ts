@@ -40,11 +40,26 @@ import { EntityAddComponent } from "./components/entity-add/entity-add.component
 })
 export class EntityComponent {
   headers: Header[] = [
-    { column: "id", name: "id" },
-    { column: "name", name: "name" },
-    { column: "displayName", name: "displayName" },
-    { column: "updatedBy", name: "updatedBy" },
-    { column: "updatedDate", name: "updatedDate" },
+    { column: "id", name: "Id", canAutoResize: true, isSortable: true },
+    { column: "name", name: "Name", canAutoResize: true, isSortable: true },
+    {
+      column: "displayName",
+      name: "Display Name",
+      canAutoResize: true,
+      isSortable: true,
+    },
+    {
+      column: "updatedBy",
+      name: "Updated By",
+      canAutoResize: true,
+      isSortable: true,
+    },
+    {
+      column: "updatedDate",
+      name: "Updated Date",
+      canAutoResize: true,
+      isSortable: true,
+    },
   ];
   columnMode: ColumnMode = ColumnMode.force;
   selectionType: SelectionType = SelectionType.single;
@@ -86,8 +101,17 @@ export class EntityComponent {
       //maxWidth: "300px",
       //maxHeight: "400px",
     });
-    dialogRef.afterClosed().subscribe(() => {
-      // this.load();
+    dialogRef.componentInstance.dataChange.subscribe((result: any) => {
+      const entity = {
+        name: result.name,
+        displayName: result.displayName,
+        id: result.id,
+        groupId: this.groupId,
+        isDisabled: false,
+        enableAuditTrial: false,
+        attributes: result.attributes,
+      };
+      this.entityService.add(entity).subscribe((results) => {});
     });
   }
 
@@ -97,19 +121,40 @@ export class EntityComponent {
     const dialogRef = this.dialog.open(EntityAddComponent, {
       data: { action: "Edit", entities: this.rows, row: this.selectedItem },
     });
-    dialogRef.afterClosed().subscribe(() => {
-      // this.load();
+    dialogRef.componentInstance.dataChange.subscribe((result: any) => {
+      console.log(result);
+      const entity = {
+        name: result.name,
+        displayName: result.displayName,
+        id: result.id,
+        groupId: this.groupId,
+        isDisabled: false,
+        enableAuditTrial: false,
+        attributes: result.attributes,
+      };
+      this.entityService.edit(entity).subscribe((results) => {
+        this.load(this.groupId);
+      });
     });
   }
   onDelete() {
-    const dialogRef = this.dialog.open(EntityAddComponent, {
-      data: { action: "Delete", entities: this.rows, row: this.selectedItem },
+    const dialogRef = this.dialogService.openConfirmDialoge({
+      message: "Do you want to delete?",
+      title: "Delete Entity",
+      icon: "delete",
     });
-    dialogRef.afterClosed().subscribe(() => {
-      // this.load();
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result == true) {
+        this.entityService
+          .delete(this.selectedItem.id)
+          .subscribe((results: any) => {
+            this.snackbarService.success("Succesfully Deleted");
+            this.load(this.groupId);
+            this.selectedItem = null;
+            this.dataGrid.clearSelection();
+          });
+      }
     });
-    this.selectedItem = null;
-    this.dataGrid.clearSelection();
   }
   onPaginate(e: Paginate) {
     //this.rows = this.getData(e.limit, e.offset);

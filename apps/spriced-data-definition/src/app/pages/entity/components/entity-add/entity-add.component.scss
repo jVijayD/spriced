@@ -6,13 +6,14 @@
     height: 430px;
   }
   .box {
-    // border: 1px solid lightgrey;
     display: flex;
     justify-content: space-between;
-    // padding: 8px;
-    // height: 440px;
-  }
   
+  }
+  .box1
+  {
+    width:60%;
+  }
   .addbtn {
     margin-left: 1rem;
   }
@@ -26,13 +27,14 @@
   }
   .savebtn {
     width: 10%;
+    margin-left: 4px;
   }
   .mdc-dialog__content > :first-child {
     margin-top: 8px;
   }
   .namegrid {
     display: flex;
-    margin: 1rem 1rem 0 0;
+    margin: 0.5rem 0.5rem 0 0;
   }
   .tableBox {
     max-height: 433px;
@@ -48,10 +50,12 @@
     justify-content: end;
     align-items: center;
   }
-  .mat-mdc-dialog-actions {
-    justify-content: end !important;
-  }
+
   .container 
   {
     padding: 1rem !important;
+  }
+  .actions {
+    display: flex;
+    justify-content:end;
   }

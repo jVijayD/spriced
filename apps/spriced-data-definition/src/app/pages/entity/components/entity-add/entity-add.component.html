@@ -3,9 +3,9 @@
     <strong>{{ action }} Entity</strong>
   </h1>
   
-  <div mat-dialog-content class="{{ action !== 'Delete' ? 'content' : '' }}">
+  <div mat-dialog-content class="content">
     <div class="namegrid">
-      <div *ngIf="action !== 'Delete'">
+      <div>
         <form
           [formGroup]="entityForm"
           class="form d-flex flex-column flex-lg-row"
@@ -32,107 +32,85 @@
       <div class="ml-4">
         <mat-form-field
           appearance="outline"
-          *ngIf="action !== 'Delete'; else elseTemplate"
+         
         >
           <mat-label>Display Name</mat-label>
           <input matInput [(ngModel)]="local_data.displayName" />
         </mat-form-field>
       </div>
       <mat-checkbox
-        *ngIf="action !== 'Delete'"
+    
         checked="true"
         [(ngModel)]="local_data.autoNumberCode"
         >Auto generate Code</mat-checkbox
       >
   
-      <!-- Mayur - 17 july 2023 - below code is commented as told on DSM today -->
-  
-      <!-- <div class="ml-4" *ngIf="action !== 'Delete'">
-        <mat-form-field appearance="outline">
-          <mat-label>Display Type</mat-label>
-          <mat-select>
-            <mat-option value="name">Name</mat-option>
-            <mat-option value="id">Id</mat-option>
-            <mat-option value="both">Name and Id</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div> -->
     </div>
-    <ng-template #elseTemplate>
-      Sure to delete <b>{{ local_data.name }}</b
-      >?
-    </ng-template>
+ 
     <mat-card
-      style="padding: 20px; height: 500px"
-      *ngIf="action !== 'Delete'"
+      style="padding: 10px;height: 450px;overflow-y: auto;"
       class="drop-shadow"
     >
       <div class="box">
-        <div class="tableBox">
-          <mat-toolbar color="primary">
-            <span>Add / Edit / Delete Attributes</span>
-          </mat-toolbar>
-          <div class="overflow-x-hidden" style="max-height: 375px">
-            <table
-              mat-table
-              [dataSource]="attSource"
-              class="mat-elevation-z8"
-              #attrtable
-            >
-              <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef>Name</th>
-                <td mat-cell class="cursor-pointer" *matCellDef="let element">
-                  {{ element.name }}
-                </td>
-              </ng-container>
-  
-              <ng-container matColumnDef="displayName">
-                <th mat-header-cell *matHeaderCellDef>Display Name</th>
-                <td mat-cell class="cursor-pointer" *matCellDef="let element">
-                  {{ element.displayName || element.name }}
-                </td>
-              </ng-container>
-  
-              <ng-container matColumnDef="action" style="text-align: right">
-                <th mat-header-cell *matHeaderCellDef>Action</th>
-                <td
-                  mat-cell
-                  *matCellDef="let element"
-                  class="action-link cursor-pointer"
-                >
-                  <div class="flex-icon">
-                    <button mat-icon-button (click)="viewAtt(element)">
-                      <mat-icon>visibility</mat-icon>
-                    </button>
-                    |
-                    <button
-                      mat-icon-button
-                      [disabled]="element.editable === false"
-                      (click)="deleteAtt(element)"
-                    >
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </div>
-                </td>
-              </ng-container>
-  
-              <tr
-                mat-header-row
-                *matHeaderRowDef="displayedColumns; sticky: true"
-              ></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-            </table>
-          </div>
-          <div
-            *ngIf="attSource.length === 0"
-            class="flex justify-center align-center pt-16 pb-16 bg-white"
-          >
-            No Records Found
-          </div>
-        </div>
-  
+        <div class="box1">
+        <sp-data-grid
+        class="w-full h-full"
+        #dataGrid
+        title="Model List"
+        [enableRowIndex]="false"
+        [isArray]="false"
+        [headers]="headers"
+        [rows]="rows"
+        [rowHeight]="40"
+        [headerHeight]="40"
+        [footerHeight]="40"
+        [columnMode]="columnMode"
+        [virtualScroll]="true"
+        [selectionType]="selectionType"
+        [limit]="10"
+        [isExternalPaging]="true"
+        [isExternalSorting]="false"
+        [sortType]="sortType"
+        [count]="totalElements"
+        (paginate)="onPaginate($event)"
+        (itemSelected)="onItemSelected($event)"
+        (sort)="onSort($event)"
+      >
+        <ng-container>
+          <sp-header-action
+            icon="add_box"
+            text="Add"
+            title="Add Entity"
+            (actionClick)="onAdd()"
+          ></sp-header-action>
+    
+          <sp-header-action
+            icon="sync"
+            text="Refresh"
+            title="Refresh"
+            (actionClick)="onRefresh()"
+          ></sp-header-action>
+    
+          <sp-header-action
+            icon="edit"
+            text="Edit"
+            title="Edit Entity"
+            [disabled]="selectedItem == null || selectedItem.editable==false"
+            (actionClick)="onEdit()"
+          ></sp-header-action>
+    
+          <sp-header-action
+            icon="delete"
+            text="Delete"
+            title="Delete Entity"
+            [disabled]="selectedItem == null  || selectedItem.editable==false"
+            (actionClick)="onDelete()"
+          ></sp-header-action>
+        </ng-container>
+      </sp-data-grid>
+    </div>
         <div class="flex" style="flex-direction: column; height: 375px">
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" class="mb-2">
             <mat-label>Attribute Name</mat-label>
             <input
               [disabled]="attAction === 'Edit'"
@@ -141,11 +119,11 @@
             />
           </mat-form-field>
   
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" class="mb-2">
             <mat-label>Display Name</mat-label>
             <input matInput [(ngModel)]="attDetails.displayName" />
           </mat-form-field>
-          <div class="flex flex-row mb-5">
+          <div class="flex flex-row mb-2">
             <!-- <mat-label>Type</mat-label> -->
             <mat-radio-group
               aria-label="Select an option"
@@ -159,6 +137,7 @@
           </div>
           <mat-form-field
             appearance="outline"
+            class="mb-2"
             *ngIf="attDetails.type === 'LOOKUP'"
           >
             <mat-label>Entity</mat-label>
@@ -177,13 +156,14 @@
           </mat-form-field>
           <mat-checkbox
             *ngIf="attDetails.type !== 'LOOKUP'"
-            class="mb-5"
+            class="mb-2"
             style="margin-top: 12px; margin-bottom: 21px"
             [(ngModel)]="constraintType"
             >Is Unique</mat-checkbox
           >
           <mat-form-field
             appearance="outline"
+            class="mb-2"
             *ngIf="attDetails.type === 'FREE_FORM'"
           >
             <mat-label>Data Type</mat-label>
@@ -199,6 +179,7 @@
   
           <mat-form-field
             appearance="outline"
+            class="mb-2"
             *ngIf="
               attDetails.dataType === 'TEXT' ||
               (attDetails.dataType === 'LINK' && attDetails.type === 'FREE_FORM')
@@ -213,7 +194,7 @@
             "
             style="display: contents"
           >
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline"  class="mb-2">
               <mat-label>Decimels</mat-label
               ><input
                 matInput
@@ -229,7 +210,7 @@
             "
             style="display: contents"
           >
-            <mat-form-field appearance="outline"
+            <mat-form-field appearance="outline" class="mb-2"
               ><mat-label>Input Mask</mat-label>
   
               <mat-select [(ngModel)]="attDetails.formatter">
@@ -253,6 +234,7 @@
           </div>
           <mat-form-field
             appearance="outline"
+            class="mb-2"
             *ngIf="
               attDetails.dataType === 'INTEGER' && attDetails.type === 'FREE_FORM'
             "
@@ -280,7 +262,7 @@
             </button>
             <button
               mat-flat-button
-              class="savebtn ml-5"
+              class="savebtn"
               color="accent"
               type="button"
               (click)="clear()"
@@ -292,15 +274,15 @@
       </div>
     </mat-card>
   </div>
-  <div mat-dialog-actions>
+  <div mat-dialog-actions class="actions">
     <button
       mat-flat-button
       color="primary"
       type="submit"
       (click)="doAction()"
-      class="form d-flex flex-column flex-lg-row"
+      class="form d-flex flex-column flex-lg-row mr-2"
       [disabled]="
-        entityForm.invalid && action !== 'Edit' && action !== 'Delete'
+        entityForm.invalid && action !== 'Edit'
       "
     >
       {{ action }}

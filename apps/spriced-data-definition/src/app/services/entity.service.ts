@@ -1,13 +1,7 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-const headers = new HttpHeaders()
-  .set("tenant", "meritor")
-  .set("user", "anand.kumar@simadvisory.com")
-  .set("transactionId", "AQWSIDSTWERTXWSATYYOKLMH")
-  .set("roles", "admin,manager,viewer")
-  .set("applications", "app1,app2,app3")
-  .set("Access-Control-Allow-Origin", "*");
+
 @Injectable({ providedIn: "root" })
 export class EntityService {
   api_url: string;
@@ -16,32 +10,18 @@ export class EntityService {
   }
 
   add(body: any) {
-    return this.http.post(`${this.api_url}/entities`, body, {
-      headers: headers,
-    });
+    return this.http.post(`${this.api_url}/entities`, body);
   }
   delete(id: number) {
-    return this.http.delete(`${this.api_url}/entities/${id}`, {
-      headers: headers,
-    });
+    return this.http.delete(`${this.api_url}/entities/${id}`);
   }
-  edit(body: any, value: any) {
-    return this.http.patch(
-      `${this.api_url}/entities/${value.id}`,
-      { displayName: body.displayName, name: body.name, id: value.id },
-      {
-        headers: headers,
-      }
-    );
+  edit(entity: any) {
+    return this.http.patch(`${this.api_url}/entities/${entity.id}`, entity);
   }
   load(id: number) {
-    return this.http.delete(`${this.api_url}/entities/${id}`, {
-      headers: headers,
-    });
+    return this.http.delete(`${this.api_url}/entities/${id}`);
   }
-  loadEntityByModel(id:number) {
-    return this.http.get(`${this.api_url}/models/${id}/entities`, {
-        headers: headers,
-      });
+  loadEntityByModel(id: number) {
+    return this.http.get(`${this.api_url}/models/${id}/entities`);
   }
 }
