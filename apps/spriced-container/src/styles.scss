@@ -4,3 +4,8 @@
 
 @import '../../../libs/themes/global.scss';
 @import '../../../libs/themes/material-theme.scss'; /* You can add global styles to this file, and also import other style files */
+@import '../../../node_modules/@swimlane/ngx-datatable/assets/icons.css';
+
+button.datatable-tree-button:disabled {
+    opacity: 0 !important;
+  }

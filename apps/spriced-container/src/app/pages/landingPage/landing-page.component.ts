@@ -39,7 +39,7 @@ export class LandingPageComponent implements OnInit {
   }
   private initializeUserOptions(): void {
     this.user = this.keycloakService.getUsername();
-    this.user = this.capitalizeFirstLetter(this.user);
+    console.log(this.keycloakService.getKeycloakInstance())
   }
   capitalizeFirstLetter(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);

@@ -1,6 +1,8 @@
 export * from "./lib/spriced-ui-lib/components/loader/loader.component";
 export * from "./lib/spriced-ui-lib/components/loader/loader.service";
 export * from "./lib/spriced-ui-lib/components/data-grid/data-grid.component";
+export * from "./lib/spriced-ui-lib/components/data-grid-tree/data-grid-tree.component";
+
 export * from "./lib/spriced-ui-lib/components/header-action/header-action.component";
 export * from "./lib/spriced-ui-lib/layouts/two-col-three-forth/two-col-three-forth.component";
 export * from "./lib/spriced-ui-lib/components/snackbar/snackbar.module";
