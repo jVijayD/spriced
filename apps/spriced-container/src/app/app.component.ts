@@ -57,7 +57,7 @@ export class AppComponent {
     },
     {
       name: "Explorer",
-      path: "/spriced-data-definition",
+      path: "/spriced-data-definition/model-list",
     },
     {
       name: "Rules",

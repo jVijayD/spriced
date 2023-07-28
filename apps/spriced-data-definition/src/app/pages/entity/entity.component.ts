@@ -89,7 +89,6 @@ export class EntityComponent {
     });
   }
   load(id: any) {
-    console.log("load");
     this.entityService.loadEntityByModel(id.value).subscribe((results: any) => {
       this.rows = results;
     });
@@ -111,7 +110,10 @@ export class EntityComponent {
         enableAuditTrial: false,
         attributes: result.attributes,
       };
-      this.entityService.add(entity).subscribe((results) => {});
+      this.entityService.add(entity).subscribe((results) => {
+        dialogRef.close();
+        this.load({ value: this.groupId });
+      });
     });
   }
 
@@ -133,7 +135,8 @@ export class EntityComponent {
         attributes: result.attributes,
       };
       this.entityService.edit(entity).subscribe((results) => {
-        this.load(this.groupId);
+        dialogRef.close();
+        this.load({ value: this.groupId });
       });
     });
   }
@@ -149,7 +152,7 @@ export class EntityComponent {
           .delete(this.selectedItem.id)
           .subscribe((results: any) => {
             this.snackbarService.success("Succesfully Deleted");
-            this.load(this.groupId);
+            this.load({ value: this.groupId });
             this.selectedItem = null;
             this.dataGrid.clearSelection();
           });
