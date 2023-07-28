@@ -299,7 +299,9 @@ private static final int PRECISION_DEFAULT_VALUE=1000;
 			dataTypeMapper.put(AttributeConstants.DataType.BUSINESS_SEQUENCE,
 					(dataType, size, nullable, defaultValue) -> SQLDataType.NVARCHAR(20));
 			dataTypeMapper.put(AttributeConstants.DataType.TIME_STAMP,
-					(dataType, size, nullable, defaultValue) -> SQLDataType.TIMESTAMP);
+					(dataType, size, nullable, defaultValue) -> SQLDataType.TIMESTAMPWITHTIMEZONE);
+			dataTypeMapper.put(AttributeConstants.DataType.TIME_STAMP_WITH_TIMEZONE,
+					(dataType, size, nullable, defaultValue) -> SQLDataType.TIMESTAMPWITHTIMEZONE);
 			dataTypeMapper.put(AttributeConstants.DataType.DATE,
 					(dataType, size, nullable, defaultValue) -> SQLDataType.DATE);
 			dataTypeMapper.put(AttributeConstants.DataType.DATE_TIME,

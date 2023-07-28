@@ -1,6 +1,7 @@
 package com.sim.spriced.framework.repo;
 
 import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -490,8 +491,7 @@ public abstract class BaseRepo {
 
 			RecordData updatedDate = new RecordData();
 			updatedDate.setAttributeName("updatedDate");
-			updatedDate.setField(column(ModelConstants.UPDATED_DATE));
-
+			updatedDate.setField(column(ModelConstants.UPDATED_DATE,OffsetDateTime.class));
 			tableData.getRecordDataList().add(updatedBy);
 			tableData.getRecordDataList().add(updatedDate);
 

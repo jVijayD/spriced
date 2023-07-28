@@ -1,6 +1,7 @@
 package com.sim.spriced.defnition.api.dto;
 
 import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import com.sim.spriced.framework.models.Action.ActionGroup;
@@ -28,7 +29,7 @@ public class RuleDto {
 	private ActionGroup group;
 	private List<Condition> condition;
 	private ConditionalAction conditionalAction;
-	private Timestamp updatedDate;
+	private OffsetDateTime updatedDate;
 	private String updatedBy;
 	
 	public Integer getId() {
@@ -97,17 +98,17 @@ public class RuleDto {
 	public void setGroup(ActionGroup group) {
 		this.group = group;
 	}
-	public Timestamp getUpdatedDate() {
-		return updatedDate;
-	}
-	public void setUpdatedDate(Timestamp updatedDate) {
-		this.updatedDate = updatedDate;
-	}
 	public String getUpdatedBy() {
 		return updatedBy;
 	}
 	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
+	}
+	public OffsetDateTime getUpdatedDate() {
+		return updatedDate;
+	}
+	public void setUpdatedDate(OffsetDateTime updatedDate) {
+		this.updatedDate = updatedDate;
 	}
 	
 	

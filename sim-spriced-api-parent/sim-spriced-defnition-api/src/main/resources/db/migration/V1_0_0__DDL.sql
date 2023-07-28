@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS "group"
     display_name character varying COLLATE pg_catalog."default" NOT NULL,
     is_disabled boolean DEFAULT false,
     updated_by character varying COLLATE pg_catalog."default",
-    updated_date timestamp without time zone,
+    updated_date timestamp with time zone,
     CONSTRAINT "Group_pkey" PRIMARY KEY (id),
     CONSTRAINT uk UNIQUE (name)
 )
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS entity
     is_disabled boolean DEFAULT false,
     attributes json NOT NULL,
     updated_by character varying COLLATE pg_catalog."default" NOT NULL,
-    updated_date timestamp without time zone NOT NULL,
+    updated_date timestamp with time zone NOT NULL,
     comment character varying COLLATE pg_catalog."default",
     enable_audit_trial boolean NOT NULL DEFAULT false,
     group_id bigint NOT NULL,
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS rule
     action json,
     status character varying COLLATE pg_catalog."default",
     updated_by character varying COLLATE pg_catalog."default",
-    updated_date timestamp without time zone,
+    updated_date timestamp with time zone,
     CONSTRAINT rule_pkey PRIMARY KEY (id)
 )
 

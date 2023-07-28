@@ -46,7 +46,7 @@ public class EntityDataService implements IEntityDataService {
 	@Transactional
 	@Override
 	public EntityDataResult upsertBulk(EntityData data) {
-		this.setDateTimeValue(data);
+//		this.setDateTimeValue(data);
 		return EntityDataResult.builder().rowsChanged(this.dataRepo.upsertBulk(data)).build();
 	}
 
@@ -72,7 +72,7 @@ public class EntityDataService implements IEntityDataService {
 
 	@Override
 	public EntityDataResult upsert(EntityData data) {
-		this.setDateTimeValue(data);
+//		this.setDateTimeValue(data);
 		List<Map<String,Object>> jsonObj = Arrays.asList(this.dataRepo.upsert(data)) ;
 		return EntityDataResult.builder().rowsChanged(new int[] { 1 }).result(jsonObj).build();
 	}

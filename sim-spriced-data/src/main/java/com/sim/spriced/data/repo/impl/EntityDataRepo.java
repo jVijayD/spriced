@@ -1,5 +1,6 @@
 package com.sim.spriced.data.repo.impl;
 
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -101,6 +102,10 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 				boolean isPrimaryKey = item.getConstraintType() == ConstraintType.PRIMARY_KEY;
 				AttributeConstants.DataType dataType = item.getDataType();
 				if (!isPrimaryKey) {
+					 if (dataType.equals(AttributeConstants.DataType.TIME_STAMP_WITH_TIMEZONE)|| dataType.equals(AttributeConstants.DataType.TIME_STAMP)) {
+						 fieldValues.put(column(item.getName(),OffsetDateTime.class), jsonObject.get(item.getName()));
+			            }
+					 else
 					fieldValues.put(column(item.getName()), jsonObject.get(item.getName()));
 				} else {
 					if (Boolean.TRUE.equals(!isChange) && dataType.equals(AttributeConstants.DataType.STRING_VAR)){
