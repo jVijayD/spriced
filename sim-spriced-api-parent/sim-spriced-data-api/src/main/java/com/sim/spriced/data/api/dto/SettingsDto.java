@@ -1,6 +1,6 @@
 package com.sim.spriced.data.api.dto;
 
-import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 
 import com.sim.spriced.framework.models.SettingsData;
 
@@ -20,7 +20,7 @@ public class SettingsDto {
 
 	private SettingsData settingsData;
 
-	private Timestamp updatedDate;
+	private OffsetDateTime updatedDate;
 
 	private String updatedBy;
 }

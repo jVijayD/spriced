@@ -1,6 +1,7 @@
 package com.sim.spriced.data.repo.impl;
 
 import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 
 import org.jooq.Record;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +39,10 @@ public class SettingsRepo  extends BaseRepo implements ISettingsRepo {
 	private Settings convertToSettings(Record rec) {
 		Settings settings = new Settings();
 		SettingsData settingsData =  super.convertJsonToObject(rec, SettingsData.class, Settings.TableConstants.TABLE, Settings.TableConstants.SETTINGS);
-		
 		settings.setUserId((String) rec.get(Settings.TableConstants.USER_ID));
 		settings.setSettingsData(settingsData);
 		settings.setUpdatedBy((String)rec.get(ModelConstants.UPDATED_BY));
-		settings.setUpdatedDate((Timestamp)rec.get(ModelConstants.UPDATED_DATE));
+		settings.setUpdatedDate((OffsetDateTime) rec.get(ModelConstants.UPDATED_DATE));
 		return settings;
 		
 	}

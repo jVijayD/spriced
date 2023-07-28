@@ -1,6 +1,6 @@
 package com.sim.spriced.data.api.dto;
 
-import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class EntityDto {
 	private String comment;
 	private final List<Attribute> attributes = new ArrayList<>();
 	private Boolean autoNumberCode = true;
-	private Timestamp updatedDate;
+	private OffsetDateTime updatedDate;
 	private String updatedBy;
 	
 }
