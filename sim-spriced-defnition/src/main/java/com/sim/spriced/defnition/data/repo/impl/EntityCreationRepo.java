@@ -335,6 +335,27 @@ private static final int PRECISION_DEFAULT_VALUE=1000;
 		}
 	}
 
+	@Override
+	public void createTrigger(String entityName){
+		String trigger = "CREATE TRIGGER " + entityName + "_trigger " +
+				"AFTER INSERT OR UPDATE ON " + entityName + " FOR EACH ROW " +
+				"EXECUTE FUNCTION history_trigger();";
+		context.execute(trigger);
+
+		//trigger for storing entity values as json on insert
+//		String triggerJsonFormat = "CREATE TRIGGER " + entityName + "_trigger " +
+//				"AFTER INSERT ON " + entityName + " FOR EACH ROW " +
+//				"EXECUTE FUNCTION history_trigger_json();";
+//		context.execute(triggerJsonFormat);
+	}
+
+	@Override
+	public void dropTrigger(String entityName){
+		String dropTriggerQuery = "DROP TRIGGER IF EXISTS " + entityName + "_trigger "+
+				"ON " + entityName + ";";
+		context.execute(dropTriggerQuery);
+	}
+
 	@FunctionalInterface
 	interface QuadFunction<A, B, C, D, R> {
 		R apply(A a, B b, C c, D d);
