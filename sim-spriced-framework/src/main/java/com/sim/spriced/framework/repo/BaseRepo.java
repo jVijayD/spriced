@@ -343,7 +343,8 @@ public abstract class BaseRepo {
 			throw new InvalidConditionException(tableDetails.getTableName());
 		}
 
-		return context.selectFrom(table(tableDetails.getTableName())).where(DSL.condition(conditionMap));
+		return context.select(tableDetails.getFields()).from(table(tableDetails.getTableName()))
+				.where(DSL.condition(conditionMap));
 	}
 
 	public <T> int delete(T entity) {
