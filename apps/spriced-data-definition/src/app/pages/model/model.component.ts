@@ -1,14 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  ViewChild,
-} from "@angular/core";
+import { Component, NgModule, OnInit, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   DataGridComponent,
   DialogService,
   DialogueModule,
+  //FilterComponent,
   Header,
   HeaderActionComponent,
   OneColComponent,
@@ -62,7 +58,7 @@ export class ModelComponent implements OnInit {
       isSortable: true,
     },
   ];
-  columnMode: ColumnMode = ColumnMode.force;
+  columnMode: ColumnMode = ColumnMode.flex;
   selectionType: SelectionType = SelectionType.single;
   sortType = SortType.single;
   isFullScreen = false;
@@ -100,7 +96,9 @@ export class ModelComponent implements OnInit {
     });
   }
 
-  onRefresh() {}
+  onRefresh() {
+    this.load();
+  }
 
   onEdit() {
     const dialogRef = this.dialog.open(ModelAddComponent, {
@@ -136,5 +134,13 @@ export class ModelComponent implements OnInit {
 
   onSort(e: any) {
     console.log(e);
+  }
+
+  onClear() {
+    this.dataGrid.clearSelection();
+  }
+
+  onFilter() {
+    //const dialogRef = this.dialogService.openDialog(FilterComponent);
   }
 }

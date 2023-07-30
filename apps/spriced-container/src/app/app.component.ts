@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { LoaderComponent } from "@spriced-frontend/spriced-ui-lib";
 import { HeaderComponent } from "./components/header/header.component";
@@ -6,6 +6,8 @@ import { SidebarComponent } from "./components/sidebar/sidebar.component";
 import { BodyComponent } from "./components/body/body.component";
 import { FooterComponent } from "./components/footer/footer.component";
 import { CommonModule } from "@angular/common";
+import { AppDataService } from "@spriced-frontend/shared/spriced-shared-lib";
+import { Subscription } from "rxjs";
 
 @Component({
   standalone: true,
@@ -18,14 +20,16 @@ import { CommonModule } from "@angular/common";
     BodyComponent,
     FooterComponent,
   ],
+  providers: [AppDataService],
   selector: "sp-root",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy, OnInit {
   title = "Spriced";
   currentAppName: any = "Spriced";
   path = location.pathname;
+  subscriptions: Subscription[] = [];
   sidebarData = [
     {
       name: "Data Definition",
@@ -54,5 +58,15 @@ export class AppComponent {
     this.path = location.pathname;
   }
 
-  constructor() {}
+  constructor(public appDataService: AppDataService) {}
+  ngOnInit(): void {
+    this.init();
+  }
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((item) => item.unsubscribe());
+  }
+
+  init() {
+    this.appDataService.setNetworkAccessData();
+  }
 }

@@ -12,6 +12,7 @@ export * from "./lib/spriced-ui-lib/components/snackbar/snackbar-failure/snackba
 export * from "./lib/spriced-ui-lib/components/dialoge/dialoge.module";
 export * from "./lib/spriced-ui-lib/components/dialoge/confirm-dialog/confirm-dialog.component";
 export * from "./lib/spriced-ui-lib/components/dialoge/info-dialog/info-dialog.component";
+export * from "./lib/spriced-ui-lib/components/dialoge/filter-dialog/filter-dialog.component";
 export * from "./lib/spriced-ui-lib/components/dialoge/dialog.service";
 export * from "./lib/spriced-ui-lib/components/app-card/app-card.component";
 export * from "./lib/spriced-ui-lib/components/top-menu/top-menu.component";
@@ -62,3 +63,4 @@ export * from "./lib/spriced-ui-lib/layouts/one-col/one-col.component";
 export * from "./lib/spriced-ui-lib/layouts/hbox/hbox.component";
 export * from "./lib/spriced-ui-lib/layouts/vbox/vbox.component";
 
+//export * from "./lib/spriced-ui-lib/components/filter/filter.component";

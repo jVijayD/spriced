@@ -7,6 +7,7 @@ export abstract class BaseDataComponent extends BaseComponent {
   dataPopulation$: Subject<unknown[]> = new Subject();
   private _dataSubscriptions: Subscription[] = [];
   source: any[] = [];
+  count = 101;
 
   constructor(dynamicService: DynamicFormService) {
     super(dynamicService);
