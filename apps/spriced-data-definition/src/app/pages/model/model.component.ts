@@ -79,7 +79,6 @@ export class ModelComponent implements OnInit {
     this.load();
   }
   load() {
-    console.log("load");
     this.modelService.loadAllModels().subscribe((results: any) => {
       this.rows = results;
     });
@@ -109,17 +108,20 @@ export class ModelComponent implements OnInit {
     });
   }
   onDelete() {
-    this.dialogService.openConfirmDialoge({
+    const dialogRef=this.dialogService.openConfirmDialoge({
       message: "Do you want to delete?",
       title: "Delete Model",
       icon: "delete",
     });
-    // const dialogRef = this.dialog.open(ModelAddComponent, {
-    //   data: { action: "Delete", value: this.selectedItem },
-    // });
-    // dialogRef.afterClosed().subscribe(() => {
-    //   this.load();
-    // });
+    dialogRef.afterClosed().subscribe((result:any) => {
+    if(result==true)
+    {
+      this.modelService.delete(this.selectedItem.id).subscribe((results: any) => {
+        this.snackbarService.success("Succesfully Deleted");
+        this.load()
+      });
+    }
+    });
     // this.selectedItem = null;
     // this.dataGrid.clearSelection();
   }

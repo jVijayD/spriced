@@ -1,0 +1,61 @@
+<sp-one-col>
+    <sp-data-grid-tree
+      class="w-full h-full"
+      #dataGrid
+      title="Model List"
+      [enableRowIndex]="false"
+      [isArray]="false"
+      [headers]="headers"
+      [rows]="rows"
+      [rowHeight]="40"
+      [headerHeight]="40"
+      [footerHeight]="40"
+      [columnMode]="columnMode"
+      [virtualScroll]="true"
+      [selectionType]="selectionType"
+      [limit]="10"
+      [isExternalPaging]="true"
+      [isExternalSorting]="false"
+      [sortType]="sortType"
+      [count]="totalElements"
+      (paginate)="onPaginate($event)"
+      (itemSelected)="onItemSelected($event)"
+      (onTreeExpand)="onTreeAction($event)"
+      (sort)="onSort($event)"
+    >
+      <ng-container>
+        <sp-header-action
+          icon="add_box"
+          text="Add"
+          title="Add Entity"
+          (actionClick)="onAdd()"
+        ></sp-header-action>
+  
+        <sp-header-action
+          icon="sync"
+          text="Refresh"
+          title="Refresh"
+          (actionClick)="onRefresh()"
+        ></sp-header-action>
+  
+        <sp-header-action
+          icon="visibility"
+          text="View"
+          title="View Entity"
+          [disabled]="selectedItem == null"
+          (actionClick)="onView()"
+        ></sp-header-action>
+
+        <sp-header-action
+        icon="upload"
+        text="Upload"
+        title="Upload"
+        [disabled]="selectedItem == null"
+        (actionClick)="onView()"
+      ></sp-header-action>
+  
+       
+      </ng-container>
+    </sp-data-grid-tree>
+  </sp-one-col>
+  

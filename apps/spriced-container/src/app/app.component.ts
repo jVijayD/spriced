@@ -34,7 +34,7 @@ export class AppComponent implements OnDestroy, OnInit {
     {
       name: "Data Definition",
       icon: "/assets/images/definition.png",
-      path: "/spriced-data-definition",
+      path: "/spriced-data-definition/model",
     },
     {
       name: "Data Access",
@@ -49,7 +49,25 @@ export class AppComponent implements OnDestroy, OnInit {
   ];
   isSideNavCollapsed = false;
   screenWidth = 0;
-  menuData?: any[];
+  menuData = [
+    {
+      name: "Model Management",
+      active: true,
+      path: "/spriced-data-definition/model",
+    },
+    {
+      name: "Entity Management",
+      path: "/spriced-data-definition/entity",
+    },
+    {
+      name: "Explorer",
+      path: "/spriced-data-definition/model-list",
+    },
+    {
+      name: "Rules",
+      path: "/spriced-data-definitions-ui/rule-management",
+    },
+  ];
   onToggleSideNav(data: any): void {
     this.screenWidth = data.screenWidth;
     this.isSideNavCollapsed = data.collapsed;
