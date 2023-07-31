@@ -1,13 +1,13 @@
 
+<mat-form-field appearance="outline" class="mb-2">
+  <mat-label>Model</mat-label>
+  <mat-select (selectionChange)="load($event)" [(value)]="groupId">
+    <mat-option *ngFor="let item of modelList" [value]="item.id"
+      >{{item.displayName}}</mat-option
+    >
+  </mat-select>
+</mat-form-field>
 <sp-one-col>
-    <mat-form-field appearance="outline" class="mb-2">
-        <mat-label>Model</mat-label>
-        <mat-select (selectionChange)="load($event)" [(value)]="groupId">
-          <mat-option *ngFor="let item of modelList" [value]="item.id"
-            >{{item.displayName}}</mat-option
-          >
-        </mat-select>
-      </mat-form-field>
     <sp-data-grid
       class="w-full h-full"
       #dataGrid

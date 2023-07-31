@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   OnInit,
   ViewChild,
@@ -72,18 +71,20 @@ export class ModelComponent implements OnInit {
 
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
+  pageNo=0;
+  pageSize=10;
 
   constructor(
     private dialogService: DialogService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    private modelService: ModelService
+    private modelService: ModelService,
   ) {}
   ngOnInit(): void {
-    this.load();
+    this.load(this.pageNo,this.pageSize);
   }
-  load() {
-    this.modelService.loadAllModels().subscribe((results: any) => {
+  load(pageNo:number,pageSize:number) {
+    this.modelService.loadPageModels(pageNo,pageSize).subscribe((results: any) => {
       this.rows = results;
     });
   }
@@ -94,19 +95,22 @@ export class ModelComponent implements OnInit {
       //maxWidth: "300px",
       //maxHeight: "400px",
     });
-    dialogRef.afterClosed().subscribe(() => {
-      this.load();
-    });
+    dialogRef.componentInstance.dataChange.subscribe((result: any) => {
+      this.rows.push(result)
+    this.rows=[...this.rows]
+    })
   }
 
-  onRefresh() {}
+  onRefresh() {
+    this.load(this.pageNo,this.pageSize);
+  }
 
   onEdit() {
     const dialogRef = this.dialog.open(ModelAddComponent, {
       data: { action: "Edit", value: this.selectedItem },
     });
     dialogRef.afterClosed().subscribe(() => {
-      this.load();
+      this.load(this.pageNo,this.pageSize);
     });
   }
   onDelete() {
@@ -120,7 +124,7 @@ export class ModelComponent implements OnInit {
     {
       this.modelService.delete(this.selectedItem.id).subscribe((results: any) => {
         this.snackbarService.success("Succesfully Deleted");
-        this.load()
+        this.load(this.pageNo,this.pageSize)
       });
     }
     });
@@ -128,11 +132,12 @@ export class ModelComponent implements OnInit {
     // this.dataGrid.clearSelection();
   }
   onPaginate(e: Paginate) {
-    //this.rows = this.getData(e.limit, e.offset);
+    this.pageNo=e.offset
+    this.pageSize=e.pageSize
+    this.load(this.pageNo,this.pageSize);
   }
 
   onItemSelected(e: any) {
-    console.log(e);
     this.selectedItem = e;
   }
 

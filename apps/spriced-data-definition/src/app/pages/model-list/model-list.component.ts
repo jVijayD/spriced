@@ -134,7 +134,9 @@ export class ModelListComponent {
   }
 
 
-  onRefresh() {}
+  onRefresh() {
+    this.load();
+  }
 
   onView() {
     

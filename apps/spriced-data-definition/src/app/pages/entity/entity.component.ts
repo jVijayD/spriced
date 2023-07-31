@@ -111,13 +111,16 @@ export class EntityComponent {
         attributes: result.attributes,
       };
       this.entityService.add(entity).subscribe((results) => {
-        dialogRef.close();
-        this.load({ value: this.groupId });
+       this.rows.push(results)
+       this.rows=[...this.rows]
+       dialogRef.close();
       });
     });
   }
 
-  onRefresh() {}
+  onRefresh() {
+    this.load({ value: this.groupId });
+  }
 
   onEdit() {
     const dialogRef = this.dialog.open(EntityAddComponent, {
