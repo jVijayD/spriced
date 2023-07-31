@@ -2,6 +2,7 @@ package com.sim.spriced.defnition.api.dto;
 
 
 import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -18,7 +19,7 @@ public class GroupDto {
 	private String name;
 	private String displayName;
 	private Boolean isDisabled;
-	private Timestamp updatedDate;
+	private OffsetDateTime updatedDate;
 	private String updatedBy;
 	public Integer getId() {
 		return id;
@@ -44,10 +45,10 @@ public class GroupDto {
 	public void setIsDisabled(Boolean isDisabled) {
 		this.isDisabled = isDisabled;
 	}
-	public Timestamp getUpdatedDate() {
+	public OffsetDateTime getUpdatedDate() {
 		return updatedDate;
 	}
-	public void setUpdatedDate(Timestamp updatedDate) {
+	public void setUpdatedDate(OffsetDateTime updatedDate) {
 		this.updatedDate = updatedDate;
 	}
 	public String getUpdatedBy() {
