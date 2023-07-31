@@ -18,7 +18,7 @@ public class TriggerCreationService extends BaseService implements IObserver<Ent
     public void update(EntityDefnitionEvent arg) {
         EntityDefnition entityDefnition = arg.getEntity();
         switch (arg.getType()) {
-            case ADD:
+            case ADD, UPDATE:
                 this.createTrigger(entityDefnition);
                 break;
             case DELETE:
@@ -30,7 +30,9 @@ public class TriggerCreationService extends BaseService implements IObserver<Ent
     }
 
     private void createTrigger(EntityDefnition entityDefnition){
-        creationRepo.createTrigger(entityDefnition.getName());
+        if (entityDefnition.getEnableAuditTrial()) {
+            creationRepo.createTrigger(entityDefnition.getName());
+        }
     }
 
     private void dropTrigger(EntityDefnition entityDefnition){
