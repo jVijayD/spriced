@@ -1,13 +1,10 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-} from "@angular/core";
+import { Component, NgModule, OnInit, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   DataGridComponent,
   DialogService,
   DialogueModule,
+  //FilterComponent,
   Header,
   HeaderActionComponent,
   OneColComponent,
@@ -61,7 +58,7 @@ export class ModelComponent implements OnInit {
       isSortable: true,
     },
   ];
-  columnMode: ColumnMode = ColumnMode.force;
+  columnMode: ColumnMode = ColumnMode.flex;
   selectionType: SelectionType = SelectionType.single;
   sortType = SortType.single;
   isFullScreen = false;
@@ -84,8 +81,9 @@ export class ModelComponent implements OnInit {
     this.load(this.pageNo,this.pageSize);
   }
   load(pageNo:number,pageSize:number) {
-    this.modelService.loadPageModels(pageNo,pageSize).subscribe((results: any) => {
+    this.modelService.loadAllModels().subscribe((results: any) => {
       this.rows = results;
+      this.totalElements=results.length
     });
   }
   onAdd() {
@@ -134,7 +132,7 @@ export class ModelComponent implements OnInit {
   onPaginate(e: Paginate) {
     this.pageNo=e.offset
     this.pageSize=e.pageSize
-    this.load(this.pageNo,this.pageSize);
+    // this.load(this.pageNo,this.pageSize);
   }
 
   onItemSelected(e: any) {
@@ -143,5 +141,13 @@ export class ModelComponent implements OnInit {
 
   onSort(e: any) {
     console.log(e);
+  }
+
+  onClear() {
+    this.dataGrid.clearSelection();
+  }
+
+  onFilter() {
+    //const dialogRef = this.dialogService.openDialog(FilterComponent);
   }
 }

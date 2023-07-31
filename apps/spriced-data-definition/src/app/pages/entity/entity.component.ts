@@ -91,6 +91,7 @@ export class EntityComponent {
   load(id: any) {
     this.entityService.loadEntityByModel(id.value).subscribe((results: any) => {
       this.rows = results;
+      this.totalElements=results.length
     });
   }
   onAdd() {

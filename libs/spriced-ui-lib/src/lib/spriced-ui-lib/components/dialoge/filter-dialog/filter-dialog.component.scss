@@ -1,0 +1,27 @@
+.container {
+  width: 800px;
+  height: 600px;
+  padding: 10px;
+  @apply flex flex-col justify-start;
+}
+
+.header {
+  @apply p-2 text-secondary-dark font-bold flex flex-row justify-between;
+}
+
+.footer {
+  @apply p-2 flex flex-row-reverse  justify-start;
+}
+
+.body {
+  height: 650px;
+  overflow-y: auto;
+}
+
+.center {
+  @apply flex flex-row items-center justify-center;
+}
+
+.mat-mdc-icon-button ::ng-deep .mat-mdc-button-persistent-ripple {
+  display: none;
+}

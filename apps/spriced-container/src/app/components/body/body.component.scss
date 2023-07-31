@@ -1,25 +1,7 @@
 .body {
-  // width: calc(100vw - 5rem);
-  // overflow: hidden ;
-  // height: 93vh;
-  // margin-left: 5rem;
-  // z-index: 0;
-  // position: relative;
-  // top: 0;
-  transition: all .5s ease;
+  transition: all 0.5s ease;
   background: #f4f7fa;
-  padding: 1.5rem;
-  padding-bottom: 0px;
-  height: calc(100vh - 5rem - 3rem);
+  padding: 1rem;
+  height: calc(100vh - 5rem - 50px);
   overflow: auto;
-}
-
-.body-trimmed {
-  // width: calc(100% - 13rem);
-  // margin-left: 13rem;
-}
-
-.body-md-screen {
-  // width: calc(100% - 5rem);
-  // margin-left: 5rem;
 }
