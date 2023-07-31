@@ -1,0 +1,97 @@
+<div class="container">
+  <div class="header">Filter</div>
+  <div class="body">
+    <query-builder
+      [(ngModel)]="data.query"
+      [config]="config"
+      [allowCollapse]="true"
+      [allowRuleset]="true"
+      [disabled]="data.disabled || false"
+      [persistValueOnFieldChange]="data.persistValueOnFieldChange || true"
+      [emptyMessage]="data.emptyMessage || ''"
+    >
+      <ng-container
+        *queryButtonGroup="
+          let ruleset;
+          let addRule = addRule;
+          let addRuleSet = addRuleSet;
+          let removeRuleSet = removeRuleSet
+        "
+      >
+        <div class="flex flex-row">
+          <button
+            color="primary"
+            mat-icon-button
+            (click)="addRule()"
+            title="Rule"
+            class="center"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+          <button
+            *ngIf="addRuleSet"
+            color="secondary"
+            mat-icon-button
+            (click)="addRuleSet()"
+            title="Ruleset"
+            class="center"
+          >
+            <mat-icon>add_circle_outline</mat-icon>
+          </button>
+          <button
+            *ngIf="removeRuleSet"
+            mat-icon-button
+            (click)="removeRuleSet()"
+            class="center"
+            title="Remove Ruleset"
+          >
+            <mat-icon>remove_circle_outline</mat-icon>
+          </button>
+        </div>
+      </ng-container>
+      <ng-container *queryArrowIcon>
+        <mat-icon ngClass="mat-arrow-icon">chevron_right</mat-icon>
+      </ng-container>
+      <ng-container *queryRemoveButton="let rule; let removeRule = removeRule">
+        <button
+          type="button"
+          mat-icon-button
+          color="accent"
+          (click)="removeRule(rule)"
+        >
+          <mat-icon>remove</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *querySwitchGroup="let ruleset; let onChange = onChange">
+        <mat-radio-group
+          *ngIf="ruleset"
+          [(ngModel)]="ruleset.condition"
+          (ngModelChange)="onChange($event)"
+        >
+          <mat-radio-button [style.padding.px]="10" value="and"
+            >And</mat-radio-button
+          >
+          <mat-radio-button [style.padding.px]="10" value="or"
+            >Or</mat-radio-button
+          >
+        </mat-radio-group>
+      </ng-container>
+      <ng-container
+        *queryInput="let rule; type: 'boolean'; let onChange = onChange"
+      >
+        <mat-checkbox
+          [(ngModel)]="rule.value"
+          (ngModelChange)="onChange()"
+        ></mat-checkbox>
+      </ng-container>
+    </query-builder>
+  </div>
+  <div class="footer">
+    <button mat-raised-button color="primary" (click)="onApply()" class="ml-2">
+      Apply
+    </button>
+    <button mat-raised-button color="accent" (click)="onCancel()" class="ml-2">
+      Cancel
+    </button>
+  </div>
+</div>

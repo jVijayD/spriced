@@ -20,6 +20,7 @@ import {
   withInterceptorsFromDi,
   withXsrfConfiguration,
 } from "@angular/common/http";
+
 import { loaderInterceptor } from "./interceptors/loader.interceptor";
 const loaderService = new LoaderService();
 export const appConfig: ApplicationConfig = {

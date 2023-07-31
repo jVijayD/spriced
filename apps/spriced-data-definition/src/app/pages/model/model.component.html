@@ -1,4 +1,5 @@
 <sp-one-col>
+  <!-- <query-builder [(ngModel)]="query" [config]="config"></query-builder> -->
   <sp-data-grid
     class="w-full h-full"
     #dataGrid
@@ -9,16 +10,15 @@
     [rows]="rows"
     [rowHeight]="40"
     [headerHeight]="40"
-    [footerHeight]="40"
+    [footerHeight]="0"
     [columnMode]="columnMode"
     [virtualScroll]="false"
     [selectionType]="selectionType"
     [limit]="10"
-    [isExternalPaging]="true"
-    [isExternalSorting]="false"
+    [isExternalPaging]="false"
+    [isExternalSorting]="true"
     [sortType]="sortType"
     [count]="totalElements"
-    (paginate)="onPaginate($event)"
     (itemSelected)="onItemSelected($event)"
     (sort)="onSort($event)"
   >
@@ -28,13 +28,6 @@
         text="Add"
         title="Add Entity"
         (actionClick)="onAdd()"
-      ></sp-header-action>
-
-      <sp-header-action
-        icon="sync"
-        text="Refresh"
-        title="Refresh"
-        (actionClick)="onRefresh()"
       ></sp-header-action>
 
       <sp-header-action
@@ -51,6 +44,28 @@
         title="Delete Entity"
         [disabled]="selectedItem == null"
         (actionClick)="onDelete()"
+      ></sp-header-action>
+
+      <sp-header-action
+        icon="clear"
+        text="Clear"
+        title="Clear Selection."
+        [disabled]="selectedItem == null"
+        (actionClick)="onClear()"
+      ></sp-header-action>
+
+      <sp-header-action
+        icon="sync"
+        text="Refresh"
+        title="Refresh"
+        (actionClick)="onRefresh()"
+      ></sp-header-action>
+
+      <sp-header-action
+        icon="filter_list"
+        text="Filter"
+        title="Filter"
+        (actionClick)="onFilter()"
       ></sp-header-action>
     </ng-container>
   </sp-data-grid>

@@ -1,15 +1,12 @@
-<div class="flex flex-row w-full h-full">
+<div class="col-height">
   <div
-    class="h-full rounded-xl shadow-lg shadow-black ml-2 mr-2 mb-2 mt-2"
+    class="col-left"
     [ngClass]="{ 'w-3/4': !singleColumn, 'w-full': singleColumn }"
   >
     <ng-content select="[left]"></ng-content>
   </div>
 
-  <div
-    class="w-1/4 h-full rounded-xl shadow-lg ml-2 mr-2 mb-2 mt-2"
-    *ngIf="!singleColumn"
-  >
+  <div class="col-right" *ngIf="!singleColumn">
     <ng-content select="[right]"></ng-content>
   </div>
 </div>

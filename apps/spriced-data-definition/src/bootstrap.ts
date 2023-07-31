@@ -1,8 +1,8 @@
 import { importProvidersFrom } from "@angular/core";
 import { bootstrapApplication } from "@angular/platform-browser";
+import { SharedSpricedSharedLibModule } from "@spriced-frontend/shared/spriced-shared-lib";
 import { RouterModule } from "@angular/router";
 import { appRoutes } from "./app/app.routes";
-import { SharedSpricedSharedLibModule } from "@spriced-frontend/shared/spriced-shared-lib";
 import { ModelComponent } from "./app/pages/model/model.component";
 
 bootstrapApplication(ModelComponent, {

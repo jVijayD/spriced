@@ -4,13 +4,14 @@ import { finalize } from "rxjs";
 
 export function loaderInterceptor(loaderService: LoaderService) {
   return (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
-    loaderService.show();
-    return next(req).pipe(
-      finalize(() => {
-        loaderService.hide();
-      })
-    );
+    if (req.headers.get("no-loader") == "true") return next(req);
+    else {
+      loaderService.show();
+      return next(req).pipe(
+        finalize(() => {
+          loaderService.hide();
+        })
+      );
+    }
   };
 }
-
-//OperatorFunction<unknown, HttpEvent<unknown>>

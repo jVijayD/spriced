@@ -8,7 +8,7 @@ import {
   EventElement,
   FORM_DATA_SERVICE,
   FormFieldControls,
-  FormFieldGroup,
+  //FormFieldGroup,
   Header,
   HeaderActionComponent,
   Paginate,
@@ -18,11 +18,16 @@ import {
   SnackbarModule,
   TopMenuComponent,
   TwoColThreeForthComponent,
+  //FilterComponent,
+  FilterData,
+  QueryColumns,
 } from "@spriced-frontend/spriced-ui-lib";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import { MatButtonModule } from "@angular/material/button";
 import { FormGroup, Validators } from "@angular/forms";
 import { of } from "rxjs";
+import { config } from "process";
+import { QueryBuilderConfig } from "ngx-angular-query-builder";
 
 @Component({
   selector: "sp-home",
@@ -36,7 +41,8 @@ import { of } from "rxjs";
     SnackbarModule,
     DialogueModule,
     DynamicFormModule,
-    TopMenuComponent
+    TopMenuComponent,
+    //FilterComponent,
   ],
   providers: [
     {
@@ -455,7 +461,7 @@ export class HomeComponent implements OnInit {
           eventValue: "test",
           eventType: "lookup",
           value: "",
-          visible: false,
+          visible: true,
           placeholder: {
             value: "",
             displayText: "--Select--",
@@ -945,6 +951,56 @@ export class HomeComponent implements OnInit {
 
     dialogResult.afterClosed().subscribe((val) => {
       console.log(val);
+    });
+  }
+
+  onFilterClick() {
+    // let query = {
+    //   condition: "and",
+    //   rules: [
+    //     { field: "age", operator: "<=", value: "Bob" },
+    //     { field: "gender", operator: ">=", value: "m" },
+    //   ],
+    // };
+
+    // let config: QueryBuilderConfig = {
+    //   fields: {
+    //     age: { name: "Age", type: "number" },
+    //     gender: {
+    //       name: "Gender",
+    //       type: "category",
+    //       options: [
+    //         { name: "Male", value: "m" },
+    //         { name: "Female", value: "f" },
+    //       ],
+    //     },
+    //   },
+    // };
+
+    const columns: QueryColumns[] = [
+      {
+        name: "name",
+        displayName: "Name",
+        dataType: "string",
+      },
+      {
+        name: "displayName",
+        displayName: "Display Name",
+        dataType: "string",
+      },
+    ];
+    const data: FilterData = {
+      //query: query,
+      //config: config,
+      config: null,
+      columns: columns,
+    };
+
+    const dialogResult = this.dialogService.openFilterDialog(data);
+    dialogResult.afterClosed().subscribe((val) => {
+      if (val !== null) {
+        console.log(val);
+      }
     });
   }
 }
