@@ -167,3 +167,11 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   @apply text-secondary-default font-extrabold;
   content: "\e4f5";
 }
+
+.page-header {
+  @apply text-secondary-dark font-medium text-base p-2;
+}
+
+.component-header-with-background {
+  @apply text-white font-medium text-base p-2;
+}

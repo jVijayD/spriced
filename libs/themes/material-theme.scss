@@ -63,7 +63,7 @@ $my-app-theme: mat.define-light-theme(
       accent: $my-app-accent,
       warn: $my-app-warn,
     ),
-    density: -1,
+    density: -3,
     border-radius: 10px 10px 0px 0px,
   )
 );
@@ -75,7 +75,7 @@ $my-formfield-theme: mat.define-light-theme(
       accent: $my-app-accent,
       warn: $my-app-warn,
     ),
-    density: -1,
+    density: -3,
     border-radius: 10px 10px 0px 0px,
   )
 );
@@ -86,7 +86,7 @@ $my-app-dark-theme: mat.define-dark-theme(
       accent: $my-app-accent,
       warn: $my-app-warn,
     ),
-    density: -1,
+    density: -3,
     border-radius: 10px 10px 0px 0px,
   )
 );

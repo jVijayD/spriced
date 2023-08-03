@@ -1,0 +1,149 @@
+<sp-two-col-three-forth [singleColumn]="isFullScreen">
+  <div class="flex flex-col w-full" style="height: calc(100% - 3rem)" left>
+    <div class="page-header pb-0">Entity Data Management</div>
+    <sp-entity-select></sp-entity-select>
+    <div class="flex-grow pl-2 pr-2">
+      <sp-data-grid
+        #dataGrid
+        [title]="entityName"
+        [enableRowIndex]="false"
+        [isArray]="true"
+        [headers]="headers"
+        [rows]="rows"
+        [rowHeight]="40"
+        [headerHeight]="40"
+        [footerHeight]="40"
+        [columnMode]="columnMode"
+        [virtualScroll]="false"
+        [selectionType]="selectionType"
+        [limit]="30"
+        [isExternalPaging]="true"
+        [isExternalSorting]="false"
+        [sortType]="sortType"
+        (paginate)="onPaginate($event)"
+        (itemSelected)="onItemSelected($event)"
+        (sort)="onSort($event)"
+      >
+        <ng-container>
+          <sp-header-action
+            [disabled]="!this.isFullScreen"
+            icon="add_box"
+            text="Add"
+            title="Add Entity"
+            (actionClick)="showAddPopup()"
+          ></sp-header-action>
+
+          <sp-header-action
+            [disabled]="!selectedItem"
+            icon="clear"
+            text="Clear"
+            title="Clear"
+            (actionClick)="onClear()"
+          ></sp-header-action>
+
+          <sp-header-action
+            icon="refresh"
+            text="Refresh"
+            title="Refresh"
+            (actionClick)="onRefresh()"
+          ></sp-header-action>
+
+          <sp-header-action
+            icon="edit"
+            text="Edit"
+            title="Edit Entity"
+            [disabled]="selectedItem == null && !isFullScreen"
+            (actionClick)="onEdit()"
+          ></sp-header-action>
+
+          <sp-header-action
+            icon="delete"
+            text="Delete"
+            title="Delete Entity"
+            [disabled]="selectedItem == null"
+            (actionClick)="onDelete()"
+          ></sp-header-action>
+
+          <sp-header-action
+            [disabled]="this.isFullScreen"
+            icon="fullscreen"
+            text="Full Screen"
+            title="Full Screen"
+            (actionClick)="onFullScreen()"
+          ></sp-header-action>
+
+          <sp-header-action
+            [disabled]="!this.isFullScreen"
+            icon="fullscreen_exit"
+            text="Exit"
+            title="Full Screen Exit"
+            (actionClick)="onFullScreen()"
+          ></sp-header-action>
+
+          <sp-header-action
+            icon="filter_list"
+            text="Filter"
+            title="Filter"
+            (actionClick)="onFilter()"
+          ></sp-header-action>
+
+          <sp-header-action
+            icon="cloud_upload"
+            text="Upload"
+            title="Bulk Upload"
+            (actionClick)="onUpload()"
+          ></sp-header-action>
+
+          <sp-header-action
+            icon="file_copy"
+            text="Template"
+            title="Upload Template"
+            (actionClick)="onUpload()"
+          ></sp-header-action>
+
+          <sp-header-action
+            icon="view_list"
+            text="Status"
+            title="Upload Status"
+            (actionClick)="onUpload()"
+          ></sp-header-action>
+
+          <sp-header-action
+            icon="settings"
+            text="Settings"
+            title="Settings"
+            (actionClick)="onUpload()"
+          ></sp-header-action>
+        </ng-container>
+      </sp-data-grid>
+    </div>
+  </div>
+  <div class="h-full" right>
+    <div class="header bg-primary-default flex flex-row justify-between">
+      <div class="component-header-with-background">Add/Edit Entity</div>
+      <div class="flex flex-row justify-end text-white">
+        <!-- <button
+          [disabled]="this.isFullScreen"
+          mat-icon-button
+          (click)="onFullScreen()"
+        >
+          <mat-icon>fullscreen</mat-icon>
+        </button>
+        <button mat-icon-button>
+          <mat-icon>keyboard_arrow_left</mat-icon>
+        </button>
+        <button mat-icon-button>
+          <mat-icon>keyboard_arrow_right</mat-icon>
+        </button> -->
+        <button mat-icon-button (click)="onClear()">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </div>
+    <sp-dynamic-form-container
+      [appForm]="appForm"
+      reset="Reset"
+      save="Save"
+    ></sp-dynamic-form-container>
+  </div>
+</sp-two-col-three-forth>

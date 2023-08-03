@@ -1,16 +1,17 @@
-const { createGlobPatternsForDependencies } = require('@nx/angular/tailwind');
-const { join } = require('path');
-const sharedTailwindConfig = require('../../libs/themes/tailwind.config');
+const { createGlobPatternsForDependencies } = require("@nx/angular/tailwind");
+const { join } = require("path");
+const sharedTailwindConfig = require("../../libs/themes/tailwind.config");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   presets: [sharedTailwindConfig],
   content: [
-    join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}'),
+    join(__dirname, "src/**/!(*.stories|*.spec).{ts,html}"),
     ...createGlobPatternsForDependencies(__dirname),
   ],
+  mode: "jit",
   theme: {
     extend: {},
   },
-  plugins: [require('@tailwindcss/container-queries')],
+  plugins: [require("@tailwindcss/container-queries")],
 };

@@ -1,13 +1,14 @@
 <ng-container>
   <div
+    style="width: 100%"
     class="w-full bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5"
   >
     <span class="float-left text-white font-medium">{{ title }}</span>
     <div class="flex flex-row"><ng-content></ng-content></div>
   </div>
   <ngx-datatable
+    style="height: 100%"
     #table
-    style="height: 100%; width: 100%"
     class="material"
     [rows]="rows"
     [columnMode]="columnMode"

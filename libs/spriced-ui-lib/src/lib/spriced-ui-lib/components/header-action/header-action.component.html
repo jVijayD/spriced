@@ -6,5 +6,5 @@
   [disabled]="disabled"
 >
   <mat-icon class="mt-auto">{{ icon }}</mat-icon>
-  <span class="text-xs self-end">{{ text }}</span>
+  <span *ngIf="showText" class="text-xs self-end">{{ text }}</span>
 </button>
