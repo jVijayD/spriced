@@ -1,11 +1,11 @@
 import { importProvidersFrom } from "@angular/core";
 import { bootstrapApplication } from "@angular/platform-browser";
 import { RouterModule } from "@angular/router";
-import { RemoteEntryComponent } from "./app/remote-entry/entry.component";
 import { appRoutes } from "./app/app.routes";
 import { SharedSpricedSharedLibModule } from "@spriced-frontend/shared/spriced-shared-lib";
+import { EntityDataComponent } from "./app/pages/entity-data/entity-data.component";
 
-bootstrapApplication(RemoteEntryComponent, {
+bootstrapApplication(EntityDataComponent, {
   providers: [
     importProvidersFrom(SharedSpricedSharedLibModule),
     importProvidersFrom(

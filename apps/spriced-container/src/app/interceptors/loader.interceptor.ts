@@ -4,14 +4,19 @@ import { finalize } from "rxjs";
 
 export function loaderInterceptor(loaderService: LoaderService) {
   return (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
-    if (req.headers.get("no-loader") == "true") return next(req);
-    else {
-      loaderService.show();
-      return next(req).pipe(
-        finalize(() => {
-          loaderService.hide();
-        })
-      );
+    try {
+      if (req.headers && req.headers.get("no-loader") == "true")
+        return next(req);
+      else {
+        loaderService.show();
+        return next(req).pipe(
+          finalize(() => {
+            loaderService.hide();
+          })
+        );
+      }
+    } catch (err) {
+      return next(req);
     }
   };
 }

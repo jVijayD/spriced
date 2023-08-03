@@ -1,0 +1,26 @@
+<div class="flex flex-row flex-wrap space-x-2 w-full pl-2 pr-2 pb-2">
+  <mat-form-field appearance="outline" class="flex-grow">
+    <mat-label>Model</mat-label>
+    <select
+      matNativeControl
+      (blur)="onTouched()"
+      [value]="selectedValue"
+      class="w-1/2 pl-2 pr-2"
+    >
+      <option value="">--Select--</option>
+    </select>
+    <mat-icon matSuffix>domain</mat-icon>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="flex-grow">
+    <mat-label>Entity</mat-label>
+    <select
+      matNativeControl
+      (blur)="onTouched()"
+      [value]="selectedValue"
+      class="w-1/2 pl-2 pr-2"
+    >
+      <option value="">--Select--</option>
+    </select>
+    <mat-icon matSuffix>table_chart</mat-icon>
+  </mat-form-field>
+</div>
