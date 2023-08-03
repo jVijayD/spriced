@@ -13,25 +13,24 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name="filedetails")
-public class FileEntity extends BaseEntity {
+@Table(name = "bulk_upload_details")
+public class BulkEntity extends BaseEntity {
 
-	@ExtraColumnData(isPrimaryKey = true,id=IDType.AUTO)
-	@Column(name="id")
+	@ExtraColumnData(isPrimaryKey = true, id = IDType.AUTO)
+	@Column(name = "id")
 	private Integer id;
 
-	@Column(name="path")
+	@Column(name = "path")
 	private String filePath;
-	
-	@Column(name="status")
+
+	@Column(name = "status")
 	private String status;
-	
-	@Column(name="source")
+
+	@Column(name = "source")
 	private String source;
-	
-	@Column(name="entity_name")
+
+	@Column(name = "entity_name")
 	private String entityName;
-	
 
 	@Override
 	boolean validate() {
@@ -39,6 +38,4 @@ public class FileEntity extends BaseEntity {
 		return true;
 	}
 
-	
-	
 }

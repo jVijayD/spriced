@@ -4,13 +4,13 @@ import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
 import com.sim.spriced.data.api.dto.FileDto;
-import com.sim.spriced.framework.models.FileEntity;
+import com.sim.spriced.framework.models.BulkEntityDetails;
 
 
 @Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface FileDtoMapper {
 
-	FileDto toFileDto(FileEntity fileEntity);
+	FileDto toFileDto(BulkEntityDetails fileEntity);
 	
-	FileEntity toFileEntity(FileDto dto);
+	BulkEntityDetails toBulkEntityDetails(FileDto dto);
 }
