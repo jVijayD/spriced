@@ -28,4 +28,8 @@ export class ModelService {
   loadAllModels() {
     return this.http.get(`${this.api_url}/models`);
   }
+
+  loadPageModels(pageNo:number,pageSize:number) {
+    return this.http.get(`${this.api_url}/models?pageNo=${pageNo}&&pageSize=${pageSize}`);
+  }
 }

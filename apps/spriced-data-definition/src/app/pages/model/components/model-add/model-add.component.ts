@@ -1,8 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   Inject,
   Optional,
+  Output,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -34,6 +36,8 @@ import { ModelService } from "apps/spriced-data-definition/src/app/services/mode
 })
 export class ModelAddComponent {
   formData = {};
+  @Output() dataChange = new EventEmitter<any>();
+
   constructor(
     public dialogRef: MatDialogRef<ModelAddComponent>,
     private modelService: ModelService,
@@ -111,6 +115,7 @@ export class ModelAddComponent {
       if (this.data.action == "Add") {
         this.modelService.add(data.value).subscribe((results: any) => {
           this.snackbarService.success("Succesfully Created");
+          this.dataChange.emit(results)
           this.onClose();
         });
       
