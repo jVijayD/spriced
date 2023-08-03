@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,9 +26,12 @@ public class EntityDefnitionService  extends BaseService
 		implements IEntityDefnitionService, IObservable<EntityDefnitionEvent> {
 
 	private List<IObserver<EntityDefnitionEvent>> observers = new ArrayList<>();
-
+	
 	@Autowired
 	IEntityDefnitionRepo defnitionRepo;
+        
+	@Autowired
+	RolePermissionService rolePermissionService;
 
 	EntityDefnitionService(List<IObserver<EntityDefnitionEvent>> entityDefnitionObservers) {
 		entityDefnitionObservers.forEach(this::register);
@@ -71,11 +72,10 @@ public class EntityDefnitionService  extends BaseService
 		this.notifyObservers(this.createEvent(entityDefnition,previous, EventType.UPDATE));
 		return entityDefnition;
 	}
-	
 
 	@Override
 	public EntityDefnition disableEntity(String name,int groupId) {
-		EntityDefnition entityDefnition = new EntityDefnition();
+		EntityDefnition entityDefnition = new EntityDefnition(name);
 		entityDefnition.setName(name);
 		entityDefnition.setGroupId(groupId);
 		entityDefnition.setIsDisabled(true);
@@ -104,19 +104,23 @@ public class EntityDefnitionService  extends BaseService
 
 	@Override
 	public List<EntityDefnition> fetchAll(int groupId) {
-		return this.defnitionRepo.getAll(groupId, false);
+		return rolePermissionService.applyPermission(this.defnitionRepo.getAll(groupId, false));
+	}
+        @Override
+	public List<EntityDefnition> fetchByRole(int groupId,String role) {
+		return rolePermissionService.applyPermission(this.defnitionRepo.getAll(groupId, false),role.split(","));
 	}
 
-	@Override
-	public Page<EntityDefnition> fetchAll(int groupId, boolean loadDisabled, Pageable pageable) {
-		return this.defnitionRepo.getAll(groupId, loadDisabled, pageable);
-	}
-
-	@Override
-	public Page<EntityDefnition> fetchAll(int groupId, Pageable pageable) {
-		return this.defnitionRepo.getAll(groupId, true, pageable);
-	}
-	
+//	@Override
+//	public Page<EntityDefnition> fetchAll(int groupId, boolean loadDisabled, Pageable pageable) {
+//		return this.defnitionRepo.getAll(groupId, loadDisabled, pageable);
+//	}
+//
+//	@Override
+//	public Page<EntityDefnition> fetchAll(int groupId, Pageable pageable) {
+//		return this.defnitionRepo.getAll(groupId, true, pageable);
+//	}
+//	
 	@PreDestroy
 	private void destroy() {
 		if (this.observers != null) {

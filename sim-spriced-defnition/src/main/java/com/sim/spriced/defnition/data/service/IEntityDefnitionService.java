@@ -27,6 +27,7 @@ public interface IEntityDefnitionService {
 	
 	List<EntityDefnition> fetchAll(int groupId,boolean loadDisabled);
 	List<EntityDefnition> fetchAll(int groupId);
-	Page<EntityDefnition> fetchAll(int groupId,boolean loadDisabled,Pageable pageable);
-	Page<EntityDefnition> fetchAll(int groupId,Pageable pageable);
+	List<EntityDefnition> fetchByRole(int groupId,String role);
+//	Page<EntityDefnition> fetchAll(int groupId,boolean loadDisabled,Pageable pageable);
+//	Page<EntityDefnition> fetchAll(int groupId,Pageable pageable);
 }
