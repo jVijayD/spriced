@@ -1,26 +1,27 @@
 <sp-one-col>
   <!-- <query-builder [(ngModel)]="query" [config]="config"></query-builder> -->
   <sp-data-grid
-    class="w-full h-full"
-    #dataGrid
-    title="Model List"
-    [enableRowIndex]="false"
-    [isArray]="false"
-    [headers]="headers"
-    [rows]="rows"
-    [rowHeight]="40"
-    [headerHeight]="40"
-    [footerHeight]="0"
-    [columnMode]="columnMode"
-    [virtualScroll]="false"
-    [selectionType]="selectionType"
-    [limit]="10"
-    [isExternalPaging]="false"
-    [isExternalSorting]="true"
-    [sortType]="sortType"
-    [count]="totalElements"
-    (itemSelected)="onItemSelected($event)"
-    (sort)="onSort($event)"
+  class="w-full h-full"
+  #dataGrid
+  title="Entity List"
+  [enableRowIndex]="false"
+  [isArray]="false"
+  [headers]="headers"
+  [rows]="rows"
+  [rowHeight]="40"
+  [headerHeight]="40"
+  [footerHeight]="40"
+  [columnMode]="columnMode"
+  [virtualScroll]="true"
+  [selectionType]="selectionType"
+  [limit]="10"
+  [isExternalPaging]="true"
+  [isExternalSorting]="false"
+  [sortType]="sortType"
+  [count]="totalElements"
+  (paginate)="onPaginate($event)"
+  (itemSelected)="onItemSelected($event)"
+  (sort)="onSort($event)"
   >
     <ng-container>
       <sp-header-action

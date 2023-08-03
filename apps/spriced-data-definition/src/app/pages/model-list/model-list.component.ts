@@ -18,6 +18,7 @@ import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import { ModelService } from "../../services/model.service";
 import { ModelAddComponent } from "../model/components/model-add/model-add.component";
 import { EntityService } from "../../services/entity.service";
+import { UploadDialogeComponent } from "./components/upload-dialoge/upload-dialoge.component";
 
 @Component({
   selector: "sp-model-list",
@@ -92,6 +93,7 @@ export class ModelListComponent {
         d.icon = 'schema';
         return d;
       });
+      this.totalElements=data.length
     });
   }
   onTreeAction(event: any) {
@@ -134,7 +136,9 @@ export class ModelListComponent {
   }
 
 
-  onRefresh() {}
+  onRefresh() {
+    this.load();
+  }
 
   onView() {
     
@@ -150,5 +154,15 @@ export class ModelListComponent {
 
   onSort(e: any) {
     console.log(e);
+  }
+  onUpload()
+  {
+    const dialogResult =this.dialog.open(UploadDialogeComponent, {
+
+    });
+
+    dialogResult.afterClosed().subscribe((val) => {
+      console.log(val);
+    });
   }
 }

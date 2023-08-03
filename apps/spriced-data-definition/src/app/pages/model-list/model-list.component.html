@@ -14,7 +14,7 @@
       [virtualScroll]="true"
       [selectionType]="selectionType"
       [limit]="10"
-      [isExternalPaging]="true"
+      [isExternalPaging]="false"
       [isExternalSorting]="false"
       [sortType]="sortType"
       [count]="totalElements"
@@ -51,7 +51,7 @@
         text="Upload"
         title="Upload"
         [disabled]="selectedItem == null"
-        (actionClick)="onView()"
+        (actionClick)="onUpload()"
       ></sp-header-action>
   
        
