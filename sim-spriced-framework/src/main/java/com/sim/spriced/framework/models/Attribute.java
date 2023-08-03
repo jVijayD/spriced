@@ -5,6 +5,7 @@ package com.sim.spriced.framework.models;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.sim.spriced.framework.constants.ModelConstants.ModelPermission;
 import com.sim.spriced.framework.models.AttributeConstants.ConstraintType;
 import com.sim.spriced.framework.models.AttributeConstants.DataType;
 import com.sim.spriced.framework.models.AttributeConstants.Type;
@@ -18,7 +19,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Attribute {
-	
+
 	private String id= UUID.randomUUID().toString();
 	private String name;
 	private String displayName;
@@ -34,7 +35,7 @@ public class Attribute {
 	private Object referencedTableId = null;
 	private String formatter = null;
 	private int numberOfDecimalValues = 0;
-	
+	private ModelPermission permission = ModelPermission.DENY;
 	//constraints
 	private ConstraintType constraintType = ConstraintType.NONE;
 	
@@ -59,5 +60,5 @@ public class Attribute {
 		this(name,type,dataType);
 		this.size=size;
 	}
-	
+        
 }
