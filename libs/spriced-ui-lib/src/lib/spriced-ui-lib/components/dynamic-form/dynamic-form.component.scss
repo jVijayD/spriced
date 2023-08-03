@@ -7,7 +7,7 @@
 /* Grp css */
 
 .items-container {
-  @apply flex flex-row flex-wrap;
+  @apply flex flex-row flex-wrap justify-center;
 }
 
 .item {
