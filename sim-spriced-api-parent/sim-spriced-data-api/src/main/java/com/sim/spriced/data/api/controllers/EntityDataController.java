@@ -8,15 +8,13 @@ import java.util.concurrent.ExecutionException;
 
 import javax.validation.Valid;
 
+
 import com.sim.spriced.framework.models.AttributeConstants;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -40,9 +38,10 @@ import com.sim.spriced.data.model.EntityData;
 import com.sim.spriced.data.model.EntityDataResult;
 import com.sim.spriced.data.service.IEntityDataRuleService;
 import com.sim.spriced.data.service.IEntityDataService;
+import com.sim.spriced.framework.annotations.CriteriaParam;
 import com.sim.spriced.framework.api.exception.ResourceNotFoundException;
+import com.sim.spriced.framework.data.filters.Criteria;
 import com.sim.spriced.framework.models.Attribute;
-import com.sim.spriced.framework.models.Rule;
 import com.sim.spriced.framework.rule.IRule;
 
 import io.micrometer.core.annotation.Timed;
@@ -93,24 +92,15 @@ public class EntityDataController {
 
 	@Timed(value = "data.getAll.time", description = "Time taken to return all data")
 	@GetMapping("")
-	public ResponseEntity<List<Map<String,Object>>> get(@PathVariable int entityId,@RequestParam(required = false) Integer pageNo,@RequestParam(required = false) Integer pageSize,@RequestParam(required = false) String sortBy,@RequestParam(required = false) String sortDir)
+	public ResponseEntity<List<Map<String,Object>>> get(@PathVariable int entityId,@CriteriaParam(required = false) Criteria searchCriteria)
 			throws ParseException, InterruptedException, ExecutionException {
 		EntityDto entityDto = this.getEntity(entityId).get();
 		if (entityDto != null) {
 			EntityData data = new EntityData();
 			data.setEntityName(entityDto.getName());
 			data.setAttributes(entityDto.getAttributes());
-			
-			if(pageSize==null || pageSize==0) {
-				var result = this.dataService.fetchAllAsMap(data);
-				return new ResponseEntity<>(result, HttpStatus.OK);
-			}
-			else {
-				Pageable pageable = this.createPageable(pageNo, pageSize, sortBy, sortDir);
-				var result = this.dataService.fetchAllAsMap(data,pageable);
-				return new ResponseEntity<>(result, HttpStatus.OK);
-			}	
-			
+                        var result = this.dataService.fetchAllAsMap(data,searchCriteria);
+                        return new ResponseEntity<>(result, HttpStatus.OK);
 		} else {
 			throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
 		}
@@ -118,23 +108,15 @@ public class EntityDataController {
 	
 	@Timed(value = "data.getAll.time", description = "Time taken to return all data")
 	@GetMapping("/json/items")
-	public ResponseEntity<String> getJsonString(@PathVariable int entityId,@RequestParam(required = false) Integer pageNo,@RequestParam(required = false) Integer pageSize,@RequestParam(required = false) String sortBy,@RequestParam(required = false) String sortDir)
+	public ResponseEntity<String> getJsonString(@PathVariable int entityId,@CriteriaParam(required = false)Criteria searchCriteria)
 			throws InterruptedException, ExecutionException {
 		EntityDto entityDto = this.getEntity(entityId).get();
 		if (entityDto != null) {
 			EntityData data = new EntityData();
 			data.setEntityName(entityDto.getName());
 			data.setAttributes(entityDto.getAttributes());
-			
-			if(pageSize==null || pageSize==0) {
-				var result = this.dataService.fetchAllAsJsonString(data);
-				return new ResponseEntity<>(result, HttpStatus.OK);
-			}
-			else {
-				Pageable pageable = this.createPageable(pageNo, pageSize, sortBy, sortDir);
-				var result = this.dataService.fetchAllAsJsonString(data,pageable);
-				return new ResponseEntity<>(result, HttpStatus.OK);
-			}	
+        		var result = this.dataService.fetchAllAsJsonString(data,searchCriteria);
+			return new ResponseEntity<>(result, HttpStatus.OK);	
 			
 		} else {
 			throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
@@ -143,7 +125,7 @@ public class EntityDataController {
 	
 	@Timed(value = "data.get.time", description = "Time taken to return data.")
 	@GetMapping("/{id}")
-	public ResponseEntity<JSONObject> get(@PathVariable int entityId, @PathVariable String id)
+	public ResponseEntity<JSONObject> get(@PathVariable int entityId, @PathVariable String id,@CriteriaParam(required = false)Criteria searchCriteria)
 			throws ParseException, InterruptedException, ExecutionException {
 		
 		
@@ -164,9 +146,7 @@ public class EntityDataController {
 					});
 			jsonArray.add(jsonObj);
 			data.setValues(jsonArray);
-			
-			
-			var result = this.dataService.fetchOne(data);
+			var result = this.dataService.fetchOne(data,searchCriteria);
 			return new ResponseEntity<>(this.convertToSimpleJSONObject(result), HttpStatus.OK);
 		} else {
 			throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
@@ -255,10 +235,6 @@ public class EntityDataController {
 		return values.stream().map(item -> new org.json.JSONObject((Map<String, ?>) item)).toList();
 	}
 
-	private JSONArray convertToSimpleJSONArray(org.json.JSONArray result) throws ParseException {
-		JSONParser parser = new JSONParser();
-		return (JSONArray) parser.parse(result.toString());
-	}
 
 	private JSONObject convertToSimpleJSONObject(org.json.JSONObject result) throws ParseException {
 		JSONParser parser = new JSONParser();
@@ -279,11 +255,4 @@ public class EntityDataController {
 		return CompletableFuture.completedFuture(ruleEngineRules);
 	}
 	
-	private Pageable createPageable(int pageNo,int pageSize, String sortBy, String sortDir) {
-		Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending();
-		
-		return PageRequest.of(pageNo, pageSize, sort);
-	}
-
 }

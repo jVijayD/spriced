@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.sim.spriced.framework.models.EntityDefnition;
+import org.json.JSONArray;
 
 
 public interface IEntityDefnitionRepo {
@@ -24,7 +25,7 @@ public interface IEntityDefnitionRepo {
 	
 	public Page<EntityDefnition> getAll(boolean loadDisabled,Pageable pagable);
 	public Page<EntityDefnition> getAll(int groupId,boolean loadDisabled,Pageable pagable);
-	
+    
 //	public List<EntityDefnition> fetchAll(boolean loadDisabled);
 //	public Page<EntityDefnition> fetchAll(boolean loadDisabled,Pageable pagable);
 //	public List<EntityDefnition> fetchAll(String group,boolean loadDisabled);

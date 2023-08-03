@@ -88,7 +88,7 @@ public class EntityDefnitionRepo extends BaseRepo implements IEntityDefnitionRep
 		defnition.setIsDisabled(loadDisabled);
 		return super.fetchMultiple(defnition, this::convertToEntityDefnition);
 	}
-
+        
 	@Override
 	public List<EntityDefnition> getAll(int groupId, boolean loadDisabled) {
 		EntityDefnition defnition = new EntityDefnition();
@@ -111,5 +111,5 @@ public class EntityDefnitionRepo extends BaseRepo implements IEntityDefnitionRep
 		defnition.setIsDisabled(loadDisabled);
 		return super.fetchAll(defnition, this::convertToEntityDefnition, pagable);
 	}
-
+       
 }

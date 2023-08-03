@@ -16,7 +16,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -27,6 +26,7 @@ import com.sim.spriced.data.repo.IEntityDataRepo;
 import com.sim.spriced.data.service.IEntityDataRuleService;
 import com.sim.spriced.data.service.IEntityDataService;
 import com.sim.spriced.framework.constants.ModelConstants;
+import com.sim.spriced.framework.data.filters.Criteria;
 import com.sim.spriced.framework.models.AttributeConstants;
 import com.sim.spriced.framework.models.AttributeConstants.DataType;
 import com.sim.spriced.framework.rule.FactResult;
@@ -56,18 +56,13 @@ public class EntityDataService implements IEntityDataService {
 	}
 
 	@Override
-	public JSONArray fetchAll(EntityData data) {
-		return this.dataRepo.fetchAll(data);
+	public JSONArray fetchAll(EntityData data,Criteria criteria) {
+		return this.dataRepo.fetchAll(data,criteria);
 	}
 
 	@Override
-	public JSONArray fetchAll(EntityData data, Pageable pageable) {
-		return this.dataRepo.fetchAll(data, pageable);
-	}
-
-	@Override
-	public JSONObject fetchOne(EntityData data) {
-		return this.dataRepo.fetchOne(data);
+	public JSONObject fetchOne(EntityData data,Criteria criteria) {
+		return this.dataRepo.fetchOne(data,criteria);
 	}
 
 	@Override
@@ -167,22 +162,12 @@ public class EntityDataService implements IEntityDataService {
     }
 
 	@Override
-	public String fetchAllAsJsonString(EntityData data) {
-		return this.dataRepo.fetchAllAsJsonString(data);
+	public String fetchAllAsJsonString(EntityData data,Criteria criteria) {
+		return this.dataRepo.fetchAllAsJsonString(data,criteria);
 	}
 
 	@Override
-	public String fetchAllAsJsonString(EntityData data, Pageable pageable) {
-		return this.dataRepo.fetchAllAsJsonString(data,pageable);
-	}
-
-	@Override
-	public List<Map<String, Object>> fetchAllAsMap(EntityData data) {
-		return this.dataRepo.fetchAllAsMap(data);
-	}
-
-	@Override
-	public List<Map<String, Object>> fetchAllAsMap(EntityData data, Pageable pageable) {
-		return this.dataRepo.fetchAllAsMap(data, pageable);
+	public List<Map<String, Object>> fetchAllAsMap(EntityData data,Criteria criteria) {
+		return this.dataRepo.fetchAllAsMap(data,criteria);
 	}
 }
