@@ -54,7 +54,6 @@ import com.sim.spriced.framework.exceptions.data.InvalidTypeConversionException;
 import com.sim.spriced.framework.exceptions.data.NotFoundException;
 import com.sim.spriced.framework.exceptions.data.NullPrimaryKeyException;
 import com.sim.spriced.framework.exceptions.data.UniqueConstraintException;
-import com.sim.spriced.framework.models.BaseEntity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -136,20 +135,6 @@ public abstract class BaseRepo {
 		return context.batch(queries).execute();
 	}
 
-        protected int createWithoutReturn(BaseEntity entity) {
-            try {
-                TableData tableDetails = this.getTableData(entity);
-                tableDetails.setUpdatedByAndUpdatedDate(
-                        this.contextManager
-                                .getRequestContext()
-                                .getUser(), this.timeStamp);
-                return this.createQueryForGeneratedID(tableDetails).execute();
-            } catch (DataIntegrityViolationException ex) {
-                ex.printStackTrace();
-            }
-            return 0;
-        }
-        
 	// Dynamic SQL based on Annotations
 	protected <T> T create(T entity) {
 		TableData tableDetails = this.getTableData(entity);
