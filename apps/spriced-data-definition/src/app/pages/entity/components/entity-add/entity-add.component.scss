@@ -8,11 +8,22 @@
   .box {
     display: flex;
     justify-content: space-between;
+    gap: 5%;
   
   }
   .box1
   {
-    width:60%;
+    width:55%;
+    height: 380px;
+  
+  }
+  .box2
+  {
+    width: 40%;
+    padding: 10px;
+    display:grid;
+    grid-template-columns: auto;
+  
   }
   .addbtn {
     margin-left: 1rem;

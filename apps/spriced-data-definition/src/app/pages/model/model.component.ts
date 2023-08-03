@@ -4,11 +4,13 @@ import {
   DataGridComponent,
   DialogService,
   DialogueModule,
+  FilterData,
   //FilterComponent,
   Header,
   HeaderActionComponent,
   OneColComponent,
   Paginate,
+  QueryColumns,
   SnackBarService,
   SnackbarModule,
 } from "@spriced-frontend/spriced-ui-lib";
@@ -65,25 +67,26 @@ export class ModelComponent implements OnInit {
   totalElements = 10000;
   rows: any[] = [];
   selectedItem: any = null;
-
+  filterData: any;
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
-  pageNo=0;
-  pageSize=10;
+  pageNo = 0;
+  pageSize = 10;
 
   constructor(
     private dialogService: DialogService,
     private snackbarService: SnackBarService,
     private dialog: MatDialog,
-    private modelService: ModelService,
+    private modelService: ModelService
   ) {}
   ngOnInit(): void {
-    this.load(this.pageNo,this.pageSize);
+    this.load(this.pageNo, this.pageSize);
   }
-  load(pageNo:number,pageSize:number) {
+  load(pageNo: number, pageSize: number) {
     this.modelService.loadAllModels().subscribe((results: any) => {
       this.rows = results;
-      this.totalElements=results.length
+      this.totalElements = results.length;
+      this.filterData = results;
     });
   }
   onAdd() {
@@ -94,44 +97,47 @@ export class ModelComponent implements OnInit {
       //maxHeight: "400px",
     });
     dialogRef.componentInstance.dataChange.subscribe((result: any) => {
-      this.rows.push(result)
-    this.rows=[...this.rows]
-    })
+      this.rows.push(result);
+      this.rows = [...this.rows];
+    });
   }
 
   onRefresh() {
-    this.load(this.pageNo,this.pageSize);
+    this.load(this.pageNo, this.pageSize);
   }
 
   onEdit() {
     const dialogRef = this.dialog.open(ModelAddComponent, {
       data: { action: "Edit", value: this.selectedItem },
     });
-    dialogRef.afterClosed().subscribe(() => {
-      this.load(this.pageNo,this.pageSize);
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result == true) {
+        this.load(this.pageNo, this.pageSize);
+      }
     });
   }
   onDelete() {
-    const dialogRef=this.dialogService.openConfirmDialoge({
+    const dialogRef = this.dialogService.openConfirmDialoge({
       message: "Do you want to delete?",
       title: "Delete Model",
       icon: "delete",
     });
-    dialogRef.afterClosed().subscribe((result:any) => {
-    if(result==true)
-    {
-      this.modelService.delete(this.selectedItem.id).subscribe((results: any) => {
-        this.snackbarService.success("Succesfully Deleted");
-        this.load(this.pageNo,this.pageSize)
-      });
-    }
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result == true) {
+        this.modelService
+          .delete(this.selectedItem.id)
+          .subscribe((results: any) => {
+            this.snackbarService.success("Succesfully Deleted");
+            this.load(this.pageNo, this.pageSize);
+          });
+      }
     });
     // this.selectedItem = null;
     // this.dataGrid.clearSelection();
   }
   onPaginate(e: Paginate) {
-    this.pageNo=e.offset
-    this.pageSize=e.pageSize
+    this.pageNo = e.offset;
+    this.pageSize = e.pageSize;
     // this.load(this.pageNo,this.pageSize);
   }
 
@@ -148,6 +154,103 @@ export class ModelComponent implements OnInit {
   }
 
   onFilter() {
-    //const dialogRef = this.dialogService.openDialog(FilterComponent);
+    const columns: QueryColumns[] = [
+      {
+        name: "id",
+        displayName: "Id",
+        dataType: "number",
+      },
+      {
+        name: "name",
+        displayName: "Name",
+        dataType: "string",
+      },
+      {
+        name: "updatedBy",
+        displayName: "Updated By",
+        dataType: "string",
+      },
+      {
+        name: "updatedDate",
+        displayName: "Updated Date",
+        dataType: "string",
+      },
+    ];
+    const data: FilterData = {
+      //query: query,
+      //config: config,
+      config: null,
+      columns: columns,
+    };
+
+    const dialogResult = this.dialogService.openFilterDialog(data);
+    dialogResult.afterClosed().subscribe((val) => {
+      if (val !== null) {
+        this.rows = this.filterData;
+        console.log(val);
+        val.map((item: any, index: number) => {
+          switch (item.operatorType) {
+            case "LESS_THAN": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key] < item.value;
+              });
+              this.rows.push(row);
+              break;
+            }
+            case "EQUALS": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key] == item.value;
+              });
+              this.rows.push(row);
+
+              break;
+            }
+            case "GREATER_THAN": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key] > item.value;
+              });
+              this.rows.push(row);
+
+              break;
+            }
+            case "GREATER_THAN_EQUALS": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key] >= item.value;
+              });
+              this.rows.push(row);
+
+              break;
+            }
+            case "LESS_THAN_EQUALS": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key] <= item.value;
+              });
+              this.rows.push(row);
+
+              break;
+            }
+            case "IS_NOT_EQUAL": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key] != item.value;
+              });
+              this.rows.push(row);
+
+              break;
+            }
+            case "LIKE": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key].includes(item.value);
+              });
+              this.rows.push(row);
+
+              break;
+            }
+            default: {
+              break;
+            }
+          }
+        });
+      }
+    });
   }
 }
