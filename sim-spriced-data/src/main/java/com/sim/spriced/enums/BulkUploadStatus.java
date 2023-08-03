@@ -1,21 +1,10 @@
 package com.sim.spriced.enums;
 
-public enum FileUploadStatus {
+public enum BulkUploadStatus {
 
-	NEW_FILE("new file"),
-	IN_PROGRESS("inprogress"),
-	FAILED("failed"),
-	UPLOAD_FAILED("upload Failed"),
-	SUCCESS("success");
-	
-	private final String status;
-
-	private FileUploadStatus(String status) {
-		this.status = status;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-	
+	UPLOADED,
+	IN_PROGRESS,
+	FAILED,
+	UPLOAD_FAILED,
+	SUCCESS;
 }
