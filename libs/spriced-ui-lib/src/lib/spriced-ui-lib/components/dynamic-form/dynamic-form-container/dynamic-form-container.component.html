@@ -1,5 +1,5 @@
 <label
-  class="text-secondary-dark m-5 font-bold text-lg"
+  class="text-secondary-dark m-2 font-bold text-lg"
   *ngIf="
     this.currentFormData.appForm?.title &&
     this.currentFormData.appForm?.title != ''
@@ -9,28 +9,33 @@
 
 <div class="container">
   <sp-dynamic-form [appFormData]="this.currentFormData"></sp-dynamic-form>
-
-  <div class="divider"></div>
-  <div class="button-container">
-    <!-- <button mat-raised-button type="button">Cancel</button> -->
-    <button
-      class="w-24"
-      mat-raised-button
-      color="accent"
-      (click)="onFormReset()"
-    >
-      {{ reset }}
-    </button>
-    <button
-      class="w-24"
-      mat-raised-button
-      color="primary"
-      type="submit"
-      (click)="onFormSubmit()"
-      [disabled]="!this.currentFormData?.form?.valid"
-    >
-      {{ save }}
-    </button>
+  <div class="submit-container">
+    <div class="divider"></div>
+    <div class="button-container">
+      <!-- <button mat-raised-button type="button">Cancel</button> -->
+      <button
+        class="w-24"
+        mat-raised-button
+        color="accent"
+        (click)="onFormReset()"
+      >
+        {{ reset }}
+      </button>
+      <button
+        class="w-24"
+        mat-raised-button
+        color="primary"
+        type="submit"
+        (click)="onFormSubmit()"
+        [disabled]="
+          this.currentFormData && this.currentFormData.form
+            ? !this.currentFormData.form.valid
+            : true
+        "
+      >
+        {{ save }}
+      </button>
+    </div>
   </div>
 </div>
 

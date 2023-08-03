@@ -1,6 +1,6 @@
 import { Route } from "@angular/router";
-import { RemoteEntryComponent } from "./entry.component";
+import { EntityDataComponent } from "../pages/entity-data/entity-data.component";
 
 export const remoteRoutes: Route[] = [
-  { path: "", component: RemoteEntryComponent },
+  { path: "", component: EntityDataComponent },
 ];

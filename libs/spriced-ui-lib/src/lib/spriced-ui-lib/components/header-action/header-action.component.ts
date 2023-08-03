@@ -23,6 +23,9 @@ export class HeaderActionComponent {
   @Input()
   disabled = false;
 
+  @Input()
+  showText = false;
+
   @Output()
   actionClick: EventEmitter<void> = new EventEmitter<void>();
 
