@@ -21,6 +21,10 @@ import { MatIconModule } from "@angular/material/icon";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import { EntitySelectComponent } from "../../components/entity-select/entity-select.component";
 import { AddModelComponent } from "./add-model/add-model.component";
+import { MatDialog } from "@angular/material/dialog";
+import { UploadDialogeComponent } from "../../components/upload-dialoge/upload-dialoge.component";
+import { SettingsPopUpComponent } from "../../components/settingsPopUp/settings-pop-up.component";
+import { StatusComponent } from "../../components/status/status.component";
 
 @Component({
   selector: "sp-entity-data",
@@ -91,7 +95,8 @@ export class EntityDataComponent {
   constructor(
     private snackbarService: SnackBarService,
     private dialogService: DialogService,
-    private dynamicFormService: DynamicFormService
+    private dynamicFormService: DynamicFormService,
+    private dialog: MatDialog
   ) {}
   onPaginate(e: Paginate) {}
   onItemSelected(e: any) {
@@ -109,7 +114,28 @@ export class EntityDataComponent {
   }
   onFilter() {}
   onEdit() {}
-  onUpload() {}
+
+  onUpload() {
+    const dialogResult = this.dialog.open(UploadDialogeComponent, {});
+
+    dialogResult.afterClosed().subscribe((val) => {
+      console.log(val);
+    });
+  }
+  onStatus() {
+    const dialogResult = this.dialog.open(StatusComponent, {});
+
+    dialogResult.afterClosed().subscribe((val) => {
+      console.log(val);
+    });
+  }
+  onSettings() {
+    const dialogResult = this.dialog.open(SettingsPopUpComponent, {});
+
+    dialogResult.afterClosed().subscribe((val) => {
+      console.log(val);
+    });
+  }
   showAddPopup() {
     this.dialogService.openDialog(AddModelComponent, {
       data: this.appForm,

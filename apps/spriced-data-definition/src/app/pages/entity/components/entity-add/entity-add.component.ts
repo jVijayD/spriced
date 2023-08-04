@@ -93,12 +93,12 @@ export class EntityAddComponent implements OnInit {
   @Output() dataChange = new EventEmitter<any>();
   constraintType = false;
   headers: Header[] = [
-    { column: "name", name: "Name", canAutoResize: true, isSortable: true },
+    { column: "name", name: "Name", canAutoResize: true, isSortable: true,width:100},
     {
       column: "displayName" || 'name',
       name: "Display Name",
       canAutoResize: true,
-      isSortable: true,
+      isSortable: true,width:100
     },
   ];
   columnMode: ColumnMode = ColumnMode.force;
@@ -129,6 +129,7 @@ export class EntityAddComponent implements OnInit {
 
     this.action = data.action;
     this.rows = this.local_data?.attributes || [];
+    this.totalElements=this.rows.length
   }
   ngOnInit(): void {
     this.initForm();
@@ -199,6 +200,7 @@ export class EntityAddComponent implements OnInit {
         });
       }
       this.rows=[...this.rows]
+      this.totalElements=this.rows.length
     }
     this.clear();
   }
@@ -215,7 +217,6 @@ export class EntityAddComponent implements OnInit {
     }
   }
 
-  onRefresh() {}
 
   onEdit() {
     if (this.selectedItem.dataType == "DECIMAL" && this.selectedItem.size > 0) {
@@ -230,7 +231,6 @@ export class EntityAddComponent implements OnInit {
     this.attDetails.displayName =
       this.selectedItem.displayName || this.selectedItem.name;
   }
-  onAdd() {}
   onDelete() {
     this.rows = this.rows.filter((value: any) => {
       return value.name != this.selectedItem.name;

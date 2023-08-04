@@ -105,14 +105,14 @@
             icon="view_list"
             text="Status"
             title="Upload Status"
-            (actionClick)="onUpload()"
+            (actionClick)="onStatus()"
           ></sp-header-action>
 
           <sp-header-action
             icon="settings"
             text="Settings"
             title="Settings"
-            (actionClick)="onUpload()"
+            (actionClick)="onSettings()"
           ></sp-header-action>
         </ng-container>
       </sp-data-grid>
@@ -140,10 +140,10 @@
         </button>
       </div>
     </div>
-    <sp-dynamic-form-container
+    <!-- <sp-dynamic-form-container
       [appForm]="appForm"
       reset="Reset"
       save="Save"
-    ></sp-dynamic-form-container>
+    ></sp-dynamic-form-container> -->
   </div>
 </sp-two-col-three-forth>

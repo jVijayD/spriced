@@ -91,11 +91,13 @@ export class EntityComponent {
   load(id: any) {
     this.entityService.loadEntityByModel(id.value).subscribe((results: any) => {
       this.rows = results;
-      this.totalElements=results.length
+      this.totalElements = results.length;
+      this.selectedItem = null;
     });
   }
   onAdd() {
     this.dataGrid.clearSelection();
+    this.selectedItem = null;
     const dialogRef = this.dialog.open(EntityAddComponent, {
       data: { action: "Add", entities: this.rows, row: "" },
       //maxWidth: "300px",
@@ -112,15 +114,19 @@ export class EntityComponent {
         attributes: result.attributes,
       };
       this.entityService.add(entity).subscribe((results) => {
-       this.rows.push(results)
-       this.rows=[...this.rows]
-       dialogRef.close();
+        this.rows.push(results);
+        this.rows = [...this.rows];
+        dialogRef.close();
       });
     });
   }
 
   onRefresh() {
     this.load({ value: this.groupId });
+  }
+  onClear() {
+    this.dataGrid.clearSelection();
+    this.selectedItem = null;
   }
 
   onEdit() {
@@ -157,7 +163,6 @@ export class EntityComponent {
           .subscribe((results: any) => {
             this.snackbarService.success("Succesfully Deleted");
             this.load({ value: this.groupId });
-            this.selectedItem = null;
             this.dataGrid.clearSelection();
           });
       }

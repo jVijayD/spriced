@@ -10,11 +10,13 @@ import {
   DataGridComponent,
   DialogService,
   DialogueModule,
+  FilterData,
   //FilterComponent,
   Header,
   HeaderActionComponent,
   OneColComponent,
   Paginate,
+  QueryColumns,
   SnackBarService,
   SnackbarModule,
 } from "@spriced-frontend/spriced-ui-lib";
@@ -78,12 +80,14 @@ export class ModelComponent implements OnInit, OnDestroy {
   totalElements = 10000;
   rows: any[] = [];
   selectedItem: any = null;
+  filterData: any;
   subscriptions: Subscription[] = [];
 
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
   pageNo = 0;
   pageSize = 10;
+  temp: any = [];
 
   constructor(
     private dialogService: DialogService,
@@ -99,6 +103,7 @@ export class ModelComponent implements OnInit, OnDestroy {
     this.modelService.loadAllModels().subscribe((results: any) => {
       this.rows = results;
       this.totalElements = results.length;
+      this.filterData = results;
     });
   }
 
@@ -110,6 +115,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   onAdd() {
     this.dataGrid.clearSelection();
+    this.selectedItem = null;
     const dialogRef = this.dialog.open(ModelAddComponent, {
       data: { action: "Add" },
     });
@@ -117,20 +123,25 @@ export class ModelComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.load(this.pageNo, this.pageSize);
+        this.selectedItem = null;
       }
     });
   }
 
   onRefresh() {
     this.load(this.pageNo, this.pageSize);
+    this.selectedItem = null;
   }
 
   onEdit() {
     const dialogRef = this.dialog.open(ModelAddComponent, {
       data: { action: "Edit", value: this.selectedItem },
     });
-    dialogRef.afterClosed().subscribe(() => {
-      this.load(this.pageNo, this.pageSize);
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.load(this.pageNo, this.pageSize);
+        this.selectedItem = null;
+      }
     });
   }
   onDelete() {
@@ -146,6 +157,7 @@ export class ModelComponent implements OnInit, OnDestroy {
           .subscribe((results: any) => {
             this.snackbarService.success("Succesfully Deleted");
             this.load(this.pageNo, this.pageSize);
+            this.selectedItem = null;
           });
       }
     });
@@ -168,9 +180,125 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   onClear() {
     this.dataGrid.clearSelection();
+    this.selectedItem = null;
   }
 
   onFilter() {
-    //const dialogRef = this.dialogService.openDialog(FilterComponent);
+    const columns: QueryColumns[] = [
+      {
+        name: "id",
+        displayName: "Id",
+        dataType: "number",
+      },
+      {
+        name: "name",
+        displayName: "Name",
+        dataType: "string",
+      },
+      {
+        name: "updatedBy",
+        displayName: "Updated By",
+        dataType: "string",
+      },
+      {
+        name: "updatedDate",
+        displayName: "Updated Date",
+        dataType: "string",
+      },
+    ];
+    const data: FilterData = {
+      //query: query,
+      //config: config,
+      config: null,
+      columns: columns,
+    };
+
+    const dialogResult = this.dialogService.openFilterDialog(data);
+    dialogResult.afterClosed().subscribe((val) => {
+      if (val !== null) {
+        this.temp = [];
+        this.rows = this.filterData;
+        console.log(val);
+        val.map((item: any, index: number) => {
+          switch (item.operatorType) {
+            case "LESS_THAN": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key] < item.value;
+              });
+              this.temp.push(...row);
+              this.rows = this.temp;
+              break;
+            }
+            case "EQUALS": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key] == item.value;
+              });
+
+              this.temp.push(...row);
+              this.rows = this.temp;
+              break;
+            }
+            case "GREATER_THAN": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key] > item.value;
+              });
+              this.temp.push(...row);
+              this.rows = this.temp;
+
+              break;
+            }
+            case "GREATER_THAN_EQUALS": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key] >= item.value;
+              });
+              this.temp.push(...row);
+              this.rows = this.temp;
+              break;
+            }
+            case "LESS_THAN_EQUALS": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key] <= item.value;
+              });
+              this.temp.push(...row);
+              this.rows = this.temp;
+
+              break;
+            }
+            case "IS_NOT_EQUAL": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key] != item.value;
+              });
+              this.temp.push(...row);
+              this.rows = this.temp;
+
+              break;
+            }
+            case "LIKE": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key].includes(item.value);
+              });
+              this.temp.push(...row);
+              this.rows = this.temp;
+              break;
+            }
+            case "ILIKE": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key].endsWith(item.value);
+              });
+              this.temp.push(...row);
+              this.rows = this.temp;
+
+              break;
+            }
+            default: {
+              break;
+            }
+          }
+        });
+
+        const result: any = [...new Set(this.rows)];
+        this.rows = result;
+      }
+    });
   }
 }
