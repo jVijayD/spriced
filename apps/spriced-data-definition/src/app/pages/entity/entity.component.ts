@@ -4,10 +4,12 @@ import {
   DataGridComponent,
   DialogService,
   DialogueModule,
+  FilterData,
   Header,
   HeaderActionComponent,
   OneColComponent,
   Paginate,
+  QueryColumns,
   SnackBarService,
   SnackbarModule,
 } from "@spriced-frontend/spriced-ui-lib";
@@ -19,6 +21,7 @@ import { ModelService } from "../../services/model.service";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatSelectModule } from "@angular/material/select";
 import { EntityAddComponent } from "./components/entity-add/entity-add.component";
+import * as moment from "moment";
 @Component({
   selector: "sp-entity",
   standalone: true,
@@ -59,6 +62,9 @@ export class EntityComponent {
       name: "Updated Date",
       canAutoResize: true,
       isSortable: true,
+      pipe: (data: any) => {
+        return moment(data).format("MM-DD-YYYY");
+      },
     },
   ];
   columnMode: ColumnMode = ColumnMode.force;
@@ -73,7 +79,8 @@ export class EntityComponent {
   dataGrid!: DataGridComponent;
   modelList: any;
   groupId: any;
-
+  temp: any[] = [];
+  filterData: any;
   constructor(
     private dialogService: DialogService,
     private snackbarService: SnackBarService,
@@ -92,6 +99,7 @@ export class EntityComponent {
     this.entityService.loadEntityByModel(id.value).subscribe((results: any) => {
       this.rows = results;
       this.totalElements = results.length;
+      this.filterData = results;
       this.selectedItem = null;
     });
   }
@@ -116,6 +124,7 @@ export class EntityComponent {
       this.entityService.add(entity).subscribe((results) => {
         this.rows.push(results);
         this.rows = [...this.rows];
+        this.totalElements = this.rows.length;
         dialogRef.close();
       });
     });
@@ -179,5 +188,123 @@ export class EntityComponent {
 
   onSort(e: any) {
     console.log(e);
+  }
+  onFilter() {
+    const columns: QueryColumns[] = [
+      {
+        name: "id",
+        displayName: "Id",
+        dataType: "number",
+      },
+      {
+        name: "name",
+        displayName: "Name",
+        dataType: "string",
+      },
+      {
+        name: "updatedBy",
+        displayName: "Updated By",
+        dataType: "string",
+      },
+      {
+        name: "updatedDate",
+        displayName: "Updated Date",
+        dataType: "string",
+      },
+    ];
+    const data: FilterData = {
+      //query: query,
+      //config: config,
+      config: null,
+      columns: columns,
+    };
+
+    const dialogResult = this.dialogService.openFilterDialog(data);
+    dialogResult.afterClosed().subscribe((val) => {
+      if (val !== null) {
+        this.temp = [];
+        this.rows = this.filterData;
+        console.log(val);
+        val.map((item: any, index: number) => {
+          switch (item.operatorType) {
+            case "LESS_THAN": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key] < item.value;
+              });
+              this.temp.push(...row);
+              this.rows = this.temp;
+              break;
+            }
+            case "EQUALS": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key] == item.value;
+              });
+
+              this.temp.push(...row);
+              this.rows = this.temp;
+              break;
+            }
+            case "GREATER_THAN": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key] > item.value;
+              });
+              this.temp.push(...row);
+              this.rows = this.temp;
+
+              break;
+            }
+            case "GREATER_THAN_EQUALS": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key] >= item.value;
+              });
+              this.temp.push(...row);
+              this.rows = this.temp;
+              break;
+            }
+            case "LESS_THAN_EQUALS": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key] <= item.value;
+              });
+              this.temp.push(...row);
+              this.rows = this.temp;
+
+              break;
+            }
+            case "IS_NOT_EQUAL": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key] != item.value;
+              });
+              this.temp.push(...row);
+              this.rows = this.temp;
+
+              break;
+            }
+            case "LIKE": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key].includes(item.value);
+              });
+              this.temp.push(...row);
+              this.rows = this.temp;
+              break;
+            }
+            case "ILIKE": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key].endsWith(item.value);
+              });
+              this.temp.push(...row);
+              this.rows = this.temp;
+
+              break;
+            }
+            default: {
+              break;
+            }
+          }
+        });
+
+        const result: any = [...new Set(this.rows)];
+        this.rows = result;
+      }
+    });
   }
 }

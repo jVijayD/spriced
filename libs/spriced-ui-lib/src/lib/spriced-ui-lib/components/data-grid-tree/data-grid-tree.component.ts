@@ -16,13 +16,13 @@ import {
   SelectionType,
   SortType,
 } from "@swimlane/ngx-datatable";
-import {  Paginate } from "../data-grid/data-grid.component";
+import { Paginate } from "../data-grid/data-grid.component";
 import { MatIconModule } from "@angular/material/icon";
 
 @Component({
   selector: "sp-data-grid-tree",
   standalone: true,
-  imports: [CommonModule, NgxDatatableModule,MatIconModule],
+  imports: [CommonModule, NgxDatatableModule, MatIconModule],
   templateUrl: "./data-grid-tree.component.html",
   styleUrls: ["./data-grid-tree.component.scss"],
 })
@@ -116,11 +116,15 @@ export class DataGridTreeComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.table.virtualization = true;
   }
-  onTreeAction(event:any)
-  {
-    this.onTreeExpand.emit(event)
+  onTreeAction(event: any) {
+    this.onTreeExpand.emit(event);
   }
-  
+  public renderData(data: any, itemHeader: Head) {
+    if (itemHeader.pipe && itemHeader.pipe instanceof Function) {
+      return itemHeader.pipe(data);
+    }
+    return data;
+  }
 }
 export interface Head {
   name: string;
@@ -134,5 +138,5 @@ export interface Head {
   isFilterable?: boolean;
   sortDirection?: "asc" | "desc";
   canAutoResize?: boolean;
-  pipe?: PipeTransform;
+  pipe?: unknown;
 }

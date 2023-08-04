@@ -131,10 +131,11 @@
                 *ngFor="let item of entityList"
                 [value]="item.id"
                 [disabled]="local_data.id === item.id"
-                >{{ item.name }}</mat-option
+                >{{ item.displayName }}</mat-option
               >
             </mat-select>
           </mat-form-field>
+          <div *ngIf="attDetails.type === 'LOOKUP'"></div>
           <mat-checkbox
             *ngIf="attDetails.type !== 'LOOKUP'"
             class="mb-2"
@@ -162,9 +163,10 @@
             appearance="outline"
             class="mb-2"
             *ngIf="
-              attDetails.dataType === 'TEXT' ||
-              (attDetails.dataType === 'LINK' &&
-                attDetails.type === 'FREE_FORM')
+              (attDetails.dataType === 'TEXT' ||
+                attDetails.dataType === 'STRING_VAR' ||
+                attDetails.dataType === 'LINK') &&
+              attDetails.type !== 'LOOKUP'
             "
           >
             <mat-label>Length</mat-label

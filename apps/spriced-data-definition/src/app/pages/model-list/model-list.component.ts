@@ -18,6 +18,7 @@ import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import { ModelService } from "../../services/model.service";
 import { ModelAddComponent } from "../model/components/model-add/model-add.component";
 import { EntityService } from "../../services/entity.service";
+import * as moment from "moment";
 
 @Component({
   selector: "sp-model-list",
@@ -36,29 +37,29 @@ import { EntityService } from "../../services/entity.service";
 })
 export class ModelListComponent {
   headers: Head[] = [
-   
     {
       column: "displayName",
       name: "Display Name",
       canAutoResize: true,
       isSortable: true,
-      isTreeColumn:true
+      isTreeColumn: true,
     },
     {
       column: "updatedBy",
       name: "Updated By",
       canAutoResize: true,
       isSortable: true,
-      isTreeColumn:false
-
+      isTreeColumn: false,
     },
     {
       column: "updatedDate",
       name: "Updated Date",
       canAutoResize: true,
       isSortable: true,
-      isTreeColumn:false
-
+      isTreeColumn: false,
+      pipe: (data: any) => {
+        return moment(data).format("MM-DD-YYYY");
+      },
     },
   ];
   columnMode: ColumnMode = ColumnMode.force;
@@ -76,10 +77,9 @@ export class ModelListComponent {
   constructor(
     private dialogService: DialogService,
     private snackbarService: SnackBarService,
-  
+
     private modelService: ModelService,
     private entityService: EntityService
-
   ) {}
   ngOnInit(): void {
     this.load();
@@ -87,62 +87,61 @@ export class ModelListComponent {
   load() {
     this.modelService.loadAllModels().subscribe((data: any) => {
       this.rows = data.map((d: any) => {
-        d.treeStatus = 'collapsed';
+        d.treeStatus = "collapsed";
         d.parentId = null;
-        d.icon = 'schema';
+        d.icon = "schema";
         return d;
       });
-      this.totalElements=data.length
+      this.totalElements = data.length;
     });
   }
   onTreeAction(event: any) {
     const row = event.row;
-    if (row.treeStatus === 'collapsed') {
+    if (row.treeStatus === "collapsed") {
       if (row.expandedOnce !== true) {
-        row.treeStatus = 'loading';
+        row.treeStatus = "loading";
         if (row.level == 0) {
-          this.entityService.loadEntityByModel(row.id).subscribe((data:any) => {
-            row.expandedOnce = true;
-            this.entities = data.map((d: any) => {
-              d.treeStatus = 'collapsed';
-              d.parentId = row.id;
-              d.icon = 'table_chart';
-              d.id = d.name + d.id;
-              return d;
+          this.entityService
+            .loadEntityByModel(row.id)
+            .subscribe((data: any) => {
+              row.expandedOnce = true;
+              this.entities = data.map((d: any) => {
+                d.treeStatus = "collapsed";
+                d.parentId = row.id;
+                d.icon = "table_chart";
+                d.id = d.name + d.id;
+                return d;
+              });
+              row.treeStatus = "expanded";
+              this.rows = [...this.rows, ...this.entities];
             });
-            row.treeStatus = 'expanded';
-            this.rows = [...this.rows, ...this.entities];
-          });
         } else {
           this.entities = row.attributes.map((d: any) => {
             row.expandedOnce = true;
-            d.treeStatus = 'disabled';
+            d.treeStatus = "disabled";
             d.parentId = row.id;
-            d.icon = 'view_column';
+            d.icon = "view_column";
             return d;
           });
-          row.treeStatus = 'expanded';
+          row.treeStatus = "expanded";
           this.rows = [...this.rows, ...this.entities];
         }
       } else {
-        row.treeStatus = 'expanded';
+        row.treeStatus = "expanded";
         this.rows = [...this.rows];
       }
     } else {
-      row.treeStatus = 'collapsed';
+      row.treeStatus = "collapsed";
       this.rows = [...this.rows];
     }
   }
-
 
   onRefresh() {
     this.load();
   }
 
-  onView() {
-    
-  }
-  onAdd(){}
+  onView() {}
+  onAdd() {}
   onPaginate(e: Paginate) {
     //this.rows = this.getData(e.limit, e.offset);
   }
@@ -154,5 +153,4 @@ export class ModelListComponent {
   onSort(e: any) {
     console.log(e);
   }
- 
 }
