@@ -36,6 +36,7 @@ public class Attribute {
 	private String formatter = null;
 	private int numberOfDecimalValues = 0;
 	private ModelPermission permission = ModelPermission.DENY;
+	private String referencedTableDisplayName = null;
 	//constraints
 	private ConstraintType constraintType = ConstraintType.NONE;
 	
