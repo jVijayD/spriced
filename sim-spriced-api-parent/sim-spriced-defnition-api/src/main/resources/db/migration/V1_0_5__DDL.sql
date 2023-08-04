@@ -106,3 +106,5 @@ CREATE TABLE IF NOT EXISTS audit_table
 --    END IF;
 --END;
 --$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+

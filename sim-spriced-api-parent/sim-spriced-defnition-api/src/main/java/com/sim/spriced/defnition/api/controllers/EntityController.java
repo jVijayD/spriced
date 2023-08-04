@@ -23,6 +23,7 @@ import com.sim.spriced.defnition.data.service.IEntityDefnitionService;
 import com.sim.spriced.framework.models.EntityDefnition;
 
 import io.micrometer.core.annotation.Timed;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @CrossOrigin(origins = "*")
 @RestController()
@@ -60,19 +61,24 @@ public class EntityController {
 		return this.entityDefnitionService.delete(id);
 	}
 	
-	@Timed(value = "entity.getAll.time", description = "Time taken to return entities.")
-	@GetMapping("/models/{groupId}/entities")
-	public ResponseEntity<List<EntityDto>> getAll(@PathVariable int groupId) {
-		// TO DO: temporary Sorting
-		List<EntityDefnition> entityList = this.entityDefnitionService.fetchAll(groupId);
-		entityList.sort((a,b)->a.getDisplayName().compareTo(b.getDisplayName()));
-		return new ResponseEntity<>(mapper.toEntityDtoList(entityList), HttpStatus.OK);
-	}
-	
+        @Timed(value = "entity.getAll.time", description = "Time taken to return entities.")
+        @GetMapping("/models/{groupId}/entities")
+        public ResponseEntity<List<EntityDto>> getAll(@PathVariable int groupId, @RequestParam(required = false) String roleName) {
+            // TO DO: temporary Sorting
+            List<EntityDefnition> entityList;
+            if (roleName != null) {
+                entityList = this.entityDefnitionService.fetchByRole(groupId, roleName);
+            } else {
+                entityList = this.entityDefnitionService.fetchAll(groupId);
+            }
+            entityList.sort((a, b) -> a.getDisplayName().compareTo(b.getDisplayName()));
+            return new ResponseEntity<>(mapper.toEntityDtoList(entityList), HttpStatus.OK);
+        }
+        
 	@Timed(value = "entity.get.time", description = "Time taken to return entity.")
 	@GetMapping("/entities/{id}")
 	public ResponseEntity<EntityDto> get(@PathVariable int id) {
-		return new ResponseEntity<>(mapper.toEntityDto(this.entityDefnitionService.fetch(id,false)), HttpStatus.OK);
+		return new ResponseEntity<>(mapper.toEntityDto(this.entityDefnitionService.fetchByRole(id)), HttpStatus.OK);
 	}
 	
 	
