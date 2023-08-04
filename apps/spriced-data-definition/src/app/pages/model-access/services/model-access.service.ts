@@ -22,7 +22,7 @@ export class ModelAccessService {
     .set("roles", "admin,manager,viewer")
     .set("applications", "app1,app2,app3")
     .set("Access-Control-Allow-Origin", "*");
-  api_url = "http://localhost:8080";
+  api_url = process.env["NX_API_DEFINITION_URL"] as string;
   getRoles() {
     return [
       { name: "admin" },
@@ -44,7 +44,7 @@ export class ModelAccessService {
   public saveModelAccessPermission(
     body: RoleGroupPermissionMapping
   ): Observable<any> {
-    return this.http.post(`${this.api_url}/modelaccess`, body, {
+    return this.http.post(`${this.api_url}/accessmanagement`, body, {
       headers: headers,
     });
   }

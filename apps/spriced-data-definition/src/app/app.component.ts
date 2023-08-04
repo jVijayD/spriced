@@ -36,6 +36,11 @@ export class AppComponent {
       active: false,
       path: "/spriced-data-definitions-ui/rule-management",
     },
+    {
+      name: "Model Access Management",
+      active: false,
+      path: "/spriced-data-definition/model-access",
+    },
   ];
   constructor(private appDataService: AppDataService) {
     this.appDataService.setMenuData(this.menuDItems);

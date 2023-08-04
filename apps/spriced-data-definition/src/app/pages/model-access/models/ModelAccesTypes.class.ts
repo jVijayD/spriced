@@ -101,19 +101,19 @@ export class ModelDTO extends TreeNode {
 export class EntityDTO extends TreeNode {
   isDisabled: boolean = false;
   name!: string;
-  entity_id: number;
+  entityId: number;
   model_id: number;
   private _attributes: AttributeDTO[] = [];
 
   constructor(
     id?: string | number,
     parentId?: string | number | null,
-    entity_id?: number,
+    entityId?: number,
     displayName?: string,
     model_id?: number
   ) {
     super(id, parentId, displayName);
-    this.entity_id = entity_id ? entity_id : 0;
+    this.entityId = entityId ? entityId : 0;
     this.model_id = model_id ? model_id : 0;
   }
 
@@ -186,20 +186,20 @@ export enum PERMISSIONS {
 
 export class RoleEntityPermissionMapping {
   id?: number;
-  group_id?: number | string;
+  groupId?: number | string;
   role?: String;
-  entity_id: number | string;
+  entityId: number | string;
   permission: PERMISSIONS;
   attributedetails?: string;
   constructor(
-    entity_id: number,
+    entityId: number,
     permission: PERMISSIONS,
-    group_id?: number,
+    groupId?: number,
     role?: string,
     attributedetails?: string
   ) {
-    this.entity_id = entity_id;
-    this.group_id = group_id ? group_id : 0;
+    this.entityId = entityId;
+    this.groupId = groupId ? groupId : 0;
     this.permission = permission;
     this.role = role ? role : "";
     this.attributedetails = attributedetails ? attributedetails : "";
@@ -207,14 +207,14 @@ export class RoleEntityPermissionMapping {
 }
 export class RoleGroupPermissionMapping {
   id?: number;
-  group_id: number | string;
+  groupId: number | string;
   role: string;
   permission: PERMISSIONS;
   updatedDate?: string;
   updatedBy?: string;
   entityPermissions?: RoleEntityPermissionMapping[];
-  constructor(group_id: number, role: string, permission?: PERMISSIONS) {
-    this.group_id = group_id;
+  constructor(groupId: number, role: string, permission?: PERMISSIONS) {
+    this.groupId = groupId;
     this.role = role;
     this.permission = permission ? permission : PERMISSIONS.DENY;
   }

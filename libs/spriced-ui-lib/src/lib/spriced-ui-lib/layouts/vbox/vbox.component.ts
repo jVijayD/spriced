@@ -5,7 +5,7 @@ import { Component, Input } from "@angular/core";
   selector: "sp-vbox",
   template: `
     <div
-      class="flex flex-column"
+      class="flex flex-col"
       [ngClass]="[
         noGap ? '' : 'gap-y-5',
         noMarginY ? '' : 'm-y-5',
