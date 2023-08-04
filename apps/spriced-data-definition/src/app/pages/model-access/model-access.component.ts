@@ -3,14 +3,18 @@ import { ChangeDetectorRef, Component } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatSelectChange, MatSelectModule } from "@angular/material/select";
-import { HboxComponent, VboxComponent } from "@spriced-frontend/spriced-ui-lib";
+import {
+  DialogService,
+  DialogueModule,
+  HboxComponent,
+  VboxComponent,
+} from "@spriced-frontend/spriced-ui-lib";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import {
   ColumnMode,
   NgxDatatableModule,
   SelectionType,
 } from "@swimlane/ngx-datatable";
-import { DataDefListService } from "../../services/datadef.service";
 import { HttpClient, HttpClientModule } from "@angular/common/http";
 import { MatButtonModule } from "@angular/material/button";
 import { ModelAccessService } from "./services/model-access.service";
@@ -23,9 +27,10 @@ import {
   RoleDTO,
   EntityDTO,
   AttributeDTO,
+  RoleGroupPermissionMapping,
+  RoleEntityPermissionMapping,
 } from "./models/ModelAccesTypes.class";
-// import { ModelData } from '../model-view/model-view.component';
-const POPULATE_ATTRIBUTES = true; 
+const POPULATE_ATTRIBUTES = true;
 @Component({
   selector: "sp-model-access",
   standalone: true,
@@ -40,13 +45,13 @@ const POPULATE_ATTRIBUTES = true;
     MatFormFieldModule,
     MatSelectModule,
     CommonModule,
+    DialogueModule,
   ],
-  providers: [DataDefListService, HttpClient],
+  providers: [HttpClient, DialogService],
   templateUrl: "./model-access.component.html",
   styleUrls: ["./model-access.component.scss"],
 })
 export class ModelAccessComponent {
-
   ColumnMode = ColumnMode;
   SelectionType = SelectionType;
 
@@ -59,16 +64,19 @@ export class ModelAccessComponent {
 
   constructor(
     private cd: ChangeDetectorRef,
-    private service: DataDefListService,
+    private dialogService: DialogService,
     private myService: ModelAccessService // private service: DataDefListService
   ) {
     this.onInit();
   }
   onInit() {
     this.roleList = this.myService.getRoles();
-    this.service.getModels().subscribe((data: ModelDTO[]) => {
-      this.modelList = data.map(m=>new ModelDTO().parse(m));
-      this.modelListBkp = data.map(m=>new ModelDTO().parse(m));
+    this.myService.getModels().subscribe((data: ModelDTO[]) => {
+      this.modelList = data.map((m) => {
+        let mdl = new ModelDTO(Number.parseInt(m.id.toString())).parse(m);
+        // this.modelListBkp.push(mdl.parse(m));
+        return mdl;
+      });
     });
   }
 
@@ -76,49 +84,122 @@ export class ModelAccessComponent {
     return Object.keys(PERMISSIONS);
   }
 
-  onSaveClick() {}
+  onSaveClick() {
+    if (
+      this.selectedModel &&
+      this.selectedRole &&
+      this.selectedModel.id &&
+      this.selectedRole.name
+    ) {
+      let modelRecord = this.treeStore.data.find(
+        (m) => m.id == this.selectedModel?.id
+      );
+      let groupPermission: RoleGroupPermissionMapping =
+        new RoleGroupPermissionMapping(
+          this.selectedModel.model_id,
+          this.selectedRole.name,
+          modelRecord?.permission
+        );
+      groupPermission.entityPermissions = this.treeStore
+        .getChildren(modelRecord)
+        .filter((n) => n.permission != PERMISSIONS.DENY)
+        .map(
+          (en: any) =>
+            new RoleEntityPermissionMapping(
+              en.entity_id,
+              en.permission,
+              this.selectedModel?.model_id,
+              groupPermission.role,
+              en?.attributes
+                .filter((e: AttributeDTO) => e.permission != PERMISSIONS.DENY)
+                .map((e: AttributeDTO) => {
+                  return { id: e.id, permission: e.permission };
+                })
+            )
+        );
+      this.myService
+        .saveModelAccessPermission(groupPermission)
+        .subscribe((data: any) => {
+          console.log(data);
+          this.onClearClick();
+        });
+    }
+  }
 
   onClearClick() {
     this.selectedRole = null;
     this.selectedModel = null;
-    this.treeStore = new TreeStore();
-    this.modelList = this.modelListBkp;
+    this.treeStore.data = [];
+    this.modelList.forEach((m) => (m.expandedOnce = false));
+  }
+
+  onSelectRole(event: MatSelectChange) {
+    if (!this.selectedModel) return;
+    if (this.hasModified()) {
+      this.showSaveChangesDialogue(event);
+    } else {
+      this.loadTree(this.selectedModel);
+    }
+  }
+
+  loadTree(mdl: ModelDTO) {
+    this.treeStore.data = [mdl];
+    this.populateEntities(mdl);
   }
 
   onSelectModel(event: MatSelectChange) {
     if (this.hasModified()) {
-      this.showSaveChangesDialogue();
+      this.showSaveChangesDialogue(event);
     } else {
-      let dto = this.getModelById(this.modelList, event.value);
-      if (dto) {
-        this.treeStore.data = [dto];
-      } else {
-        this.treeStore.data = [];
-      }
+      this.loadTree(event.value);
     }
   }
-  getModelById(modelList: ModelDTO[], value: ModelDTO): ModelDTO | undefined {
-    return modelList.find((m: ModelDTO) => m == value);
+
+  // getModelById(modelList: ModelDTO[], value: ModelDTO): ModelDTO | undefined {
+  //   return modelList.find((m: ModelDTO) => m == value);
+  // }
+
+  showSaveChangesDialogue(event: MatSelectChange) {
+    const dialogResult = this.dialogService.openConfirmDialoge({
+      title: "Confirm",
+      icon: "public",
+      message:
+        "All the unsaved changes will be lost. Do you want to save the changes ?",
+      maxWidth: 400,
+    });
+
+    dialogResult.afterClosed().subscribe((val) => {
+      if (val) {
+        this.onSaveClick();
+      } else if (this.selectedModel) {
+        this.loadTree(this.selectedModel);
+      }
+    });
   }
-  showSaveChangesDialogue() {
-    throw new Error("Method not implemented.");
-  }
+
   hasModified() {
-    return this.treeStore.data.find((node: TreeNode) => node.hasModified);
+    return this.treeStore.data.find((node: TreeNode) => node.hasModified());
   }
 
   private populateEntities(model: ModelDTO) {
-    this.service.getEntities(model.id).subscribe((data: EntityDTO[]) => {
-      let entitiesList = data.map((d: EntityDTO) => {
-        d.parentId = model.id;
-        d.id = d.name + d.id;
-        return new EntityDTO().parse(d);
+    if (!this.selectedRole) return;
+    this.myService
+      .getEntities(model.id, this.selectedRole.name)
+      .subscribe((data: EntityDTO[]) => {
+        let entitiesList = data.map((d: EntityDTO) => {
+          d.entity_id = Number.parseInt(d.id.toString());
+          d.parentId = model.id;
+          d.id = d.name + d.id;
+          return new EntityDTO().parse(d);
+        });
+        this.treeStore.appendData(entitiesList);
+        if (POPULATE_ATTRIBUTES) {
+          this.treeStore.appendData(entitiesList.flatMap((e) => e.attributes));
+        }
+        if (entitiesList[0]) {
+          this.updateParent(entitiesList[0]);
+        }
       });
-      this.treeStore.appendData(entitiesList);
-      if(POPULATE_ATTRIBUTES){
-        this.treeStore.appendData(entitiesList.flatMap(e=>e.attributes).filter(a=>a));
-      }
-    });
   }
 
   onTreeAction(event: any) {
@@ -126,8 +207,8 @@ export class ModelAccessComponent {
     if (row.expandable == false) return;
     if (row.expandedOnce !== true) {
       if (row.level == 0) {
-        const model: ModelDTO = event.row;
-        this.populateEntities(model);
+        // const model: ModelDTO = event.row;
+        // this.populateEntities(model);
       } else {
         const entity: EntityDTO = event.row;
         this.treeStore.appendData(entity.attributes);
@@ -139,6 +220,7 @@ export class ModelAccessComponent {
     this.treeStore.refreshData();
     this.cd.detectChanges();
   }
+
   updateValue(event: { value: any }, rowIndex: number, record: TreeNode) {
     // const record = this.rows[rowIndex];
     // this.editing[rowIndex] = false;
@@ -172,7 +254,7 @@ export class ModelAccessComponent {
   updateChildren(record: TreeNode) {
     this.treeStore.getChildren(record).forEach((node: TreeNode) => {
       node.permission = record.permission;
-      
+
       this.updateChildren(node);
     });
   }

@@ -1,4 +1,4 @@
-import { Attribute } from "@angular/core";
+import { Attribute, Type } from "@angular/core";
 
 export interface ModelData {
   file: string;
@@ -12,12 +12,13 @@ export interface RoleDTO {
 
 export class TreeNode {
   displayName: string = "";
-  id: string | number = 0;
+  id: number | string = 0;
   parentId: string | number | null = 0;
   expandable: boolean = true;
   level!: number;
   expandedOnce: boolean = false;
   initialData?: TreeNode;
+  initialPermission?: string;
   icon: string = "schema";
   treeStatus: string = "collapsed";
   private _expanded: boolean = false;
@@ -33,6 +34,13 @@ export class TreeNode {
     let retObj: this = Object.create(this);
     Object.assign(retObj, ob);
     Object.setPrototypeOf(retObj, this);
+    return retObj;
+  }
+
+  public mapTo(ob: Object) {
+    let retObj = Object.create(ob);
+    Object.assign(ob, this);
+    Object.setPrototypeOf(retObj, ob);
     return retObj;
   }
 
@@ -57,6 +65,7 @@ export class TreeNode {
     this.displayName = displayName ? displayName : this.displayName;
     this.parentId = parentId ? parentId : this.parentId;
     this.initialData = Object.assign({}, this);
+    this.initialPermission =  this.permission;
   }
 
   public hasModified(): boolean {
@@ -64,22 +73,27 @@ export class TreeNode {
     delete a.initialData;
     let b = this.initialData;
     delete b?.initialData;
-    return JSON.stringify(a) !== JSON.stringify(b);
+    // return JSON.stringify(a) !== JSON.stringify(b);
+    return this.initialPermission !== this.permission;
   }
 }
 export class AttributeDTO extends TreeNode {
+  attribute_id?: string;
   name!: string;
 }
 export class ModelDTO extends TreeNode {
   isDisabled: boolean = false;
+  model_id: number;
   name: string = "";
   constructor(
+    model_id: number,
     id?: string | number,
     parentId?: string | number | null,
     displayName?: string,
     name?: string
   ) {
     super(id, parentId, displayName);
+    this.model_id = model_id;
     name ? (this.name = name) : "";
   }
 }
@@ -87,14 +101,20 @@ export class ModelDTO extends TreeNode {
 export class EntityDTO extends TreeNode {
   isDisabled: boolean = false;
   name!: string;
+  entity_id: number;
+  model_id: number;
   private _attributes: AttributeDTO[] = [];
 
   constructor(
     id?: string | number,
     parentId?: string | number | null,
-    displayName?: string
+    entity_id?: number,
+    displayName?: string,
+    model_id?: number
   ) {
     super(id, parentId, displayName);
+    this.entity_id = entity_id ? entity_id : 0;
+    this.model_id = model_id ? model_id : 0;
   }
 
   public get attributes(): AttributeDTO[] {
@@ -102,23 +122,23 @@ export class EntityDTO extends TreeNode {
   }
 
   public set attributes(attributes: AttributeDTO[]) {
+    let attribPermissions = new Set<PERMISSIONS>();
     this._attributes = attributes.map((d: AttributeDTO) => {
+      d.attribute_id = d.id.toString();
       d.treeStatus = "disabled";
       d.expandable = false;
       d.parentId = this.id;
       d.displayName = d.name;
       d.icon = "view_column";
+      attribPermissions.add(d.permission);
       return new AttributeDTO().parse(d);
     });
-  }
-  public override get permission(): PERMISSIONS {
-    return super.permission;
-  }
-  public override set permission(v: PERMISSIONS) {
-    super.permission = v;
-    if (!this.expandedOnce) {
-      this.attributes.forEach((a) => (a.permission = v));
-    }
+    this.permission =
+      attribPermissions.size > 1
+        ? PERMISSIONS.PARTIAL
+        : attribPermissions.size == 1
+        ? [...attribPermissions][0]
+        : PERMISSIONS.DENY;
   }
 }
 
@@ -162,4 +182,40 @@ export enum PERMISSIONS {
   UPDATE = "UPDATE",
   DENY = "DENY",
   PARTIAL = "PARTIAL",
+}
+
+export class RoleEntityPermissionMapping {
+  id?: number;
+  group_id?: number | string;
+  role?: String;
+  entity_id: number | string;
+  permission: PERMISSIONS;
+  attributedetails?: string;
+  constructor(
+    entity_id: number,
+    permission: PERMISSIONS,
+    group_id?: number,
+    role?: string,
+    attributedetails?: string
+  ) {
+    this.entity_id = entity_id;
+    this.group_id = group_id ? group_id : 0;
+    this.permission = permission;
+    this.role = role ? role : "";
+    this.attributedetails = attributedetails ? attributedetails : "";
+  }
+}
+export class RoleGroupPermissionMapping {
+  id?: number;
+  group_id: number | string;
+  role: string;
+  permission: PERMISSIONS;
+  updatedDate?: string;
+  updatedBy?: string;
+  entityPermissions?: RoleEntityPermissionMapping[];
+  constructor(group_id: number, role: string, permission?: PERMISSIONS) {
+    this.group_id = group_id;
+    this.role = role;
+    this.permission = permission ? permission : PERMISSIONS.DENY;
+  }
 }
