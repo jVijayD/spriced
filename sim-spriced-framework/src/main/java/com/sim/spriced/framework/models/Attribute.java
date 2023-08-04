@@ -34,6 +34,7 @@ public class Attribute {
 	private Object referencedTableId = null;
 	private String formatter = null;
 	private int numberOfDecimalValues = 0;
+	private String referencedTableDisplayName = null;
 	
 	//constraints
 	private ConstraintType constraintType = ConstraintType.NONE;

@@ -148,7 +148,7 @@ public class EntityIngestionService implements IEntityIngestionService, IObserve
         attributes.forEach(attribute ->{
             switch (attribute.getDataType()) {
                 case INTEGER, AUTO -> attributeList.put(attribute.getName(), "int64");
-                case DECIMAL, DOUBLE -> attributeList.put(attribute.getName(), "float64");
+                case DECIMAL, DOUBLE, FLOAT -> attributeList.put(attribute.getName(), "float64");
             }
         });
         return attributeList;
