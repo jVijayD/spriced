@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS public.role_entity_permission_mapping
     permission character varying(25) COLLATE pg_catalog."default" NOT NULL,
     updated_by character varying COLLATE pg_catalog."default" NOT NULL,
     updated_date timestamp with time zone NOT NULL,
-    attributedetails json,
+    attribute_details json,
     CONSTRAINT fk_entity_id FOREIGN KEY (entity_id)
         REFERENCES public.entity (id) MATCH SIMPLE
         ON UPDATE NO ACTION
