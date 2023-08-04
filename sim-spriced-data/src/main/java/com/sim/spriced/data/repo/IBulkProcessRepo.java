@@ -1,9 +1,9 @@
 package com.sim.spriced.data.repo;
 
-import com.sim.spriced.framework.models.FileEntity;
+import com.sim.spriced.framework.models.BulkEntityDetails;
 
-public interface IDataFileRepo {
+public interface IBulkProcessRepo {
 	
-	FileEntity saveFileDetails(FileEntity fileEntity);
+	BulkEntityDetails saveFileDetails(BulkEntityDetails fileEntity);
 
 }

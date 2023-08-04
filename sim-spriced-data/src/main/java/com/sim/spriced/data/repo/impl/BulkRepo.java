@@ -1,17 +1,21 @@
 package com.sim.spriced.data.repo.impl;
 
+import com.sim.spriced.framework.models.BulkEntityDetails;
+
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
-import com.sim.spriced.data.repo.IDataFileRepo;
-import com.sim.spriced.framework.models.FileEntity;
+import com.sim.spriced.data.repo.IBulkProcessRepo;
 import com.sim.spriced.framework.repo.BaseRepo;
 
 
 @Repository
-public class FileUploadRepo extends BaseRepo implements IDataFileRepo {
+public class BulkRepo extends BaseRepo implements IBulkProcessRepo{
 
 	@Override
-	public FileEntity saveFileDetails(FileEntity fileEntity) {
-		return super.create(fileEntity);
+	public BulkEntityDetails saveFileDetails(BulkEntityDetails bulkEntityDetails) {
+		return super.create(bulkEntityDetails);
 	}
+
 }
