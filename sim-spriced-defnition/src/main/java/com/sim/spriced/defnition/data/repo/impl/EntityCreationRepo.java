@@ -299,7 +299,9 @@ private static final int PRECISION_DEFAULT_VALUE=1000;
 			dataTypeMapper.put(AttributeConstants.DataType.BUSINESS_SEQUENCE,
 					(dataType, size, nullable, defaultValue) -> SQLDataType.NVARCHAR(20));
 			dataTypeMapper.put(AttributeConstants.DataType.TIME_STAMP,
-					(dataType, size, nullable, defaultValue) -> SQLDataType.TIMESTAMP);
+					(dataType, size, nullable, defaultValue) -> SQLDataType.TIMESTAMPWITHTIMEZONE);
+			dataTypeMapper.put(AttributeConstants.DataType.TIME_STAMP_WITH_TIMEZONE,
+					(dataType, size, nullable, defaultValue) -> SQLDataType.TIMESTAMPWITHTIMEZONE);
 			dataTypeMapper.put(AttributeConstants.DataType.DATE,
 					(dataType, size, nullable, defaultValue) -> SQLDataType.DATE);
 			dataTypeMapper.put(AttributeConstants.DataType.DATE_TIME,
@@ -331,6 +333,27 @@ private static final int PRECISION_DEFAULT_VALUE=1000;
 			Result<?> result = this.context.selectFrom(table("entity")).where(condition).fetch();
 			return String.valueOf(result.get(0).get("name"));
 		}
+	}
+
+	@Override
+	public void createTrigger(String entityName){
+		String trigger = "CREATE TRIGGER " + entityName + "_trigger " +
+				"AFTER INSERT OR UPDATE ON " + entityName + " FOR EACH ROW " +
+				"EXECUTE FUNCTION history_trigger();";
+		context.execute(trigger);
+
+		//trigger for storing entity values as json on insert
+//		String triggerJsonFormat = "CREATE TRIGGER " + entityName + "_trigger " +
+//				"AFTER INSERT ON " + entityName + " FOR EACH ROW " +
+//				"EXECUTE FUNCTION history_trigger_json();";
+//		context.execute(triggerJsonFormat);
+	}
+
+	@Override
+	public void dropTrigger(String entityName){
+		String dropTriggerQuery = "DROP TRIGGER IF EXISTS " + entityName + "_trigger "+
+				"ON " + entityName + ";";
+		context.execute(dropTriggerQuery);
 	}
 
 	@FunctionalInterface

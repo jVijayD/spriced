@@ -29,4 +29,6 @@ public interface IEntityCreationRepo {
 			List<Attribute> deletedAttributes);
 	public void alterUniqueKey(String entityName, List<Attribute> addedAttributes,
 			List<Attribute> deletedAttributes);
+	public void createTrigger(String entityName);
+	public void dropTrigger(String entityName);
 }

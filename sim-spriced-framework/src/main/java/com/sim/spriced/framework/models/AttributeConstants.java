@@ -6,7 +6,7 @@ public class AttributeConstants {
 
 		BOOLEAN("Boolean"), LINK("Link"), BIT("Bit"), INTEGER("Integer"), DECIMAL("Decimal"), DOUBLE("Double"),
 		FLOAT("Float"), TEXT("Text"), STRING("String"), STRING_VAR("Fixed Length String"), CHARACTER("Character"),
-		JSON("Json"), XML("Xml"),AUTO("Identity"),BUSINESS_SEQUENCE("Business Sequence"),TIME_STAMP("Timestamp"),DATE("Date"),DATE_TIME("Date Time");
+		JSON("Json"), XML("Xml"),AUTO("Identity"),BUSINESS_SEQUENCE("Business Sequence"),TIME_STAMP("Timestamp"),DATE("Date"),DATE_TIME("Date Time"),TIME_STAMP_WITH_TIMEZONE("timestamp with time zone");
 
 		private final String displayName;
 

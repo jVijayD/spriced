@@ -1,6 +1,7 @@
 package com.sim.spriced.framework.repo;
 
 import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,6 +44,9 @@ import com.sim.spriced.framework.annotations.ExtraColumnData;
 import com.sim.spriced.framework.annotations.IDType;
 import com.sim.spriced.framework.constants.ModelConstants;
 import com.sim.spriced.framework.context.SPricedContextManager;
+import com.sim.spriced.framework.data.filters.Criteria;
+import com.sim.spriced.framework.data.filters.Filter;
+import com.sim.spriced.framework.data.filters.FilterGenerator;
 import com.sim.spriced.framework.exceptions.data.InvalidConditionException;
 import com.sim.spriced.framework.exceptions.data.InvalidEntityFieldMappingException;
 import com.sim.spriced.framework.exceptions.data.InvalidFieldMappingException;
@@ -50,10 +54,13 @@ import com.sim.spriced.framework.exceptions.data.InvalidTypeConversionException;
 import com.sim.spriced.framework.exceptions.data.NotFoundException;
 import com.sim.spriced.framework.exceptions.data.NullPrimaryKeyException;
 import com.sim.spriced.framework.exceptions.data.UniqueConstraintException;
+import com.sim.spriced.framework.models.BaseEntity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jooq.Select;
+import org.jooq.SelectSeekStepN;
 
 @Repository
 public abstract class BaseRepo {
@@ -129,6 +136,20 @@ public abstract class BaseRepo {
 		return context.batch(queries).execute();
 	}
 
+        protected int createWithoutReturn(BaseEntity entity) {
+            try {
+                TableData tableDetails = this.getTableData(entity);
+                tableDetails.setUpdatedByAndUpdatedDate(
+                        this.contextManager
+                                .getRequestContext()
+                                .getUser(), this.timeStamp);
+                return this.createQueryForGeneratedID(tableDetails).execute();
+            } catch (DataIntegrityViolationException ex) {
+                ex.printStackTrace();
+            }
+            return 0;
+        }
+        
 	// Dynamic SQL based on Annotations
 	protected <T> T create(T entity) {
 		TableData tableDetails = this.getTableData(entity);
@@ -295,6 +316,12 @@ public abstract class BaseRepo {
 		}).collect(Collectors.toList());
 
 	}
+        
+        protected Collection<SortField<?>> getOrderBy(List<Criteria.Sorter> sorters) {
+            return sorters.stream().map(sorter -> (Criteria.Sorter.Direction.ASC == sorter.getDirection() ?
+                                                   column(sorter.getProperty()).asc() : column(sorter.getProperty()).desc()))
+                    .collect(Collectors.toList());
+        }
 
 	public <T> List<T> fetchMultiple(T entity, Function<Record, T> converter) {
 		TableData tableDetails = this.getTableData(entity);
@@ -378,7 +405,7 @@ public abstract class BaseRepo {
 
 		return new PageImpl<>(queryResults);
 	}
-
+        
 	public <T> Page<T> fetchAll(T entity, Function<Record, T> converter, Pageable pagable) {
 
 		TableData tableDetails = this.getTableData(entity);
@@ -430,7 +457,7 @@ public abstract class BaseRepo {
 		List<T> queryResults = result.map(converter::apply);
 		return new PageImpl<>(queryResults);
 	}
-
+        
 	public <T> List<T> fetchAll(String tableName, Condition condition, Class<T> type) {
 		if (condition == null) {
 			return this.context.selectFrom(table(tableName)).fetchInto(type);
@@ -448,7 +475,25 @@ public abstract class BaseRepo {
 
 		return result.map(converter::apply);
 	}
-
+        
+    public Select fetchRecordsByCriteria(String tableName, Criteria searchCriteria, List<Field<Object>> fieldsList) {
+        Criteria.Pager pager = searchCriteria.getPager();
+        List<Criteria.Sorter> sorters = searchCriteria.getSorters();
+        List<Filter> filtersList = searchCriteria.getFilters();
+        Condition condition = FilterGenerator.generate(filtersList, fieldsList);
+        SelectSeekStepN<Record> selectSeek = this
+                .context
+                .selectFrom(table(tableName))
+                .where(condition != null ? condition : DSL.noCondition())
+                .orderBy(this.getOrderBy(sorters));
+        if (pager == null) {
+            return selectSeek;
+        } else {
+            return selectSeek
+                    .limit(pager.getPageSize())
+                    .offset(pager.getOffset());
+        }
+    }
 	// Table Data details to generate the Query
 	private <T> TableData getTableData(T entity) {
 
@@ -490,8 +535,7 @@ public abstract class BaseRepo {
 
 			RecordData updatedDate = new RecordData();
 			updatedDate.setAttributeName("updatedDate");
-			updatedDate.setField(column(ModelConstants.UPDATED_DATE));
-
+			updatedDate.setField(column(ModelConstants.UPDATED_DATE,OffsetDateTime.class));
 			tableData.getRecordDataList().add(updatedBy);
 			tableData.getRecordDataList().add(updatedDate);
 
@@ -573,10 +617,10 @@ public abstract class BaseRepo {
 
 		return result;
 	}
-
+        
 	@Setter
 	@Getter
-	class TableData {
+	public class TableData {
 		private String tableName;
 		private Field<?> versionColumn;
 		private final List<RecordData> recordDataList = new ArrayList<>();

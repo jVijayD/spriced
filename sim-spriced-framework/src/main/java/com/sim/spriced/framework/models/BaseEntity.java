@@ -1,6 +1,6 @@
 package com.sim.spriced.framework.models;
 
-import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 
 import javax.persistence.Column;
 
@@ -15,7 +15,7 @@ import lombok.Setter;
 @Getter
 public abstract class BaseEntity {
 	@Column(name=ModelConstants.UPDATED_DATE)
-	private Timestamp updatedDate;
+	private OffsetDateTime updatedDate;
 	@Column(name=ModelConstants.UPDATED_BY)
 	private String updatedBy;
 	

@@ -1,5 +1,6 @@
 package com.sim.spriced.data.repo.impl;
 
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -11,12 +12,12 @@ import org.jooq.impl.DSL;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.sim.spriced.data.model.EntityData;
 import com.sim.spriced.data.repo.IEntityDataRepo;
 import com.sim.spriced.framework.constants.ModelConstants;
+import com.sim.spriced.framework.data.filters.Criteria;
 import com.sim.spriced.framework.exceptions.data.UniqueConstraintException;
 import com.sim.spriced.framework.models.Attribute;
 import com.sim.spriced.framework.models.AttributeConstants.ConstraintType;
@@ -77,11 +78,8 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 
 	private Map<String,Object> executeUpsertQuery(String entityName, Map<Field<?>, Object> fieldValues,
 			Map<Field<?>, Object> fieldValuesPrimaryKey, boolean isChange) {
-		Field<?> col = column("code");
 		Collection<Field<?>> allFields = new ArrayList<>(fieldValues.keySet());
-		if (!fieldValues.containsKey(col)){
-			allFields.add(col);
-		}
+		allFields.addAll(fieldValuesPrimaryKey.keySet());
 		if (!isChange) {
 			Collection<Field<?>> fields = new ArrayList<>(fieldValues.keySet());
 			Collection<Object> values = fieldValues.values();
@@ -101,19 +99,21 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 		jsonObject.put(ModelConstants.UPDATED_DATE, this.timeStamp);
 
 		attributes.forEach(item -> {
-			if (jsonObject.has(item.getName())) {
 				boolean isPrimaryKey = item.getConstraintType() == ConstraintType.PRIMARY_KEY;
 				AttributeConstants.DataType dataType = item.getDataType();
 				if (!isPrimaryKey) {
+					 if (dataType.equals(AttributeConstants.DataType.TIME_STAMP_WITH_TIMEZONE)|| dataType.equals(AttributeConstants.DataType.TIME_STAMP)) {
+						 fieldValues.put(column(item.getName(),OffsetDateTime.class), jsonObject.get(item.getName()));
+			            }
+					 else
 					fieldValues.put(column(item.getName()), jsonObject.get(item.getName()));
 				} else {
 					if (Boolean.TRUE.equals(!isChange) && dataType.equals(AttributeConstants.DataType.STRING_VAR)){
 						fieldValues.put(column(item.getName()), jsonObject.get(item.getName()));
 					} else {
-						primaryKeyValues.put(column(item.getName()), jsonObject.get(item.getName()));
+						primaryKeyValues.put(column(item.getName()), jsonObject.has(item.getName())? jsonObject.get(item.getName()):null);
 					}
 				}
-			}
 		});
 
 		return Pair.of(fieldValues, primaryKeyValues);
@@ -126,33 +126,19 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 	}
 
 	@Override
-	public JSONArray fetchAll(EntityData data) {
+	public JSONArray fetchAll(EntityData data, Criteria searchCriteria) {
 		String entityName = data.getEntityName();
-		Condition condition = this.createCondition(data);
-		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).limit(100).fetch();
-		List<String> columns = this.getColumns(data.getAttributes(), result==null || result.isEmpty()?null:result.get(0));
+                List<Field<Object>> fieldsList = data.getAttributes().stream().map(e->column(e.getName())).toList();
+		Result<Record> result = fetchRecordsByCriteria(entityName,searchCriteria,fieldsList).fetch();
+               	List<String> columns = result != null ? this.getColumns(data.getAttributes(), result.get(0)) : null;
 		return this.toJSONArray(result, columns);
 	}
 
 	@Override
-	public JSONArray fetchAll(EntityData data, Pageable pageable) {
+	public JSONObject fetchOne(EntityData data,Criteria searchCriteria) {
 		String entityName = data.getEntityName();
-		Condition condition = this.createCondition(data);
-
-		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition)
-				.orderBy(this.getOrderBy(pageable.getSort())).limit(pageable.getPageSize()).offset(pageable.getOffset())
-				.fetch();
-
-		List<String> columns = result != null ? this.getColumns(data.getAttributes(), result.get(0)) : null;
-
-		return this.toJSONArray(result, columns);
-	}
-
-	@Override
-	public JSONObject fetchOne(EntityData data) {
-		String entityName = data.getEntityName();
-		Condition condition = this.createCondition(data);
-		Record result = this.context.selectFrom(table(entityName)).where(condition).fetchOne();
+                List<Field<Object>> fieldsList = data.getAttributes().stream().map(e->column(e.getName())).toList();
+		Record result = fetchRecordsByCriteria(entityName,searchCriteria,fieldsList).fetchOne();
 		List<String> columns = this.getColumns(data.getAttributes(), result);
 		return this.toJsonObject(result, columns);
 	}
@@ -210,36 +196,18 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 	}
 
 	@Override
-	public List<Map<String, Object>> fetchAllAsMap(EntityData data) {
+	public List<Map<String, Object>> fetchAllAsMap(EntityData data, Criteria searchCriteria) {
 		String entityName = data.getEntityName();
-		Condition condition = this.createCondition(data);
-		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).limit(100).fetch();
+		List<Field<Object>> fieldsList = data.getAttributes().stream().map(e->column(e.getName())).toList();
+                Result<Record> result = fetchRecordsByCriteria(entityName,searchCriteria,fieldsList).fetch();
 		return result.intoMaps();
 	}
 
 	@Override
-	public List<Map<String, Object>> fetchAllAsMap(EntityData data, Pageable pageable) {
+	public String fetchAllAsJsonString(EntityData data,Criteria searchCriteria) {
 		String entityName = data.getEntityName();
-		Condition condition = this.createCondition(data);
-		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).limit(pageable.getPageSize()).offset(pageable.getOffset())
-				.fetch();
-		return result.intoMaps();
-	}
-
-	@Override
-	public String fetchAllAsJsonString(EntityData data) {
-		String entityName = data.getEntityName();
-		Condition condition = this.createCondition(data);
-		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).limit(100).fetch();
-		return result.formatJSON();
-	}
-
-	@Override
-	public String fetchAllAsJsonString(EntityData data, Pageable pageable) {
-		String entityName = data.getEntityName();
-		Condition condition = this.createCondition(data);
-		Result<Record> result = this.context.selectFrom(table(entityName)).where(condition).limit(pageable.getPageSize()).offset(pageable.getOffset())
-				.fetch();
+		List<Field<Object>> fieldsList = data.getAttributes().stream().map(e->column(e.getName())).toList();
+                Result<Record> result = fetchRecordsByCriteria(entityName,searchCriteria,fieldsList).fetch();
 		return result.formatJSON();
 	}
 

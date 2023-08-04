@@ -1,6 +1,7 @@
 package com.sim.spriced.defnition.data.repo.impl;
 
 import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import org.jooq.Record;
@@ -90,7 +91,7 @@ public class RuleRepo extends BaseRepo implements IRuleRepo {
 		result.setPriority((Integer)rec.get(Rule.TableConstants.PRIORITY));
 		result.setStatus((String)rec.get(Rule.TableConstants.STATUS));
 		result.setUpdatedBy((String)rec.get(ModelConstants.UPDATED_BY));
-		result.setUpdatedDate((Timestamp)rec.get(ModelConstants.UPDATED_DATE));
+		result.setUpdatedDate((OffsetDateTime) rec.get(ModelConstants.UPDATED_DATE));
 		result.setCondition(condition);
 		result.setConditionalAction(conditionalAction);
 		result.setGroup(Action.ActionGroup.valueOf((String)rec.get(Rule.TableConstants.GROUP)));
