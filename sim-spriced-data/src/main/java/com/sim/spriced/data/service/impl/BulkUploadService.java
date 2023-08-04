@@ -8,38 +8,39 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.sim.spriced.data.service.IFileProcessService;
-import com.sim.spriced.data.service.IFileService;
-import com.sim.spriced.enums.FileUploadStatus;
-import com.sim.spriced.framework.models.FileEntity;
+import com.sim.spriced.data.repo.IBulkProcessRepo;
+import com.sim.spriced.data.service.IBulkUploadService;
+import com.sim.spriced.enums.BulkUploadStatus;
+import com.sim.spriced.framework.models.BulkEntityDetails;
 
 @Service
-public class FileUploadService implements IFileService {
+public class BulkUploadService implements IBulkUploadService {
 
+	
 	@Autowired
-	private IFileProcessService fileProcessService;
+	private IBulkProcessRepo processRepo;
 
 	@Value("${connect.input.mount.path}")
 	private String dir;
 
 	@Override
-	public FileEntity uploadFileDetails(FileEntity fileEntity, MultipartFile file) {
+	public BulkEntityDetails uploadFileDetails(BulkEntityDetails fileEntity, MultipartFile file) {
 		String status = uploadCsvFiles(file, fileEntity);
 		fileEntity.setStatus(status);
-		return fileProcessService.uploadFileDetails(fileEntity);
+		return processRepo.saveFileDetails(fileEntity);
 	}
 
-	public String uploadCsvFiles(MultipartFile file,FileEntity data ) {
+	public String uploadCsvFiles(MultipartFile file, BulkEntityDetails data ) {
 		String fileName = file.getOriginalFilename();
 		String filePath = dir + fileName;
 		data.setFilePath(filePath);
 		try {
 			File destFile = new File(filePath);
 			file.transferTo(destFile);
-			return FileUploadStatus.NEW_FILE.name();
+			return BulkUploadStatus.UPLOADED.name();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return FileUploadStatus.UPLOAD_FAILED.name();
+			return BulkUploadStatus.UPLOAD_FAILED.name();
 		}
 	}
 }
