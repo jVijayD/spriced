@@ -27,21 +27,14 @@ export class HeaderComponent {
   @Input() menuData: any;
   user = "";
   constructor(
-    private keycloakService: KeycloakService
-  ) //  private dbService: NgxIndexedDBService,
-  {
+    private keycloakService: KeycloakService //  private dbService: NgxIndexedDBService,
+  ) {
     this.user = this.keycloakService.getUsername();
     this.user = this.capitalizeFirstLetter(this.user);
   }
 
   public logOut(e: any) {
     {
-      // this.dbService.clear('this_entity').subscribe((successDeleted) => {
-      //   console.log('success? ', successDeleted);
-      // });
-      // this.dbService.clear('all_entity').subscribe((successDeleted) => {
-      //   console.log('success? ', successDeleted);
-      // });
       e.preventDefault();
       e.stopPropagation();
       this.keycloakService.logout();

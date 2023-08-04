@@ -6,7 +6,10 @@ import { SidebarComponent } from "./components/sidebar/sidebar.component";
 import { BodyComponent } from "./components/body/body.component";
 import { FooterComponent } from "./components/footer/footer.component";
 import { CommonModule } from "@angular/common";
-import { AppDataService } from "@spriced-frontend/shared/spriced-shared-lib";
+import {
+  AppDataService,
+  MenuItem,
+} from "@spriced-frontend/shared/spriced-shared-lib";
 import { Subscription } from "rxjs";
 
 @Component({
@@ -20,7 +23,6 @@ import { Subscription } from "rxjs";
     BodyComponent,
     FooterComponent,
   ],
-  providers: [AppDataService],
   selector: "sp-root",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
@@ -49,25 +51,7 @@ export class AppComponent implements OnDestroy, OnInit {
   ];
   isSideNavCollapsed = false;
   screenWidth = 0;
-  menuData = [
-    {
-      name: "Model Management",
-      active: true,
-      path: "/spriced-data-definition/model",
-    },
-    {
-      name: "Entity Management",
-      path: "/spriced-data-definition/entity",
-    },
-    {
-      name: "Explorer",
-      path: "/spriced-data-definition/model-list",
-    },
-    {
-      name: "Rules",
-      path: "/spriced-data-definitions-ui/rule-management",
-    },
-  ];
+  menuData: MenuItem[] = [];
   onToggleSideNav(data: any): void {
     this.screenWidth = data.screenWidth;
     this.isSideNavCollapsed = data.collapsed;
@@ -76,7 +60,13 @@ export class AppComponent implements OnDestroy, OnInit {
     this.path = location.pathname;
   }
 
-  constructor(public appDataService: AppDataService) {}
+  constructor(public appDataService: AppDataService) {
+    this.subscriptions.push(
+      this.appDataService.menuData$.subscribe((menuItems) => {
+        this.menuData = [...menuItems];
+      })
+    );
+  }
   ngOnInit(): void {
     this.init();
   }

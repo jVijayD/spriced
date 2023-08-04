@@ -74,7 +74,17 @@ export class EntityDataComponent {
 
   //Dynamic Form
   private formFields!: FormFieldControls;
-  appForm!: AppForm;
+  appForm: AppForm = {
+    title: "",
+    groups: [
+      {
+        title: "",
+        formFieldControls: [],
+      },
+    ],
+    asyncValidations: [],
+    validations: [],
+  };
 
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
@@ -99,7 +109,7 @@ export class EntityDataComponent {
   }
   onFilter() {}
   onEdit() {}
-  onUpload(){}
+  onUpload() {}
   showAddPopup() {
     this.dialogService.openDialog(AddModelComponent, {
       data: this.appForm,

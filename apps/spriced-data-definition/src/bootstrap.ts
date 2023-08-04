@@ -4,6 +4,7 @@ import { SharedSpricedSharedLibModule } from "@spriced-frontend/shared/spriced-s
 import { RouterModule } from "@angular/router";
 import { appRoutes } from "./app/app.routes";
 import { ModelComponent } from "./app/pages/model/model.component";
+//import { AppComponent } from "./app/app.component";
 
 bootstrapApplication(ModelComponent, {
   providers: [

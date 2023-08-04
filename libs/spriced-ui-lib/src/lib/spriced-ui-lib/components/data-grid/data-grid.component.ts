@@ -114,7 +114,6 @@ export class DataGridComponent implements AfterViewInit {
   }
 
   public renderData(data: any, itemHeader: Header) {
-    debugger;
     if (itemHeader.pipe && itemHeader.pipe instanceof Function) {
       return itemHeader.pipe(data);
     }
