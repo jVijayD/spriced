@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Table(name = "bulk_upload_details")
-public class BulkEntity extends BaseEntity {
+public class BulkEntityDetails extends BaseEntity {
 
 	@ExtraColumnData(isPrimaryKey = true, id = IDType.AUTO)
 	@Column(name = "id")

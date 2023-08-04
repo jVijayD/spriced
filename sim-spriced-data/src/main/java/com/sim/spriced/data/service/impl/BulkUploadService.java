@@ -2,6 +2,7 @@ package com.sim.spriced.data.service.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.OffsetDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +28,8 @@ public class BulkUploadService implements IBulkUploadService {
 	public BulkEntityDetails uploadFileDetails(BulkEntityDetails fileEntity, MultipartFile file) {
 		String status = uploadCsvFiles(file, fileEntity);
 		fileEntity.setStatus(status);
+		String entity= fileEntity.getEntityName()+"_"+OffsetDateTime.now();
+		fileEntity.setEntityName(entity);
 		return processRepo.saveFileDetails(fileEntity);
 	}
 
