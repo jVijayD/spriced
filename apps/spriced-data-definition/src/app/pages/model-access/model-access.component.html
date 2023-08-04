@@ -2,7 +2,7 @@
   <sp-hbox>
     <mat-form-field appearance="outline">
       <mat-label>User Role</mat-label>
-      <mat-select [(value)]="selectedRole">
+      <mat-select  (selectionChange)="onSelectRole($event)" [(value)]="selectedRole">
         <mat-option *ngFor="let item of roleList" [value]="item">{{item.name}}</mat-option>
       </mat-select>
     </mat-form-field>
