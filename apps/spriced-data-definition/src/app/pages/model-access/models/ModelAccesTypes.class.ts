@@ -190,19 +190,19 @@ export class RoleEntityPermissionMapping {
   role?: String;
   entityId: number | string;
   permission: PERMISSIONS;
-  attributedetails?: string;
+  attributeDetails?: string;
   constructor(
     entityId: number,
     permission: PERMISSIONS,
     groupId?: number,
     role?: string,
-    attributedetails?: string
+    attributeDetails?: string
   ) {
     this.entityId = entityId;
     this.groupId = groupId ? groupId : 0;
     this.permission = permission;
     this.role = role ? role : "";
-    this.attributedetails = attributedetails ? attributedetails : "";
+    this.attributeDetails = attributeDetails ? attributeDetails : "";
   }
 }
 export class RoleGroupPermissionMapping {
