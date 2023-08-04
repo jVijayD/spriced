@@ -63,7 +63,7 @@ public class EntityController {
 	
         @Timed(value = "entity.getAll.time", description = "Time taken to return entities.")
         @GetMapping("/models/{groupId}/entities")
-        public ResponseEntity<List<EntityDto>> getAll(@PathVariable int groupId, @RequestParam String roleName) {
+        public ResponseEntity<List<EntityDto>> getAll(@PathVariable int groupId, @RequestParam(required = false) String roleName) {
             // TO DO: temporary Sorting
             List<EntityDefnition> entityList;
             if (roleName != null) {
@@ -78,7 +78,7 @@ public class EntityController {
 	@Timed(value = "entity.get.time", description = "Time taken to return entity.")
 	@GetMapping("/entities/{id}")
 	public ResponseEntity<EntityDto> get(@PathVariable int id) {
-		return new ResponseEntity<>(mapper.toEntityDto(this.entityDefnitionService.fetch(id,false)), HttpStatus.OK);
+		return new ResponseEntity<>(mapper.toEntityDto(this.entityDefnitionService.fetchByRole(id)), HttpStatus.OK);
 	}
 	
 	

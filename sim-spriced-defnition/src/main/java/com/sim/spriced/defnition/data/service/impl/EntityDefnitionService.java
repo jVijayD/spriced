@@ -22,94 +22,99 @@ import com.sim.spriced.framework.pubsub.IObservable;
 import com.sim.spriced.framework.pubsub.IObserver;
 
 @Service
-public class EntityDefnitionService  extends BaseService
-		implements IEntityDefnitionService, IObservable<EntityDefnitionEvent> {
+public class EntityDefnitionService extends BaseService
+        implements IEntityDefnitionService, IObservable<EntityDefnitionEvent> {
 
-	private List<IObserver<EntityDefnitionEvent>> observers = new ArrayList<>();
-	
-	@Autowired
-	IEntityDefnitionRepo defnitionRepo;
-        
-	@Autowired
-	RolePermissionService rolePermissionService;
+    private List<IObserver<EntityDefnitionEvent>> observers = new ArrayList<>();
 
-	EntityDefnitionService(List<IObserver<EntityDefnitionEvent>> entityDefnitionObservers) {
-		entityDefnitionObservers.forEach(this::register);
-	}
+    @Autowired
+    IEntityDefnitionRepo defnitionRepo;
 
-	@Override
-	@Transactional
-	public EntityDefnition create(EntityDefnition entityDefnition) {
-		entityDefnition.validate();
-		entityDefnition = this.defnitionRepo.add(entityDefnition);
-		this.notifyObservers(this.createEvent(entityDefnition,null, EventType.ADD));
-		return entityDefnition;
-	}
+    @Autowired
+    RolePermissionService rolePermissionService;
 
-	@Override
-	@Transactional
-	public int delete(String name,int groupId) {
-		EntityDefnition entityDefnition = this.defnitionRepo.getByName(name, groupId);
-		return this.delete(entityDefnition);
-	}
+    EntityDefnitionService(List<IObserver<EntityDefnitionEvent>> entityDefnitionObservers) {
+        entityDefnitionObservers.forEach(this::register);
+    }
 
-	@Override
-	@Transactional
-	public int delete(EntityDefnition defnition) {
-		int rows = this.defnitionRepo.remove(defnition);
-		this.notifyObservers(this.createEvent(defnition,null, EventType.DELETE));
-		return rows;
-	}
-	
-	@Override
-	@Transactional
-	@CachePut(value="entities",key="#entityDefnition.id")
-	public EntityDefnition update(EntityDefnition entityDefnition) {
-		entityDefnition.validate();
-		EntityDefnition previous = this.defnitionRepo.get(entityDefnition.getId());
-		entityDefnition = this.defnitionRepo.change(entityDefnition);
-		
-		this.notifyObservers(this.createEvent(entityDefnition,previous, EventType.UPDATE));
-		return entityDefnition;
-	}
+    @Override
+    @Transactional
+    public EntityDefnition create(EntityDefnition entityDefnition) {
+        entityDefnition.validate();
+        entityDefnition = this.defnitionRepo.add(entityDefnition);
+        this.notifyObservers(this.createEvent(entityDefnition, null, EventType.ADD));
+        return entityDefnition;
+    }
 
-	@Override
-	public EntityDefnition disableEntity(String name,int groupId) {
-		EntityDefnition entityDefnition = new EntityDefnition(name);
-		entityDefnition.setName(name);
-		entityDefnition.setGroupId(groupId);
-		entityDefnition.setIsDisabled(true);
-		return this.defnitionRepo.change(entityDefnition);
-	}
+    @Override
+    @Transactional
+    public int delete(String name, int groupId) {
+        EntityDefnition entityDefnition = this.defnitionRepo.getByName(name, groupId);
+        return this.delete(entityDefnition);
+    }
 
-	@Override
-	public EntityDefnition enableEntity(String name,int groupId) {
-		EntityDefnition entityDefnition = new EntityDefnition();
-		entityDefnition.setName(name);
-		entityDefnition.setGroupId(groupId);
-		entityDefnition.setIsDisabled(false);
-		return this.defnitionRepo.change(entityDefnition);
-	}
+    @Override
+    @Transactional
+    public int delete(EntityDefnition defnition) {
+        int rows = this.defnitionRepo.remove(defnition);
+        this.notifyObservers(this.createEvent(defnition, null, EventType.DELETE));
+        return rows;
+    }
 
-	
-	@Override
-	public EntityDefnition fetchByName(String name, int groupId) {
-		return this.defnitionRepo.getByName(name, groupId);
-	}
+    @Override
+    @Transactional
+    @CachePut(value = "entities", key = "#entityDefnition.id")
+    public EntityDefnition update(EntityDefnition entityDefnition) {
+        entityDefnition.validate();
+        EntityDefnition previous = this.defnitionRepo.get(entityDefnition.getId());
+        entityDefnition = this.defnitionRepo.change(entityDefnition);
 
-	@Override
-	public List<EntityDefnition> fetchAll(int groupId, boolean loadDisabled) {
-		return this.defnitionRepo.getAll(groupId, loadDisabled);
-	}
+        this.notifyObservers(this.createEvent(entityDefnition, previous, EventType.UPDATE));
+        return entityDefnition;
+    }
 
-	@Override
-	public List<EntityDefnition> fetchAll(int groupId) {
-		return rolePermissionService.applyPermission(this.defnitionRepo.getAll(groupId, false));
-	}
-        @Override
-	public List<EntityDefnition> fetchByRole(int groupId,String role) {
-		return rolePermissionService.applyPermission(this.defnitionRepo.getAll(groupId, false),role.split(","));
-	}
+    @Override
+    public EntityDefnition disableEntity(String name, int groupId) {
+        EntityDefnition entityDefnition = new EntityDefnition(name);
+        entityDefnition.setName(name);
+        entityDefnition.setGroupId(groupId);
+        entityDefnition.setIsDisabled(true);
+        return this.defnitionRepo.change(entityDefnition);
+    }
+
+    @Override
+    public EntityDefnition enableEntity(String name, int groupId) {
+        EntityDefnition entityDefnition = new EntityDefnition();
+        entityDefnition.setName(name);
+        entityDefnition.setGroupId(groupId);
+        entityDefnition.setIsDisabled(false);
+        return this.defnitionRepo.change(entityDefnition);
+    }
+
+    @Override
+    public EntityDefnition fetchByName(String name, int groupId) {
+        return this.defnitionRepo.getByName(name, groupId);
+    }
+
+    @Override
+    public List<EntityDefnition> fetchAll(int groupId, boolean loadDisabled) {
+        return this.defnitionRepo.getAll(groupId, loadDisabled);
+    }
+
+    @Override
+    public List<EntityDefnition> fetchAll(int groupId) {
+        return rolePermissionService.applyPermission(this.defnitionRepo.getAll(groupId, false));
+    }
+
+    @Override
+    public List<EntityDefnition> fetchByRole(int groupId, String role) {
+        return rolePermissionService.applyPermission(this.defnitionRepo.getAll(groupId, false), role.split(","));
+    }
+
+    @Override
+    public EntityDefnition fetchByRole(int entityId) {
+        return rolePermissionService.applyPermission(this.defnitionRepo.get(entityId), null);
+    }
 
 //	@Override
 //	public Page<EntityDefnition> fetchAll(int groupId, boolean loadDisabled, Pageable pageable) {
@@ -121,53 +126,51 @@ public class EntityDefnitionService  extends BaseService
 //		return this.defnitionRepo.getAll(groupId, true, pageable);
 //	}
 //	
-	@PreDestroy
-	private void destroy() {
-		if (this.observers != null) {
-			observers.clear();
-		}
-	}
+    @PreDestroy
+    private void destroy() {
+        if (this.observers != null) {
+            observers.clear();
+        }
+    }
 
-	@Override
-	public void register(IObserver<EntityDefnitionEvent> observer) {
-		this.observers.add(observer);
-	}
+    @Override
+    public void register(IObserver<EntityDefnitionEvent> observer) {
+        this.observers.add(observer);
+    }
 
-	@Override
-	public void unregister(IObserver<EntityDefnitionEvent> observer) {
-		this.observers.remove(observer);
+    @Override
+    public void unregister(IObserver<EntityDefnitionEvent> observer) {
+        this.observers.remove(observer);
 
-	}
+    }
 
-	@Override
-	public void notifyObservers(EntityDefnitionEvent arg) {
-		if (this.observers != null) {
-			observers.forEach(observer -> observer.update(arg));
-		}
-	}
+    @Override
+    public void notifyObservers(EntityDefnitionEvent arg) {
+        if (this.observers != null) {
+            observers.forEach(observer -> observer.update(arg));
+        }
+    }
 
+    private EntityDefnitionEvent createEvent(EntityDefnition entity, EntityDefnition previousEntity, EventType type) {
+        EntityDefnitionEvent arg = new EntityDefnitionEvent();
+        arg.setEntity(entity);
+        arg.setPreviousEntity(previousEntity);
+        arg.setType(type);
+        return arg;
+    }
 
-	private EntityDefnitionEvent createEvent(EntityDefnition entity,EntityDefnition previousEntity, EventType type) {
-		EntityDefnitionEvent arg = new EntityDefnitionEvent();
-		arg.setEntity(entity);
-		arg.setPreviousEntity(previousEntity);
-		arg.setType(type);
-		return arg;
-	}
+    @Cacheable(value = "entities", key = "#id")
+    @Override
+    public EntityDefnition fetch(int id, boolean loadDisabled) {
+        return this.defnitionRepo.get(id, loadDisabled);
+    }
 
-	@Cacheable(value="entities",key="#id")
-	@Override
-	public EntityDefnition fetch(int id, boolean loadDisabled) {
-		return this.defnitionRepo.get(id, loadDisabled);
-	}
-
-	@CacheEvict(value="entities",key="#id")
-	@Transactional
-	@Override
-	public int delete(int id) {
-		EntityDefnition defnition = this.defnitionRepo.get(id);
-		return this.delete(defnition);
-	}
-
+    @CacheEvict(value = "entities", key = "#id")
+    @Transactional
+    @Override
+    public int delete(int id) {
+        EntityDefnition defnition = this.defnitionRepo.get(id);
+        return this.delete(defnition);
+    }
 
 }
