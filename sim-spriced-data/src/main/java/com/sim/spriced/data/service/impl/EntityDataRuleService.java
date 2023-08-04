@@ -12,6 +12,7 @@ import com.sim.spriced.data.rule.RuleFactory;
 import com.sim.spriced.data.service.IEntityDataRuleService;
 import com.sim.spriced.framework.models.Attribute;
 import com.sim.spriced.framework.models.Rule;
+import com.sim.spriced.framework.models.StatusConstants;
 import com.sim.spriced.framework.rule.FactResult;
 import com.sim.spriced.framework.rule.IRule;
 import com.sim.spriced.framework.rule.RuleEngine;
@@ -24,7 +25,7 @@ public class EntityDataRuleService implements IEntityDataRuleService {
 
 	@Override
 	public List<IRule<JSONObject>> getRuleEngineRules(List<Rule> rules, List<Attribute> attributes) {
-		return rules.parallelStream().map(r -> factory.createInstance(r, attributes)).toList();
+		return rules.parallelStream().filter(r -> r.getStatus().equalsIgnoreCase(StatusConstants.ACTIVE)).map(r -> factory.createInstance(r, attributes)).toList();
 	}
 
 	@Override

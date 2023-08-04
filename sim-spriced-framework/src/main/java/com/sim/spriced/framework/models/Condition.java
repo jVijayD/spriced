@@ -107,11 +107,11 @@ public class Condition {
 		}
 	}
 
-	public static void getSubConditionsRecursively(Condition condition, Stack<List<Condition>> stack) {
+	public static void getSubConditionsRecursively(Condition condition, Stack<List<Condition>> subConditionStack) {
         if(condition.getSubConditions() != null && !condition.getSubConditions().isEmpty()) {
-            stack.add(condition.getSubConditions());
+            subConditionStack.add(condition.getSubConditions());
             for(Condition subCondition: condition.getSubConditions()) {
-                getSubConditionsRecursively(subCondition, stack);
+                getSubConditionsRecursively(subCondition, subConditionStack);
             }
         }
     }

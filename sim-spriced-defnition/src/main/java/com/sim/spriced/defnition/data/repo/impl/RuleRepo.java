@@ -14,6 +14,7 @@ import com.sim.spriced.framework.models.Action;
 import com.sim.spriced.framework.models.Condition;
 import com.sim.spriced.framework.models.ConditionalAction;
 import com.sim.spriced.framework.models.Rule;
+import com.sim.spriced.framework.models.StatusConstants;
 import com.sim.spriced.framework.repo.BaseRepo;
 
 
@@ -22,6 +23,11 @@ public class RuleRepo extends BaseRepo implements IRuleRepo {
 
 	@Override
 	public Rule add(Rule rule) {
+		return super.create(rule,this::convertToRule);
+	}
+	
+	@Override
+	public Rule save(Rule rule) {
 		return super.create(rule,this::convertToRule);
 	}
 

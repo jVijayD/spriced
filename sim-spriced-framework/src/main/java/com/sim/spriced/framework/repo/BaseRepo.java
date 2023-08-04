@@ -137,7 +137,7 @@ public abstract class BaseRepo {
 	}
 
 	protected <T> T create(T entity, Function<Record, T> converter) {
-		TableData tableDetails = this.getTableData(entity);
+ 		TableData tableDetails = this.getTableData(entity);
 		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser(), this.timeStamp);
 		return this.create(tableDetails, converter);
 	}
