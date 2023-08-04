@@ -27,11 +27,13 @@ import com.sim.spriced.data.service.IEntityDataRuleService;
 import com.sim.spriced.data.service.IEntityDataService;
 import com.sim.spriced.framework.constants.ModelConstants;
 import com.sim.spriced.framework.data.filters.Criteria;
+import com.sim.spriced.framework.models.Attribute;
 import com.sim.spriced.framework.models.AttributeConstants;
 import com.sim.spriced.framework.models.AttributeConstants.DataType;
 import com.sim.spriced.framework.rule.FactResult;
 import com.sim.spriced.framework.rule.IRule;
 import com.sim.spriced.framework.rule.Result;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -47,6 +49,7 @@ public class EntityDataService implements IEntityDataService {
 	@Override
 	public EntityDataResult upsertBulk(EntityData data) {
 //		this.setDateTimeValue(data);
+                data = filterWithUpdateOnlyAttributes(data);
 		return EntityDataResult.builder().rowsChanged(this.dataRepo.upsertBulk(data)).build();
 	}
 
@@ -65,13 +68,23 @@ public class EntityDataService implements IEntityDataService {
 		return this.dataRepo.fetchOne(data,criteria);
 	}
 
-	@Override
-	public EntityDataResult upsert(EntityData data) {
-//		this.setDateTimeValue(data);
-		List<Map<String,Object>> jsonObj = Arrays.asList(this.dataRepo.upsert(data)) ;
-		return EntityDataResult.builder().rowsChanged(new int[] { 1 }).result(jsonObj).build();
-	}
+        @Override
+        public EntityDataResult upsert(EntityData data) {
+    //		this.setDateTimeValue(data);
+            data = filterWithUpdateOnlyAttributes(data);
+            List<Map<String, Object>> jsonObj = Arrays.asList(this.dataRepo.upsert(data));
+            return EntityDataResult.builder().rowsChanged(new int[]{1}).result(jsonObj).build();
+        }
 
+        private EntityData filterWithUpdateOnlyAttributes(EntityData data) {
+            List<Attribute> attrib = data.getAttributes()
+                    .stream()
+                    .filter(a -> a.getPermission() == ModelConstants.ModelPermission.UPDATE)
+                    .collect(Collectors.toList());
+            data.setAttributes(attrib);
+            return data;
+        }
+        
 	@Override
 	public EntityDataResult upsert(EntityData data, List<IRule<JSONObject>> rules) {
 		//this.setDateTimeValue(data);
