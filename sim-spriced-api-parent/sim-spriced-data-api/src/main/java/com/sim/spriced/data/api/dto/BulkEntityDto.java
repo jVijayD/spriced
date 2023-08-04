@@ -12,9 +12,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FileDto {
+public class BulkEntityDto {
 
-
+	private int id;
+	
 	private String entityName;
 	 
 	private String status;
