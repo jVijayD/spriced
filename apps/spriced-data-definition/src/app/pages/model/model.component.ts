@@ -72,6 +72,7 @@ export class ModelComponent implements OnInit {
   dataGrid!: DataGridComponent;
   pageNo = 0;
   pageSize = 10;
+  temp: any = [];
 
   constructor(
     private dialogService: DialogService,
@@ -151,6 +152,7 @@ export class ModelComponent implements OnInit {
 
   onClear() {
     this.dataGrid.clearSelection();
+    this.selectedItem = null;
   }
 
   onFilter() {
@@ -186,6 +188,7 @@ export class ModelComponent implements OnInit {
     const dialogResult = this.dialogService.openFilterDialog(data);
     dialogResult.afterClosed().subscribe((val) => {
       if (val !== null) {
+        this.temp = [];
         this.rows = this.filterData;
         console.log(val);
         val.map((item: any, index: number) => {
@@ -194,22 +197,25 @@ export class ModelComponent implements OnInit {
               var row = this.filterData.filter(function (el: any) {
                 return el[item.key] < item.value;
               });
-              this.rows.push(row);
+              this.temp.push(...row);
+              this.rows = this.temp;
               break;
             }
             case "EQUALS": {
               var row = this.filterData.filter(function (el: any) {
                 return el[item.key] == item.value;
               });
-              this.rows.push(row);
 
+              this.temp.push(...row);
+              this.rows = this.temp;
               break;
             }
             case "GREATER_THAN": {
               var row = this.filterData.filter(function (el: any) {
                 return el[item.key] > item.value;
               });
-              this.rows.push(row);
+              this.temp.push(...row);
+              this.rows = this.temp;
 
               break;
             }
@@ -217,15 +223,16 @@ export class ModelComponent implements OnInit {
               var row = this.filterData.filter(function (el: any) {
                 return el[item.key] >= item.value;
               });
-              this.rows.push(row);
-
+              this.temp.push(...row);
+              this.rows = this.temp;
               break;
             }
             case "LESS_THAN_EQUALS": {
               var row = this.filterData.filter(function (el: any) {
                 return el[item.key] <= item.value;
               });
-              this.rows.push(row);
+              this.temp.push(...row);
+              this.rows = this.temp;
 
               break;
             }
@@ -233,7 +240,8 @@ export class ModelComponent implements OnInit {
               var row = this.filterData.filter(function (el: any) {
                 return el[item.key] != item.value;
               });
-              this.rows.push(row);
+              this.temp.push(...row);
+              this.rows = this.temp;
 
               break;
             }
@@ -241,7 +249,16 @@ export class ModelComponent implements OnInit {
               var row = this.filterData.filter(function (el: any) {
                 return el[item.key].includes(item.value);
               });
-              this.rows.push(row);
+              this.temp.push(...row);
+              this.rows = this.temp;
+              break;
+            }
+            case "ILIKE": {
+              var row = this.filterData.filter(function (el: any) {
+                return el[item.key].endsWith(item.value);
+              });
+              this.temp.push(...row);
+              this.rows = this.temp;
 
               break;
             }
@@ -250,6 +267,9 @@ export class ModelComponent implements OnInit {
             }
           }
         });
+
+        const result: any = [...new Set(this.rows)];
+        this.rows = result;
       }
     });
   }

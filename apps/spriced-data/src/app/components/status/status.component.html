@@ -1,0 +1,28 @@
+<div class="outer">
+  <button mat-icon-button color="transparent" class="close" (click)="onClose()">
+    <mat-icon>close</mat-icon>
+  </button>
+  <div class="mt-8 container">
+    <sp-data-grid
+      class="w-full h-full"
+      #dataGrid
+      title="Upload Status"
+      [enableRowIndex]="false"
+      [isArray]="false"
+      [headers]="headers"
+      [rows]="rows"
+      [rowHeight]="40"
+      [headerHeight]="40"
+      [footerHeight]="40"
+      [columnMode]="columnMode"
+      [virtualScroll]="true"
+      [selectionType]="selectionType"
+      [limit]="10"
+      [isExternalPaging]="true"
+      [isExternalSorting]="false"
+      [sortType]="sortType"
+      [count]="totalElements"
+    >
+    </sp-data-grid>
+  </div>
+</div>

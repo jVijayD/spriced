@@ -1,11 +1,9 @@
-<h1 mat-dialog-title>
-  <strong>Settings</strong>
-</h1>
+<h1 mat-dialog-title>Settings</h1>
 
 <div mat-dialog-content class="grid">
   <mat-card style="padding: 20px" class="drop-shadow">
     <mat-label class="mb-2"><strong>This Entity</strong></mat-label>
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" class="mb-4">
       <mat-label> Records per page</mat-label>
       <input [(ngModel)]="noOfRecords" matInput type="number" />
     </mat-form-field>
@@ -16,7 +14,7 @@
   </mat-card>
   <mat-card style="padding: 20px; margin-top: 4px" class="drop-shadow">
     <mat-label class="mb-2"><strong>All Entity</strong></mat-label>
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" class="mb-4">
       <mat-label> Display format</mat-label>
       <mat-select [(ngModel)]="displayFormat">
         <mat-option value="name">Code</mat-option>
@@ -28,7 +26,6 @@
   </mat-card>
 </div>
 <div mat-dialog-actions>
-  <button mat-flat-button color="primary" (click)="save()">Ok</button>
   <button
     mat-button
     (click)="closeDialog()"
@@ -38,4 +35,5 @@
   >
     Cancel
   </button>
+  <button mat-flat-button color="primary" (click)="save()">Ok</button>
 </div>
