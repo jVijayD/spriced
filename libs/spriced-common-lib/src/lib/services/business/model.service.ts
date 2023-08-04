@@ -26,7 +26,7 @@ export class ModelService {
     return this.http.delete(`${this.api_url}/models/${id}`);
   }
   loadAllModels() {
-    return this.http.get(`${this.api_url}/models`);
+    return this.http.get<Model[]>(`${this.api_url}/models`);
   }
 
   loadPageModels(pageNo: number, pageSize: number) {
@@ -36,4 +36,10 @@ export class ModelService {
   }
 }
 
-export interface Model {}
+export interface Model {
+  id: number;
+  name: string;
+  displayName: string;
+  updatedBy: string;
+  updatedDate: string;
+}

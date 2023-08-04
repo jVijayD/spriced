@@ -4,10 +4,14 @@
     <select
       matNativeControl
       (blur)="onTouched()"
-      [value]="selectedValue"
+      [value]="selectedModelValue"
       class="w-1/2 pl-2 pr-2"
+      (change)="onModelSelectionChange($event)"
     >
       <option value="">--Select--</option>
+      <option *ngFor="let item of this.models" [value]="item.id">
+        {{ item.displayName }}
+      </option>
     </select>
     <mat-icon matSuffix>domain</mat-icon>
   </mat-form-field>
@@ -16,10 +20,14 @@
     <select
       matNativeControl
       (blur)="onTouched()"
-      [value]="selectedValue"
+      [value]="selectedEntity"
       class="w-1/2 pl-2 pr-2"
+      (change)="onEntitySelectionChange($event)"
     >
       <option value="">--Select--</option>
+      <option *ngFor="let item of this.entities" [value]="item">
+        {{ item.displayName }}
+      </option>
     </select>
     <mat-icon matSuffix>table_chart</mat-icon>
   </mat-form-field>

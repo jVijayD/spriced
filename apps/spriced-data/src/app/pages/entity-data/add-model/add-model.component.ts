@@ -11,11 +11,13 @@ import {
   DynamicFormService,
   FORM_DATA_SERVICE,
 } from "@spriced-frontend/spriced-ui-lib";
+import { MatIconModule } from "@angular/material/icon";
+import { FormGroup } from "@angular/forms";
 
 @Component({
   selector: "sp-add-model",
   standalone: true,
-  imports: [CommonModule, MatDialogModule, DynamicFormModule],
+  imports: [CommonModule, MatDialogModule, DynamicFormModule, MatIconModule],
   providers: [
     {
       provide: FORM_DATA_SERVICE,
@@ -46,10 +48,16 @@ export class AddModelComponent {
   ) {
     dialogRef.disableClose = true;
   }
-  onDismiss(): void {
-    this.dialogRef.close(false);
+  onClose(): void {
+    this.dialogRef.close(null);
   }
-  onConfirm(): void {
-    this.dialogRef.close(true);
+
+  onSubmit(data: FormGroup<any>) {
+    if (data.valid) {
+      this.dialogRef.close(data.value);
+    }
   }
+  // onConfirm(): void {
+  //   this.dialogRef.close(true);
+  // }
 }
