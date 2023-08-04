@@ -30,7 +30,7 @@ public class RolePermissionService implements IRolePermissionService {
 
         RoleGroupPermissionMapping deleteGroup = new RoleGroupPermissionMapping();
         deleteGroup.setRole(groupPermission.getRole());
-        deleteGroup.setGroup_id(groupPermission.getGroup_id());
+        deleteGroup.setGroupId(groupPermission.getGroupId());
 
         rolePermissionRepo.delete(deleteGroup);
         int status = rolePermissionRepo.create(groupPermission);
@@ -40,7 +40,7 @@ public class RolePermissionService implements IRolePermissionService {
             RoleEntityPermissionMapping deleteEnitty = new RoleEntityPermissionMapping();
 
             deleteEnitty.setRole(groupPermission.getRole());
-            deleteEnitty.setGroup_id(groupPermission.getGroup_id());
+            deleteEnitty.setGroupId(groupPermission.getGroupId());
 
             rolePermissionRepo.delete(deleteEnitty);
             status = rolePermissionRepo.create(entityPermissions);
@@ -116,7 +116,7 @@ public class RolePermissionService implements IRolePermissionService {
                 entityPermissions.stream()
                         .filter(e -> e.getPermission() == ModelConstants.ModelPermission.PARTIAL)
                         .<ModelConstants.ModelPermission>mapMulti((a, c) -> {
-                            Optional<ModelConstants.ModelPermission> opt = a.getAttributedetails()
+                            Optional<ModelConstants.ModelPermission> opt = a.getAttributeDetails()
                                     .stream()
                                     .filter(fa -> fa.getId().equals(id))
                                     .map(aa -> aa.getPermission())

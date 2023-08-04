@@ -27,7 +27,7 @@ import lombok.Setter;
 public class RoleGroupPermissionMappingDto {
 
     public Integer id;
-    public Integer group_id;
+    public Integer groupId;
     public String role;
     public String permission;
     public OffsetDateTime updatedDate;

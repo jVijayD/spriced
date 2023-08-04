@@ -15,12 +15,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
-@Component(value = "roleentitypermissionmapping")
+@Component(value = "role_entity_permission_mapping")
 @Getter
 @Setter
 @NoArgsConstructor
 @Data
-@Table(name = "roleentitypermissionmapping")
+@Table(name = "role_entity_permission_mapping")
 public class RoleEntityPermissionMapping extends BaseEntity {
 
     @Getter
@@ -32,17 +32,17 @@ public class RoleEntityPermissionMapping extends BaseEntity {
         ModelConstants.ModelPermission permission;
     }
 
-    public static final String TABLE = "roleentitypermissionmapping";
+    public static final String TABLE = "role_entity_permission_mapping";
     @ExtraColumnData(isPrimaryKey = true, id = IDType.AUTO)
     @Id
     @Column(name = "id")
     private Integer id;
 
     @Column(name = "entity_id")
-    private Integer entity_id;
+    private Integer entityId;
 
     @Column(name = "group_id")
-    private Integer group_id;
+    private Integer groupId;
 
     @Column(name = "role")
     private String role;
@@ -50,9 +50,9 @@ public class RoleEntityPermissionMapping extends BaseEntity {
     @Column(name = "permission")
     private ModelConstants.ModelPermission permission;
 
-    @Column(name = "attributedetails")
+    @Column(name = "attribute_details")
     @ExtraColumnData(convertToJson = true, exclude = false)
-    private List<AttributePermission> attributedetails;
+    private List<AttributePermission> attributeDetails;
 
     public RoleEntityPermissionMapping(String role) {
         this.role = role;

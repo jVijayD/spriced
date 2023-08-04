@@ -26,7 +26,7 @@ import io.micrometer.core.annotation.Timed;
  *
  */
 @RestController()
-@RequestMapping("/modelaccess")
+@RequestMapping("/accessmanagement")
 @CrossOrigin(origins = "*")
 public class AcccessManagementController {
 
@@ -36,17 +36,6 @@ public class AcccessManagementController {
     @Autowired
     private RoleGroupPermissionMappingDtoMapper mapper;
 
-//	@Timed(value = "group.getAll.time", description = "Time taken to return groups")
-//	@GetMapping()
-//	public ResponseEntity<List<GroupDto>> get() {
-//		return new ResponseEntity<>(mapper.toGroupDtoList(this.accessMngmntService.fetchAll(false)), HttpStatus.OK);
-//	}
-//
-//	@Timed(value = "group.get.time", description = "Time taken to return group")
-//	@GetMapping("/{id}")
-//	public ResponseEntity<GroupDto> get(@PathVariable int id) {
-//		return new ResponseEntity<>(mapper.toGroupDto(this.accessMngmntService.fetch(id, false)), HttpStatus.OK);
-//	}
     @Timed(value = "modelaccess.create.time", description = "Time taken to create modelaccess")
     @PostMapping
     public ResponseEntity<RoleGroupPermissionMappingDto> create(@Valid @RequestBody RoleGroupPermissionMappingDto groupPermissionDTO) {
@@ -64,19 +53,4 @@ public class AcccessManagementController {
         );}
         
     }
-
-//	@Timed(value = "group.change.time", description = "Time taken to change group")
-//	@PatchMapping("/{id}")
-//	public ResponseEntity<GroupDto> update(@Valid @RequestBody GroupUpdateDto group,@PathVariable int id) {
-//		
-//		Group grp = this.accessMngmntService.changeName(id, group.getDisplayName());
-//		return new ResponseEntity<>(mapper.toGroupDto(grp), HttpStatus.CREATED);
-//
-//	}
-//
-//	@Timed(value = "group.delete.time", description = "Time taken to delete group")
-//	@DeleteMapping("/{id}")
-//	public ResponseEntity<Integer> remove(@PathVariable int id) {
-//		return new ResponseEntity<>(this.accessMngmntService.delete(id), HttpStatus.OK);
-//	}
 }

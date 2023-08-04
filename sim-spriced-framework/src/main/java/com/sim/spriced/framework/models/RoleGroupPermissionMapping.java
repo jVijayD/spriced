@@ -13,21 +13,21 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
-@Component(value = "rolegrouppermissionmapping")
+@Component(value = "role_group_permission_mapping")
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "rolegrouppermissionmapping")
+@Table(name = "role_group_permission_mapping")
 public class RoleGroupPermissionMapping extends BaseEntity {
 
-    public static final String TABLE = "rolegrouppermissionmapping";
+    public static final String TABLE = "role_group_permission_mapping";
     @ExtraColumnData(isPrimaryKey = true, id = IDType.AUTO)
     @Id
     @Column(name = "id")
     private Integer id;
 
     @Column(name = "group_id")
-    private Integer group_id;
+    private Integer groupId;
 
     @Column(name = "role")
     private String role;
