@@ -44,7 +44,7 @@ export class ModelAccessService {
   public saveModelAccessPermission(
     body: RoleGroupPermissionMapping
   ): Observable<any> {
-    return this.http.post(`${this.api_url}/modelaccess`, body, {
+    return this.http.post(`${this.api_url}/accessmanagement`, body, {
       headers: headers,
     });
   }
