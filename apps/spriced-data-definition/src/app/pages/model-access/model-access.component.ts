@@ -106,7 +106,7 @@ export class ModelAccessComponent {
         .map(
           (en: any) =>
             new RoleEntityPermissionMapping(
-              en.entity_id,
+              en.entityId,
               en.permission,
               this.selectedModel?.model_id,
               groupPermission.role,
@@ -187,7 +187,7 @@ export class ModelAccessComponent {
       .getEntities(model.id, this.selectedRole.name)
       .subscribe((data: EntityDTO[]) => {
         let entitiesList = data.map((d: EntityDTO) => {
-          d.entity_id = Number.parseInt(d.id.toString());
+          d.entityId = Number.parseInt(d.id.toString());
           d.parentId = model.id;
           d.id = d.name + d.id;
           return new EntityDTO().parse(d);
