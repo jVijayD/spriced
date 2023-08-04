@@ -116,6 +116,7 @@ export class EntityComponent {
       this.entityService.add(entity).subscribe((results) => {
         this.rows.push(results);
         this.rows = [...this.rows];
+        this.totalElements = this.rows.length;
         dialogRef.close();
       });
     });
