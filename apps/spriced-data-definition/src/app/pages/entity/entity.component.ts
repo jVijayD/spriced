@@ -21,6 +21,7 @@ import { ModelService } from "../../services/model.service";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatSelectModule } from "@angular/material/select";
 import { EntityAddComponent } from "./components/entity-add/entity-add.component";
+import * as moment from "moment";
 @Component({
   selector: "sp-entity",
   standalone: true,
@@ -61,6 +62,9 @@ export class EntityComponent {
       name: "Updated Date",
       canAutoResize: true,
       isSortable: true,
+      pipe: (data: any) => {
+        return moment(data).format("MM-DD-YYYY");
+      },
     },
   ];
   columnMode: ColumnMode = ColumnMode.force;
