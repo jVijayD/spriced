@@ -112,6 +112,13 @@ export class DataGridComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.table.virtualization = true;
   }
+
+  public renderData(data: any, itemHeader: Header) {
+    if (itemHeader.pipe && itemHeader.pipe instanceof Function) {
+      return itemHeader.pipe(data);
+    }
+    return data;
+  }
 }
 
 export interface Header {
@@ -125,7 +132,7 @@ export interface Header {
   isFilterable?: boolean;
   sortDirection?: "asc" | "desc";
   canAutoResize?: boolean;
-  pipe?: PipeTransform;
+  pipe?: unknown;
 }
 
 export interface Paginate {

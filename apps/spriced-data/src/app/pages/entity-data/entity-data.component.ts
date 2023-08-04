@@ -78,7 +78,17 @@ export class EntityDataComponent {
 
   //Dynamic Form
   private formFields!: FormFieldControls;
-  appForm!: AppForm;
+  appForm: AppForm = {
+    title: "",
+    groups: [
+      {
+        title: "",
+        formFieldControls: [],
+      },
+    ],
+    asyncValidations: [],
+    validations: [],
+  };
 
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
@@ -86,7 +96,7 @@ export class EntityDataComponent {
     private snackbarService: SnackBarService,
     private dialogService: DialogService,
     private dynamicFormService: DynamicFormService,
-    private dialog: MatDialog,
+    private dialog: MatDialog
   ) {}
   onPaginate(e: Paginate) {}
   onItemSelected(e: any) {
@@ -104,38 +114,28 @@ export class EntityDataComponent {
   }
   onFilter() {}
   onEdit() {}
- 
-  onUpload()
-  {
-    const dialogResult =this.dialog.open(UploadDialogeComponent, {
 
-    });
+  onUpload() {
+    const dialogResult = this.dialog.open(UploadDialogeComponent, {});
 
     dialogResult.afterClosed().subscribe((val) => {
       console.log(val);
     });
   }
-  onStatus()
-  {
-    const dialogResult =this.dialog.open(StatusComponent, {
-    
-
-    });
+  onStatus() {
+    const dialogResult = this.dialog.open(StatusComponent, {});
 
     dialogResult.afterClosed().subscribe((val) => {
       console.log(val);
-    }); 
+    });
   }
-  onSettings()
-    {
-      const dialogResult =this.dialog.open(SettingsPopUpComponent, {
+  onSettings() {
+    const dialogResult = this.dialog.open(SettingsPopUpComponent, {});
 
-      });
-  
-      dialogResult.afterClosed().subscribe((val) => {
-        console.log(val);
-      });
-    }
+    dialogResult.afterClosed().subscribe((val) => {
+      console.log(val);
+    });
+  }
   showAddPopup() {
     this.dialogService.openDialog(AddModelComponent, {
       data: this.appForm,

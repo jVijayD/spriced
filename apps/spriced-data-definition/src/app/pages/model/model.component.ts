@@ -1,4 +1,10 @@
-import { Component, NgModule, OnInit, ViewChild } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   DataGridComponent,
@@ -18,6 +24,9 @@ import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import { ModelAddComponent } from "./components/model-add/model-add.component";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { ModelService } from "../../services/model.service";
+import { Subscription } from "rxjs";
+import { DatePipe } from "@angular/common";
+import * as moment from "moment";
 
 @Component({
   selector: "sp-defnition-entity",
@@ -31,13 +40,14 @@ import { ModelService } from "../../services/model.service";
     DialogueModule,
     SnackbarModule,
     MatDialogModule,
+    DatePipe,
   ],
   providers: [ModelService],
   templateUrl: "./model.component.html",
   styleUrls: ["./model.component.scss"],
   //changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ModelComponent implements OnInit {
+export class ModelComponent implements OnInit, OnDestroy {
   headers: Header[] = [
     { column: "id", name: "Id", canAutoResize: true, isSortable: true },
     { column: "name", name: "Name", canAutoResize: true, isSortable: true },
@@ -58,6 +68,9 @@ export class ModelComponent implements OnInit {
       name: "Updated Date",
       canAutoResize: true,
       isSortable: true,
+      pipe: (data: any) => {
+        return moment(data).format("MM-DD-YYYY");
+      },
     },
   ];
   columnMode: ColumnMode = ColumnMode.flex;
@@ -68,6 +81,8 @@ export class ModelComponent implements OnInit {
   rows: any[] = [];
   selectedItem: any = null;
   filterData: any;
+  subscriptions: Subscription[] = [];
+
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
   pageNo = 0;
@@ -80,6 +95,7 @@ export class ModelComponent implements OnInit {
     private dialog: MatDialog,
     private modelService: ModelService
   ) {}
+
   ngOnInit(): void {
     this.load(this.pageNo, this.pageSize);
   }
@@ -90,21 +106,31 @@ export class ModelComponent implements OnInit {
       this.filterData = results;
     });
   }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((item) => {
+      item.unsubscribe();
+    });
+  }
+
   onAdd() {
     this.dataGrid.clearSelection();
+    this.selectedItem = null;
     const dialogRef = this.dialog.open(ModelAddComponent, {
       data: { action: "Add" },
-      //maxWidth: "300px",
-      //maxHeight: "400px",
     });
-    dialogRef.componentInstance.dataChange.subscribe((result: any) => {
-      this.rows.push(result);
-      this.rows = [...this.rows];
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.load(this.pageNo, this.pageSize);
+        this.selectedItem = null;
+      }
     });
   }
 
   onRefresh() {
     this.load(this.pageNo, this.pageSize);
+    this.selectedItem = null;
   }
 
   onEdit() {
@@ -112,8 +138,9 @@ export class ModelComponent implements OnInit {
       data: { action: "Edit", value: this.selectedItem },
     });
     dialogRef.afterClosed().subscribe((result) => {
-      if (result == true) {
+      if (result) {
         this.load(this.pageNo, this.pageSize);
+        this.selectedItem = null;
       }
     });
   }
@@ -130,6 +157,7 @@ export class ModelComponent implements OnInit {
           .subscribe((results: any) => {
             this.snackbarService.success("Succesfully Deleted");
             this.load(this.pageNo, this.pageSize);
+            this.selectedItem = null;
           });
       }
     });

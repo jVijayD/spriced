@@ -92,10 +92,12 @@ export class EntityComponent {
     this.entityService.loadEntityByModel(id.value).subscribe((results: any) => {
       this.rows = results;
       this.totalElements = results.length;
+      this.selectedItem = null;
     });
   }
   onAdd() {
     this.dataGrid.clearSelection();
+    this.selectedItem = null;
     const dialogRef = this.dialog.open(EntityAddComponent, {
       data: { action: "Add", entities: this.rows, row: "" },
       //maxWidth: "300px",
@@ -161,7 +163,6 @@ export class EntityComponent {
           .subscribe((results: any) => {
             this.snackbarService.success("Succesfully Deleted");
             this.load({ value: this.groupId });
-            this.selectedItem = null;
             this.dataGrid.clearSelection();
           });
       }

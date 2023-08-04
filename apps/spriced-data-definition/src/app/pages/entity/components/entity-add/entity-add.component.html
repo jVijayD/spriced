@@ -1,7 +1,5 @@
 <div class="container">
-  <h1 mat-dialog-title>
-    <strong>{{ action }} Entity</strong>
-  </h1>
+  <h1 mat-dialog-title>{{ action }} Entity</h1>
 
   <div mat-dialog-content class="content">
     <div class="namegrid">
@@ -237,7 +235,16 @@
           <mat-divider></mat-divider>
           <div class="flex justify-end p-5">
             <button
-              mat-flat-button
+              mat-raised-button
+              class="savebtn"
+              color="accent"
+              type="button"
+              (click)="clear()"
+            >
+              Clear
+            </button>
+            <button
+              mat-raised-button
               type="button"
               color="primary"
               class="savebtn"
@@ -250,15 +257,6 @@
             >
               {{ attAction }}
             </button>
-            <button
-              mat-flat-button
-              class="savebtn"
-              color="accent"
-              type="button"
-              (click)="clear()"
-            >
-              Clear
-            </button>
           </div>
         </div>
       </div>
@@ -266,23 +264,22 @@
   </div>
   <div mat-dialog-actions class="actions">
     <button
-      mat-flat-button
+      (click)="closeDialog()"
+      mat-raised-button
+      color="accent"
+      type="button"
+      class="mr-2"
+    >
+      Cancel
+    </button>
+    <button
+      mat-raised-button
       color="primary"
       type="submit"
       (click)="doAction()"
-      class="form d-flex flex-column flex-lg-row mr-2"
       [disabled]="entityForm.invalid && action !== 'Edit'"
     >
       {{ action }}
-    </button>
-    <button
-      mat-button
-      (click)="closeDialog()"
-      mat-flat-button
-      color="accent"
-      type="button"
-    >
-      Cancel
     </button>
   </div>
 </div>

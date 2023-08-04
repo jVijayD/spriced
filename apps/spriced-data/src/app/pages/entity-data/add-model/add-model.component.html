@@ -1,8 +1,13 @@
 <div class="flex flex-col container">
   <div class="page-header">Add/Edit Entity</div>
+
+  <button mat-icon-button color="transparent" class="close" (click)="onClose()">
+    <mat-icon>close</mat-icon>
+  </button>
   <sp-dynamic-form-container
     [appForm]="dialogData.data"
     reset="Reset"
     save="Save"
+    (submitEvent)="onSubmit($event)"
   ></sp-dynamic-form-container>
 </div>

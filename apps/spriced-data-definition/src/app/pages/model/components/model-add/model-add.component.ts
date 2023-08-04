@@ -46,7 +46,7 @@ export class ModelAddComponent {
   ) {
     this.dialogRef.disableClose = true;
     this.appForm = {
-      title: "Add/Edit Model",
+      title: this.data.action === "Edit" ? "Edit Model" : "Add Model",
       //columns: 4,
       groups: [
         {
@@ -65,7 +65,7 @@ export class ModelAddComponent {
       name: "name",
       value: this.data.value?.name || "",
       placeholder: "Name",
-      icon: "phone",
+      icon: "business",
       label: "Name",
       readOnly: this.data.action == "Edit" ? true : false,
       validations: [
@@ -87,7 +87,7 @@ export class ModelAddComponent {
       name: "displayName",
       value: this.data.value?.displayName || "",
       placeholder: "DisplayName",
-      icon: "phone",
+      icon: "business",
       label: "DisplayName",
       validations: [
         {
@@ -106,26 +106,26 @@ export class ModelAddComponent {
 
   appForm!: AppForm;
 
-  onClose() {
-    this.dialogRef.close();
+  onClose(data: any) {
+    this.dialogRef.close(data);
   }
 
   onSubmit(data: FormGroup<any>) {
     if (data.valid) {
       if (this.data.action == "Add") {
         this.modelService.add(data.value).subscribe((results: any) => {
-          this.snackbarService.success("Succesfully Created");
-          this.dataChange.emit(results)
-          this.onClose();
+          this.snackbarService.success("Model Successfully Created.");
+          //this.dataChange.emit(results);
+          this.onClose({ data: results, action: this.data.action });
         });
-      
       } else if (this.data.action == "Edit") {
-        this.modelService.edit(data.value,this.data.value).subscribe((results: any) => {
-          this.snackbarService.success("Succesfully Updated");
-          this.dialogRef.close(true);
-        });
+        this.modelService
+          .edit(data.value, this.data.value)
+          .subscribe((results: any) => {
+            this.snackbarService.success("Model Successfully Updated.");
+            this.onClose({ data: results, action: this.data.action });
+          });
       }
-    
     }
   }
 }
