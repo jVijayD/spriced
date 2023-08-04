@@ -1,6 +1,5 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
 
 @Injectable({ providedIn: "root" })
 export class EntityService {
@@ -25,3 +24,5 @@ export class EntityService {
     return this.http.get(`${this.api_url}/models/${id}/entities`);
   }
 }
+
+export interface entity {}
