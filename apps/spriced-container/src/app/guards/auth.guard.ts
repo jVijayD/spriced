@@ -1,0 +1,61 @@
+import {
+  HttpEvent,
+  HttpHandler,
+  HttpHeaders,
+  HttpRequest,
+} from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import {
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+  UrlTree,
+  Router,
+} from "@angular/router";
+import { KeycloakAuthGuard, KeycloakService } from "keycloak-angular";
+import { Observable } from "rxjs";
+
+@Injectable({
+  providedIn: "root",
+})
+export class AuthGuard extends KeycloakAuthGuard {
+  user: any;
+  constructor(
+    protected override readonly router: Router,
+    protected readonly keycloak: KeycloakService
+  ) {
+    super(router, keycloak);
+  }
+  async isAccessAllowed(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Promise<boolean | UrlTree> {
+    if (!this.hasRoles()) {
+      console.log(window.location.origin + state.url);
+       window.location.href =  `${window.location.origin}/unauthorized`;
+    }
+    return this.hasRoles();
+  }
+
+  hasRoles() {
+    let roles =
+      this.keycloak.getKeycloakInstance().tokenParsed?.realm_access?.roles;
+    console.log(roles);
+    return roles != undefined && roles.length > 1;
+  }
+  intercept(
+    req: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
+    this.user = this.keycloak.getKeycloakInstance();
+    const authReq = req.clone({
+      headers: new HttpHeaders({
+        tenant: "meritor",
+        user: this.user.profile.email || "",
+        transactionId: this.user.profile.id || "",
+        roles: this.user.tokenParsed?.realm_access?.roles?.join(","),
+        applications: this.user.profile.attributes.application || "",
+      }),
+    });
+    return next.handle(authReq);
+  }
+}
