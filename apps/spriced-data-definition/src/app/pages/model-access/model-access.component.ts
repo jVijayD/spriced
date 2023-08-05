@@ -30,7 +30,7 @@ import {
   RoleGroupPermissionMapping,
   RoleEntityPermissionMapping,
 } from "./models/ModelAccesTypes.class";
-import { ErrorTypes, StatusPannelService } from "@spriced-frontend/shared/spriced-shared-lib";
+import { ErrorTypes, AppDataService } from "@spriced-frontend/shared/spriced-shared-lib";
 const POPULATE_ATTRIBUTES = true;
 @Component({
   selector: "sp-model-access",
@@ -66,7 +66,7 @@ export class ModelAccessComponent {
   constructor(
     private cd: ChangeDetectorRef,
     private dialogService: DialogService,
-    private statusPannelService: StatusPannelService,
+    private statusPannelService: AppDataService,
     private myService: ModelAccessService // private service: DataDefListService
   ) {
     this.onInit();

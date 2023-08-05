@@ -3,7 +3,6 @@ import { CommonModule } from "@angular/common";
 import { initializeKeycloak } from "./auth/keycloak-init.factory";
 import { KeycloakAngularModule, KeycloakService } from "keycloak-angular";
 import { AppDataService } from "./app-data/app-data.service";
-import { StatusPannelService } from "./app-data/status-panel.service";
 import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { headerInterceptor } from "./auth/header-interceptor";
 
@@ -22,7 +21,7 @@ import { headerInterceptor } from "./auth/header-interceptor";
       useClass: headerInterceptor,
       multi: true,
     },
-    AppDataService,StatusPannelService
+    AppDataService
   ],
 })
 export class SharedSpricedSharedLibModule {}

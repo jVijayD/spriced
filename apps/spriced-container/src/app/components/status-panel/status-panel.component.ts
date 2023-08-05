@@ -2,8 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatIconModule } from "@angular/material/icon";
 import {
+  AppDataService,
   ErrorTypes,
-  StatusPannelService,
   errorElement,
 } from "@spriced-frontend/shared/spriced-shared-lib";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
@@ -24,10 +24,10 @@ import { StatusDialogueComponent } from "./status-dialogue/status-dialogue.compo
 export class StatusPanelComponent implements OnInit{
   constructor(
     public dialog: MatDialog,
-    private statusPnlService: StatusPannelService
+    private statusPnlService: AppDataService
   ) {}
   ngOnInit(): void {
-    this.statusPnlService.$ERROR_LIST.subscribe((r) => {
+    this.statusPnlService.$ERROR_LIST.subscribe((r:errorElement[]) => {
       this.ERROR_LIST = r;
     });
   }
