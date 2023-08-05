@@ -2,7 +2,6 @@
   <mat-form-field appearance="outline" class="flex-grow">
     <mat-label>Model</mat-label>
     <mat-select
-      (blur)="onTouched()"
       [value]="selectedModelValue"
       class="w-1/2 pl-2 pr-2"
       (selectionChange)="onModelSelectionChange($event)"
@@ -18,7 +17,6 @@
     <mat-label>Entity</mat-label>
     <mat-select
       matNativeControl
-      (blur)="onTouched()"
       [value]="selectedEntity"
       class="w-1/2 pl-2 pr-2"
       (selectionChange)="onEntitySelectionChange($event)"

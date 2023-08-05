@@ -1,4 +1,4 @@
-import { Component, ViewChild } from "@angular/core";
+import { Component, OnDestroy, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   AppForm,
@@ -15,6 +15,8 @@ import {
   HeaderActionComponent,
   Paginate,
   TwoColThreeForthComponent,
+  GenericControl,
+  IValidator,
 } from "@spriced-frontend/spriced-ui-lib";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
@@ -25,6 +27,11 @@ import { MatDialog } from "@angular/material/dialog";
 import { UploadDialogeComponent } from "../../components/upload-dialoge/upload-dialoge.component";
 import { SettingsPopUpComponent } from "../../components/settingsPopUp/settings-pop-up.component";
 import { StatusComponent } from "../../components/status/status.component";
+import { Attribute, Entity } from "@spriced-frontend/spriced-common-lib";
+import { ValidationErrors, Validators } from "@angular/forms";
+import { EntityDataService } from "../../services/entity-data.service";
+import { Subscription } from "rxjs";
+import * as moment from "moment";
 
 @Component({
   selector: "sp-entity-data",
@@ -42,6 +49,7 @@ import { StatusComponent } from "../../components/status/status.component";
     EntitySelectComponent,
   ],
   providers: [
+    EntityDataService,
     {
       provide: FORM_DATA_SERVICE,
       useValue: {
@@ -64,8 +72,8 @@ import { StatusComponent } from "../../components/status/status.component";
   templateUrl: "./entity-data.component.html",
   styleUrls: ["./entity-data.component.scss"],
 })
-export class EntityDataComponent {
-  entityName = "List";
+export class EntityDataComponent implements OnDestroy {
+  subscriptions: Subscription[] = [];
   isFullScreen = false;
   headers: Header[] = [];
   columnMode: ColumnMode = ColumnMode.force;
@@ -74,21 +82,12 @@ export class EntityDataComponent {
   selectedItem: any;
   //totalElements = 10000;
   rows: any[] = [];
-  data: any[] = [];
+  //data: any[] = [];
 
+  currentSelectedEntity?: Entity;
   //Dynamic Form
-  private formFields!: FormFieldControls;
-  appForm: AppForm = {
-    title: "",
-    groups: [
-      {
-        title: "",
-        formFieldControls: [],
-      },
-    ],
-    asyncValidations: [],
-    validations: [],
-  };
+  //private formFields!: FormFieldControls;
+  appForm!: AppForm;
 
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
@@ -96,8 +95,15 @@ export class EntityDataComponent {
     private snackbarService: SnackBarService,
     private dialogService: DialogService,
     private dynamicFormService: DynamicFormService,
+    private entityDataService: EntityDataService,
     private dialog: MatDialog
-  ) {}
+  ) {
+    this.setFormData("", []);
+  }
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((item) => item.unsubscribe());
+  }
+
   onPaginate(e: Paginate) {}
   onItemSelected(e: any) {
     this.selectedItem = e;
@@ -129,16 +135,210 @@ export class EntityDataComponent {
       console.log(val);
     });
   }
+
   onSettings() {
     const dialogResult = this.dialog.open(SettingsPopUpComponent, {});
-
     dialogResult.afterClosed().subscribe((val) => {
       console.log(val);
     });
   }
+
   showAddPopup() {
     this.dialogService.openDialog(AddModelComponent, {
       data: this.appForm,
     });
+  }
+
+  onEntitySelectionChange(entity: Entity | string) {
+    this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);
+    this.createDynamicGrid(this.currentSelectedEntity);
+    this.createDynamicUIMapping(this.currentSelectedEntity);
+  }
+
+  private createDynamicUIMapping(entity: Entity | undefined) {
+    let formFields: FormFieldControls = [];
+    if (entity) {
+      debugger;
+      entity.attributes.forEach((attr: Attribute) => {
+        formFields.push(this.getType(attr));
+      });
+    }
+    this.setFormData("", formFields);
+  }
+
+  private getType(attr: Attribute): GenericControl {
+    switch (attr.dataType) {
+      case "STRING_VAR":
+      case "TEXT":
+      case "LINK":
+        return {
+          type: "input",
+          subType: "text",
+          name: attr.name,
+          placeholder: attr.displayName || attr.name,
+          label: attr.displayName || attr.name,
+          validations: this.getValidations(attr),
+        };
+      case "INTEGER":
+        return {
+          type: "numeric",
+          subType: "text",
+          name: attr.name,
+          placeholder: attr.displayName || attr.name,
+          label: attr.displayName || attr.name,
+          decimalCount: attr.numberOfDecimalValues,
+          validations: this.getValidations(attr),
+        };
+
+      case "TIME_STAMP":
+        return {
+          name: attr.name,
+          type: "date",
+          format: attr.formatter ?? "MM/DD/YYYY",
+          label: "MM/DD/YYYY",
+          placeholder: attr.displayName || attr.name,
+          startDate: moment(new Date()).format("YYYY-MM-DD"),
+          startView: "month",
+          hiddenDefault: null,
+          validations: this.getValidations(attr),
+        };
+      case "BOOLEAN":
+        return {
+          type: "checkbox",
+          name: attr.name,
+          label: attr.displayName || attr.name,
+          validations: this.getValidations(attr),
+        };
+      case "AUTO":
+      default:
+        return {
+          type: "input",
+          subType: "hidden",
+          name: attr.name,
+          label: "",
+        };
+    }
+  }
+
+  private getValidations(attr: Attribute): IValidator[] {
+    let validations: IValidator[] = [];
+
+    if (!attr.nullable) {
+      validations.push({
+        name: `required`,
+        message: `${attr.displayName || attr.name} is required.`.toLowerCase(),
+        validator: Validators.required,
+      });
+    }
+
+    if (
+      attr.size &&
+      (attr.dataType === "LINK" ||
+        attr.dataType === "STRING_VAR" ||
+        attr.dataType === "TEXT")
+    ) {
+      validations.push({
+        name: `maxlength`,
+        message: `Maximum length is ${attr.size}.`.toLowerCase(),
+        validator: Validators.maxLength,
+      });
+    }
+
+    if (attr.dataType === "LINK") {
+      validations.push({
+        name: `${attr.name}_pattern`,
+        message: `Invalid pattern for link`.toLowerCase(),
+        validator: Validators.pattern(
+          "(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?"
+        ),
+      });
+    }
+    return validations;
+  }
+  private createDynamicGrid(entity: Entity | undefined) {
+    if (entity) {
+      this.headers = entity.attributes.map((attr: Attribute) => {
+        return {
+          column: attr.name,
+          name: attr.displayName || attr.name,
+          canAutoResize: true,
+          isSortable: true,
+          isFilterable: true,
+        };
+      });
+      this.loadEntityData(entity);
+    } else {
+      this.headers = [];
+    }
+  }
+
+  private loadEntityData(entity: Entity) {
+    if (entity) {
+      this.subscriptions.push(
+        this.entityDataService.loadEntityData(entity.id).subscribe({
+          next: (items) => {
+            alert("GET DATA");
+          },
+          error: (err) => {
+            this.rows = [];
+            alert("Error");
+          },
+        })
+      );
+    } else {
+    }
+  }
+
+  onSubmitEntityData(data: any) {
+    if (data.valid) {
+      const entityId = this.currentSelectedEntity?.id as number;
+      if (!this.selectedItem) {
+        this.createEntityData(entityId, data.value);
+      } else {
+        this.editEntityData(entityId, this.selectedItem.id, data.value);
+      }
+    } else {
+      this.snackbarService.warn("Invalid record data.");
+    }
+  }
+
+  private createEntityData(entityId: number, data: any) {
+    debugger;
+    this.entityDataService.createEntityData(entityId, data).subscribe({
+      next: (item) => {
+        this.snackbarService.success("Record created successfully.");
+      },
+      error: (err) => {
+        console.error(err);
+        this.snackbarService.error("Record creation failed.");
+      },
+    });
+  }
+
+  private editEntityData(entityId: number, recordId: number, data: any) {
+    data.id = recordId;
+    this.entityDataService.updateEntityData(entityId, data).subscribe({
+      next: (item) => {
+        this.snackbarService.success("Record updated successfully.");
+      },
+      error: (err) => {
+        console.error(err);
+        this.snackbarService.error("Record update failed.");
+      },
+    });
+  }
+
+  private setFormData(title: string, formFieldControls: FormFieldControls) {
+    this.appForm = {
+      title: title,
+      groups: [
+        {
+          title: "",
+          formFieldControls: [...formFieldControls],
+        },
+      ],
+      validations: [],
+      asyncValidations: [],
+    };
   }
 }

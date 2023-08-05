@@ -44,7 +44,7 @@ export class AppComponent implements OnDestroy, OnInit {
       path: "/spriced-data",
     },
     {
-      name: "Data Reporting",
+      name: "Reporting",
       icon: "/assets/images/reporting.png",
       path: "/spriced-reports",
     },
