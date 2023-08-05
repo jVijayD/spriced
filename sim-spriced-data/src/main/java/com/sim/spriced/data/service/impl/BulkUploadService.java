@@ -40,10 +40,10 @@ public class BulkUploadService implements IBulkUploadService {
 		try {
 			File destFile = new File(filePath);
 			file.transferTo(destFile);
-			return BulkUploadStatus.UPLOADED.name();
+			return BulkUploadStatus.UPLOADED.getBulkUploadStatus();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return BulkUploadStatus.UPLOAD_FAILED.name();
+			return BulkUploadStatus.UPLOAD_FAILED.getBulkUploadStatus();
 		}
 	}
 }
