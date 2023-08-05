@@ -123,6 +123,7 @@ export class ModelListComponent {
             d.treeStatus = "disabled";
             d.parentId = row.id;
             d.icon = "view_column";
+            d.displayName = d.displayName || d.name;
             return d;
           });
           row.treeStatus = "expanded";

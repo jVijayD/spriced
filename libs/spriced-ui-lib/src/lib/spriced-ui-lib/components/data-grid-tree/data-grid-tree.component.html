@@ -45,12 +45,16 @@
       [isTreeColumn]="header.isTreeColumn"
     >
       <ng-template let-row="row" ngx-datatable-cell-template>
-        <mat-icon *ngIf="header.isTreeColumn">{{ row.icon }}</mat-icon>
-        {{
-          isArray
-            ? this.renderData(row[i], header)
-            : this.renderData(row[header.column], header)
-        }}
+        <span style="display: inline-flex" class="ml-5">
+          <mat-icon *ngIf="header.isTreeColumn">{{ row.icon }}</mat-icon>
+          <span class="ml-2">
+            {{
+              isArray
+                ? this.renderData(row[i], header)
+                : this.renderData(row[header.column], header)
+            }}</span
+          ></span
+        >
       </ng-template></ngx-datatable-column
     >
   </ngx-datatable>
