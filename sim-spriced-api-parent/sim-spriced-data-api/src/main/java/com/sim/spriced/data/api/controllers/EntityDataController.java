@@ -102,8 +102,8 @@ public class EntityDataController {
             EntityData data = new EntityData();
             data.setEntityName(entityDto.getName());
             data.setAttributes(entityDto.getAttributes());
-            var result = this.dataService.fetchAllAsMap(data,searchCriteria);
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            var result = this.dataService.fetchAllAsMapPage(data,searchCriteria);
+            return new ResponseEntity(result, HttpStatus.OK);
         } else {
             throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
         }

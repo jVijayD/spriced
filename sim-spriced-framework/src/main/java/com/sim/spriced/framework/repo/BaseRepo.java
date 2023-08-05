@@ -476,6 +476,7 @@ public abstract class BaseRepo {
 		return result.map(converter::apply);
 	}
         
+	// Table Data details to generate the Query
     public Select fetchRecordsByCriteria(String tableName, Criteria searchCriteria, List<Field<Object>> fieldsList) {
         if (searchCriteria == null) {
             searchCriteria = new Criteria();
@@ -497,7 +498,35 @@ public abstract class BaseRepo {
                     .offset(pager.getOffset());
         }
     }
-	// Table Data details to generate the Query
+    public Page fetchRecordsByCriteriaPage(String tableName, Criteria searchCriteria, List<Field<Object>> fieldsList) {
+        if (searchCriteria == null) {
+            searchCriteria = new Criteria();
+        }
+        PageImpl pg;
+        Criteria.Pager pager = searchCriteria.getPager();
+        List<Criteria.Sorter> sorters = searchCriteria.getSorters();
+        List<Filter> filtersList = searchCriteria.getFilters();
+        Condition condition = FilterGenerator.generate(filtersList, fieldsList);
+        SelectSeekStepN<Record> selectSeek = this.context
+                .selectFrom(table(tableName))
+                .where(condition != null ? condition : DSL.trueCondition())
+                .orderBy(this.getOrderBy(sorters));
+
+        if (pager == null) {
+            pg = new PageImpl(selectSeek.fetch().intoMaps());
+        } else {
+            int count = context.fetchCount(selectSeek);
+            pg = new PageImpl(
+                    selectSeek
+                            .limit(pager.getPageSize())
+                            .offset(pager.getOffset())
+                            .fetch()
+                            .intoMaps(),
+                    Pageable.ofSize(pager.getPageSize()),
+                    count);
+        }
+        return pg;
+    }
 	private <T> TableData getTableData(T entity) {
 
 		TableData tableData = new TableData();

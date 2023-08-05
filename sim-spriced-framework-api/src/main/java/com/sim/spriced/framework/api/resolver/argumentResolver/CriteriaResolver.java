@@ -34,7 +34,6 @@ public class CriteriaResolver implements HandlerMethodArgumentResolver {
         ObjectMapper objectMapper = new ObjectMapper();
 
         webRequest.getParameterMap().forEach((s, a) -> {
-            System.out.println(a);
             try {
                 criteria = objectMapper.readValue(a[0], Criteria.class);
             } catch (JsonProcessingException ex) {
