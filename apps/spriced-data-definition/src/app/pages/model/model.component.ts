@@ -122,7 +122,10 @@ export class ModelComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.load(this.pageNo, this.pageSize);
+        // this.load(this.pageNo, this.pageSize);
+        this.rows.push(result.data);
+        this.rows = [...this.rows];
+        this.totalElements = this.rows.length;
         this.selectedItem = null;
       }
     });

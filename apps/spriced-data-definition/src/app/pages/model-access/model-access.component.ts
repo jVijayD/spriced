@@ -30,7 +30,8 @@ import {
   RoleGroupPermissionMapping,
   RoleEntityPermissionMapping,
 } from "./models/ModelAccesTypes.class";
-const POPULATE_ATTRIBUTES = true;
+import { ErrorTypes, AppDataService } from "@spriced-frontend/shared/spriced-shared-lib";
+const POPULATE_ATTRIBUTES = false;
 @Component({
   selector: "sp-model-access",
   standalone: true,
@@ -65,6 +66,7 @@ export class ModelAccessComponent {
   constructor(
     private cd: ChangeDetectorRef,
     private dialogService: DialogService,
+    private statusPannelService: AppDataService,
     private myService: ModelAccessService // private service: DataDefListService
   ) {
     this.onInit();
@@ -78,6 +80,7 @@ export class ModelAccessComponent {
         return mdl;
       });
     });
+    this.statusPannelService.init()
   }
 
   getPermissions() {
@@ -106,7 +109,7 @@ export class ModelAccessComponent {
         .map(
           (en: any) =>
             new RoleEntityPermissionMapping(
-              en.entity_id,
+              en.entityId,
               en.permission,
               this.selectedModel?.model_id,
               groupPermission.role,
@@ -127,6 +130,7 @@ export class ModelAccessComponent {
   }
 
   onClearClick() {
+    this.statusPannelService.init()
     this.selectedRole = null;
     this.selectedModel = null;
     this.treeStore.data = [];
@@ -187,7 +191,7 @@ export class ModelAccessComponent {
       .getEntities(model.id, this.selectedRole.name)
       .subscribe((data: EntityDTO[]) => {
         let entitiesList = data.map((d: EntityDTO) => {
-          d.entity_id = Number.parseInt(d.id.toString());
+          d.entityId = Number.parseInt(d.id.toString());
           d.parentId = model.id;
           d.id = d.name + d.id;
           return new EntityDTO().parse(d);

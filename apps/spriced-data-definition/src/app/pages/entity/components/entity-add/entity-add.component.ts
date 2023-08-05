@@ -93,12 +93,19 @@ export class EntityAddComponent implements OnInit {
   @Output() dataChange = new EventEmitter<any>();
   constraintType = false;
   headers: Header[] = [
-    { column: "name", name: "Name", canAutoResize: true, isSortable: true,width:100},
     {
-      column: "displayName" || 'name',
+      column: "name",
+      name: "Name",
+      canAutoResize: true,
+      isSortable: true,
+      width: 100,
+    },
+    {
+      column: "displayName" || "name",
       name: "Display Name",
       canAutoResize: true,
-      isSortable: true,width:100
+      isSortable: true,
+      width: 100,
     },
   ];
   columnMode: ColumnMode = ColumnMode.force;
@@ -110,6 +117,7 @@ export class EntityAddComponent implements OnInit {
 
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
+  referencedTableDisplayName: any;
   constructor(
     public dialogRef: MatDialogRef<EntityAddComponent>,
     //@Optional() is used to prevent error if no data is passed
@@ -123,13 +131,17 @@ export class EntityAddComponent implements OnInit {
     this.entityList = data.entities;
     if (this.local_data.id == this.entityList[0]?.id) {
       this.attDetails.referencedTableId = this.entityList[1]?.id;
+      this.referencedTable = this.entityList[1]?.name;
+      this.referencedTableDisplayName = this.entityList[1]?.displayName;
     } else {
       this.attDetails.referencedTableId = this.entityList[0]?.id;
+      this.referencedTable = this.entityList[0]?.name;
+      this.referencedTableDisplayName = this.entityList[0]?.displayName;
     }
 
     this.action = data.action;
     this.rows = this.local_data?.attributes || [];
-    this.totalElements=this.rows.length
+    this.totalElements = this.rows.length;
   }
   ngOnInit(): void {
     this.initForm();
@@ -160,7 +172,13 @@ export class EntityAddComponent implements OnInit {
     this.cdr.detectChanges();
   }
   selectedEntity(event: any) {
-    this.referencedTable = event.source.triggerValue;
+    this.referencedTableDisplayName = event.source.triggerValue;
+    this.entityList.map((value: any) => {
+      if (value.id == event.source.value) {
+        this.referencedTable = value.name;
+      }
+    });
+    console.log(this.referencedTable, this.referencedTableDisplayName);
   }
   updateRowData(row_obj: any) {
     if (row_obj.dataType == "INTEGER" && row_obj.size > 0) {
@@ -173,7 +191,7 @@ export class EntityAddComponent implements OnInit {
         }
         return true;
       });
-      this.rows=[...this.rows]
+      this.rows = [...this.rows];
     }
     if (this.attAction == "Add") {
       if (row_obj.type == "FREE_FORM") {
@@ -197,10 +215,11 @@ export class EntityAddComponent implements OnInit {
           type: row_obj.type,
           referencedTableId: row_obj.referencedTableId,
           referencedTable: this.referencedTable,
+          referencedTableDisplayName: this.referencedTableDisplayName,
         });
       }
-      this.rows=[...this.rows]
-      this.totalElements=this.rows.length
+      this.rows = [...this.rows];
+      this.totalElements = this.rows.length;
     }
     this.clear();
   }
@@ -216,7 +235,6 @@ export class EntityAddComponent implements OnInit {
       });
     }
   }
-
 
   onEdit() {
     if (this.selectedItem.dataType == "DECIMAL" && this.selectedItem.size > 0) {

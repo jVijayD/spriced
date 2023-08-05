@@ -16,7 +16,7 @@ export class EntityService {
     return this.http.delete(`${this.api_url}/entities/${id}`);
   }
   edit(entity: any) {
-    return this.http.patch(`${this.api_url}/entities/${entity.id}`, entity);
+    return this.http.put(`${this.api_url}/entities/${entity.id}`, entity);
   }
   load(id: number) {
     return this.http.delete(`${this.api_url}/entities/${id}`);

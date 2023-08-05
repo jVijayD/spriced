@@ -2,7 +2,7 @@
   <sp-hbox>
     <mat-form-field appearance="outline">
       <mat-label>User Role</mat-label>
-      <mat-select  (selectionChange)="onSelectRole($event)" [(value)]="selectedRole">
+      <mat-select (selectionChange)="onSelectRole($event)" [(value)]="selectedRole">
         <mat-option *ngFor="let item of roleList" [value]="item">{{item.name}}</mat-option>
       </mat-select>
     </mat-form-field>
@@ -20,12 +20,13 @@
     </button>
   </sp-hbox>
   <sp-vbox [noGap]="true" [marginX]="true">
-    <mat-toolbar color="primary">
-      <span>Model View</span>
-    </mat-toolbar>
-    <ngx-datatable class="material striped tableScroll" style="height: 500px;" [columnMode]="ColumnMode.flex"
-      [headerHeight]="50" [footerHeight]="0" [rowHeight]="60" [rows]="treeStore.data" [scrollbarV]="true" [scrollbarH]="true"
-      [treeFromRelation]="'parentId'" [treeToRelation]="'id'" (treeAction)="onTreeAction($event)">
+    <div class="w-full bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
+      <span class="float-left text-white font-medium">Model View</span>
+      <div class="flex flex-row"><ng-content></ng-content></div>
+    </div>
+    <ngx-datatable class="material striped tableScroll" style="height: 80%;" [columnMode]="ColumnMode.flex"
+      [headerHeight]="50" [footerHeight]="0" [rowHeight]="60" [rows]="treeStore.data" [scrollbarV]="true"
+      [scrollbarH]="true" [treeFromRelation]="'parentId'" [treeToRelation]="'id'" (treeAction)="onTreeAction($event)">
       <!-- <ngx-datatable-column name="Id" [width]="80"></ngx-datatable-column> -->
       <ngx-datatable-column name="Display Name" prop="displayName" [isTreeColumn]="true" [flexGrow]="3"
         [treeLevelIndent]="20">
@@ -45,8 +46,7 @@
             </span>   *ngIf="editing[rowIndex]"   (blur)="editing[rowIndex] = false"-->
 
           <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-min">
-            <mat-select (selectionChange)="updateValue($event, rowIndex,row)"
-              [value]="row.permission">
+            <mat-select (selectionChange)="updateValue($event, rowIndex,row)" [value]="row.permission">
               <ng-container *ngFor="let item of getPermissions() ">
                 <mat-option value="{{item}}" *ngIf="(row.level < 2 && item === 'PARTIAL')"
                   disabled>{{item}}</mat-option>
