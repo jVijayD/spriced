@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 public class Criteria implements Serializable {
 
     Pager pager;
-    List<Filter> filters;
+    List<Filter> filters = new ArrayList();
     List<Sorter> sorters = new ArrayList();
 
     @NoArgsConstructor

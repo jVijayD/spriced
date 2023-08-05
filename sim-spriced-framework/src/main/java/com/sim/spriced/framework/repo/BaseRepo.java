@@ -477,6 +477,9 @@ public abstract class BaseRepo {
 	}
         
     public Select fetchRecordsByCriteria(String tableName, Criteria searchCriteria, List<Field<Object>> fieldsList) {
+        if (searchCriteria == null) {
+            searchCriteria = new Criteria();
+        }
         Criteria.Pager pager = searchCriteria.getPager();
         List<Criteria.Sorter> sorters = searchCriteria.getSorters();
         List<Filter> filtersList = searchCriteria.getFilters();
