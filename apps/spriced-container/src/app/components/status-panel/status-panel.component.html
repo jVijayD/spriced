@@ -1,11 +1,12 @@
 <div class="flex space-x-2">
-  <mat-icon class="text-green-600 cursor-pointer" (click)="onSuccesClick()"
-    >check_circle</mat-icon
-  >
-  <mat-icon class="text-red-600 cursor-pointer" (click)="onErrorClick()"
-    >report_problem</mat-icon
-  >
-  <mat-icon class="text-orange-400 cursor-pointer" (click)="onInfoClick()"
-    >info</mat-icon
-  >
+  <mat-icon class="text-green-600 cursor-pointer" *ngIf="!hasErrors()">check_circle</mat-icon>
+  <div *ngIf="getErrorCount() > 0" class="text-white flex items-center gap-x-2">
+    <mat-icon class="text-red-600 cursor-pointer" (click)="onErrorClick()">report_problem</mat-icon>
+    <span class="align-middle"> {{getErrorCount()}} Errors</span>
+
+  </div>
+  <div *ngIf="getWarningCount() > 0" class="text-white flex items-center gap-x-2"> <mat-icon
+      class="text-orange-400 cursor-pointer" (click)="onInfoClick()">info</mat-icon>
+    <span class="align-middle">{{getWarningCount()}} Warnings</span>
+  </div>
 </div>
