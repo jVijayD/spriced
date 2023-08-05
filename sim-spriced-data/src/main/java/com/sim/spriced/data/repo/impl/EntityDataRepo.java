@@ -22,6 +22,7 @@ import com.sim.spriced.framework.exceptions.data.UniqueConstraintException;
 import com.sim.spriced.framework.models.Attribute;
 import com.sim.spriced.framework.models.AttributeConstants.ConstraintType;
 import com.sim.spriced.framework.repo.BaseRepo;
+import org.springframework.data.domain.Page;
 
 @Repository
 public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
@@ -201,6 +202,12 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 		List<Field<Object>> fieldsList = data.getAttributes().stream().map(e->column(e.getName())).toList();
                 Result<Record> result = fetchRecordsByCriteria(entityName,searchCriteria,fieldsList).fetch();
 		return result.intoMaps();
+	}
+	@Override
+	public Page fetchAllAsMapPage(EntityData data, Criteria searchCriteria) {
+		String entityName = data.getEntityName();
+		List<Field<Object>> fieldsList = data.getAttributes().stream().map(e -> column(e.getName())).toList();
+		return fetchRecordsByCriteriaPage(entityName, searchCriteria, fieldsList);
 	}
 
 	@Override

@@ -34,6 +34,7 @@ import com.sim.spriced.framework.rule.FactResult;
 import com.sim.spriced.framework.rule.IRule;
 import com.sim.spriced.framework.rule.Result;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 
 
 @Service
@@ -182,5 +183,9 @@ public class EntityDataService implements IEntityDataService {
 	@Override
 	public List<Map<String, Object>> fetchAllAsMap(EntityData data,Criteria criteria) {
 		return this.dataRepo.fetchAllAsMap(data,criteria);
+	}
+	@Override
+	public Page fetchAllAsMapPage(EntityData data,Criteria criteria) {
+		return this.dataRepo.fetchAllAsMapPage(data,criteria);
 	}
 }
