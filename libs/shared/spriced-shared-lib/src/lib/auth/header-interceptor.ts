@@ -22,10 +22,10 @@ export class headerInterceptor implements HttpInterceptor {
     const authReq = req.clone({
       headers: new HttpHeaders({
         tenant: "meritor",
-        user: this.user.profile.email || '',
-        transactionId: this.user.profile.id || '',
+        user: this.user.profile.email || "",
+        transactionId: this.user.profile.id || "",
         roles: "admin,manager,viewer",
-        applications: this.user.profile.attributes.application || '',
+        applications: this.user.profile.attributes.application || "",
       }),
     });
     return next.handle(authReq);

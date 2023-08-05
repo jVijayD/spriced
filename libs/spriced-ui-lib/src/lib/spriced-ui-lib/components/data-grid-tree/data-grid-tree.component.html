@@ -6,9 +6,8 @@
     <div class="flex flex-row"><ng-content></ng-content></div>
   </div>
   <ngx-datatable
+    style="height: 100%; overflow-y: hidden"
     #table
-    class="height"
-    style="width: 100%"
     class="material"
     [rows]="rows"
     [columnMode]="columnMode"

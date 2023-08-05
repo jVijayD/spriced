@@ -1,27 +1,23 @@
 <div class="container">
-    <h1 mat-dialog-title>
-     Upload
-    </h1>
-  
-    <div mat-dialog-content>
-      <div class="grid grid-flow-row">
-        <mat-icon
-          style="height: 40px; width: 40px; font-size: 40px;margin-bottom: 1rem;"
-          class="text-primary-dark justify-self-center"
-         
-          >upload</mat-icon
-        >
-        <input type="file" multiple="true"  #file  (change)="uploadFile($event)">
-      </div>
-    </div>
-  
-    <div mat-dialog-actions class="flex flex-row items-end">
-      <button mat-raised-button color="accent" (click)="closeDialog()">
-      Cancel
-      </button>
-      <button mat-raised-button color="primary" (click)="doAction()">
-       Upload
-      </button>
+  <h1 mat-dialog-title>Upload</h1>
+
+  <div mat-dialog-content>
+    <div class="grid grid-flow-row">
+      <mat-icon
+        style="height: 40px; width: 40px; font-size: 40px; margin-bottom: 1rem"
+        class="text-primary-dark justify-self-center"
+        >upload</mat-icon
+      >
+      <input type="file" multiple="true" #file (change)="uploadFile($event)" />
     </div>
   </div>
-  
+
+  <div mat-dialog-actions class="flex flex-row items-end">
+    <button mat-raised-button color="accent" (click)="closeDialog()">
+      Cancel
+    </button>
+    <button mat-raised-button color="primary" (click)="doAction()">
+      Upload
+    </button>
+  </div>
+</div>

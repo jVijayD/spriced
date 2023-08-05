@@ -19,6 +19,7 @@ import { ModelService } from "../../services/model.service";
 import { ModelAddComponent } from "../model/components/model-add/model-add.component";
 import { EntityService } from "../../services/entity.service";
 import * as moment from "moment";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "sp-model-list",
@@ -79,7 +80,8 @@ export class ModelListComponent {
     private snackbarService: SnackBarService,
 
     private modelService: ModelService,
-    private entityService: EntityService
+    private entityService: EntityService,
+    private router: Router
   ) {}
   ngOnInit(): void {
     this.load();
@@ -140,7 +142,11 @@ export class ModelListComponent {
     this.load();
   }
 
-  onView() {}
+  onView() {
+    const data = { ...this.selectedItem };
+    data.id = data.id.replace(data.name, "");
+    this.router.navigate(["/spriced-data/" + data.groupId + "/", data.id]);
+  }
   onAdd() {}
   onPaginate(e: Paginate) {
     //this.rows = this.getData(e.limit, e.offset);
@@ -148,6 +154,7 @@ export class ModelListComponent {
 
   onItemSelected(e: any) {
     this.selectedItem = e;
+    console.log(e);
   }
 
   onSort(e: any) {

@@ -25,6 +25,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { UploadDialogeComponent } from "../../components/upload-dialoge/upload-dialoge.component";
 import { SettingsPopUpComponent } from "../../components/settingsPopUp/settings-pop-up.component";
 import { StatusComponent } from "../../components/status/status.component";
+import { EntityDataService } from "../../services/entity-data.service";
 
 @Component({
   selector: "sp-entity-data",
@@ -96,7 +97,8 @@ export class EntityDataComponent {
     private snackbarService: SnackBarService,
     private dialogService: DialogService,
     private dynamicFormService: DynamicFormService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private dataService: EntityDataService
   ) {}
   onPaginate(e: Paginate) {}
   onItemSelected(e: any) {
@@ -119,7 +121,17 @@ export class EntityDataComponent {
     const dialogResult = this.dialog.open(UploadDialogeComponent, {});
 
     dialogResult.afterClosed().subscribe((val) => {
-      console.log(val);
+      if (val) {
+        console.log(val.data);
+        const fileDetails = { source: "web", entityName: "ent" };
+        const formData = new FormData();
+
+        formData.append("file", val.data, val.data.name);
+        formData.append("fileDetails", JSON.stringify(fileDetails));
+        this.dataService.upload(formData).subscribe((val) => {
+          console.log(val);
+        });
+      }
     });
   }
   onStatus() {
@@ -132,9 +144,7 @@ export class EntityDataComponent {
   onSettings() {
     const dialogResult = this.dialog.open(SettingsPopUpComponent, {});
 
-    dialogResult.afterClosed().subscribe((val) => {
-      console.log(val);
-    });
+    dialogResult.afterClosed().subscribe((val) => {});
   }
   showAddPopup() {
     this.dialogService.openDialog(AddModelComponent, {
