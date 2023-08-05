@@ -31,7 +31,7 @@ import {
   RoleEntityPermissionMapping,
 } from "./models/ModelAccesTypes.class";
 import { ErrorTypes, AppDataService } from "@spriced-frontend/shared/spriced-shared-lib";
-const POPULATE_ATTRIBUTES = true;
+const POPULATE_ATTRIBUTES = false;
 @Component({
   selector: "sp-model-access",
   standalone: true,
