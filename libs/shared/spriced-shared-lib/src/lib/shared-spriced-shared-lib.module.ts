@@ -21,7 +21,7 @@ import { headerInterceptor } from "./auth/header-interceptor";
       useClass: headerInterceptor,
       multi: true,
     },
-    AppDataService,
+    AppDataService
   ],
 })
 export class SharedSpricedSharedLibModule {}

@@ -22,6 +22,7 @@ import {
 } from "@angular/common/http";
 
 import { loaderInterceptor } from "./interceptors/loader.interceptor";
+import { ErrorCatchingInterceptor } from "./interceptors/http-error-interceptor";
 const loaderService = new LoaderService();
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,6 +33,11 @@ export const appConfig: ApplicationConfig = {
     {
       provide: HTTP_INTERCEPTORS,
       useClass: KeycloakBearerInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorCatchingInterceptor,
       multi: true,
     },
     provideHttpClient(withInterceptorsFromDi()),
