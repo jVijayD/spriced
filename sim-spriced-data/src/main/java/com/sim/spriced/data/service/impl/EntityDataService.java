@@ -176,4 +176,5 @@ public class EntityDataService implements IEntityDataService {
 	public Page fetchAllAsMapPage(EntityData data, Criteria criteria) {
 		return this.dataRepo.fetchAllAsMapPage(data, criteria);
 	}
+
 }
