@@ -515,7 +515,7 @@ public abstract class BaseRepo {
         if (pager == null) {
             pg = new PageImpl(selectSeek.fetch().intoMaps());
         } else {
-            int count = context.fetchCount(selectSeek);
+            int count = context.fetchCount(table(tableName),condition != null ? condition : DSL.trueCondition());
             pg = new PageImpl(
                     selectSeek
                             .limit(pager.getPageSize())
