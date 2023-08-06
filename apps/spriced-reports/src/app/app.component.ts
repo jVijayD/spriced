@@ -10,7 +10,6 @@ import { RouterOutlet } from "@angular/router";
   selector: "sp-app",
   standalone: true,
   imports: [CommonModule, RouterOutlet],
-  providers: [AppDataService],
   template: `<router-outlet></router-outlet>`,
   styles: [],
 })

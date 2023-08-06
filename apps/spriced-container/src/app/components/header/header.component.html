@@ -9,19 +9,14 @@
   <div class="relative flex items-center">
     <span class="text-white">Hi, {{ user }} </span>
     <div class="vl"></div>
-    <button
-      mat-icon-button
-      class="btn"
-      aria-label="Example icon-button with a menu"
-      routerLink="/"
-    >
-      <mat-icon class="icon-size">home</mat-icon>
+    <button mat-icon-button class="btn" aria-label="" routerLink="/">
+      <mat-icon class="icon-size_home">home</mat-icon>
     </button>
     <button
       mat-icon-button
       [matMenuTriggerFor]="menu"
       class="btn"
-      aria-label="Example icon-button with a menu"
+      aria-label=""
     >
       <mat-icon class="icon-size">account_circle</mat-icon>
     </button>
