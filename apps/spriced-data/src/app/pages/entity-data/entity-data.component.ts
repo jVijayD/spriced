@@ -125,7 +125,17 @@ export class EntityDataComponent implements OnDestroy {
     const dialogResult = this.dialog.open(UploadDialogeComponent, {});
 
     dialogResult.afterClosed().subscribe((val) => {
-      console.log(val);
+      if (val) {
+        console.log(val.data);
+        const fileDetails = { source: "web", entityName: "ent" };
+        const formData = new FormData();
+
+        formData.append("file", val.data, val.data.name);
+        formData.append("fileDetails", JSON.stringify(fileDetails));
+        this.entityDataService.upload(formData).subscribe((val) => {
+          console.log(val);
+        });
+      }
     });
   }
   onStatus() {

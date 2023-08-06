@@ -12,14 +12,15 @@ import { MatButtonModule } from "@angular/material/button";
   styleUrls: ["./upload-dialoge.component.scss"],
 })
 export class UploadDialogeComponent {
-  file: any;
+  file!: any;
   constructor(public dialogRef: MatDialogRef<UploadDialogeComponent>) {}
   uploadFile(e: any) {
-    console.log(e.target)
-    this.file = e.target.files;
+    // let files: FileList = e.target.files;
+    // this.file = files[0];
+    this.file = e.target.files[0];
   }
   doAction() {
-    this.dialogRef.close({ data: this.file ,action:'upload'});
+    this.dialogRef.close({ data: this.file });
   }
   closeDialog() {
     this.dialogRef.close();

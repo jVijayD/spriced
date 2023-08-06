@@ -1,20 +1,17 @@
+.outer {
+  height: 560px;
+}
+.close {
+  right: 2px;
+  position: absolute;
+  top: 2px;
+}
 
-  .outer
-  {
-    height: 550px;
-  }
-  .close {
-    right: 2px;
-    position: absolute;
-    top: 2px;
-  }
-  
-  .mat-mdc-icon-button ::ng-deep .mat-mdc-button-persistent-ripple {
-    display: none;
-  }
-  .container
-  {
-    width: 800px;
-    height: 500px;
-    padding: 10px;
-  }
+.mat-mdc-icon-button ::ng-deep .mat-mdc-button-persistent-ripple {
+  display: none;
+}
+.container {
+  width: 800px;
+  height: 500px;
+  padding: 10px;
+}

@@ -74,11 +74,11 @@ export class ModelAddComponent {
           message: "Name is required.",
           validator: Validators.required,
         },
-        {
-          name: "minlength",
-          message: "Min length should be 5.",
-          validator: Validators.minLength(5),
-        },
+        // {
+        //   name: "minlength",
+        //   message: "Min length should be 5.",
+        //   validator: Validators.minLength(5),
+        // },
       ],
     },
     {
@@ -95,11 +95,11 @@ export class ModelAddComponent {
           message: "DisplayName is required.",
           validator: Validators.required,
         },
-        {
-          name: "minlength",
-          message: "Min length should be 5.",
-          validator: Validators.minLength(5),
-        },
+        // {
+        //   name: "minlength",
+        //   message: "Min length should be 5.",
+        //   validator: Validators.minLength(5),
+        // },
       ],
     },
   ];

@@ -101,7 +101,7 @@ export class EntityAddComponent implements OnInit {
       width: 100,
     },
     {
-      column: "displayName" || "name",
+      column: "displayName",
       name: "Display Name",
       canAutoResize: true,
       isSortable: true,
@@ -140,6 +140,9 @@ export class EntityAddComponent implements OnInit {
     }
 
     this.action = data.action;
+    this.local_data?.attributes?.forEach((element: any) => {
+      element.displayName = element.displayName || element.name;
+    });
     this.rows = this.local_data?.attributes || [];
     this.totalElements = this.rows.length;
   }
@@ -246,8 +249,6 @@ export class EntityAddComponent implements OnInit {
     this.constraintType =
       this.selectedItem.constraintType == "UNIQUE_KEY" ? true : false;
     this.attDetails = { ...this.selectedItem };
-    this.attDetails.displayName =
-      this.selectedItem.displayName || this.selectedItem.name;
   }
   onDelete() {
     this.rows = this.rows.filter((value: any) => {
