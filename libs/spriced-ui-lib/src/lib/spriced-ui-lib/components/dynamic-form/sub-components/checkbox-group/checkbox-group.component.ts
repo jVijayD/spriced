@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   Inject,
   Injector,
@@ -18,6 +19,7 @@ import { NG_VALUE_ACCESSOR } from "@angular/forms";
   selector: "sp-checkbox-group",
   templateUrl: "./checkbox-group.component.html",
   styleUrls: ["./checkbox-group.component.scss"],
+  changeDetection: ChangeDetectionStrategy.Default,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
