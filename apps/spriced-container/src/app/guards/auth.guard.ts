@@ -29,11 +29,15 @@ export class AuthGuard extends KeycloakAuthGuard {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Promise<boolean | UrlTree> {
+    if (!this.authenticated) {
+      window.location.href = `${window.location.origin}`;
+      return true;
+    }
     if (!this.hasRoles()) {
       console.log(window.location.origin + state.url);
-       window.location.href =  `${window.location.origin}/unauthorized`;
+      window.location.href = `${window.location.origin}/unauthorized`;
     }
-    return this.hasRoles();
+    return true;
   }
 
   hasRoles() {
@@ -42,10 +46,10 @@ export class AuthGuard extends KeycloakAuthGuard {
     console.log(roles);
     return roles != undefined && roles.length > 1;
   }
-  intercept(
+  async intercept(
     req: HttpRequest<any>,
     next: HttpHandler
-  ): Observable<HttpEvent<any>> {
+  ): Promise<Observable<HttpEvent<any>>> {
     this.user = this.keycloak.getKeycloakInstance();
     const authReq = req.clone({
       headers: new HttpHeaders({
