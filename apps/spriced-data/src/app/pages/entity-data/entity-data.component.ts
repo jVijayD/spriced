@@ -133,7 +133,7 @@ export class EntityDataComponent {
         );
         // formData.append("fileDetails", JSON.stringify(fileDetails));
         this.dataService.upload(formData, fileDetails).subscribe((val) => {
-          console.log(val);
+          this.snackbarService.success("Uploaded Successfully");
         });
       }
     });
