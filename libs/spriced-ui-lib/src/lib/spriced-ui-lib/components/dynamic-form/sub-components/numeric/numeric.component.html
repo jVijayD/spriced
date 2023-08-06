@@ -15,7 +15,7 @@
       [type]="control.subType"
       [disabled]="control.readOnly || disabled"
       [(ngModel)]="value"
-      (blur)="onTouched()"
+      (blur)="onValidate()"
     />
     <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
     <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>

@@ -1,0 +1,20 @@
+<ng-container *ngIf="control.type === 'checkbox' && visible">
+  <mat-checkbox
+    class="full-width"
+    type="checkbox"
+    [disabled]="control.readOnly || disabled"
+    [(ngModel)]="value"
+    (blur)="onTouched()"
+  >
+    {{ control.label }}
+  </mat-checkbox>
+
+  <ng-container>
+    <sp-error
+      *ngIf="frmControl.errors"
+      [validations]="control.validations || []"
+      [errors]="frmControl.errors"
+    ></sp-error>
+    <div *ngIf="!frmControl.errors" style="visibility: hidden">*</div>
+  </ng-container>
+</ng-container>

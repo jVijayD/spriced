@@ -1,32 +1,53 @@
-import { Component, NgModule, OnDestroy, OnInit } from "@angular/core";
+import {
+  Component,
+  NgModule,
+  OnDestroy,
+  OnInit,
+  Output,
+  EventEmitter,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
-import { MatFormField } from "@angular/material/form-field";
 import { FormsModule } from "@angular/forms";
 import { MatIconModule } from "@angular/material/icon";
+import { MatSelectChange, MatSelectModule } from "@angular/material/select";
+import { ActivatedRoute } from "@angular/router";
 import {
   ModelService,
   EntityService,
   Model,
+  Entity,
 } from "@spriced-frontend/spriced-common-lib";
 import { Subscription } from "rxjs";
+
 @Component({
   selector: "sp-entity-select",
   standalone: true,
-  imports: [CommonModule, MatInputModule, FormsModule, MatIconModule],
+  imports: [
+    CommonModule,
+    MatInputModule,
+    FormsModule,
+    MatIconModule,
+    MatSelectModule,
+  ],
   templateUrl: "./entity-select.component.html",
   styleUrls: ["./entity-select.component.scss"],
 })
 export class EntitySelectComponent implements OnInit, OnDestroy {
   subscriptions: Subscription[] = [];
   models: Model[] = [];
-  entities: any[] = [];
+  entities: Entity[] = [];
 
-  selectedModelValue: string = "";
-  selectedEntity: any;
+  selectedModelValue: string | number = "";
+  selectedEntity: string | Entity = "";
+
+  @Output()
+  entitySelectionEvent: EventEmitter<Entity | string> = new EventEmitter();
+
   constructor(
     private modelService: ModelService,
-    private entityService: EntityService
+    private entityService: EntityService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnDestroy(): void {
@@ -34,34 +55,57 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    const modelId = Number(this.route.snapshot.paramMap.get("modelId"));
+    const entityId = Number(this.route.snapshot.paramMap.get("entityId"));
+
     this.subscriptions.push(
-      this.modelService.loadAllModels().subscribe((items: Model[]) => {
-        this.models = items;
+      this.modelService.loadAllModels().subscribe({
+        next: (items: Model[]) => {
+          this.models = items;
+          if (items.length) {
+            this.selectedModelValue = modelId || items[0].id;
+            this.loadEntity(this.selectedModelValue, entityId);
+          }
+        },
+        error: () => {
+          this.models = [];
+        },
       })
     );
   }
 
-  loadEntity(modelId: number) {
+  //onTouched() {}
+  loadEntity(modelId: number, entityId?: number) {
     this.subscriptions.push(
-      this.entityService.load(modelId).subscribe((items) => {
-        debugger;
-        if (items) {
-          this.entities = items as [];
-        }
+      this.entityService.loadEntityByModel(modelId).subscribe({
+        next: (items) => {
+          if (items) {
+            this.entities = items;
+            if (this.entities.length) {
+              this.selectedEntity =
+                this.entities.find((item) => item.id === entityId) ||
+                this.entities[0];
+
+              this.entitySelectionEvent.emit(this.selectedEntity);
+            }
+          }
+        },
+        error: (err) => {
+          this.entities = [];
+        },
       })
     );
   }
 
-  onTouched() {}
-
-  onModelSelectionChange(e: any) {
-    debugger;
+  onModelSelectionChange(e: MatSelectChange) {
+    this.entities = [];
     if (e.value != "") {
-      this.loadEntity(Number(this.selectedModelValue));
-    } else {
-      this.entities = [];
+      this.loadEntity(Number(e.value));
     }
   }
 
-  onEntitySelectionChange(e: any) {}
+  onEntitySelectionChange(e: MatSelectChange) {
+    debugger;
+    this.entitySelectionEvent.emit(e.value);
+  }
 }

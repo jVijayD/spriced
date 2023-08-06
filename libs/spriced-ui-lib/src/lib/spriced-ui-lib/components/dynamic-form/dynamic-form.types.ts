@@ -65,6 +65,21 @@ export type InputControl = {
   style?: IStyle;
 };
 
+export type CheckboxControl = {
+  type: "checkbox";
+  label: string;
+  name: string;
+  value?: any;
+  visible?: boolean;
+  readOnly?: boolean;
+  hiddenDefault?: any;
+  validations?: IValidator[];
+  asyncValidations?: IValidator[];
+  accessControl?: IAccessControl;
+  rule?: IRule;
+  style?: IStyle;
+};
+
 export type NumericControl = {
   type: "numeric";
   subType: "text";
@@ -357,6 +372,7 @@ export type DataControl =
 
 export type GenericControl =
   | InputControl
+  | CheckboxControl
   | NumericControl
   | DataControl
   | TextControl
