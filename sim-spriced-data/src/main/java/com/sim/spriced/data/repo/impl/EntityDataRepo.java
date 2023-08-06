@@ -21,6 +21,7 @@ import com.sim.spriced.framework.data.filters.Criteria;
 import com.sim.spriced.framework.exceptions.data.UniqueConstraintException;
 import com.sim.spriced.framework.models.Attribute;
 import com.sim.spriced.framework.models.AttributeConstants.ConstraintType;
+import com.sim.spriced.framework.models.AttributeConstants.DataType;
 import com.sim.spriced.framework.repo.BaseRepo;
 import org.springframework.data.domain.Page;
 
@@ -28,6 +29,11 @@ import org.springframework.data.domain.Page;
 public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 
 	private static final String CHANGE = "change";
+	private EnumMap<DataType,Object> nullValueMap = new EnumMap<>(DataType.class);
+	
+	public EntityDataRepo(){
+		this.initializeNullMap();
+	}
 
 	@Override
 	public int[] upsertBulk(EntityData data) {
@@ -63,6 +69,23 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 		});
 		return this.batchExqecute(queries);
 	}
+	
+	private void initializeNullMap() {
+		this.nullValueMap.put(DataType.BOOLEAN, DSL.val((Boolean)null));
+		this.nullValueMap.put(DataType.INTEGER, DSL.val((Integer)null));
+		this.nullValueMap.put(DataType.DOUBLE, DSL.val((Double)null));
+		this.nullValueMap.put(DataType.FLOAT, DSL.val((Double)null));
+		this.nullValueMap.put(DataType.DATE, DSL.val((OffsetDateTime )null));
+		this.nullValueMap.put(DataType.DATE_TIME, DSL.val((OffsetDateTime)null));
+		this.nullValueMap.put(DataType.STRING_VAR, DSL.val((String)null));
+		this.nullValueMap.put(DataType.TEXT, DSL.val((String)null));
+		this.nullValueMap.put(DataType.LINK, DSL.val((String)null));
+		this.nullValueMap.put(DataType.STRING, DSL.val((String)null));
+	}
+	
+	private Object getNullValue(DataType dataType){
+		return this.nullValueMap.getOrDefault(dataType, null);
+	}
 
 	private Query createUpsertQuery(String entityName, Map<Field<?>, Object> fieldValues,
 			Map<Field<?>, Object> fieldValuesPrimaryKey, boolean isChange) {
@@ -96,9 +119,6 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 		Map<Field<?>, Object> fieldValues = new HashMap<>();
 		Map<Field<?>, Object> primaryKeyValues = new HashMap<>();
 
-		jsonObject.put(ModelConstants.UPDATED_BY, this.contextManager.getRequestContext().getUser());
-		jsonObject.put(ModelConstants.UPDATED_DATE, this.timeStamp);
-
 		attributes.forEach(item -> {
 				boolean isPrimaryKey = item.getConstraintType() == ConstraintType.PRIMARY_KEY;
 				AttributeConstants.DataType dataType = item.getDataType();
@@ -106,13 +126,15 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 					 if (dataType.equals(AttributeConstants.DataType.TIME_STAMP_WITH_TIMEZONE)|| dataType.equals(AttributeConstants.DataType.TIME_STAMP)) {
 						 fieldValues.put(column(item.getName(),OffsetDateTime.class), jsonObject.get(item.getName()));
 			            }
-					 else
-					fieldValues.put(column(item.getName()), jsonObject.get(item.getName()));
+					 else {
+						 fieldValues.put(column(item.getName()), jsonObject.has(item.getName())? jsonObject.get(item.getName()):this.getNullValue(dataType));
+					 }
+					
 				} else {
 					if (Boolean.TRUE.equals(!isChange) && dataType.equals(AttributeConstants.DataType.STRING_VAR)){
 						fieldValues.put(column(item.getName()), jsonObject.get(item.getName()));
 					} else {
-						primaryKeyValues.put(column(item.getName()), jsonObject.has(item.getName())? jsonObject.get(item.getName()):null);
+						primaryKeyValues.put(column(item.getName()), jsonObject.has(item.getName())? jsonObject.get(item.getName()):this.getNullValue(dataType));
 					}
 				}
 		});
@@ -184,6 +206,13 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 
 			boolean isChange = jsonObj.has(CHANGE) && jsonObj.getBoolean(CHANGE);
 
+			jsonObj.put(ModelConstants.UPDATED_BY, this.contextManager.getRequestContext().getUser());
+			jsonObj.put(ModelConstants.UPDATED_DATE, this.timeStamp);
+			if(!jsonObj.has(ModelConstants.IS_VALID)) {
+				jsonObj.put(ModelConstants.IS_VALID, true);
+			}
+			
+			
 			Pair<Map<Field<?>, Object>, Map<Field<?>, Object>> fieldValuesWithPrimaryKey = this
 					.getFieldValues(data.getAttributes(), jsonObj, isChange);
 
