@@ -158,7 +158,6 @@ export class EntityDataComponent implements OnDestroy {
   private createDynamicUIMapping(entity: Entity | undefined) {
     let formFields: FormFieldControls = [];
     if (entity) {
-      debugger;
       entity.attributes.forEach((attr: Attribute) => {
         formFields.push(this.getType(attr));
       });
@@ -208,6 +207,7 @@ export class EntityDataComponent implements OnDestroy {
           name: attr.name,
           label: attr.displayName || attr.name,
           validations: this.getValidations(attr),
+          value: false,
         };
       case "AUTO":
       default:
@@ -292,18 +292,28 @@ export class EntityDataComponent implements OnDestroy {
   onSubmitEntityData(data: any) {
     if (data.valid) {
       const entityId = this.currentSelectedEntity?.id as number;
+      const finalData = this.removeNull(data.value);
       if (!this.selectedItem) {
-        this.createEntityData(entityId, data.value);
+        this.createEntityData(entityId, finalData);
       } else {
-        this.editEntityData(entityId, this.selectedItem.id, data.value);
+        this.editEntityData(entityId, this.selectedItem.id, finalData);
       }
     } else {
       this.snackbarService.warn("Invalid record data.");
     }
   }
 
+  private removeNull(data: any) {
+    let finalData: any = {};
+    for (let item in data) {
+      if (data[item] !== null && data[item] !== undefined) {
+        finalData[item] = data[item];
+      }
+    }
+    return finalData;
+  }
+
   private createEntityData(entityId: number, data: any) {
-    debugger;
     this.entityDataService.createEntityData(entityId, data).subscribe({
       next: (item) => {
         this.snackbarService.success("Record created successfully.");

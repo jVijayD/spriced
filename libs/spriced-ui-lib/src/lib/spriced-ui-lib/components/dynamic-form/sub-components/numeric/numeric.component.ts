@@ -58,4 +58,12 @@ export class NumericComponent
     this.addRule(inputControl.rule);
     this.setControlAccess();
   }
+
+  onValidate() {
+    if (Number(this.value).toString() === "NaN") {
+      this.value = undefined;
+    } else {
+      this.value = Number(this.value);
+    }
+  }
 }

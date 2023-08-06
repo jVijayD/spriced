@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
-import { RouterModule } from "@angular/router";
+import { NavigationStart, Router, RouterModule } from "@angular/router";
 import { LoaderComponent } from "@spriced-frontend/spriced-ui-lib";
 import { HeaderComponent } from "./components/header/header.component";
 import { SidebarComponent } from "./components/sidebar/sidebar.component";
@@ -60,10 +60,18 @@ export class AppComponent implements OnDestroy, OnInit {
     this.path = location.pathname;
   }
 
-  constructor(public appDataService: AppDataService) {
+  constructor(public appDataService: AppDataService, private router: Router) {
     this.subscriptions.push(
       this.appDataService.menuData$.subscribe((menuItems) => {
         this.menuData = [...menuItems];
+      })
+    );
+
+    this.subscriptions.push(
+      this.router.events.subscribe((event) => {
+        if (event instanceof NavigationStart) {
+          this.appDataService.setErrors([]);
+        }
       })
     );
   }
