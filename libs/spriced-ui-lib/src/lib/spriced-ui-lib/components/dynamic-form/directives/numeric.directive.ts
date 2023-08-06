@@ -1,7 +1,7 @@
-import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input } from "@angular/core";
 
 @Directive({
-  selector: '[spNumeric]',
+  selector: "[spNumeric]",
 })
 export class NumericDirective {
   @Input() decimals = 0;
@@ -11,11 +11,11 @@ export class NumericDirective {
       return String(value).match(new RegExp(/^\d+$/));
     } else {
       const regExpString =
-        '^\\s*((\\d+(\\.\\d{0,' +
+        "^\\s*((\\d+(\\.\\d{0," +
         this.decimals +
-        '})?)|((\\d*(\\.\\d{1,' +
+        "})?)|((\\d*(\\.\\d{1," +
         this.decimals +
-        '}))))\\s*$';
+        "}))))\\s*$";
       return String(value).match(new RegExp(regExpString));
     }
   }
@@ -23,7 +23,7 @@ export class NumericDirective {
   private run(oldValue: string) {
     setTimeout(() => {
       const currentValue = this.el.nativeElement.value;
-      if (currentValue !== '' && !this.check(currentValue)) {
+      if (currentValue !== "" && !this.check(currentValue)) {
         this.el.nativeElement.value = oldValue;
       }
     });
@@ -31,12 +31,35 @@ export class NumericDirective {
 
   constructor(private el: ElementRef) {}
 
-  @HostListener('keydown', ['$event'])
+  @HostListener("keydown", ["$event"])
   onKeyDown(event: KeyboardEvent) {
+    if (
+      [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "Backspace",
+        "",
+        " ",
+        "Enter",
+        ".",
+        "ArrowLeft",
+        "ArrowRight",
+      ].indexOf(event.key) === -1
+    ) {
+      event.preventDefault();
+    }
     this.run(this.el.nativeElement.value);
   }
 
-  @HostListener('paste', ['$event'])
+  @HostListener("paste", ["$event"])
   onPaste(event: ClipboardEvent) {
     this.run(this.el.nativeElement.value);
   }

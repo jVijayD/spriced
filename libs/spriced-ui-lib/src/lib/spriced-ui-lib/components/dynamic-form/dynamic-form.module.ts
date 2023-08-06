@@ -45,6 +45,7 @@ import { DateFormatDirectiveDDMMYY } from "./directives/dateformat-DDMMMyy.direc
 import { DateFormatDirectivedMMM__DD__YYYY } from "./directives/MMM-DD-YYYY.directive";
 import { DateFormatDirectiveDD_MMM__YYYY } from "./directives/DD-MMM-YYYY.directive";
 import { DateFormatDirectiveYYYY__DD__MMM } from "./directives/YYYY-DD-MMM.directive";
+import { CheckboxComponent } from "./sub-components/checkbox/checkbox.component";
 
 @NgModule({
   declarations: [
@@ -87,6 +88,7 @@ import { DateFormatDirectiveYYYY__DD__MMM } from "./directives/YYYY-DD-MMM.direc
     DateFormatDirectivedMMM__DD__YYYY,
     DateFormatDirectiveDD_MMM__YYYY,
     DateFormatDirectiveYYYY__DD__MMM,
+    CheckboxComponent,
   ],
   imports: [
     CommonModule,
@@ -143,6 +145,7 @@ import { DateFormatDirectiveYYYY__DD__MMM } from "./directives/YYYY-DD-MMM.direc
     DateFormatDirectivedMMM__DD__YYYY,
     DateFormatDirectiveDD_MMM__YYYY,
     DateFormatDirectiveYYYY__DD__MMM,
+    CheckboxComponent,
   ],
 })
 export class DynamicFormModule {}

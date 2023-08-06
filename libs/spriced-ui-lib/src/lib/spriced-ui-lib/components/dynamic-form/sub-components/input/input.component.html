@@ -1,4 +1,6 @@
-<ng-container *ngIf="control.type === 'input' && visible">
+<ng-container
+  *ngIf="control.type === 'input' && control.subType !== 'hidden' && visible"
+>
   <mat-form-field
     [appearance]="'outline'"
     [ngClass]="frmControl.errors ? 'error' : ''"
@@ -27,4 +29,9 @@
     ></sp-error>
     <div *ngIf="!frmControl.errors" style="visibility: hidden">*</div>
   </ng-container>
+</ng-container>
+<ng-container
+  *ngIf="control.type === 'input' && control.subType === 'hidden' && visible"
+>
+  <input type="hidden" [(ngModel)]="value" />
 </ng-container>

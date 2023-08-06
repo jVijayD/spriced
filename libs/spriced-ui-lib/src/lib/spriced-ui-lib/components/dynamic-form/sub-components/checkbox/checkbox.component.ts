@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   Inject,
   Injector,
@@ -9,24 +8,23 @@ import {
   forwardRef,
 } from "@angular/core";
 import { BaseComponent } from "../../base.component";
-import { DynamicFormService } from "../../service/dynamic-form.service";
-import { GenericControl } from "../../dynamic-form.types";
 import { NG_VALUE_ACCESSOR } from "@angular/forms";
+import { GenericControl } from "../../dynamic-form.types";
+import { DynamicFormService } from "../../service/dynamic-form.service";
 
 @Component({
-  selector: "sp-numeric",
-  templateUrl: "./numeric.component.html",
-  styleUrls: ["./numeric.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: "sp-checkbox",
+  templateUrl: "./checkbox.component.html",
+  styleUrls: ["./checkbox.component.scss"],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
       multi: true,
-      useExisting: forwardRef(() => NumericComponent),
+      useExisting: forwardRef(() => CheckboxComponent),
     },
   ],
 })
-export class NumericComponent
+export class CheckboxComponent
   extends BaseComponent
   implements OnInit, OnDestroy
 {
@@ -57,13 +55,5 @@ export class NumericComponent
   private _initControlData(inputControl: GenericControl) {
     this.addRule(inputControl.rule);
     this.setControlAccess();
-  }
-
-  onValidate() {
-    if (Number(this.value).toString() === "NaN") {
-      this.value = undefined;
-    } else {
-      this.value = Number(this.value);
-    }
   }
 }
