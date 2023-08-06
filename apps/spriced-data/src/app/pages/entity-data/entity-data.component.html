@@ -9,7 +9,7 @@
         #dataGrid
         [title]="this.currentSelectedEntity?.displayName || ''"
         [enableRowIndex]="false"
-        [isArray]="true"
+        [isArray]="false"
         [headers]="headers"
         [rows]="rows"
         [rowHeight]="40"
@@ -18,9 +18,10 @@
         [columnMode]="columnMode"
         [virtualScroll]="false"
         [selectionType]="selectionType"
-        [limit]="30"
+        [count]="totalElements"
+        [limit]="limit"
         [isExternalPaging]="true"
-        [isExternalSorting]="false"
+        [isExternalSorting]="true"
         [sortType]="sortType"
         (paginate)="onPaginate($event)"
         (itemSelected)="onItemSelected($event)"
@@ -33,21 +34,6 @@
             text="Add"
             title="Add Entity"
             (actionClick)="showAddPopup()"
-          ></sp-header-action>
-
-          <sp-header-action
-            [disabled]="!selectedItem"
-            icon="clear"
-            text="Clear"
-            title="Clear"
-            (actionClick)="onClear()"
-          ></sp-header-action>
-
-          <sp-header-action
-            icon="refresh"
-            text="Refresh"
-            title="Refresh"
-            (actionClick)="onRefresh()"
           ></sp-header-action>
 
           <sp-header-action
@@ -64,6 +50,14 @@
             title="Delete Entity"
             [disabled]="selectedItem == null"
             (actionClick)="onDelete()"
+          ></sp-header-action>
+
+          <sp-header-action
+            [disabled]="!selectedItem"
+            icon="clear"
+            text="Clear"
+            title="Clear"
+            (actionClick)="onClear()"
           ></sp-header-action>
 
           <sp-header-action
@@ -96,17 +90,17 @@
             (actionClick)="onUpload()"
           ></sp-header-action>
 
-          <sp-header-action
+          <!-- <sp-header-action
             icon="file_copy"
             text="Template"
             title="Upload Template"
             (actionClick)="onUpload()"
-          ></sp-header-action>
+          ></sp-header-action> -->
 
           <sp-header-action
             icon="view_list"
             text="Status"
-            title="Upload Status"
+            title="Status"
             (actionClick)="onStatus()"
           ></sp-header-action>
 
@@ -148,6 +142,7 @@
       reset="Reset"
       save="Save"
       (submitEvent)="onSubmitEntityData($event)"
+      (resetEvent)="onClear()"
     ></sp-dynamic-form-container>
   </div>
 </sp-two-col-three-forth>

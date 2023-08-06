@@ -14,7 +14,6 @@ import { DynamicFormService } from "../service/dynamic-form.service";
   selector: "sp-dynamic-form-container",
   templateUrl: "./dynamic-form-container.component.html",
   styleUrls: ["./dynamic-form-container.component.scss"],
-  //providers: [DynamicFormService],
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class DynamicFormContainerComponent {
@@ -24,6 +23,9 @@ export class DynamicFormContainerComponent {
 
   @Output()
   submitEvent = new EventEmitter<FormGroup>();
+
+  @Output()
+  resetEvent = new EventEmitter();
 
   @Input()
   set appForm(appForm: AppForm) {
@@ -62,6 +64,7 @@ export class DynamicFormContainerComponent {
   onFormReset() {
     this.formSubmitAttempt = false;
     this.currentFormData?.form?.reset({ ...this.itemsNotReset() });
+    this.resetEvent.emit();
   }
 
   private dispatchSubmitEvent(form: FormGroup) {

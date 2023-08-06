@@ -1,6 +1,9 @@
 import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { AppDataService } from "@spriced-frontend/shared/spriced-shared-lib";
+import {
+  AppDataService,
+  MenuItem,
+} from "@spriced-frontend/shared/spriced-shared-lib";
 import { RouterOutlet } from "@angular/router";
 
 @Component({
@@ -12,7 +15,14 @@ import { RouterOutlet } from "@angular/router";
   styles: [],
 })
 export class AppComponent {
-  constructor(appDataService: AppDataService) {
-
+  menuItems: MenuItem[] = [
+    {
+      name: "Home",
+      path: "/spriced-reports",
+      active: true,
+    },
+  ];
+  constructor(private appDataService: AppDataService) {
+    this.appDataService.setMenuData(this.menuItems);
   }
 }
