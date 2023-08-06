@@ -46,11 +46,10 @@ export const appRoutes: Route[] = [
     path: "",
     component: LandingPageComponent,
   },
-
-  // {
-  //   path: "**",
-  //   component: PageNotFoundComponent,
-  // },
+  {
+    path: "**",
+    component: PageNotFoundComponent,
+  },
   {
     path: "unauthorized",
     component: UnAuthorizedEntryComponent,
