@@ -45,8 +45,22 @@ export class StatusComponent implements OnInit {
       width: 60,
     },
     {
+      column: "updatedBy",
+      name: "Updated By",
+      canAutoResize: true,
+      isSortable: true,
+      width: 60,
+    },
+    {
       column: "status",
       name: "Status",
+      canAutoResize: true,
+      isSortable: true,
+      width: 60,
+    },
+    {
+      column: "updatedDate",
+      name: "Updated Date",
       canAutoResize: true,
       isSortable: true,
       width: 60,
@@ -58,14 +72,16 @@ export class StatusComponent implements OnInit {
   isFullScreen = false;
   rows: any[] = [];
   selectedItem: any = null;
-  totalElements = this.rows.length;
+  totalElements = 100;
 
   onClose() {
     this.dialogRef.close({ event: "Cancel" });
   }
   ngOnInit(): void {
     this.dataService.getStatus().subscribe((val: any) => {
-      this.rows = val;
+      console.log(val);
+      this.rows = [...val];
+      this.totalElements = this.rows.length;
     });
   }
 }

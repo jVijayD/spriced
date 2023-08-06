@@ -127,8 +127,12 @@ export class EntityDataComponent {
         const formData = new FormData();
 
         formData.append("file", val.data, val.data.name);
-        formData.append("fileDetails", JSON.stringify(fileDetails));
-        this.dataService.upload(formData).subscribe((val) => {
+        formData.append(
+          "fileDetails",
+          new Blob([JSON.stringify(fileDetails)], { type: "application/json" })
+        );
+        // formData.append("fileDetails", JSON.stringify(fileDetails));
+        this.dataService.upload(formData, fileDetails).subscribe((val) => {
           console.log(val);
         });
       }

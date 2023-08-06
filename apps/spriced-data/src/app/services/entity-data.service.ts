@@ -8,12 +8,8 @@ export class EntityDataService {
     this.api_url = process.env["NX_API_DATA_URL"] as string;
   }
 
-  upload(file: any) {
-    const headers = new HttpHeaders().set("Content-Type", "application/json");
-
-    return this.http.post(`${this.api_url}/bulk/upload`, file, {
-      headers: headers,
-    });
+  upload(file: any, fileDetails: any) {
+    return this.http.post(`${this.api_url}/bulk/upload`, file);
   }
   getStatus() {
     return this.http.get(`${this.api_url}/bulk/getAll`);
