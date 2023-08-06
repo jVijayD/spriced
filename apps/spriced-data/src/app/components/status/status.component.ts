@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   DataGridComponent,
@@ -9,113 +9,63 @@ import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import { MatDialogRef } from "@angular/material/dialog";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
+import { EntityDataService } from "../../services/entity-data.service";
 
 @Component({
   selector: "sp-status",
   standalone: true,
-  imports: [CommonModule, OneColComponent, DataGridComponent,MatIconModule,MatButtonModule],
+  imports: [
+    CommonModule,
+    OneColComponent,
+    DataGridComponent,
+    MatIconModule,
+    MatButtonModule,
+  ],
   templateUrl: "./status.component.html",
   styleUrls: ["./status.component.scss"],
 })
-export class StatusComponent {
+export class StatusComponent implements OnInit {
   constructor(
-    public dialogRef: MatDialogRef<StatusComponent>){}
+    public dialogRef: MatDialogRef<StatusComponent>,
+    private dataService: EntityDataService
+  ) {}
   headers: Header[] = [
-    { column: "entity", name: "Entity", canAutoResize: true, isSortable: true ,width:60},
-    { column: "file", name: "File", canAutoResize: true, isSortable: true,width:60 },
+    {
+      column: "entityName",
+      name: "Entity",
+      canAutoResize: true,
+      isSortable: true,
+      width: 60,
+    },
+    {
+      column: "filePath",
+      name: "File",
+      canAutoResize: true,
+      isSortable: true,
+      width: 60,
+    },
     {
       column: "status",
       name: "Status",
       canAutoResize: true,
-      isSortable: true,width:60
+      isSortable: true,
+      width: 60,
     },
   ];
   columnMode: ColumnMode = ColumnMode.force;
   selectionType: SelectionType = SelectionType.single;
   sortType = SortType.single;
   isFullScreen = false;
-  rows: any[] =[{
-    entity:'entity1',
-    file:'de.csv',
-    status:'In progress'
-  },
-  {
-    entity:'entity0',
-    file:'de.csv',
-    status:'In progress'
-  },{
-    entity:'entity9',
-    file:'de.csv',
-    status:'In progress'
-  },{
-    entity:'entity8',
-    file:'de.csv',
-    status:'In progress'
-  },{
-    entity:'entity2',
-    file:'de.csv',
-    status:'In progress'
-  },{
-    entity:'entity2',
-    file:'de.csv',
-    status:'In progress'
-  },
-  {
-    entity:'entity2',
-    file:'de.csv',
-    status:'In progress'
-  },{
-    entity:'entity2',
-    file:'de.csv',
-    status:'In progress'
-  },{
-    entity:'entity2',
-    file:'de.csv',
-    status:'In progress'
-  },{
-    entity:'entity2',
-    file:'de.csv',
-    status:'In progress'
-  },{
-    entity:'entity2',
-    file:'de.csv',
-    status:'In progress'
-  },{
-    entity:'entity2',
-    file:'de.csv',
-    status:'In progress'
-  },{
-    entity:'entity2',
-    file:'de.csv',
-    status:'In progress'
-  },{
-    entity:'entity2',
-    file:'de.csv',
-    status:'In progress'
-  },{
-    entity:'entity2',
-    file:'de.csv',
-    status:'In progress'
-  },{
-    entity:'entity2',
-    file:'de.csv',
-    status:'In progress'
-  },{
-    entity:'entity2',
-    file:'de.csv',
-    status:'In progress'
-  },{
-    entity:'entity2',
-    file:'de.csv',
-    status:'In progress'
-  },
-];
+  rows: any[] = [];
   selectedItem: any = null;
-  totalElements=this.rows.length
+  totalElements = this.rows.length;
 
-
-  onClose()
-  {
+  onClose() {
     this.dialogRef.close({ event: "Cancel" });
+  }
+  ngOnInit(): void {
+    this.dataService.getStatus().subscribe((val: any) => {
+      this.rows = val;
+    });
   }
 }

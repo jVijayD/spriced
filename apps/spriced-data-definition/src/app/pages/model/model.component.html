@@ -1,40 +1,40 @@
 <sp-one-col>
   <!-- <query-builder [(ngModel)]="query" [config]="config"></query-builder> -->
   <sp-data-grid
-  class="w-full h-full"
-  #dataGrid
-  title="Model List"
-  [enableRowIndex]="false"
-  [isArray]="false"
-  [headers]="headers"
-  [rows]="rows"
-  [rowHeight]="40"
-  [headerHeight]="40"
-  [footerHeight]="40"
-  [columnMode]="columnMode"
-  [virtualScroll]="true"
-  [selectionType]="selectionType"
-  [limit]="10"
-  [isExternalPaging]="true"
-  [isExternalSorting]="false"
-  [sortType]="sortType"
-  [count]="totalElements"
-  (paginate)="onPaginate($event)"
-  (itemSelected)="onItemSelected($event)"
-  (sort)="onSort($event)"
+    class="w-full h-full"
+    #dataGrid
+    title="Model List"
+    [enableRowIndex]="false"
+    [isArray]="false"
+    [headers]="headers"
+    [rows]="rows"
+    [rowHeight]="40"
+    [headerHeight]="40"
+    [footerHeight]="40"
+    [columnMode]="columnMode"
+    [virtualScroll]="true"
+    [selectionType]="selectionType"
+    [limit]="10"
+    [isExternalPaging]="true"
+    [isExternalSorting]="false"
+    [sortType]="sortType"
+    [count]="totalElements"
+    (paginate)="onPaginate($event)"
+    (itemSelected)="onItemSelected($event)"
+    (sort)="onSort($event)"
   >
     <ng-container>
       <sp-header-action
         icon="add_box"
         text="Add"
-        title="Add Entity"
+        title="Add Model"
         (actionClick)="onAdd()"
       ></sp-header-action>
 
       <sp-header-action
         icon="edit"
         text="Edit"
-        title="Edit Entity"
+        title="Edit Model"
         [disabled]="selectedItem == null"
         (actionClick)="onEdit()"
       ></sp-header-action>
@@ -42,7 +42,7 @@
       <sp-header-action
         icon="delete"
         text="Delete"
-        title="Delete Entity"
+        title="Delete Model"
         [disabled]="selectedItem == null"
         (actionClick)="onDelete()"
       ></sp-header-action>

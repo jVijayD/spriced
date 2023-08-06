@@ -3,6 +3,7 @@ import { Component, Input } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
+import { RouterModule } from "@angular/router";
 import { TopMenuComponent } from "@spriced-frontend/spriced-ui-lib";
 // import { menuItem } from '@spriced-frontend/shared/data-store';
 // import { NgxIndexedDBService } from 'ngx-indexed-db';
@@ -19,6 +20,7 @@ import { KeycloakService } from "keycloak-angular";
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
+    RouterModule,
   ],
 })
 export class HeaderComponent {

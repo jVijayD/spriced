@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Settings</h1>
+<label class="text-secondary-dark m-2 font-bold text-lg">Settings</label>
 
 <div mat-dialog-content class="grid">
   <mat-card style="padding: 20px" class="drop-shadow">
@@ -25,7 +25,7 @@
     <mat-checkbox [(ngModel)]="showSystem">Show System Attribute</mat-checkbox>
   </mat-card>
 </div>
-<div mat-dialog-actions>
+<div class="button-container">
   <button
     mat-button
     (click)="closeDialog()"
