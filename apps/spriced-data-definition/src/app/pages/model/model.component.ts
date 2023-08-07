@@ -155,13 +155,17 @@ export class ModelComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result == true) {
-        this.modelService
-          .delete(this.selectedItem.id)
-          .subscribe((results: any) => {
+        this.modelService.delete(this.selectedItem.id).subscribe({
+          next: (result) => {
             this.snackbarService.success("Succesfully Deleted");
             this.load(this.pageNo, this.pageSize);
             this.selectedItem = null;
-          });
+          },
+
+          error: (err) => {
+            this.snackbarService.error("Record deletion failed.");
+          },
+        });
       }
     });
     // this.selectedItem = null;

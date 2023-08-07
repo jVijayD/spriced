@@ -20,6 +20,7 @@ import { FormGroup, Validators } from "@angular/forms";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { ModelService } from "apps/spriced-data-definition/src/app/services/model.service";
+import { error } from "console";
 
 @Component({
   selector: "sp-entity-add",
@@ -113,18 +114,30 @@ export class ModelAddComponent {
   onSubmit(data: FormGroup<any>) {
     if (data.valid) {
       if (this.data.action == "Add") {
-        this.modelService.add(data.value).subscribe((results: any) => {
-          this.snackbarService.success("Model Successfully Created.");
-          //this.dataChange.emit(results);
-          this.onClose({ data: results, action: this.data.action });
+        this.modelService.add(data.value).subscribe({
+          next: (results: any) => {
+            this.snackbarService.success("Model Successfully Created.");
+            //this.dataChange.emit(results);
+            this.onClose({ data: results, action: this.data.action });
+          },
+          error: (err: any) => {
+            if (err.error.errorCode == "DB_UK-008") {
+              this.snackbarService.error("Model Already Exists.");
+            } else {
+              this.snackbarService.error("Model Creation Failed.");
+            }
+          },
         });
       } else if (this.data.action == "Edit") {
-        this.modelService
-          .edit(data.value, this.data.value)
-          .subscribe((results: any) => {
+        this.modelService.edit(data.value, this.data.value).subscribe({
+          next: (results: any) => {
             this.snackbarService.success("Model Successfully Updated.");
             this.onClose({ data: results, action: this.data.action });
-          });
+          },
+          error: (err: any) => {
+            this.snackbarService.error("Update Model  Failed.");
+          },
+        });
       }
     }
   }
