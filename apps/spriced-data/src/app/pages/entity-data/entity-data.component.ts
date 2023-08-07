@@ -1,4 +1,9 @@
-import { Component, OnDestroy, ViewChild } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  ViewChild,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   AppForm,
@@ -27,8 +32,13 @@ import { MatDialog } from "@angular/material/dialog";
 import { UploadDialogeComponent } from "../../components/upload-dialoge/upload-dialoge.component";
 import { SettingsPopUpComponent } from "../../components/settingsPopUp/settings-pop-up.component";
 import { StatusComponent } from "../../components/status/status.component";
-import { Attribute, Entity } from "@spriced-frontend/spriced-common-lib";
-import { ValidationErrors, Validators } from "@angular/forms";
+import {
+  Attribute,
+  Criteria,
+  Entity,
+  RequestUtilityService,
+} from "@spriced-frontend/spriced-common-lib";
+import { Validators } from "@angular/forms";
 import { EntityDataService } from "../../services/entity-data.service";
 import { Subscription } from "rxjs";
 import * as moment from "moment";
@@ -36,6 +46,7 @@ import * as moment from "moment";
 @Component({
   selector: "sp-entity-data",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Default,
   imports: [
     CommonModule,
     DialogueModule,
@@ -73,6 +84,7 @@ import * as moment from "moment";
   styleUrls: ["./entity-data.component.scss"],
 })
 export class EntityDataComponent implements OnDestroy {
+  limit: number = 8;
   subscriptions: Subscription[] = [];
   isFullScreen = false;
   headers: Header[] = [];
@@ -80,14 +92,12 @@ export class EntityDataComponent implements OnDestroy {
   selectionType: SelectionType = SelectionType.single;
   sortType = SortType.single;
   selectedItem: any;
-  //totalElements = 10000;
+  totalElements = 0;
   rows: any[] = [];
-  //data: any[] = [];
-
   currentSelectedEntity?: Entity;
   //Dynamic Form
-  //private formFields!: FormFieldControls;
   appForm!: AppForm;
+  currentCriteria!: Criteria;
 
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
@@ -104,17 +114,50 @@ export class EntityDataComponent implements OnDestroy {
     this.subscriptions.forEach((item) => item.unsubscribe());
   }
 
-  onPaginate(e: Paginate) {}
+  onPaginate(e: Paginate) {
+    const criteria: Criteria = {
+      ...this.currentCriteria,
+      pager: {
+        pageNumber: e.offset,
+        pageSize: this.limit,
+      },
+    };
+    this.loadEntityData(this.currentSelectedEntity as Entity, criteria);
+  }
+
+  onSort(e: any) {
+    const sorters = e.sorts.map((sort: any) => {
+      return { direction: sort.dir.toUpperCase(), property: sort.prop };
+    });
+    const criteria: Criteria = { ...this.currentCriteria, sorters: sorters };
+    this.loadEntityData(this.currentSelectedEntity as Entity, criteria);
+  }
+
   onItemSelected(e: any) {
     this.selectedItem = e;
+    this.dynamicFormService.parentForm?.setValue(this.selectedItem);
   }
+
   onClear() {
     this.selectedItem = null;
     this.dataGrid.clearSelection();
+    this.dynamicFormService.parentForm?.reset();
   }
-  onSort(e: any) {}
-  onDelete() {}
-  onRefresh() {}
+
+  onDelete() {
+    const dialog = this.dialogService.openConfirmDialoge({
+      message: "Do you want to delete the record?",
+      title: "Delete",
+      icon: "delete",
+    });
+
+    dialog.afterClosed().subscribe((result) => {
+      if (result) {
+        this.deleteEntityData(this.selectedItem.id);
+      }
+    });
+  }
+
   onFullScreen() {
     this.isFullScreen = !this.isFullScreen;
   }
@@ -165,6 +208,25 @@ export class EntityDataComponent implements OnDestroy {
     this.createDynamicUIMapping(this.currentSelectedEntity);
   }
 
+  private deleteEntityData(entityDataId: number) {
+    return this.entityDataService
+      .deleteEntityData((this.currentSelectedEntity as Entity).id, entityDataId)
+      .subscribe({
+        next: (result) => {
+          if (result > 0) {
+            this.snackbarService.success("Record deleted successfully.");
+            this.onClear();
+            this.loadEntityData(
+              this.currentSelectedEntity as Entity,
+              this.currentCriteria
+            );
+          }
+        },
+        error: (err) => {
+          this.snackbarService.error("Record deletion failed.");
+        },
+      });
+  }
   private createDynamicUIMapping(entity: Entity | undefined) {
     let formFields: FormFieldControls = [];
     if (entity) {
@@ -276,26 +338,31 @@ export class EntityDataComponent implements OnDestroy {
           isFilterable: true,
         };
       });
-      this.loadEntityData(entity);
+      this.loadEntityData(entity, {
+        pager: { pageNumber: 0, pageSize: this.limit },
+      });
     } else {
       this.headers = [];
     }
   }
 
-  private loadEntityData(entity: Entity) {
+  private loadEntityData(entity: Entity, criteria: Criteria) {
+    this.currentCriteria = criteria;
     if (entity) {
       this.subscriptions.push(
-        this.entityDataService.loadEntityData(entity.id).subscribe({
-          next: (items) => {
-            alert("GET DATA");
+        this.entityDataService.loadEntityData(entity.id, criteria).subscribe({
+          next: (page) => {
+            this.rows = page.content;
+            this.totalElements = page.totalElements;
           },
           error: (err) => {
             this.rows = [];
-            alert("Error");
+            console.error(err);
           },
         })
       );
     } else {
+      this.rows = [];
     }
   }
 
@@ -326,11 +393,20 @@ export class EntityDataComponent implements OnDestroy {
   private createEntityData(entityId: number, data: any) {
     this.entityDataService.createEntityData(entityId, data).subscribe({
       next: (item) => {
+        this.dynamicFormService.parentForm?.reset();
         this.snackbarService.success("Record created successfully.");
+        this.loadEntityData(
+          this.currentSelectedEntity as Entity,
+          this.currentCriteria
+        );
       },
       error: (err) => {
         console.error(err);
-        this.snackbarService.error("Record creation failed.");
+        let errMessage = "";
+        if (err.error.errorCode === "DB_UK-008") {
+          errMessage = `Unique constraint violation-${err.error.details}`;
+        }
+        this.snackbarService.error(`Record creation failed.${errMessage}`);
       },
     });
   }
@@ -340,6 +416,10 @@ export class EntityDataComponent implements OnDestroy {
     this.entityDataService.updateEntityData(entityId, data).subscribe({
       next: (item) => {
         this.snackbarService.success("Record updated successfully.");
+        this.loadEntityData(
+          this.currentSelectedEntity as Entity,
+          this.currentCriteria
+        );
       },
       error: (err) => {
         console.error(err);

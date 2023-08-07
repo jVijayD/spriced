@@ -1,16 +1,31 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import {
+  Criteria,
+  PageData,
+  RequestUtilityService,
+} from "@spriced-frontend/spriced-common-lib";
 import { Observable } from "rxjs";
 
 @Injectable({ providedIn: "root" })
 export class EntityDataService {
   api_url: string;
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private requestUtility: RequestUtilityService
+  ) {
     this.api_url = process.env["NX_API_DATA_URL"] as string;
   }
 
-  loadEntityData(id: string | number): Observable<any> {
-    return this.http.get(`${this.api_url}/entity/${id}/data`);
+  loadEntityData(
+    id: string | number,
+    criteria: Criteria
+  ): Observable<PageData> {
+    const url = this.requestUtility.addCriteria(
+      `${this.api_url}/entity/${id}/data`,
+      criteria
+    );
+    return this.http.get<PageData>(url);
   }
 
   createEntityData(id: string | number, data: any): Observable<any> {
@@ -21,6 +36,12 @@ export class EntityDataService {
   updateEntityData(id: string | number, data: any): Observable<any> {
     return this.http.put(`${this.api_url}/entity/${id}/data`, { data: [data] });
   }
+  deleteEntityData(id: string | number, entityDataId: number): Observable<any> {
+    return this.http.delete(
+      `${this.api_url}/entity/${id}/data/${entityDataId}`
+    );
+  }
+
   upload(file: any) {
     const headers = new HttpHeaders().set("Content-Type", "application/json");
 

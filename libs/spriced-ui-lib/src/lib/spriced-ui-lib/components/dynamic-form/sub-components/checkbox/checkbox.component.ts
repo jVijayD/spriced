@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   Inject,
   Injector,
@@ -16,6 +17,7 @@ import { DynamicFormService } from "../../service/dynamic-form.service";
   selector: "sp-checkbox",
   templateUrl: "./checkbox.component.html",
   styleUrls: ["./checkbox.component.scss"],
+  changeDetection: ChangeDetectionStrategy.Default,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
