@@ -125,6 +125,7 @@ export class EntityComponent {
         this.rows.push(results);
         this.rows = [...this.rows];
         this.totalElements = this.rows.length;
+        this.snackbarService.success("Succesfully Added");
         dialogRef.close();
       });
     });
@@ -154,6 +155,7 @@ export class EntityComponent {
         attributes: result.attributes,
       };
       this.entityService.edit(entity).subscribe((results) => {
+        this.snackbarService.success("Succesfully Updated");
         dialogRef.close();
         this.load({ value: this.groupId });
       });
