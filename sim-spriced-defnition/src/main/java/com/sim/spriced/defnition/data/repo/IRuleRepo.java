@@ -10,6 +10,7 @@ import com.sim.spriced.framework.models.Rule;
 
 public interface IRuleRepo {
 	public Rule add(Rule rule);
+	public Rule save(Rule rule);
 	public int remove(Rule rule);
 	public List<Rule> fetchAll();
 	public Page<Rule> fetchAll(Pageable pagable);

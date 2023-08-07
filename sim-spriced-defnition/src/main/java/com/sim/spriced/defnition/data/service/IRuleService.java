@@ -9,6 +9,7 @@ import com.sim.spriced.framework.models.Rule;
 
 public interface IRuleService {
 	Rule create(Rule rule);
+	Rule save(Rule rule);
 	Rule update(Rule rule);
 	int deleteByName(String name);
 	int delete(int id);

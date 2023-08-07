@@ -12,8 +12,8 @@ public class IsNotBetween extends BaseSpecification {
 
 	public static final String COMMA = ",";
 
-	public IsNotBetween(String column, Object value, ConditionType conditionType, OperandType operandType) {
-		super(column, value, conditionType, operandType);
+	public IsNotBetween(String column, Object value, ConditionType conditionType, OperandType operandType, ConditionType subConditionType) {
+		super(column, value, conditionType, operandType, subConditionType);
 	}
 
 	@Override
@@ -40,18 +40,18 @@ public class IsNotBetween extends BaseSpecification {
 			}
 			try {
 				if (this.isNumeric(this.convertToNumber(start)) && this.isNumeric(this.convertToNumber(end))) {
-					result = !(this.convertToNumber(start) >= this.convertToNumber(this.value)
-							&& this.convertToNumber(this.value) <= this.convertToNumber(end));
+					result = !(this.convertToNumber(start) >= this.convertToNumber(value)
+							&& this.convertToNumber(value) <= this.convertToNumber(end));
 				}
 			} catch (Exception e) {
 				if (this.isDate(start) && this.isDate(end)) {
 					LocalDate startDate = LocalDate.parse(start.toString());
 					LocalDate endDate = LocalDate.parse(end.toString());
-					LocalDate toCheck = LocalDate.parse(this.convertToDate(this.value).toString());
+					LocalDate toCheck = LocalDate.parse(this.convertToDate(value).toString());
 					result = toCheck.isBefore(startDate) || toCheck.isAfter(endDate);
-				} else if (this.isString(this.value)) {
-					result = !((this.value.toString().compareTo(start) >= 0)
-							&& (this.value.toString().compareTo(end) <= 0));
+				} else if (this.isString(value)) {
+					result = !((value.toString().compareTo(start) >= 0)
+							&& (value.toString().compareTo(end) <= 0));
 				}
 			}
 		}

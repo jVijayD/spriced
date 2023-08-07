@@ -15,16 +15,22 @@ public abstract class BaseSpecification implements CompositeSpecification<JSONOb
 	protected Object value; 
 	protected ConditionType conditionType;
 	protected OperandType operandType;
+	protected ConditionType subConditionType;
 	
-	protected BaseSpecification(String column,Object value,ConditionType conditionType,OperandType operandType) {
+	protected BaseSpecification(String column,Object value,ConditionType conditionType,OperandType operandType, ConditionType subConditionType) {
 		this.column = column;
 		this.value = value;
 		this.conditionType = conditionType;
 		this.operandType = operandType;
+		this.subConditionType = subConditionType;
 	}
 	
 	public ConditionType getConditionType() {
 		return conditionType;
+	}
+	
+	public ConditionType getSubConditionType() {
+		return subConditionType;
 	}
 
 	protected boolean isNumeric(Object value) {

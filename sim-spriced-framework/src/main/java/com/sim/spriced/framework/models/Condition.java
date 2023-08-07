@@ -1,7 +1,11 @@
 package com.sim.spriced.framework.models;
 
+import java.util.List;
+import java.util.Stack;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Condition {
 	private ConditionType conditionType = ConditionType.NONE;
@@ -16,6 +21,8 @@ public class Condition {
 	private OperatorType operatorType = OperatorType.NONE;
 	private Object operand = null;
 	private OperandType operandType = OperandType.BLANK;
+	private ConditionType subConditionType = ConditionType.NONE;
+	private List<Condition> subConditions;
 
 	public enum ConditionType {
 		NONE("none","This is used if we have only one item"),
@@ -99,4 +106,13 @@ public class Condition {
 			return description;
 		}
 	}
+
+	public static void getSubConditionsRecursively(Condition condition, Stack<List<Condition>> subConditionStack) {
+        if(condition.getSubConditions() != null && !condition.getSubConditions().isEmpty()) {
+            subConditionStack.add(condition.getSubConditions());
+            for(Condition subCondition: condition.getSubConditions()) {
+                getSubConditionsRecursively(subCondition, subConditionStack);
+            }
+        }
+    }
 }
