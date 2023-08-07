@@ -122,16 +122,24 @@ export class EntityComponent {
         attributes: result.attributes,
         enableAuditTrial: result.enableAuditTrial,
       };
-      this.entityService.add(entity).subscribe((results) => {
-        this.rows.push(results);
-        this.rows = [...this.rows];
-        this.totalElements = this.rows.length;
-        this.snackbarService.success("Succesfully Added");
-        dialogRef.close();
+      this.entityService.add(entity).subscribe({
+        next: (results: any) => {
+          this.rows.push(results);
+          this.rows = [...this.rows];
+          this.totalElements = this.rows.length;
+          this.snackbarService.success("Succesfully Added");
+          dialogRef.close();
+        },
+        error: (err: any) => {
+          if (err.error.errorCode == "DB_UK-008") {
+            this.snackbarService.error("Entity Already Exists.");
+          } else {
+            this.snackbarService.error("Entity Creation Failed.");
+          }
+        },
       });
     });
   }
-
   onRefresh() {
     this.load({ value: this.groupId });
   }
@@ -155,10 +163,15 @@ export class EntityComponent {
         enableAuditTrial: false,
         attributes: result.attributes,
       };
-      this.entityService.edit(entity).subscribe((results) => {
-        this.snackbarService.success("Succesfully Updated");
-        dialogRef.close();
-        this.load({ value: this.groupId });
+      this.entityService.edit(entity).subscribe({
+        next: (results: any) => {
+          this.snackbarService.success("Succesfully Updated");
+          dialogRef.close();
+          this.load({ value: this.groupId });
+        },
+        error: (err: any) => {
+          this.snackbarService.error("Entity Update Failed.");
+        },
       });
     });
   }
@@ -170,13 +183,16 @@ export class EntityComponent {
     });
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result == true) {
-        this.entityService
-          .delete(this.selectedItem.id)
-          .subscribe((results: any) => {
+        this.entityService.delete(this.selectedItem.id).subscribe({
+          next: (results: any) => {
             this.snackbarService.success("Succesfully Deleted");
             this.load({ value: this.groupId });
             this.dataGrid.clearSelection();
-          });
+          },
+          error: (err: any) => {
+            this.snackbarService.error("Entity Deletion Failed.");
+          },
+        });
       }
     });
   }
