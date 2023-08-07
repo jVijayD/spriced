@@ -50,7 +50,8 @@ export interface Attribute {
     | "LINK"
     | "TIME_STAMP"
     | "BOOLEAN"
-    | "AUTO";
+    | "AUTO"
+    | "SERIAL";
   type: "FREE_FORM" | "LOOKUP";
   size: number;
   nullable: boolean;
@@ -61,6 +62,7 @@ export interface Attribute {
   businessIdAppender?: string;
   formatter?: string;
   numberOfDecimalValues: number;
+  permission: "UPDATE" | "DENY" | "VIEW";
   constraintType:
     | "NONE"
     | "PRIMARY_KEY"

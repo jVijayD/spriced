@@ -1,14 +1,7 @@
 import { Component, Inject } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
-import {
-  NgxAngularQueryBuilderModule,
-  QueryBuilderConfig,
-} from "ngx-angular-query-builder";
+
+import { QueryBuilderConfig } from "ngx-angular-query-builder";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { MatButtonModule } from "@angular/material/button";
-import { MatIconModule } from "@angular/material/icon";
-import { MatRadioModule } from "@angular/material/radio";
 
 @Component({
   selector: "sp-filter",
@@ -98,10 +91,10 @@ export class FilterDialogComponent {
         return OperatorType.LESS_THAN_EQUALS;
       case "contains":
         return OperatorType.LIKE;
-      case "starts with":
-        return OperatorType.ILIKE;
-      case "ends with":
-        return OperatorType.ILIKE;
+      // case "starts with":
+      //   return OperatorType.ILIKE;
+      // case "ends with":
+      //   return OperatorType.ILIKE;
     }
     return operatorType;
   }
@@ -125,17 +118,13 @@ export class FilterDialogComponent {
   private mapOperators(type: string) {
     switch (type) {
       case "string":
-        return [
-          "equals",
-          "contains",
-          "starts with",
-          "ends with",
-          "not equal to",
-        ];
+        return ["equals", "contains", "not equal to"];
       case "date":
         return [">", "<", ">=", "<=", "=", "!="];
       case "number":
         return [">", "<", ">=", "<=", "=", "!="];
+      case "boolean":
+        return ["=", "!="];
     }
     return [];
   }
@@ -192,7 +181,7 @@ enum OperatorType {
 export interface QueryColumns {
   name: string;
   displayName?: string;
-  dataType: "number" | "string" | "date" | "category";
+  dataType: "number" | "string" | "date" | "boolean" | "category";
   options?: { name: string; value: any }[];
   nullable?: boolean;
 }

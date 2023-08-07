@@ -124,6 +124,8 @@ export class DataGridComponent implements AfterViewInit {
 export interface Header {
   name: string;
   column: string;
+  dataType?: "category" | "date" | "number" | "string" | "boolean";
+  options?: { name: string; value: any }[];
   width?: number;
   hidden?: boolean;
   pinned?: "left" | "right";

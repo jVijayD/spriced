@@ -4,6 +4,7 @@ import { ConfirmDialogComponent } from "./confirm-dialog/confirm-dialog.componen
 import { InfoDialogComponent } from "./info-dialog/info-dialog.component";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialogModule } from "@angular/material/dialog";
+import { MatSelectModule } from "@angular/material/select";
 import { MatIconModule } from "@angular/material/icon";
 import { DialogService } from "./dialog.service";
 import { NgxAngularQueryBuilderModule } from "ngx-angular-query-builder";
@@ -28,6 +29,7 @@ import { FilterDialogComponent } from "./filter-dialog/filter-dialog.component";
     MatButtonModule,
     MatIconModule,
     MatRadioModule,
+    MatSelectModule,
   ],
   providers: [DialogService],
   exports: [ConfirmDialogComponent, InfoDialogComponent, FilterDialogComponent],
