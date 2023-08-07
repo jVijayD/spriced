@@ -176,6 +176,10 @@ $my-app-dark-theme: mat.define-dark-theme(
   height: 18px;
 }
 
+.mat-expansion-indicator:after {
+  color: var(--primary-dark) !important;
+  background-color: var(--primary-dark);
+}
 // mat-form-field.error {
 //   border-style: solid;
 //   border-width: 1px;

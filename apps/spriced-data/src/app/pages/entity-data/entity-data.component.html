@@ -116,7 +116,9 @@
   </div>
   <div class="h-full" right>
     <div class="header bg-primary-default flex flex-row justify-between">
-      <div class="component-header-with-background">Add/Edit Entity</div>
+      <div class="component-header-with-background">
+        {{ this.currentSelectedEntity?.displayName }}
+      </div>
       <div class="flex flex-row justify-end text-white">
         <!-- <button
           [disabled]="this.isFullScreen"
@@ -136,13 +138,29 @@
         </button>
       </div>
     </div>
-    <sp-dynamic-form-container
-      *ngIf="appForm.groups[0].formFieldControls.length"
-      [appForm]="appForm"
-      reset="Reset"
-      save="Save"
-      (submitEvent)="onSubmitEntityData($event)"
-      (resetEvent)="onClear()"
-    ></sp-dynamic-form-container>
+    <mat-accordion>
+      <mat-expansion-panel
+        [expanded]="this.currentSelectedEntity ? true : false"
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <b>{{ this.selectedItem ? "Edit " : "Add " }}</b>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <sp-dynamic-form-container
+          *ngIf="appForm.groups[0].formFieldControls.length"
+          [appForm]="appForm"
+          reset="Reset"
+          save="Save"
+          (submitEvent)="onSubmitEntityData($event)"
+          (resetEvent)="onClear()"
+        ></sp-dynamic-form-container>
+      </mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <b>Dependant Lookup Entities</b>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+    </mat-accordion>
   </div>
 </sp-two-col-three-forth>
