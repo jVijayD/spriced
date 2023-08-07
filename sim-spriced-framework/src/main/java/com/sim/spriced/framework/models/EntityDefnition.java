@@ -82,6 +82,7 @@ public class EntityDefnition extends BaseEntity {
 
 	@Override
 	public boolean validate() {
+		this.name = this.name.replaceAll(" ","_").toLowerCase();
 		this.validateDisplayName();
 		this.validateAttributes();
 		return true;
