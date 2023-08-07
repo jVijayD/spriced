@@ -29,7 +29,11 @@ public class RuleRepo extends BaseRepo implements IRuleRepo {
 	
 	@Override
 	public Rule save(Rule rule) {
-		return super.create(rule,this::convertToRule);
+		if(rule.getId() == null) {
+			return super.create(rule,this::convertToRule);
+		} else {
+			return super.update(rule,this::convertToRule);
+		}
 	}
 
 	@Override
