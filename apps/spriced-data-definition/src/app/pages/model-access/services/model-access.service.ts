@@ -26,8 +26,8 @@ export class ModelAccessService {
   getRoles() {
     return [
       { name: "admin" },
-      { name: "manager" },
-      { name: "view" }
+      { name: "john" },
+      { name: "outside" }
     ];
   }
   public getEntities(id: any,role: string): Observable<EntityDTO[]> {
