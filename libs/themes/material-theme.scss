@@ -180,6 +180,15 @@ $my-app-dark-theme: mat.define-dark-theme(
   color: var(--primary-dark) !important;
   background-color: var(--primary-dark);
 }
+
+.mat-expansion-panel-header {
+  padding: 0 10px !important;
+  color: var(--secondary-default);
+}
+.mat-expansion-panel-body {
+  padding: 0px !important;
+}
+
 // mat-form-field.error {
 //   border-style: solid;
 //   border-width: 1px;

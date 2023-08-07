@@ -54,5 +54,4 @@ export const appRoutes: Route[] = [
     path: "**",
     component: PageNotFoundComponent,
   },
- 
 ];
