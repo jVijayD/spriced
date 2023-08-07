@@ -22,6 +22,7 @@ import {
   TwoColThreeForthComponent,
   GenericControl,
   IValidator,
+  QueryColumns,
 } from "@spriced-frontend/spriced-ui-lib";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
@@ -32,6 +33,10 @@ import { MatDialog } from "@angular/material/dialog";
 import { UploadDialogeComponent } from "../../components/upload-dialoge/upload-dialoge.component";
 import { SettingsPopUpComponent } from "../../components/settingsPopUp/settings-pop-up.component";
 import { StatusComponent } from "../../components/status/status.component";
+import {
+  MatExpansionModule,
+  MatExpansionPanel,
+} from "@angular/material/expansion";
 import {
   Attribute,
   Criteria,
@@ -58,7 +63,9 @@ import * as moment from "moment";
     TwoColThreeForthComponent,
     SnackbarModule,
     EntitySelectComponent,
+    MatExpansionModule,
   ],
+  viewProviders: [MatExpansionPanel],
   providers: [
     EntityDataService,
     {
@@ -161,7 +168,21 @@ export class EntityDataComponent implements OnDestroy {
   onFullScreen() {
     this.isFullScreen = !this.isFullScreen;
   }
-  onFilter() {}
+
+  onFilter() {
+    const dialogResult = this.dialogService.openFilterDialog({
+      persistValueOnFieldChange: true,
+      columns: this.getFilterColumns(),
+      emptyMessage: "Please select filter criteria.",
+      config: null,
+    });
+
+    dialogResult.afterClosed().subscribe((val) => {
+      if (val) {
+      }
+    });
+  }
+
   onEdit() {}
 
   onUpload() {
@@ -208,6 +229,33 @@ export class EntityDataComponent implements OnDestroy {
     this.createDynamicUIMapping(this.currentSelectedEntity);
   }
 
+  onSubmitEntityData(data: any) {
+    if (data.valid) {
+      const entityId = this.currentSelectedEntity?.id as number;
+      const finalData = this.removeNull(data.value);
+      if (!this.selectedItem) {
+        this.createEntityData(entityId, finalData);
+      } else {
+        this.editEntityData(entityId, this.selectedItem.id, finalData);
+      }
+    } else {
+      this.snackbarService.warn("Invalid record data.");
+    }
+  }
+
+  private getFilterColumns(): QueryColumns[] {
+    return this.headers
+      .filter((item) => item.isFilterable)
+      .map((col) => {
+        return {
+          name: col.column,
+          displayName: col.name,
+          dataType: col.dataType || "string",
+          options: col.dataType === "category" ? col.options : undefined,
+        };
+      });
+  }
+
   private deleteEntityData(entityDataId: number) {
     return this.entityDataService
       .deleteEntityData((this.currentSelectedEntity as Entity).id, entityDataId)
@@ -227,12 +275,21 @@ export class EntityDataComponent implements OnDestroy {
         },
       });
   }
+
   private createDynamicUIMapping(entity: Entity | undefined) {
     let formFields: FormFieldControls = [];
     if (entity) {
-      entity.attributes.forEach((attr: Attribute) => {
-        formFields.push(this.getType(attr));
-      });
+      console.log(entity.attributes);
+      entity.attributes
+        .filter((item) => {
+          return (
+            item.permission !== "DENY" &&
+            (item.editable === true || item.constraintType === "PRIMARY_KEY")
+          );
+        })
+        .forEach((attr: Attribute) => {
+          formFields.push(this.getType(attr));
+        });
     }
     this.setFormData("", formFields);
   }
@@ -249,6 +306,7 @@ export class EntityDataComponent implements OnDestroy {
           placeholder: attr.displayName || attr.name,
           label: attr.displayName || attr.name,
           validations: this.getValidations(attr),
+          readOnly: attr.permission === "VIEW" ? true : false,
         };
       case "INTEGER":
         return {
@@ -259,6 +317,7 @@ export class EntityDataComponent implements OnDestroy {
           label: attr.displayName || attr.name,
           decimalCount: attr.numberOfDecimalValues,
           validations: this.getValidations(attr),
+          readOnly: attr.permission === "VIEW" ? true : false,
         };
 
       case "TIME_STAMP":
@@ -272,6 +331,7 @@ export class EntityDataComponent implements OnDestroy {
           startView: "month",
           hiddenDefault: null,
           validations: this.getValidations(attr),
+          readOnly: attr.permission === "VIEW" ? true : false,
         };
       case "BOOLEAN":
         return {
@@ -279,6 +339,7 @@ export class EntityDataComponent implements OnDestroy {
           name: attr.name,
           label: attr.displayName || attr.name,
           validations: this.getValidations(attr),
+          readOnly: attr.permission === "VIEW" ? true : false,
           value: false,
         };
       case "AUTO":
@@ -327,23 +388,63 @@ export class EntityDataComponent implements OnDestroy {
     }
     return validations;
   }
+
   private createDynamicGrid(entity: Entity | undefined) {
     if (entity) {
-      this.headers = entity.attributes.map((attr: Attribute) => {
-        return {
-          column: attr.name,
-          name: attr.displayName || attr.name,
-          canAutoResize: true,
-          isSortable: true,
-          isFilterable: true,
-        };
-      });
+      this.headers = entity.attributes
+        .filter((item) => {
+          return item.permission !== "DENY";
+        })
+        .map((attr: Attribute) => {
+          return {
+            column: attr.name,
+            name: attr.displayName || attr.name,
+            canAutoResize: true,
+            isSortable: true,
+            isFilterable: true,
+            dataType: this.getColumnDataType(attr),
+            options: this.getOptions(attr),
+          };
+        });
       this.loadEntityData(entity, {
         pager: { pageNumber: 0, pageSize: this.limit },
       });
     } else {
       this.headers = [];
     }
+  }
+
+  private getColumnDataType(
+    attr: Attribute
+  ): "string" | "number" | "date" | "category" | "boolean" {
+    switch (attr.dataType) {
+      case "STRING_VAR":
+      case "TEXT":
+      case "LINK":
+        return "string";
+      case "TIME_STAMP":
+        return "date";
+      case "BOOLEAN":
+        return "boolean";
+      case "INTEGER":
+      case "SERIAL":
+        return "number";
+      default:
+        return "string";
+    }
+  }
+
+  private getOptions(
+    attr: Attribute
+  ): { name: string; value: any }[] | undefined {
+    let options = undefined;
+    if (attr.dataType === "BOOLEAN") {
+      options = [
+        { name: "True", value: true },
+        { name: "False", value: false },
+      ];
+    }
+    return options;
   }
 
   private loadEntityData(entity: Entity, criteria: Criteria) {
@@ -363,20 +464,6 @@ export class EntityDataComponent implements OnDestroy {
       );
     } else {
       this.rows = [];
-    }
-  }
-
-  onSubmitEntityData(data: any) {
-    if (data.valid) {
-      const entityId = this.currentSelectedEntity?.id as number;
-      const finalData = this.removeNull(data.value);
-      if (!this.selectedItem) {
-        this.createEntityData(entityId, finalData);
-      } else {
-        this.editEntityData(entityId, this.selectedItem.id, finalData);
-      }
-    } else {
-      this.snackbarService.warn("Invalid record data.");
     }
   }
 
@@ -415,6 +502,7 @@ export class EntityDataComponent implements OnDestroy {
     data.id = recordId;
     this.entityDataService.updateEntityData(entityId, data).subscribe({
       next: (item) => {
+        this.onClear();
         this.snackbarService.success("Record updated successfully.");
         this.loadEntityData(
           this.currentSelectedEntity as Entity,
