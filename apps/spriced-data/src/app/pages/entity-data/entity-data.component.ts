@@ -198,7 +198,10 @@ export class EntityDataComponent implements OnDestroy {
     dialogResult.afterClosed().subscribe((val) => {
       if (val) {
         console.log(val.data);
-        const fileDetails = { source: "web", entityName: "ent" };
+        const fileDetails = {
+          source: "web",
+          entityName: this.currentSelectedEntity?.name,
+        };
         const formData = new FormData();
 
         formData.append("file", val.data, val.data.name);
