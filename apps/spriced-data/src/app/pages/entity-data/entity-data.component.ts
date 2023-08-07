@@ -289,8 +289,8 @@ export class EntityDataComponent implements OnDestroy {
       entity.attributes
         .filter((item) => {
           return (
-            item.permission !== "DENY" &&
-            (item.editable === true || item.constraintType === "PRIMARY_KEY")
+            (item.permission !== "DENY" && item.editable === true) ||
+            item.constraintType == "PRIMARY_KEY"
           );
         })
         .forEach((attr: Attribute) => {
