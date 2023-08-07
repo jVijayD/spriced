@@ -249,6 +249,8 @@ export class EntityDataComponent implements OnDestroy {
   }
 
   onEntitySelectionChange(entity: Entity | string) {
+    this.headers = [{ name: "", column: "" }];
+    this.rows = [...[]];
     this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);
     this.createDynamicGrid(this.currentSelectedEntity);
     this.createDynamicUIMapping(this.currentSelectedEntity);
