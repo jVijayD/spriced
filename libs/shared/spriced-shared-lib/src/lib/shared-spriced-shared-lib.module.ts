@@ -6,8 +6,55 @@ import { AppDataService } from "./app-data/app-data.service";
 import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { headerInterceptor } from "./auth/header-interceptor";
 
+import { DBConfig, NgxIndexedDBModule } from "ngx-indexed-db";
+const dbConfig: DBConfig = {
+  name: "settings",
+  version: 3,
+  objectStoresMeta: [
+    {
+      store: "this_entity",
+      storeConfig: { keyPath: "id", autoIncrement: true },
+      storeSchema: [
+        { name: "entity", keypath: "entity", options: { unique: false } },
+        {
+          name: "noOfRecords",
+          keypath: "noOfRecords",
+          options: { unique: false },
+        },
+        {
+          name: "freeze",
+          keypath: "freeze",
+          options: { unique: false },
+        },
+      ],
+    },
+
+    {
+      store: "all_entity",
+      storeConfig: { keyPath: "id", autoIncrement: true },
+      storeSchema: [
+        {
+          name: "displayFormat",
+          keypath: "displayFormat",
+          options: { unique: false },
+        },
+        {
+          name: "showSystem",
+          keypath: "showSystem",
+          options: { unique: false },
+        },
+      ],
+    },
+  ],
+};
+
 @NgModule({
-  imports: [CommonModule, KeycloakAngularModule,HttpClientModule],
+  imports: [
+    CommonModule,
+    KeycloakAngularModule,
+    HttpClientModule,
+    NgxIndexedDBModule.forRoot(dbConfig),
+  ],
   providers: [
     KeycloakService,
     {
@@ -21,7 +68,7 @@ import { headerInterceptor } from "./auth/header-interceptor";
       useClass: headerInterceptor,
       multi: true,
     },
-    AppDataService
+    AppDataService,
   ],
 })
 export class SharedSpricedSharedLibModule {}

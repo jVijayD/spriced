@@ -35,7 +35,7 @@
           <input matInput [(ngModel)]="local_data.displayName" />
         </mat-form-field>
       </div>
-      <mat-checkbox checked="true" [(ngModel)]="local_data.autoNumberCode"
+      <mat-checkbox [(ngModel)]="local_data.autoNumberCode"
         >Auto generate Code</mat-checkbox
       >
     </div>
@@ -96,7 +96,7 @@
           <mat-form-field appearance="outline" class="mb-2">
             <mat-label>Attribute Name</mat-label>
             <input
-              [disabled]="attAction === 'Edit'"
+              [disabled]="attAction === 'Update'"
               matInput
               [(ngModel)]="attDetails.name"
             />
@@ -259,7 +259,7 @@
                 attDetails.editable === false
               "
             >
-              {{ attAction }}
+              {{ attAction }} Attribute
             </button>
           </div>
         </div>
@@ -283,7 +283,7 @@
       (click)="doAction()"
       [disabled]="entityForm.invalid && action !== 'Edit'"
     >
-      {{ action }}
+      Save
     </button>
   </div>
 </div>

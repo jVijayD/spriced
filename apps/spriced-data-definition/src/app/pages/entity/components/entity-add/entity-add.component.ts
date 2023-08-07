@@ -143,6 +143,7 @@ export class EntityAddComponent implements OnInit {
     this.local_data?.attributes?.forEach((element: any) => {
       element.displayName = element.displayName || element.name;
     });
+
     this.rows = this.local_data?.attributes || [];
     this.totalElements = this.rows.length;
   }
