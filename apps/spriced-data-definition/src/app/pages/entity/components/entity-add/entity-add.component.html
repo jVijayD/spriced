@@ -35,9 +35,14 @@
           <input matInput [(ngModel)]="local_data.displayName" />
         </mat-form-field>
       </div>
-      <mat-checkbox [(ngModel)]="local_data.autoNumberCode"
-        >Auto generate Code</mat-checkbox
-      >
+      <div class="autoCheck">
+        <mat-checkbox [(ngModel)]="local_data.autoNumberCode" color="primary"
+          >Auto generate Code</mat-checkbox
+        >
+        <mat-checkbox [(ngModel)]="local_data.enableAuditTrial" color="primary"
+          >Enable Change Tracking</mat-checkbox
+        >
+      </div>
     </div>
 
     <mat-card

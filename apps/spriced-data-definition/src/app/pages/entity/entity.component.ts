@@ -118,8 +118,9 @@ export class EntityComponent {
         id: result.id,
         groupId: this.groupId,
         isDisabled: false,
-        enableAuditTrial: false,
+        //enableAuditTrial: false,
         attributes: result.attributes,
+        enableAuditTrial: result.enableAuditTrial,
       };
       this.entityService.add(entity).subscribe({
         next: (results: any) => {

@@ -49,6 +49,7 @@ export class SettingsPopUpComponent {
     private settings: SettingsService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {
+    debugger;
     let result = this.settings.getGlobalSettings();
     console.log(result);
     if (result) {

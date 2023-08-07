@@ -34,6 +34,7 @@
 .namegrid {
   display: flex;
   margin: 0.5rem 0.5rem 0 0;
+  @apply space-x-2;
 }
 .tableBox {
   max-height: 433px;
@@ -53,6 +54,13 @@
 .container {
   padding: 1rem !important;
 }
+
 .actions {
   @apply flex flex-row justify-center gap-5;
+}
+
+.autoCheck {
+  @apply pl-2;
+  display: flex;
+  flex-direction: column;
 }
