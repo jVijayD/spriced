@@ -123,12 +123,14 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 				boolean isPrimaryKey = item.getConstraintType() == ConstraintType.PRIMARY_KEY;
 				AttributeConstants.DataType dataType = item.getDataType();
 				if (!isPrimaryKey) {
-					 if (dataType.equals(AttributeConstants.DataType.TIME_STAMP_WITH_TIMEZONE)|| dataType.equals(AttributeConstants.DataType.TIME_STAMP)) {
-						 fieldValues.put(column(item.getName(),OffsetDateTime.class), jsonObject.get(item.getName()));
-			            }
-					 else {
-						 fieldValues.put(column(item.getName()), jsonObject.has(item.getName())? jsonObject.get(item.getName()):this.getNullValue(dataType));
-					 }
+					if(!dataType.equals(AttributeConstants.DataType.AUTO)) {
+						 if (dataType.equals(AttributeConstants.DataType.TIME_STAMP_WITH_TIMEZONE)|| dataType.equals(AttributeConstants.DataType.TIME_STAMP)) {
+							 fieldValues.put(column(item.getName(),OffsetDateTime.class), jsonObject.has(item.getName())? jsonObject.get(item.getName()):this.getNullValue(dataType));
+				            }
+						 else {
+							 fieldValues.put(column(item.getName()), jsonObject.has(item.getName())? jsonObject.get(item.getName()):this.getNullValue(dataType));
+						 }
+					}
 					
 				} else {
 					if (Boolean.TRUE.equals(!isChange) && dataType.equals(AttributeConstants.DataType.STRING_VAR)){
