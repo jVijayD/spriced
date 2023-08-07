@@ -174,10 +174,16 @@ export class EntityDataComponent implements OnDestroy {
         const formData = new FormData();
 
         formData.append("file", val.data, val.data.name);
-        formData.append("fileDetails", JSON.stringify(fileDetails));
-        this.entityDataService.upload(formData).subscribe((val) => {
-          console.log(val);
-        });
+        formData.append(
+          "fileDetails",
+          new Blob([JSON.stringify(fileDetails)], { type: "application/json" })
+        );
+        // formData.append("fileDetails", JSON.stringify(fileDetails));
+        this.entityDataService
+          .upload(formData, fileDetails)
+          .subscribe((val) => {
+            this.snackbarService.success("Uploaded Successfully");
+          });
       }
     });
   }

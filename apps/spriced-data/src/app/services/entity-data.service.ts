@@ -17,6 +17,9 @@ export class EntityDataService {
     this.api_url = process.env["NX_API_DATA_URL"] as string;
   }
 
+  upload(file: any, fileDetails: any) {
+    return this.http.post(`${this.api_url}/bulk/upload`, file);
+  }
   loadEntityData(
     id: string | number,
     criteria: Criteria
@@ -42,13 +45,6 @@ export class EntityDataService {
     );
   }
 
-  upload(file: any) {
-    const headers = new HttpHeaders().set("Content-Type", "application/json");
-
-    return this.http.post(`${this.api_url}/bulk/upload`, file, {
-      headers: headers,
-    });
-  }
   getStatus() {
     return this.http.get(`${this.api_url}/bulk/getAll`);
   }
