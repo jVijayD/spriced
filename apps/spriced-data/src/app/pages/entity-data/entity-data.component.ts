@@ -241,6 +241,12 @@ export class EntityDataComponent implements OnDestroy {
       data: this.appForm,
     });
   }
+  onModelSelectionChange() {
+    this.currentSelectedEntity = undefined;
+    this.headers = [{ name: "", column: "" }];
+    this.rows = [...[]];
+    this.setFormData("", []);
+  }
 
   onEntitySelectionChange(entity: Entity | string) {
     this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);

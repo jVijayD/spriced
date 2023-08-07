@@ -3,7 +3,7 @@
 <div mat-dialog-content class="grid">
   <mat-card style="padding: 20px" class="drop-shadow">
     <mat-label class="mb-2"
-      ><strong>{{ data.name }}</strong></mat-label
+      ><strong>{{ data.displayName || data.name }}</strong></mat-label
     >
     <mat-form-field appearance="outline" class="mb-4">
       <mat-label> Records per page</mat-label>

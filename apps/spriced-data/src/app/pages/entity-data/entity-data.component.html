@@ -3,6 +3,7 @@
     <div class="page-header pb-0">Entity Data Management</div>
     <sp-entity-select
       (entitySelectionEvent)="onEntitySelectionChange($event)"
+      (modelSelectionEvent)="onModelSelectionChange()"
     ></sp-entity-select>
     <div class="flex-grow pl-2 pr-2">
       <sp-data-grid

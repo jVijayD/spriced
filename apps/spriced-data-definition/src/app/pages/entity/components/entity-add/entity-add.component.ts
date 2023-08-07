@@ -129,7 +129,7 @@ export class EntityAddComponent implements OnInit {
     this.attDetails.type = "FREE_FORM";
     this.local_data = { ...data.row };
     this.entityList = data.entities;
-    debugger;
+
     if (this.local_data.id == this.entityList[0]?.id) {
       this.attDetails.referencedTableId = this.entityList[1]?.id;
       this.referencedTable = this.entityList[1]?.name;

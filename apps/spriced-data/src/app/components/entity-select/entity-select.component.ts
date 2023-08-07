@@ -44,6 +44,9 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
   @Output()
   entitySelectionEvent: EventEmitter<Entity | string> = new EventEmitter();
 
+  @Output()
+  modelSelectionEvent: EventEmitter<Entity | string> = new EventEmitter();
+
   constructor(
     private modelService: ModelService,
     private entityService: EntityService,
@@ -99,13 +102,13 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
 
   onModelSelectionChange(e: MatSelectChange) {
     this.entities = [];
+    this.modelSelectionEvent.emit();
     if (e.value != "") {
       this.loadEntity(Number(e.value));
     }
   }
 
   onEntitySelectionChange(e: MatSelectChange) {
-    debugger;
     this.entitySelectionEvent.emit(e.value);
   }
 }
