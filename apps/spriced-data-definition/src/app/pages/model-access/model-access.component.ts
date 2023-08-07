@@ -7,6 +7,8 @@ import {
   DialogService,
   DialogueModule,
   HboxComponent,
+  SnackBarService,
+  SnackbarModule,
   VboxComponent,
 } from "@spriced-frontend/spriced-ui-lib";
 import { MatToolbarModule } from "@angular/material/toolbar";
@@ -31,6 +33,7 @@ import {
   RoleEntityPermissionMapping,
 } from "./models/ModelAccesTypes.class";
 import { ErrorTypes, AppDataService } from "@spriced-frontend/shared/spriced-shared-lib";
+import { MatSnackBar } from "@angular/material/snack-bar";
 const POPULATE_ATTRIBUTES = false;
 @Component({
   selector: "sp-model-access",
@@ -44,11 +47,11 @@ const POPULATE_ATTRIBUTES = false;
     NgxDatatableModule,
     MatIconModule,
     MatFormFieldModule,
-    MatSelectModule,
+    MatSelectModule,SnackbarModule,
     CommonModule,
     DialogueModule,
   ],
-  providers: [HttpClient, DialogService],
+  providers: [HttpClient, DialogService,SnackBarService,AppDataService],
   templateUrl: "./model-access.component.html",
   styleUrls: ["./model-access.component.scss"],
 })
@@ -66,6 +69,7 @@ export class ModelAccessComponent {
   constructor(
     private cd: ChangeDetectorRef,
     private dialogService: DialogService,
+    private snackbarService: SnackBarService,
     private statusPannelService: AppDataService,
     private myService: ModelAccessService // private service: DataDefListService
   ) {
@@ -124,7 +128,8 @@ export class ModelAccessComponent {
         .saveModelAccessPermission(groupPermission)
         .subscribe((data: any) => {
           console.log(data);
-          this.onClearClick();
+          this.snackbarService.success("Succesfully Saved");
+          // this.onClearClick();
         });
     }
   }
