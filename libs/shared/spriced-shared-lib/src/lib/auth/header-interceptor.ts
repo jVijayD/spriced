@@ -24,7 +24,7 @@ export class headerInterceptor implements HttpInterceptor {
         tenant: "meritor",
         user: this.user.profile.email || "",
         transactionId: this.user.profile.id || "",
-        roles: "admin,manager,viewer",
+        roles: this.user.tokenParsed?.realm_access?.roles?.join(","),
         applications: this.user.profile.attributes.application || "",
       }),
     });
