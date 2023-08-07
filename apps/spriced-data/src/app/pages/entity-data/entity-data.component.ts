@@ -243,14 +243,15 @@ export class EntityDataComponent implements OnDestroy {
   }
   onModelSelectionChange() {
     this.currentSelectedEntity = undefined;
-    this.headers = [{ name: "", column: "" }];
+    // this.headers = [{ name: "", column: "" }];
+    this.dataGrid.table._internalColumns = [...[]];
     this.rows = [...[]];
     this.setFormData("", []);
   }
 
   onEntitySelectionChange(entity: Entity | string) {
-    this.headers = [{ name: "", column: "" }];
-    this.rows = [...[]];
+    this.currentSelectedEntity = undefined;
+    this.dataGrid.table._internalColumns = [...[]];
     this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);
     this.createDynamicGrid(this.currentSelectedEntity);
     this.createDynamicUIMapping(this.currentSelectedEntity);
@@ -436,8 +437,6 @@ export class EntityDataComponent implements OnDestroy {
       this.loadEntityData(entity, {
         pager: { pageNumber: 0, pageSize: this.limit },
       });
-    } else {
-      this.headers = [];
     }
   }
 
