@@ -35,7 +35,11 @@ public class RuleService implements IRuleService {
 	@Override
 	public Rule update(Rule rule) {
 		rule.validate();
-		rule.setStatus(StatusConstants.ACTIVE);
+		if(rule.getIsExcluded()) {
+			rule.setStatus(StatusConstants.EXCLUDED);
+		} else {
+			rule.setStatus(StatusConstants.ACTIVE);
+		}
 		return this.ruleRepo.change(rule);
 	}
 
