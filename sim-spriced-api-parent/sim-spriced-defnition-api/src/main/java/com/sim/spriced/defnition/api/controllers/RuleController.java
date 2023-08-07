@@ -78,9 +78,17 @@ public class RuleController {
 		return new ResponseEntity<>(this.ruleService.delete(id), HttpStatus.OK);
 	}
 	
-	@Timed(value = "rule.create.time", description = "Time taken to create rule.")
+	@Timed(value = "rule.create.time", description = "Time taken to create saved rule.")
 	@PostMapping("/rules/save")
 	public ResponseEntity<RuleDto> save(@RequestBody RuleDto rule) {
+		Rule rul = mapper.toRule(rule);
+		rul = this.ruleService.save(rul);
+		return new ResponseEntity<>(mapper.toRuleDto(rul), HttpStatus.CREATED);
+	}
+	
+	@Timed(value = "rule.update.time", description = "Time taken to update saved rule.")
+	@PutMapping("/rules/save/{id}")
+	public ResponseEntity<RuleDto> save(@PathVariable int id, @RequestBody RuleDto rule) {
 		Rule rul = mapper.toRule(rule);
 		rul = this.ruleService.save(rul);
 		return new ResponseEntity<>(mapper.toRuleDto(rul), HttpStatus.CREATED);
