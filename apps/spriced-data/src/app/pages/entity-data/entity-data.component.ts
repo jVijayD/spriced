@@ -119,9 +119,6 @@ export class EntityDataComponent implements OnDestroy {
     private settings: SettingsService
   ) {
     this.setFormData("", []);
-    this.settings.getGlobalSettings().subscribe((result) => {
-      console.log(result);
-    });
   }
   ngOnDestroy(): void {
     this.subscriptions.forEach((item) => item.unsubscribe());
