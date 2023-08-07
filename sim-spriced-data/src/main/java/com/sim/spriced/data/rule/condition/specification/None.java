@@ -5,7 +5,7 @@ import org.json.JSONObject;
 public class None  extends BaseSpecification {
 
 	protected None() {
-		super(null, null,null,null);
+		super(null, null,null,null, null);
 	}
 
 	@Override

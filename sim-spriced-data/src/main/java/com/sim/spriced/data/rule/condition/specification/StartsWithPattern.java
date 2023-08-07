@@ -10,8 +10,8 @@ import com.sim.spriced.framework.models.Condition.OperandType;
 
 public class StartsWithPattern extends BaseSpecification {
 
-	public StartsWithPattern(String column, Object value, ConditionType conditionType, OperandType operandType) {
-		super(column, value, conditionType, operandType);
+	public StartsWithPattern(String column, Object value, ConditionType conditionType, OperandType operandType, ConditionType subConditionType) {
+		super(column, value, conditionType, operandType, subConditionType);
 	}
 
 	@Override

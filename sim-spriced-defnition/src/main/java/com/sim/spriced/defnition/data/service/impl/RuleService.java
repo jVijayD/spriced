@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.sim.spriced.defnition.data.repo.IRuleRepo;
 import com.sim.spriced.defnition.data.service.IRuleService;
 import com.sim.spriced.framework.models.Rule;
+import com.sim.spriced.framework.models.StatusConstants;
 
 @Service
 public class RuleService implements IRuleService {
@@ -21,12 +22,20 @@ public class RuleService implements IRuleService {
 	@Override
 	public Rule create(Rule rule) {
 		rule.validate();
+		rule.setStatus(StatusConstants.ACTIVE);
 		return this.ruleRepo.add(rule);
+	}
+	
+	@Override
+	public Rule save(Rule rule) {
+		rule.setStatus(StatusConstants.IN_PROGRESS);
+		return this.ruleRepo.save(rule);
 	}
 
 	@Override
 	public Rule update(Rule rule) {
 		rule.validate();
+		rule.setStatus(StatusConstants.ACTIVE);
 		return this.ruleRepo.change(rule);
 	}
 
