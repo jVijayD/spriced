@@ -4,9 +4,9 @@
   --primary-dark: #a8211a;
   --primary-disabled: #d56c6baa;
 
-  --secondary-light: #ebeff2;
-  --secondary-default: #d0d9e1;
-  --secondary-dark: #748ea8;
+  --secondary-light: #818e97;
+  --secondary-default: #52616d;
+  --secondary-dark: #2b3846;
 
   --warn-light: #fff170;
   --warn-default: #ffab1f;
@@ -25,13 +25,43 @@
   --disabled: rgba(113, 103, 103, 0.604);
 }
 
+::-webkit-scrollbar {
+  width: 8px;
+  background-color: #f5f5f5;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.6);
+  background-color: #cccccc;
+  //background-color: #b7adad;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 50px;
+  background-color: var(--primary-dark);
+  background-image: -webkit-linear-gradient(
+    90deg,
+    var(--primary-dark),
+    var(--primary-light),
+    transparent 100%,
+    var(--primary-dark),
+    transparent
+  );
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-default);
+}
+
 html,
 body {
   height: 100%;
+  overflow: auto;
 }
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+  overflow: auto;
 }
 
 // @import '../../node_modules/@swimlane/ngx-datatable/assets/icons.css';
@@ -52,14 +82,14 @@ body {
 .ngx-datatable.material.multi-click-selection
   .datatable-body-row.active:hover
   .datatable-row-group {
-  background-color: var(--secondary-default);
+  background-color: var(--secondary-light);
 }
 
-// .ngx-datatable.material.single-selection
-//   .datatable-body-row.active
-//   .datatable-body-cell {
-//   color: var(--white);
-// }
+.ngx-datatable.material.single-selection
+  .datatable-body-row.active
+  .datatable-body-cell {
+  color: var(--white);
+}
 
 .ngx-datatable.material.single-selection .datatable-body-row.active,
 .ngx-datatable.material.single-selection
@@ -73,7 +103,7 @@ body {
 .ngx-datatable.material.multi-click-selection
   .datatable-body-row.active
   .datatable-row-group {
-  background-color: var(--secondary-default);
+  background-color: var(--secondary-light);
 }
 
 .ngx-datatable .datatable-body .datatable-row-wrapper {
@@ -116,37 +146,37 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   }
 }
 
-.ngx-datatable.material
-  .datatable-footer
-  .datatable-pager
-  .datatable-icon-prev:before {
-  content: "<<";
-  font-size: small;
-}
+// .ngx-datatable.material
+//   .datatable-footer
+//   .datatable-pager
+//   .datatable-icon-prev:before {
+//   content: "<<";
+//   font-size: small;
+// }
 
-.ngx-datatable.material
-  .datatable-footer
-  .datatable-pager
-  .datatable-icon-left:before {
-  content: "<";
-  font-size: medium;
-}
+// .ngx-datatable.material
+//   .datatable-footer
+//   .datatable-pager
+//   .datatable-icon-left:before {
+//   content: "<";
+//   font-size: medium;
+// }
 
-.ngx-datatable.material
-  .datatable-footer
-  .datatable-pager
-  .datatable-icon-right:after {
-  content: ">";
-  font-size: medium;
-}
+// .ngx-datatable.material
+//   .datatable-footer
+//   .datatable-pager
+//   .datatable-icon-right:after {
+//   content: ">";
+//   font-size: medium;
+// }
 
-.ngx-datatable.material
-  .datatable-footer
-  .datatable-pager
-  .datatable-icon-skip:after {
-  content: ">>";
-  font-size: small;
-}
+// .ngx-datatable.material
+//   .datatable-footer
+//   .datatable-pager
+//   .datatable-icon-skip:after {
+//   content: ">>";
+//   font-size: small;
+// }
 
 .ngx-datatable .datatable-header .datatable-header-cell .sort-btn {
   float: right;
@@ -159,17 +189,20 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   align-items: center;
   width: 100%;
   height: 300px;
-  @apply text-secondary-default;
+  @apply text-secondary-light;
 }
 .ngx-datatable.material .empty-row::after {
   font-family: "Material Icons";
   font-size: 100px;
-  @apply text-secondary-default font-extrabold;
+  @apply text-secondary-light font-extrabold;
   content: "\e4f5";
 }
 
+.ngx-datatable .datatable-footer-inner {
+  overflow-y: hidden;
+}
 .page-header {
-  @apply text-secondary-dark font-medium text-base p-2;
+  @apply text-secondary-default font-medium text-base p-2;
 }
 
 .component-header-with-background {

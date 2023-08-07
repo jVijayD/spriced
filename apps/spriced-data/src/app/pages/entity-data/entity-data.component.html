@@ -1,13 +1,15 @@
 <sp-two-col-three-forth [singleColumn]="isFullScreen">
   <div class="flex flex-col w-full" style="height: calc(100% - 3rem)" left>
     <div class="page-header pb-0">Entity Data Management</div>
-    <sp-entity-select></sp-entity-select>
+    <sp-entity-select
+      (entitySelectionEvent)="onEntitySelectionChange($event)"
+    ></sp-entity-select>
     <div class="flex-grow pl-2 pr-2">
       <sp-data-grid
         #dataGrid
-        [title]="entityName"
+        [title]="this.currentSelectedEntity?.displayName || ''"
         [enableRowIndex]="false"
-        [isArray]="true"
+        [isArray]="false"
         [headers]="headers"
         [rows]="rows"
         [rowHeight]="40"
@@ -16,45 +18,31 @@
         [columnMode]="columnMode"
         [virtualScroll]="false"
         [selectionType]="selectionType"
-        [limit]="30"
+        [count]="totalElements"
+        [limit]="limit"
         [isExternalPaging]="true"
-        [isExternalSorting]="false"
+        [isExternalSorting]="true"
         [sortType]="sortType"
         (paginate)="onPaginate($event)"
         (itemSelected)="onItemSelected($event)"
         (sort)="onSort($event)"
       >
         <ng-container>
-          <sp-header-action
+          <!-- <sp-header-action
             [disabled]="!this.isFullScreen"
             icon="add_box"
             text="Add"
             title="Add Entity"
             (actionClick)="showAddPopup()"
-          ></sp-header-action>
+          ></sp-header-action> -->
 
-          <sp-header-action
-            [disabled]="!selectedItem"
-            icon="clear"
-            text="Clear"
-            title="Clear"
-            (actionClick)="onClear()"
-          ></sp-header-action>
-
-          <sp-header-action
-            icon="refresh"
-            text="Refresh"
-            title="Refresh"
-            (actionClick)="onRefresh()"
-          ></sp-header-action>
-
-          <sp-header-action
+          <!-- <sp-header-action
             icon="edit"
             text="Edit"
             title="Edit Entity"
             [disabled]="selectedItem == null && !isFullScreen"
             (actionClick)="onEdit()"
-          ></sp-header-action>
+          ></sp-header-action> -->
 
           <sp-header-action
             icon="delete"
@@ -65,20 +53,28 @@
           ></sp-header-action>
 
           <sp-header-action
+            [disabled]="!selectedItem"
+            icon="clear"
+            text="Clear"
+            title="Clear"
+            (actionClick)="onClear()"
+          ></sp-header-action>
+
+          <!-- <sp-header-action
             [disabled]="this.isFullScreen"
             icon="fullscreen"
             text="Full Screen"
             title="Full Screen"
             (actionClick)="onFullScreen()"
-          ></sp-header-action>
+          ></sp-header-action> -->
 
-          <sp-header-action
+          <!-- <sp-header-action
             [disabled]="!this.isFullScreen"
             icon="fullscreen_exit"
             text="Exit"
             title="Full Screen Exit"
             (actionClick)="onFullScreen()"
-          ></sp-header-action>
+          ></sp-header-action> -->
 
           <sp-header-action
             icon="filter_list"
@@ -94,17 +90,17 @@
             (actionClick)="onUpload()"
           ></sp-header-action>
 
-          <sp-header-action
+          <!-- <sp-header-action
             icon="file_copy"
             text="Template"
             title="Upload Template"
             (actionClick)="onUpload()"
-          ></sp-header-action>
+          ></sp-header-action> -->
 
           <sp-header-action
             icon="view_list"
             text="Status"
-            title="Upload Status"
+            title="Status"
             (actionClick)="onStatus()"
           ></sp-header-action>
 
@@ -140,10 +136,13 @@
         </button>
       </div>
     </div>
-    <!-- <sp-dynamic-form-container
+    <sp-dynamic-form-container
+      *ngIf="appForm.groups[0].formFieldControls.length"
       [appForm]="appForm"
       reset="Reset"
       save="Save"
-    ></sp-dynamic-form-container> -->
+      (submitEvent)="onSubmitEntityData($event)"
+      (resetEvent)="onClear()"
+    ></sp-dynamic-form-container>
   </div>
 </sp-two-col-three-forth>

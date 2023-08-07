@@ -77,6 +77,13 @@
             *ngIf="ctrl.type === 'radio-group'"
           >
           </sp-radio-group>
+
+          <sp-checkbox
+            class="item"
+            [control]="ctrl"
+            [formControlName]="ctrl.name"
+            *ngIf="ctrl.type === 'checkbox'"
+          ></sp-checkbox>
         </ng-container>
       </ng-container>
     </div>

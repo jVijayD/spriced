@@ -17,7 +17,7 @@ import { NG_VALUE_ACCESSOR } from "@angular/forms";
   selector: "sp-numeric",
   templateUrl: "./numeric.component.html",
   styleUrls: ["./numeric.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -57,5 +57,13 @@ export class NumericComponent
   private _initControlData(inputControl: GenericControl) {
     this.addRule(inputControl.rule);
     this.setControlAccess();
+  }
+
+  onValidate() {
+    if (Number(this.value).toString() === "NaN") {
+      this.value = undefined;
+    } else {
+      this.value = Number(this.value);
+    }
   }
 }

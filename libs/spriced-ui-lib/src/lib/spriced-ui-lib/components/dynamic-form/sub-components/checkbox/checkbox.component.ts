@@ -9,24 +9,27 @@ import {
   forwardRef,
 } from "@angular/core";
 import { BaseComponent } from "../../base.component";
-import { DynamicFormService } from "../../service/dynamic-form.service";
-import { GenericControl } from "../../dynamic-form.types";
 import { NG_VALUE_ACCESSOR } from "@angular/forms";
+import { GenericControl } from "../../dynamic-form.types";
+import { DynamicFormService } from "../../service/dynamic-form.service";
 
 @Component({
-  selector: "sp-input",
-  templateUrl: "./input.component.html",
-  styleUrls: ["./input.component.scss"],
+  selector: "sp-checkbox",
+  templateUrl: "./checkbox.component.html",
+  styleUrls: ["./checkbox.component.scss"],
   changeDetection: ChangeDetectionStrategy.Default,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
       multi: true,
-      useExisting: forwardRef(() => InputComponent),
+      useExisting: forwardRef(() => CheckboxComponent),
     },
   ],
 })
-export class InputComponent extends BaseComponent implements OnInit, OnDestroy {
+export class CheckboxComponent
+  extends BaseComponent
+  implements OnInit, OnDestroy
+{
   @Input()
   set control(inputControl: GenericControl) {
     this._control = inputControl;
