@@ -12,11 +12,11 @@
         <mat-option *ngFor="let item of modelList" [value]="item">{{item.displayName}}</mat-option>
       </mat-select>
     </mat-form-field>
+    <button mat-raised-button color="accent" (click)="onClearClick()">
+      Clear
+    </button>
     <button mat-raised-button color="primary" (click)="onSaveClick()">
       Save
-    </button>
-    <button mat-raised-button color="primary" (click)="onClearClick()">
-      Clear
     </button>
   </sp-hbox>
   <sp-vbox [noGap]="true" [marginX]="true">
@@ -24,11 +24,11 @@
       <span class="float-left text-white font-medium">Model View</span>
       <div class="flex flex-row"><ng-content></ng-content></div>
     </div>
-    <ngx-datatable class="material striped tableScroll" style="height: 80%;" [columnMode]="ColumnMode.flex"
+    <ngx-datatable class="material striped tableScroll" style="height: calc(100vh - 16rem);" [columnMode]="ColumnMode.flex"
       [headerHeight]="50" [footerHeight]="0" [rowHeight]="60" [rows]="treeStore.data" [scrollbarV]="true"
       [scrollbarH]="true" [treeFromRelation]="'parentId'" [treeToRelation]="'id'" (treeAction)="onTreeAction($event)">
       <!-- <ngx-datatable-column name="Id" [width]="80"></ngx-datatable-column> -->
-      <ngx-datatable-column name="Display Name" prop="displayName" [isTreeColumn]="true" [flexGrow]="3"
+      <ngx-datatable-column name="Display Name" prop="displayName" [canAutoResize]="true" [isTreeColumn]="true" [flexGrow]="3"
         [treeLevelIndent]="20">
         <ng-template let-row="row" let-value="value" let-rowIndex="rowIndex" ngx-datatable-cell-template>
           <span style="display: inline-flex" class="ml-5">
@@ -39,7 +39,7 @@
           </span>
         </ng-template>
       </ngx-datatable-column>
-      <ngx-datatable-column name="Permission" prop="permission" [flexGrow]="1">
+      <ngx-datatable-column name="Permission" prop="permission" [canAutoResize]="true" [flexGrow]="1">
         <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-row="row" let-value="value">
           <!-- <span (dblclick)="editing[rowIndex] = true" style="width: 300px;" *ngIf="!editing[rowIndex]">
               {{ value }}

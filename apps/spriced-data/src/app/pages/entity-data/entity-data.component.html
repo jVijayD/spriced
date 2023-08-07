@@ -108,6 +108,7 @@
             icon="settings"
             text="Settings"
             title="Settings"
+            [disabled]="this.currentSelectedEntity == null"
             (actionClick)="onSettings()"
           ></sp-header-action>
         </ng-container>

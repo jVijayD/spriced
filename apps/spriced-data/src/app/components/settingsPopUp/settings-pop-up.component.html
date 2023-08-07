@@ -2,7 +2,9 @@
 
 <div mat-dialog-content class="grid">
   <mat-card style="padding: 20px" class="drop-shadow">
-    <mat-label class="mb-2"><strong>This Entity</strong></mat-label>
+    <mat-label class="mb-2"
+      ><strong>{{ data.name }}</strong></mat-label
+    >
     <mat-form-field appearance="outline" class="mb-4">
       <mat-label> Records per page</mat-label>
       <input [(ngModel)]="noOfRecords" matInput type="number" />
@@ -22,7 +24,9 @@
         <mat-option value="namecode">Name&lcub;Code&rcub;</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-checkbox [(ngModel)]="showSystem">Show System Attribute</mat-checkbox>
+    <mat-checkbox color="primary" [(ngModel)]="showSystem"
+      >Show System Attribute</mat-checkbox
+    >
   </mat-card>
 </div>
 <div class="button-container">
