@@ -47,6 +47,7 @@ import { Validators } from "@angular/forms";
 import { EntityDataService } from "../../services/entity-data.service";
 import { Subscription } from "rxjs";
 import * as moment from "moment";
+import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
 
 @Component({
   selector: "sp-entity-data",
@@ -68,6 +69,7 @@ import * as moment from "moment";
   viewProviders: [MatExpansionPanel],
   providers: [
     EntityDataService,
+    SettingsService,
     {
       provide: FORM_DATA_SERVICE,
       useValue: {
@@ -113,9 +115,14 @@ export class EntityDataComponent implements OnDestroy {
     private dialogService: DialogService,
     private dynamicFormService: DynamicFormService,
     private entityDataService: EntityDataService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private settings: SettingsService
   ) {
     this.setFormData("", []);
+    this.settings.getGlobalSettings().subscribe((result) => {
+      console.log(result);
+    });
+    console.log(this.settings.getCurrentSettings("ent"));
   }
   ngOnDestroy(): void {
     this.subscriptions.forEach((item) => item.unsubscribe());
@@ -191,7 +198,10 @@ export class EntityDataComponent implements OnDestroy {
     dialogResult.afterClosed().subscribe((val) => {
       if (val) {
         console.log(val.data);
-        const fileDetails = { source: "web", entityName: "ent" };
+        const fileDetails = {
+          source: "web",
+          entityName: this.currentSelectedEntity?.name,
+        };
         const formData = new FormData();
 
         formData.append("file", val.data, val.data.name);
@@ -217,7 +227,9 @@ export class EntityDataComponent implements OnDestroy {
   }
 
   onSettings() {
-    const dialogResult = this.dialog.open(SettingsPopUpComponent, {});
+    const dialogResult = this.dialog.open(SettingsPopUpComponent, {
+      data: this.currentSelectedEntity,
+    });
     dialogResult.afterClosed().subscribe((val) => {
       console.log(val);
     });
