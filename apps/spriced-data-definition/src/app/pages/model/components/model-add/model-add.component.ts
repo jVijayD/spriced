@@ -65,7 +65,7 @@ export class ModelAddComponent {
       name: "name",
       value: this.data.value?.name || "",
       placeholder: "Name",
-      icon: "business",
+      icon: "schema",
       label: "Name",
       readOnly: this.data.action == "Edit" ? true : false,
       validations: [
@@ -87,7 +87,7 @@ export class ModelAddComponent {
       name: "displayName",
       value: this.data.value?.displayName || "",
       placeholder: "DisplayName",
-      icon: "business",
+      icon: "schema",
       label: "DisplayName",
       validations: [
         {
