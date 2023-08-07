@@ -122,7 +122,6 @@ export class EntityDataComponent implements OnDestroy {
     this.settings.getGlobalSettings().subscribe((result) => {
       console.log(result);
     });
-    console.log(this.settings.getCurrentSettings("ent"));
   }
   ngOnDestroy(): void {
     this.subscriptions.forEach((item) => item.unsubscribe());
@@ -231,7 +230,12 @@ export class EntityDataComponent implements OnDestroy {
       data: this.currentSelectedEntity,
     });
     dialogResult.afterClosed().subscribe((val) => {
-      console.log(val);
+      if (val !== "Cancel") {
+        this.loadEntityData(
+          this.currentSelectedEntity as Entity,
+          this.currentCriteria
+        );
+      }
     });
   }
 
@@ -468,6 +472,7 @@ export class EntityDataComponent implements OnDestroy {
   private loadEntityData(entity: Entity, criteria: Criteria) {
     this.currentCriteria = criteria;
     if (entity) {
+      this.applyEntitySettings(entity);
       this.subscriptions.push(
         this.entityDataService.loadEntityData(entity.id, criteria).subscribe({
           next: (page) => {
@@ -483,6 +488,16 @@ export class EntityDataComponent implements OnDestroy {
     } else {
       this.rows = [];
     }
+  }
+
+  private applyEntitySettings(entity: Entity) {
+    const entitySettings = this.settings.getCurrentSettings(entity.name);
+    this.limit = entitySettings.noOfRecords;
+    this.headers.forEach((item, index) => {
+      if (index === entitySettings.freeze) {
+        item.pinned = "left";
+      }
+    });
   }
 
   private removeNull(data: any) {
