@@ -21,11 +21,11 @@ export class AppComponent {
       path: "/spriced-data",
       active: true,
     },
-    {
-      name: "Settings",
-      path: "/spriced-data/settings",
-      active: false,
-    },
+    // {
+    //   name: "Settings",
+    //   path: "/spriced-data/settings",
+    //   active: false,
+    // },
   ];
   constructor(private appDataService: AppDataService) {
     this.appDataService.setMenuData(this.menuItems);

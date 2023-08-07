@@ -492,12 +492,14 @@ export class EntityDataComponent implements OnDestroy {
 
   private applyEntitySettings(entity: Entity) {
     const entitySettings = this.settings.getCurrentSettings(entity.name);
-    this.limit = entitySettings.noOfRecords;
-    this.headers.forEach((item, index) => {
-      if (index === entitySettings.freeze) {
-        item.pinned = "left";
-      }
-    });
+    if (entitySettings) {
+      this.limit = entitySettings.noOfRecords;
+      this.headers.forEach((item, index) => {
+        if (index === entitySettings.freeze) {
+          item.pinned = "left";
+        }
+      });
+    }
   }
 
   private removeNull(data: any) {
