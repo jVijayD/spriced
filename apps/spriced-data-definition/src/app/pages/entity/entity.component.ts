@@ -81,6 +81,7 @@ export class EntityComponent {
   groupId: any;
   temp: any[] = [];
   filterData: any;
+  query?: any;
   constructor(
     private dialogService: DialogService,
     private snackbarService: SnackBarService,
@@ -141,6 +142,7 @@ export class EntityComponent {
     });
   }
   onRefresh() {
+    this.query = null;
     this.load({ value: this.groupId });
   }
   onClear() {
@@ -232,8 +234,9 @@ export class EntityComponent {
       },
     ];
     const data: FilterData = {
-      //query: query,
-      //config: config,
+      query: this.query,
+      persistValueOnFieldChange: true,
+      emptyMessage: "Please select filter criteria.",
       config: null,
       columns: columns,
     };
@@ -241,6 +244,8 @@ export class EntityComponent {
     const dialogResult = this.dialogService.openFilterDialog(data);
     dialogResult.afterClosed().subscribe((val) => {
       if (val !== null) {
+        this.query = dialogResult.componentInstance.data.query;
+
         this.temp = [];
         this.rows = this.filterData;
         console.log(val);
