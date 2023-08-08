@@ -20,10 +20,6 @@ import { CustomToolTipComponent } from "../custom-tool-tip/custom-tool-tip.compo
 import { ToolTipRendererDirective } from "../directive/tool-tip-renderer.directive";
 import * as moment from 'moment';
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { ErrorPanelService, BusinessruleService} from '@spriced-frontend/spriced-common-lib';
-import { DialogboxComponent } from "../dialogbox/dialogbox.component";
-import { MatDialog } from "@angular/material/dialog";
-import { SnackBarService } from "../snackbar/snackbar.service";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 @Component({

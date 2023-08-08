@@ -32,7 +32,7 @@ import {
   RoleGroupPermissionMapping,
   RoleEntityPermissionMapping,
 } from "./models/ModelAccesTypes.class";
-import { ErrorTypes, AppDataService } from "@spriced-frontend/spriced-common-lib";
+import { ErrorTypes, AppDataService } from "@spriced-frontend/shared/spriced-shared-lib";
 import { MatSnackBar } from "@angular/material/snack-bar";
 const POPULATE_ATTRIBUTES = false;
 @Component({
@@ -51,7 +51,7 @@ const POPULATE_ATTRIBUTES = false;
     CommonModule,
     DialogueModule,
   ],
-  providers: [HttpClient, DialogService,SnackBarService,AppDataService],
+  providers: [HttpClient, DialogService,SnackBarService],
   templateUrl: "./model-access.component.html",
   styleUrls: ["./model-access.component.scss"],
 })

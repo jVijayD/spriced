@@ -8,7 +8,7 @@ import {
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { AppDataService, ErrorTypes } from '@spriced-frontend/spriced-common-lib';
+import { AppDataService, ErrorTypes } from '@spriced-frontend/shared/spriced-shared-lib';
 
 
 @Injectable()

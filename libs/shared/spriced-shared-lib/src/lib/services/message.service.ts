@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, distinctUntilChanged } from 'rxjs';
 import { SnackBarService } from '@spriced-frontend/spriced-ui-lib';
-import { AppDataService, ErrorPanelService, ErrorTypes } from '@spriced-frontend/spriced-common-lib';
+import { AppDataService, ErrorPanelService, ErrorTypes } from '@spriced-frontend/shared/spriced-shared-lib';
 // import {
 //   AppDataService,
 //   ErrorTypes,

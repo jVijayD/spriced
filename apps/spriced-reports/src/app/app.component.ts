@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import {
   AppDataService,
   MenuItem,
-} from "@spriced-frontend/spriced-common-lib";
+} from "@spriced-frontend/shared/spriced-shared-lib";
 import { RouterOutlet } from "@angular/router";
 
 @Component({

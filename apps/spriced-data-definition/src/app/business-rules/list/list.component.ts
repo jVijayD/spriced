@@ -16,10 +16,10 @@ import * as moment from 'moment';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {
   AppDataService,
-  BusinessruleService,
   MessageService,
   ErrorPanelService
-} from '@spriced-frontend/spriced-common-lib';
+} from '@spriced-frontend/shared/spriced-shared-lib';
+import { BusinessruleService } from '@spriced-frontend/spriced-common-lib';
 import {
   DialogboxComponent,
   Header,

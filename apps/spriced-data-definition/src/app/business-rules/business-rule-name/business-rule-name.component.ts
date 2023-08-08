@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { MatTable } from '@angular/material/table';
-import { AppDataService, BusinessruleService, MessageService } from '@spriced-frontend/spriced-common-lib';
+import { AppDataService, MessageService } from '@spriced-frontend/shared/spriced-shared-lib';
+import { BusinessruleService } from '@spriced-frontend/spriced-common-lib';
 import { FormGroup, FormControl, Validators, FormArray, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, forkJoin, takeUntil } from 'rxjs';

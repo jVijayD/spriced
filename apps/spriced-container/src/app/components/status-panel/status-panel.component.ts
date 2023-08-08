@@ -5,7 +5,7 @@ import {
   AppDataService,
   ErrorTypes,
   errorElement,
-} from "@spriced-frontend/spriced-common-lib";
+} from "@spriced-frontend/shared/spriced-shared-lib";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { StatusDialogueComponent } from "./status-dialogue/status-dialogue.component";
 

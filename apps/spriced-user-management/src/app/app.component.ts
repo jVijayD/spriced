@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { AppDataService } from "@spriced-frontend/spriced-common-lib";
+import { AppDataService } from "@spriced-frontend/shared/spriced-shared-lib";
 import { RouterOutlet } from "@angular/router";
 
 @Component({

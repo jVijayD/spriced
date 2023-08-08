@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { errorElement } from '@spriced-frontend/spriced-common-lib'
+import { errorElement } from '@spriced-frontend/shared/spriced-shared-lib'
 
 @Injectable({
   providedIn: 'root'

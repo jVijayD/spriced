@@ -27,7 +27,8 @@ import { ElseactionComponent } from "./elseaction/elseaction.component";
 import { NGX_MAT_DATE_FORMATS, NgxMatDateAdapter, NgxMatDatetimePickerModule, NgxMatTimepickerModule } from "@angular-material-components/datetime-picker";
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MatMomentDateModule } from "@angular/material-moment-adapter";
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from "@angular/material/core";
-import { DateAdapterService, MessageService } from "@spriced-frontend/spriced-common-lib";
+import {  MessageService } from "@spriced-frontend/shared/spriced-shared-lib";
+import { DateAdapterService } from "@spriced-frontend/spriced-common-lib";
 import { headerInterceptor } from "libs/shared/spriced-shared-lib/src/lib/auth/header-interceptor";
 
 const MY_DATE_FORMAT = {

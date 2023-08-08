@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, Input, OnDestroy } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
-import { AppDataService } from "@spriced-frontend/spriced-common-lib";
+import { AppDataService } from "@spriced-frontend/shared/spriced-shared-lib";
 import { Subscription } from "rxjs";
 import { StatusPanelComponent } from "../status-panel/status-panel.component";
 @Component({

@@ -1,6 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { StyleUtilityService } from "./services/style-utility.service";
+import { StyleUtilityService } from "../../../shared/spriced-shared-lib/src/lib/services/style-utility.service";
 import { EntityService } from "./services/entity.service";
 import { ModelService } from "./services/model.service";
 import { RequestUtilityService } from "./services/utility/request-utility.service";

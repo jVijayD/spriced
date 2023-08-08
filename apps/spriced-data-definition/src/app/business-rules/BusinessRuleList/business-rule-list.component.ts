@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, forwardRef } from '@angular/core';
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AppDataService } from '@spriced-frontend/spriced-common-lib';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
@@ -11,7 +10,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { DateAdapterService, ServiceTokens, FormDataFetchService } from '@spriced-frontend/spriced-common-lib';
+import {  AppDataService,ServiceTokens, FormDataFetchService } from '@spriced-frontend/shared/spriced-shared-lib';
+import { DateAdapterService } from '@spriced-frontend/spriced-common-lib';
 import { DynamicFormService, FORM_DATA_SERVICE, SnackBarService } from '@spriced-frontend/spriced-ui-lib';
 import { CommonModule } from '@angular/common';
 import { NGX_MAT_DATE_FORMATS, NgxMatDateAdapter, NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';

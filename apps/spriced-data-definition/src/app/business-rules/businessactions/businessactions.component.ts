@@ -12,7 +12,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { DateAdapterService, ServiceTokens, FormDataFetchService } from '@spriced-frontend/spriced-common-lib';
+import { ServiceTokens, FormDataFetchService } from '@spriced-frontend/shared/spriced-shared-lib';
+import { DateAdapterService } from '@spriced-frontend/spriced-common-lib';
 import { DynamicFormService, FORM_DATA_SERVICE, SnackBarService } from '@spriced-frontend/spriced-ui-lib';
 import { RouterModule } from '@angular/router';
 
