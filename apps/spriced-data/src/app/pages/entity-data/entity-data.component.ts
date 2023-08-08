@@ -399,6 +399,7 @@ export class EntityDataComponent implements OnDestroy {
             readOnly: attr.permission === "VIEW" ? true : false,
           };
         case "INTEGER":
+        case "DECIMAL":
           return {
             type: "numeric",
             subType: "text",
@@ -518,6 +519,7 @@ export class EntityDataComponent implements OnDestroy {
         return "boolean";
       case "INTEGER":
       case "SERIAL":
+      case "DECIMAL":
       case "AUTO":
         return "number";
       default:
