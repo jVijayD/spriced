@@ -9,6 +9,7 @@ export const remoteRoutes: Route[] = [
     children: [
       { path: "", component: EntityDataComponent },
       { path: ":modelId/:entityId", component: EntityDataComponent },
+      { path: "lookup/:id", component: EntityDataComponent },
     ],
   },
 ];
