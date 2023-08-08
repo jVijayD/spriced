@@ -60,6 +60,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
   public nestedIds: any = [];
   public item: any;
   public idsBr: any;
+  public modelId: any;
 
   // DEMO LIST CODE
   public get connectedBRDropListsIds(): string[] {
@@ -99,8 +100,9 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     const ruleId = this.activeRoute?.snapshot?.params?.['id'];
     const previewRule = this.activeRoute?.snapshot?.params?.['preview'];
     const entity_id = this.activeRoute?.snapshot?.queryParams?.['entity_id'];
+    const model_id = this.activeRoute?.snapshot?.queryParams?.['model_id'];
     this.previewField = !['', undefined, null].includes(previewRule);
-
+    this.modelId = model_id;
     /**
      * Handling create rule when entity id is present
      */
@@ -764,15 +766,26 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     (this.ruleId && text !== 'save' ? this.businessRuleService.updateBusinessRule(this.ruleId, updateParam) : !this.ruleId && text === 'save' ? this.businessRuleService.saveBusinessRule(updateParam) : !!this.ruleId && text === 'save' ? this.businessRuleService.updateSaveBusinessRule(this.ruleId, updateParam) : this.businessRuleService.insertBusinessRule(param)).subscribe((res: any) => {
       const message: any = this.ruleId ? 'Rule is updated successfully!' : 'Rule is created successfully!';
       this.messageservice.snackMessage.next(message);
-      this.router.navigate(['/spriced-data-definition/rules/rule-management']);
+      this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
+        queryParams: { entity_id: this.entityId, model_id: this.modelId},
+      });
     },
       // Handle the api error as needed
       (error: any) => {
         console.error('Error occurred during API request:', error);
         this.messageservice.snackMessage.next('Error occurred during API request:')
-        this.router.navigate(['/spriced-data-definition/rules/rule-management']);
+        this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
+          queryParams: { entity_id: this.entityId, model_id: this.modelId},
+        });
         this.saveButton = false;
       });
+  }
+
+  public backToListpage()
+  {
+    this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
+      queryParams: { entity_id: this.entityId, model_id: this.modelId},
+    });
   }
 
   /**

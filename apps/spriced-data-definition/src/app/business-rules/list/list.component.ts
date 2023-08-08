@@ -11,7 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {
@@ -49,6 +49,7 @@ export class ListComponent implements OnInit, OnDestroy {
   public memberTypes = [{ value: 'Leaf', viewValue: 'Leaf' }];
   public filterData: any;
   public entityId: any;
+  public modelId: any;
   public currentId: any;
   public pageIndex = 0;
   public pageNo = 0;
@@ -73,49 +74,49 @@ export class ListComponent implements OnInit, OnDestroy {
   ];
 
   headers: Header[] = [
-    { column: "priority", name: "Priority", canAutoResize: true, isSortable: true,width:100 },
-    { column: "excluded", name: "Excluded", canAutoResize: true, isSortable: true,width:100 },
+    { column: "priority", name: "Priority", canAutoResize: true, isSortable: true, width: 100 },
+    { column: "excluded", name: "Excluded", canAutoResize: true, isSortable: true, width: 100 },
     {
       column: "name",
       name: "Name",
       canAutoResize: true,
       isSortable: true,
-      width:200
+      width: 200
     },
     {
       column: "description",
       name: "Description",
       canAutoResize: true,
       isSortable: true,
-      width:200
+      width: 200
     },
     {
       column: "expression",
       name: "Expression",
       canAutoResize: true,
       isSortable: true,
-      width:100
+      width: 100
     },
     {
       column: "status",
       name: "Status",
       canAutoResize: true,
       isSortable: true,
-      width:150
+      width: 150
     },
     {
       column: "notification",
       name: "Notification",
       canAutoResize: true,
       isSortable: true,
-      width:120
+      width: 120
     },
     {
       column: "updatedDate",
       name: "Modified_Date",
       canAutoResize: true,
       isSortable: true,
-      width:150
+      width: 150
     },
     // {
     //   column: "action",
@@ -144,8 +145,12 @@ export class ListComponent implements OnInit, OnDestroy {
     private messageservice: MessageService,
     private dialogRef: MatDialog,
     private errorPanelService: ErrorPanelService,
-    private msgSrv: SnackBarService
-  ) { }
+    private msgSrv: SnackBarService,
+    private activeRoute: ActivatedRoute,
+  ) {
+    this.entityId = +this.activeRoute?.snapshot?.queryParams?.['entity_id'];
+    this.modelId = +this.activeRoute?.snapshot?.queryParams?.['model_id'];
+  }
 
   /**
    * Initialization tasks or data fetching can be done here
@@ -179,8 +184,8 @@ export class ListComponent implements OnInit, OnDestroy {
   public async getRulesAndModelsData() {
     // eslint-disable-next-line prefer-const
     let { rules, models } = await this.getALlApis();
-    this.defaultModel = models[0]?.id;
-    this.handleEntityByModels(models[0].id);
+    this.defaultModel = this.modelId ? this.modelId : models[0]?.id;
+    this.handleEntityByModels(this.defaultModel);
 
     if (rules && models) {
       // Handling order by id
@@ -253,7 +258,7 @@ export class ListComponent implements OnInit, OnDestroy {
    */
   public addNewRule() {
     this.route.navigate([`/spriced-data-definition/rules/business-rule`], {
-      queryParams: { entity_id: 1 },
+      queryParams: { model_id: this.modelId, entity_id: this.entityId },
     });
   }
 
@@ -389,15 +394,15 @@ export class ListComponent implements OnInit, OnDestroy {
    * HANDLE FOR ENTITIES BY MODEL ID
    * @param id number
    */
-  public handleEntityByModels(id: number) {
+  public handleEntityByModels(id: number, text?: any) {
     this.businessRuleService
       .getAllEntitesByModuleId(id)
       .pipe(takeUntil(this.notifier$))
       .subscribe((res: any) => {
         this.entities = res;
-        this.attributes = res[0].attributes;
         const entity = res.find((el: any) => el.groupId === this.defaultModel)
-        this.defaultEntity = entity?.id;
+        this.defaultEntity = this.entityId && !text ? this.entityId : entity?.id;
+        this.modelId = id;
         this.handleAttributeByEntity(this.defaultEntity);
       });
   }
@@ -419,6 +424,8 @@ export class ListComponent implements OnInit, OnDestroy {
       ...entity.attributes,
     ];
     this.defValue = 'ALL';
+
+    // this.attributes = entity.attributes;
 
     this.filterData = this.dataSource.filter((res: any) => res.entityId === id);
     this.rows = this.filterData;
@@ -442,12 +449,12 @@ export class ListComponent implements OnInit, OnDestroy {
     );
   }
 
-   /**
- * HANDLE THIS FUNCTION FOR EXPRESSION TOOLTIP
- * @param element any
- * @returns 
- */
-   getExpressionTooltip(element: any): string {
+  /**
+* HANDLE THIS FUNCTION FOR EXPRESSION TOOLTIP
+* @param element any
+* @returns 
+*/
+  getExpressionTooltip(element: any): string {
     let tooltipText = `${this.getConditionTooltipText(element.condition, 3)}`;
     tooltipText += this.getActionTooltipText(element.conditionalAction);
 
