@@ -10,11 +10,13 @@ import { Observable } from "rxjs";
 @Injectable({ providedIn: "root" })
 export class EntityDataService {
   api_url: string;
+  def_url: string;
   constructor(
     private http: HttpClient,
     private requestUtility: RequestUtilityService
   ) {
     this.api_url = process.env["NX_API_DATA_URL"] as string;
+    this.def_url = process.env["NX_API_DEFINITION_URL"] as string;
   }
 
   upload(file: any, fileDetails: any) {
@@ -47,5 +49,9 @@ export class EntityDataService {
 
   getStatus() {
     return this.http.get(`${this.api_url}/bulk/getAll`);
+  }
+
+  loadEntity(id: number) {
+    return this.http.get(`${this.def_url}/entities/${id}`);
   }
 }

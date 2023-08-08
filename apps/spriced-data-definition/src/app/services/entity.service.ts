@@ -19,7 +19,7 @@ export class EntityService {
     return this.http.put(`${this.api_url}/entities/${entity.id}`, entity);
   }
   load(id: number) {
-    return this.http.delete(`${this.api_url}/entities/${id}`);
+    return this.http.get(`${this.api_url}/entities/${id}`);
   }
   loadEntityByModel(id: number) {
     return this.http.get(`${this.api_url}/models/${id}/entities`);
