@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import {
   AppDataService,
   MenuItem,
-} from "@spriced-frontend/shared/spriced-shared-lib";
+} from "@spriced-frontend/spriced-common-lib";
 import { RouterOutlet } from "@angular/router";
 
 @Component({
@@ -34,7 +34,7 @@ export class AppComponent {
     {
       name: "Rules",
       active: false,
-      path: "/spriced-data-definitions-ui/rule-management",
+      path: "/spriced-data-definition/rules/rule-management",
     },
     {
       name: "Model Access Management",

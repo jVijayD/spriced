@@ -264,7 +264,7 @@ export class EntityDataComponent implements OnDestroy {
   private getFilterColumns(): QueryColumns[] {
     return this.headers
       .filter((item) => item.isFilterable)
-      .map((col) => {
+      .map((col: any) => {
         return {
           name: col.column,
           displayName: col.name,

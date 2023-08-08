@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { errorElement } from '@spriced-frontend/shared/spriced-shared-lib';
+import { errorElement } from '@spriced-frontend/spriced-common-lib';
 import { MatTableModule } from '@angular/material/table';
 import { HeaderActionComponent } from '@spriced-frontend/spriced-ui-lib';
 @Component({

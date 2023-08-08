@@ -1,0 +1,117 @@
+{
+    "ruleTypes": [
+        {
+            "name": "default value action",
+            "value": "DEFAULT_VALUE_ACTION"
+        },
+        {
+            "name": "change value action",
+            "value": "CHANGE_VALUE_ACTION"
+        },
+        {
+            "name": "validation action",
+            "value": "VALIDATION_ACTION"
+        },
+        {
+            "name": "external action",
+            "value": "EXTERNAL_ACTION"
+        },
+        {
+            "name": "user defined action script",
+            "value": "USER_DEFINED_ACTION_SCRIPT"
+        }
+    ],
+    "actions": {
+        "DEFAULT_VALUE_ACTION": [
+            {
+                "value": "NONE",
+                "name": "none"
+            },
+            {
+                "value": "DEFAULTS_TO",
+                "name": "defaults to"
+            },
+            {
+                "value": "DEFAULTS_TO_GENERATED_VALUE",
+                "name": "defaults to generated value"
+            },
+            {
+                "value": "DEFAULTS_TO_CONCATNATED_VALUE",
+                "name": "defaults to concatenated value"
+            }
+        ],
+        "CHANGE_VALUE_ACTION": [
+            {
+                "value": "EQUALS",
+                "name": "equals"
+            },
+            {
+                "value": "EQUALS_CONCATENATED_VALUE",
+                "name": "equals concatenated value"
+            }
+        ],
+        "VALIDATION_ACTION": [
+            {
+                "value": "IS_REQUIRED",
+                "name": "is required"
+            },
+            {
+                "value": "IS_NOT_VALID",
+                "name": "is not valid"
+            },
+            {
+                "value": "MUST_CONTAIN_PATTERN",
+                "name": "must contain pattern"
+            },
+            {
+                "value": "MUST_BE_UNIQUE",
+                "name": "must be unique"
+            },
+            {
+                "value": "MUST_HAVE_ONE_OF_FOLLOWING_VALUES",
+                "name": "must have one of following values"
+            },
+            {
+                "value": "MUST_BE_GREATER_THAN",
+                "name": "must be greater than"
+            },
+            {
+                "value": "MUST_BE_EQUAL_TO",
+                "name": "must be equal to"
+            },
+            {
+                "value": "MUST_BE_GREATER_THAN_EQUAL",
+                "name": "must be greater than equals"
+            },
+            {
+                "value": "MUST_BE_LESS_THAN",
+                "name": "must be less than"
+            },
+            {
+                "value": "MUST_BE_LESS_THAN_EQUAL",
+                "name": "must be less than equal"
+            },
+            {
+                "value": "MUST_BE_BETWEEN",
+                "name": "must be between"
+            },
+            {
+                "value": "MUST_HAVE_MINIMUM_LENGTH_OF",
+                "name": "must have minimum length of"
+            },
+            {
+                "value": "MUST_HAVE_MAXIMUM_LENGTH_OF",
+                "name": "must have maximum length of"
+            }
+        ],
+        "EXTERNAL_ACTION": [
+            {
+                "value": "START_WORKFLOW",
+                "name": "start workflow"
+            }
+        ],
+        "USER_DEFINED_ACTION_SCRIPT": [
+           
+        ]
+    }
+}

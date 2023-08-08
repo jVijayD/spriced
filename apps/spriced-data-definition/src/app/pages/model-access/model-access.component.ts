@@ -32,7 +32,7 @@ import {
   RoleGroupPermissionMapping,
   RoleEntityPermissionMapping,
 } from "./models/ModelAccesTypes.class";
-import { ErrorTypes, AppDataService } from "@spriced-frontend/shared/spriced-shared-lib";
+import { ErrorTypes, AppDataService } from "@spriced-frontend/spriced-common-lib";
 import { MatSnackBar } from "@angular/material/snack-bar";
 const POPULATE_ATTRIBUTES = false;
 @Component({

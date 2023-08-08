@@ -9,7 +9,7 @@ import { CommonModule } from "@angular/common";
 import {
   AppDataService,
   MenuItem,
-} from "@spriced-frontend/shared/spriced-shared-lib";
+} from "@spriced-frontend/spriced-common-lib";
 import { Subscription } from "rxjs";
 
 @Component({

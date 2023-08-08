@@ -1,0 +1,202 @@
+<!-- BUSINESS RULE CONTAINER -->
+<div class="spinner flex justify-center items-center h-full" *ngIf="loading">
+    <mat-spinner class="loading" [diameter]="30"></mat-spinner>
+</div>
+
+
+<div class="ml-sm-2 pb-6 px-4 business_rule_container" *ngIf="!loading">
+    <h2 *ngIf="!previewField"><strong>Create New Business Rule</strong></h2>
+    <h2 *ngIf="previewField"><strong>Preview Business Rule</strong></h2>
+    <form [formGroup]="myForm" (ngSubmit)="onSubmit(myForm.value)">
+
+        <div class="flex mt-4">
+            <!-- BUSINESS RULE NAME FORM FIELD -->
+            <div class="example-container mt-1.5 flex flex-col">
+                <mat-form-field [ngClass]="previewField ? 'not-allow' : ''" class="w-52 p-0" appearance="outline">
+                    <mat-label>Business Rule Name</mat-label>
+                    <input [readonly]="previewField" formControlName="name" matInput placeholder="Enter Rule Name">
+                    <mat-error class="text-sm italic text-red-500 p-0"
+                        *ngIf="myForm.get('name')!.invalid && myForm.get('name')!.touched && myForm.get('name')!.hasError('required')">
+                        Rule name is required
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <!-- PRIORITY DROPDOWN -->
+            <div class="example-container mt-1.5 flex flex-col ml-2">
+                <mat-form-field [ngClass]="previewField ? 'not-allow' : ''" class="w-52" appearance="outline">
+                    <mat-label>Priority</mat-label>
+                    <input [readonly]="previewField" formControlName="priority" matInput type="number"
+                        placeholder="Enter only number">
+                    <mat-error class="text-sm italic text-red-500"
+                        *ngIf="myForm.get('priority')!.invalid && myForm.get('priority')!.touched && myForm.get('priority')!.hasError('required')">
+                        Priority is required
+                    </mat-error>
+                    <mat-error class="text-sm italic text-red-500"
+                        *ngIf="myForm.get('priority')!.hasError('min') || myForm.get('priority')!.hasError('max')">
+                        Number must be between 1 and 100
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <!-- SEND NOTIFICATION MULTISELECT DROPDOWN -->
+            <div class="example-container mt-1.5 flex flex-col ml-2">
+                <mat-form-field [ngClass]="previewField ? 'not-allow' : ''" appearance="outline">
+                    <mat-label>Send Notification</mat-label>
+                    <mat-select [panelClass]="previewField ? 'hideOption' : ''" formControlName="notification" multiple>
+                        <mat-option *ngFor="let item of sendNotificationData"
+                            [value]="item.groupId">{{item.name}}</mat-option>
+                    </mat-select>
+                    <mat-error class="text-sm italic text-red-500 p-0"
+                        *ngIf="myForm.get('notification')!.invalid && myForm.get('notification')!.touched && myForm.get('notification')!.hasError('required')">
+                        This field is required
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <!-- RULE TYPE DROPDOWN -->
+            <div class="example-container mt-1.5 flex flex-col ml-2">
+                <mat-form-field [ngClass]="previewField ? 'not-allow' : ''" appearance="outline">
+                    <mat-label>Type</mat-label>
+                    <mat-select [panelClass]="previewField ? 'hideOption' : ''" formControlName="group"
+                        (valueChange)="handleRuleType($event)">
+                        <mat-option *ngFor="let item of conditionsData?.ruleTypes"
+                            [value]="item.value"><span class="capitalize">{{item.name}}</span></mat-option>
+                    </mat-select>
+                    <mat-error class="text-sm italic text-red-500 p-0"
+                        *ngIf="myForm.get('group')!.invalid && myForm.get('group')!.touched && myForm.get('group')!.hasError('required')">
+                        This field is required
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+        </div>
+
+        <div class="example-container mt-4 flex flex-col">
+            <mat-form-field [ngClass]="previewField ? 'not-allow' : ''" class="example-full-width w-2/5"
+                appearance="outline">
+                <mat-label>Description</mat-label>
+                <textarea [readonly]="previewField" matInput placeholder="Add description"
+                    formControlName="description"></textarea>
+                <mat-error class="text-sm italic text-red-500"
+                    *ngIf="myForm.get('description')!.invalid && myForm.get('description')!.touched && myForm.get('description')!.hasError('required')">
+                    Descrioption is required
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <ng-container
+            *ngIf="(!previewField && conditions.value.length === 0 || conditions.value.length > 0) || (previewField && conditions.value.length > 0)">
+            <!-- ADD CONDITIONS ROW -->
+            <div class="heading mt-2 w-full flex justify-between conditions">
+                <h2 class="font-medium"> Conditions </h2>
+                <button *ngIf="!previewField" mat-raised-button color="primary" class="p-4"
+                    (click)="handleAddNewRow('condition'); $event.preventDefault();">Add
+                    new</button>
+            </div>
+
+            <hr class="mt-1.5">
+
+            <!-- WARNING MESSAGE SHOW IF NO DATA IN CONDITION FORM -->
+            <ng-container *ngIf="conditions.value.length === 0">
+                <div class="message py-4">
+                    <p class="flex justify-center italic"> Please click on add new button to create a new condition </p>
+                </div>
+            </ng-container>
+            <!-- HANDLE FOR DYNAMICALLY BUISNESSCONDITIONS RULES -->
+            <sp-business-rule-list 
+                *ngIf="!!item" 
+                [dataRules]="conditionsData"
+                [item]="item"
+                (remove)="removeRow($event)"
+                [preview]="previewField"
+                (itemDrop)="onDragDropBusinessRule($event)"
+                [connectedDropListsIds]="connectedBRDropListsIds"
+            >
+            </sp-business-rule-list>
+        </ng-container>
+
+
+        <ng-container
+            *ngIf="(!previewField && actions.value.length === 0 || actions.value.length > 0) || (previewField && actions.value.length > 0)">
+            <!-- ADD ACTIONS ROW -->
+            <div class="heading mt-8 w-full flex justify-between actions">
+                <h2 class="font-medium"> If Action </h2>
+                <button mat-raised-button *ngIf="!previewField" color="primary" class="p-4"
+                    (click)="handleAddNewRow('action'); $event.preventDefault();">Add new</button>
+            </div>
+
+            <hr class="mt-1.5">
+
+            <!-- WARNING MESSAGE SHOW IF NO DATA IN IF ACION FORM -->
+            <ng-container *ngIf="actions.value.length === 0">
+                <div class="message py-4">
+                    <p class="flex justify-center italic"> Actions is required please click on add new button to create
+                        a new action </p>
+                </div>
+            </ng-container>
+
+            <!-- HANDLE FOR DYNAMICALLY BUISNESSACTIONS RULES -->
+            <ng-container formArrayName="action" *ngIf="actions.value.length > 0">
+                <div [cdkDropListDisabled]="previewField" cdkDropList class="example-list"
+                    (cdkDropListDropped)="drop($event, 'action')" [cdkDropListSortPredicate]="sortPredicate">
+                    <div class="add_conditions_container border-gray-400 rounded block pt-2.5 px-3.5 pb-2 mt-2 overflow-auto w-full h-full border border-gray border-solid"
+                        *ngFor="let form of actions.controls; let i = index" [cdkDragData]="i" cdkDrag>
+                        <spriced-frontend-businessactions [preview]="previewField" (remove)="removeRow('action', i)"
+                            [actionType]="actionType" [dataRules]="conditionsData"
+                            [actionForm]="form"></spriced-frontend-businessactions>
+                    </div>
+                </div>
+            </ng-container>
+        </ng-container>
+
+
+        <ng-container
+            *ngIf="(!previewField && elseAction.value.length === 0 || elseAction.value.length > 0) || (previewField && elseAction.value.length > 0)">
+            <!-- ADD IF ACTIONS ROW -->
+            <div class="heading mt-16 w-full flex justify-between actions">
+                <h2 class="font-medium"> Else Action </h2>
+                <button *ngIf="!previewField" mat-raised-button color="primary" class="p-4"
+                    (click)="handleAddNewRow('elseaction'); $event.preventDefault();">Add new</button>
+            </div>
+
+            <hr class="mt-1.5">
+
+            <!-- WARNING MESSAGE SHOW IF NO DATA IN ELSE ACION FORM -->
+            <ng-container *ngIf="elseAction.value.length === 0">
+                <div class="message py-4">
+                    <p class="flex justify-center italic"> Please click on add new button to create a else action </p>
+                </div>
+            </ng-container>
+
+            <!-- HANDLE FOR DYNAMICALLY BUISNESSACTIONS RULES -->
+            <ng-container formArrayName="elseaction" *ngIf="elseAction.value.length > 0">
+                <div [cdkDropListDisabled]="previewField" cdkDropList class="example-list"
+                    (cdkDropListDropped)="drop($event, 'elseaction')" [cdkDropListSortPredicate]="sortPredicate">
+                    <div class="add_conditions_container border-gray-400 rounded pt-2.5 px-3.5 pb-2 mt-2 overflow-auto flex w-full h-full border border-gray border-solid"
+                        *ngFor="let form of elseAction.controls; let i = index" [cdkDragData]="i" cdkDrag>
+                        <sp-elseaction (remove)="removeRow('elseaction', i)" [preview]="previewField"
+                            [actionType]="actionType" [dataRules]="conditionsData" [actionForm]="form"></sp-elseaction>
+                    </div>
+                </div>
+            </ng-container>
+        </ng-container>
+
+        <!-- SAVE BUTTON -->
+        <div class="save-btn mt-8">
+            <div *ngIf="!previewField" class="flex">
+                <button mat-raised-button color="primary" type="submit"
+                    [ngStyle]="{'opacity': !myForm.valid || saveButton ? '0.5' : '1'}"
+                    [disabled]="!myForm.valid || saveButton" class="p-4 mr-2">Publish</button>
+                    <button mat-raised-button color="primary" (click)="onSubmit(myForm.value, 'save')"
+                    [ngStyle]="{'opacity': !myForm.valid || saveButton ? '0.5' : '1'}"
+                    [disabled]="!myForm.valid || saveButton" class="p-4 mr-2">Save</button>
+                <button [routerLink]="'/spriced-data-definition/rules/rule-management'" mat-raised-button color="primary"
+                    class="p-4">Cancel</button>
+            </div>
+            <button *ngIf="previewField" [routerLink]="'/spriced-data-definition/rules/rule-management'" mat-raised-button
+                color="primary" class="p-4">Back</button>
+        </div>
+
+    </form>
+</div>
