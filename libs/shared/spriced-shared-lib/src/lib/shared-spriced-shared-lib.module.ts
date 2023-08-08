@@ -2,7 +2,6 @@ import { APP_INITIALIZER, NgModule, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { initializeKeycloak } from "./auth/keycloak-init.factory";
 import { KeycloakAngularModule, KeycloakService } from "keycloak-angular";
-import { AppDataService } from "@spriced-frontend/shared/spriced-shared-lib";
 import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { headerInterceptor } from "./auth/header-interceptor";
 

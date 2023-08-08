@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { errorElement } from '@spriced-frontend/shared/spriced-shared-lib'
 
 @Injectable({
   providedIn: 'root'
 })
 export class ErrorPanelService {
-  ERROR_LIST: BehaviorSubject<errorElement[]> = new BehaviorSubject<
-  errorElement[]
+  ERROR_LIST: BehaviorSubject<any[]> = new BehaviorSubject<
+  any[]
 >([]);
 
 $ERROR_LIST = this.ERROR_LIST.asObservable();
@@ -16,7 +15,7 @@ init(): void {
   this.setErrors([]);
 }
 
-setErrors(errorList: errorElement[]): void {
+setErrors(errorList: any[]): void {
   this.ERROR_LIST.next(errorList);
 }
 getErrors() {
