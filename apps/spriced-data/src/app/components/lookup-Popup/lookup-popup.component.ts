@@ -53,8 +53,15 @@ export class LookupPopupComponent {
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<LookupPopupComponent>
   ) {
-    this.currentSelectedEntity = data;
-    this.createDynamicGrid(this.currentSelectedEntity);
+    this.entityDataService.loadEntity(data).subscribe({
+      next: (result: any) => {
+        this.currentSelectedEntity = result;
+        this.createDynamicGrid(this.currentSelectedEntity);
+      },
+      error: (err) => {
+        console.error(err);
+      },
+    });
   }
 
   private createDynamicGrid(entity: Entity | undefined) {
