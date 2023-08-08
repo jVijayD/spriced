@@ -24,7 +24,7 @@ export class RequestUtilityService {
 }
 
 export interface Criteria {
-  filters?: [];
+  filters?: any[];
   sorters?: { direction: "DESC" | "ASC"; property: string }[];
 
   pager?: {

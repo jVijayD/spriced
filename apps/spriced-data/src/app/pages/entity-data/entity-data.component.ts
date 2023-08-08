@@ -49,6 +49,7 @@ import { Subscription } from "rxjs";
 import * as moment from "moment";
 import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
 import { RouterModule } from "@angular/router";
+import { AuditDataComponent } from "./audit-data/audit-data.component";
 
 @Component({
   selector: "sp-entity-data",
@@ -258,6 +259,12 @@ export class EntityDataComponent implements OnDestroy {
     this.dataGrid.table._internalColumns = [...[]];
     this.rows = [...[]];
     this.setFormData("", []);
+  }
+
+  onAudit(){
+    this.dialogService.openDialog(AuditDataComponent, {
+      data: this.currentSelectedEntity,
+    });
   }
 
   onEntitySelectionChange(entity: Entity | string) {

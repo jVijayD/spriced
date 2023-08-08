@@ -31,6 +31,17 @@ export class EntityDataService {
     return this.http.get<PageData>(url);
   }
 
+  loadAuditData(
+    entityName: string ,
+    criteria: Criteria
+  ): Observable<PageData> {
+    const url = this.requestUtility.addCriteria(
+      `${this.api_url}/audit-trial`,
+      criteria
+    );
+    return this.http.get<PageData>(url);
+  }
+
   createEntityData(id: string | number, data: any): Observable<any> {
     return this.http.post(`${this.api_url}/entity/${id}/data`, {
       data: [data],
