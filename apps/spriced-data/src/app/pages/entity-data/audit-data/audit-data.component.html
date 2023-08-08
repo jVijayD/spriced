@@ -7,11 +7,10 @@
 
   <sp-data-grid
         #dataGrid
-        [title]="this.currentSelectedEntity?.displayName || 'Data'"
+        [title]="this.currentSelectedEntity.displayName || 'Data'"
         [enableRowIndex]="false"
         [isArray]="false"
         [headers]="headers"
-        [title]="'Audit Details'"
         [rows]="rows"
         [rowHeight]="40"
         [headerHeight]="40"
