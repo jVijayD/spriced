@@ -57,7 +57,7 @@ export class DynamicFormService {
 
 export const FORM_DATA_SERVICE = "FORM_DATA_SERVICE";
 export interface EventElement {
-  name: string;
+  data: unknown;
   type: string;
   value: unknown;
 }

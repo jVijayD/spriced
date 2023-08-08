@@ -65,7 +65,7 @@ export class LookupSelectComponent
     const lookupControl = this._control as LookupSelectControl;
 
     const event: EventElement = {
-      name: lookupControl.eventValue,
+      data: lookupControl.eventValue,
       type: lookupControl.eventType,
       value: this.value,
     };

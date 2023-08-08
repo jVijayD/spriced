@@ -119,7 +119,18 @@ export class EntityDataComponent implements OnDestroy {
     private settings: SettingsService
   ) {
     this.setFormData("", []);
+    this.subscribeToFormEvents();
   }
+
+  subscribeToFormEvents() {
+    this.subscriptions.push(
+      this.dynamicFormService.eventSubject$.subscribe((value) => {
+        if (value.type == "lookup") {
+        }
+      })
+    );
+  }
+
   ngOnDestroy(): void {
     this.subscriptions.forEach((item) => item.unsubscribe());
   }
@@ -338,7 +349,7 @@ export class EntityDataComponent implements OnDestroy {
         readOnly: attr.permission === "VIEW" ? true : false,
         displayProp: "name",
         valueProp: "code",
-        eventValue: "",
+        eventValue: attr.referencedTableId,
         eventType: "lookup",
         placeholder: {
           value: "",
