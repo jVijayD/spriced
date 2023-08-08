@@ -66,11 +66,7 @@ public class EntityController {
         public ResponseEntity<List<EntityDto>> getAll(@PathVariable int groupId, @RequestParam(required = false) String roleName) {
             // TO DO: temporary Sorting
             List<EntityDefnition> entityList;
-            if (roleName != null) {
-                entityList = this.entityDefnitionService.fetchByRole(groupId, roleName);
-            } else {
-                entityList = this.entityDefnitionService.fetchAll(groupId);
-            }
+            entityList = this.entityDefnitionService.fetchByRole(groupId, roleName);
             entityList.sort((a, b) -> a.getDisplayName().compareTo(b.getDisplayName()));
             return new ResponseEntity<>(mapper.toEntityDtoList(entityList), HttpStatus.OK);
         }

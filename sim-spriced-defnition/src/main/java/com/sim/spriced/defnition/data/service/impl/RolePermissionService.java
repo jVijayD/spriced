@@ -3,6 +3,7 @@ package com.sim.spriced.defnition.data.service.impl;
 import com.sim.spriced.defnition.data.repo.impl.RolePermissionRepo;
 import com.sim.spriced.defnition.data.service.IRolePermissionService;
 import com.sim.spriced.framework.constants.ModelConstants;
+import com.sim.spriced.framework.context.SPricedContextManager;
 import com.sim.spriced.framework.exceptions.data.CreateEntityException;
 import com.sim.spriced.framework.models.EntityDefnition;
 import com.sim.spriced.framework.models.RoleEntityPermissionMapping;
@@ -34,8 +35,6 @@ public class RolePermissionService implements IRolePermissionService {
 
         rolePermissionRepo.delete(deleteGroup);
         int status = rolePermissionRepo.create(groupPermission);
-        if (status > 0) {
-        }
         if (entityPermissions.size() > 0) {
             RoleEntityPermissionMapping deleteEnitty = new RoleEntityPermissionMapping();
 
@@ -108,6 +107,8 @@ public class RolePermissionService implements IRolePermissionService {
     public List<EntityDefnition> applyPermission(List<EntityDefnition> entityDefnitions, String[] roles) {
         return entityDefnitions.stream()
                 .map(e -> applyPermission(e, roles))
+                .map(e -> roles == null || roles.length == 0 ? getAuthorizedEntity(e) : e)
+                .filter(e -> !e.getAttributes().isEmpty())
                 .collect(Collectors.toList());
     }
 

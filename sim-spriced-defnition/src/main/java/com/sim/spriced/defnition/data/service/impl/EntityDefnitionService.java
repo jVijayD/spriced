@@ -108,7 +108,7 @@ public class EntityDefnitionService extends BaseService
 
     @Override
     public List<EntityDefnition> fetchByRole(int groupId, String role) {
-        return rolePermissionService.applyPermission(this.defnitionRepo.getAll(groupId, false), role.split(","));
+        return rolePermissionService.applyPermission(this.defnitionRepo.getAll(groupId, false), role!=null?role.split(","):null);
     }
 
     @Override
@@ -116,16 +116,6 @@ public class EntityDefnitionService extends BaseService
         return rolePermissionService.applyPermission(this.defnitionRepo.get(entityId), null);
     }
 
-//	@Override
-//	public Page<EntityDefnition> fetchAll(int groupId, boolean loadDisabled, Pageable pageable) {
-//		return this.defnitionRepo.getAll(groupId, loadDisabled, pageable);
-//	}
-//
-//	@Override
-//	public Page<EntityDefnition> fetchAll(int groupId, Pageable pageable) {
-//		return this.defnitionRepo.getAll(groupId, true, pageable);
-//	}
-//	
     @PreDestroy
     private void destroy() {
         if (this.observers != null) {
