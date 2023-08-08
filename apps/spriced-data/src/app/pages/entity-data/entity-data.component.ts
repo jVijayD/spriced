@@ -48,6 +48,7 @@ import { EntityDataService } from "../../services/entity-data.service";
 import { Subscription } from "rxjs";
 import * as moment from "moment";
 import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
+import { RouterModule } from "@angular/router";
 
 @Component({
   selector: "sp-entity-data",
@@ -65,6 +66,7 @@ import { SettingsService } from "../../components/settingsPopUp/service/settings
     SnackbarModule,
     EntitySelectComponent,
     MatExpansionModule,
+    RouterModule,
   ],
   viewProviders: [MatExpansionPanel],
   providers: [
@@ -107,6 +109,8 @@ export class EntityDataComponent implements OnDestroy {
   //Dynamic Form
   appForm!: AppForm;
   currentCriteria!: Criteria;
+
+  query?: any;
 
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
@@ -178,10 +182,17 @@ export class EntityDataComponent implements OnDestroy {
       columns: this.getFilterColumns(),
       emptyMessage: "Please select filter criteria.",
       config: null,
+      query: this.query,
     });
 
     dialogResult.afterClosed().subscribe((val) => {
       if (val) {
+        this.query = dialogResult.componentInstance.data.query;
+        this.currentCriteria.filters = val;
+        this.loadEntityData(
+          this.currentSelectedEntity as Entity,
+          this.currentCriteria
+        );
       }
     });
   }
@@ -443,6 +454,7 @@ export class EntityDataComponent implements OnDestroy {
   private getColumnDataType(
     attr: Attribute
   ): "string" | "number" | "date" | "category" | "boolean" {
+    debugger;
     switch (attr.dataType) {
       case "STRING_VAR":
       case "TEXT":
@@ -454,6 +466,7 @@ export class EntityDataComponent implements OnDestroy {
         return "boolean";
       case "INTEGER":
       case "SERIAL":
+      case "AUTO":
         return "number";
       default:
         return "string";
@@ -499,6 +512,7 @@ export class EntityDataComponent implements OnDestroy {
     if (entitySettings) {
       this.limit = entitySettings.noOfRecords;
       this.headers.forEach((item, index) => {
+        item.pinned = undefined;
         if (index === entitySettings.freeze) {
           item.pinned = "left";
         }

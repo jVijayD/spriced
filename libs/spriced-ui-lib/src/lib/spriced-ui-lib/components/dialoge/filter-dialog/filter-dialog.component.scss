@@ -25,3 +25,7 @@
 .mat-mdc-icon-button ::ng-deep .mat-mdc-button-persistent-ripple {
   display: none;
 }
+
+:host ::ng-deep input[type="checkbox"] {
+  margin-top: 12px;
+}
