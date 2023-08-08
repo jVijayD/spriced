@@ -26,14 +26,16 @@
             title="Rule"
             class="center"
           >
-            <mat-icon>add</mat-icon>
+            <div>
+              <mat-icon>add</mat-icon>
+            </div>
           </button>
           <button
             *ngIf="addRuleSet"
             color="secondary"
             mat-icon-button
             (click)="addRuleSet()"
-            title="Ruleset"
+            title="Rule set"
             class="center"
           >
             <mat-icon>add_circle_outline</mat-icon>
@@ -43,7 +45,7 @@
             mat-icon-button
             (click)="removeRuleSet()"
             class="center"
-            title="Remove Ruleset"
+            title="Remove Rule set"
           >
             <mat-icon>remove_circle_outline</mat-icon>
           </button>
@@ -76,14 +78,14 @@
           >
         </mat-radio-group>
       </ng-container>
-      <ng-container
+      <!-- <ng-container
         *queryInput="let rule; type: 'boolean'; let onChange = onChange"
       >
         <mat-checkbox
           [(ngModel)]="rule.value"
           (ngModelChange)="onChange()"
         ></mat-checkbox>
-      </ng-container>
+      </ng-container> -->
     </query-builder>
   </div>
   <div class="footer">

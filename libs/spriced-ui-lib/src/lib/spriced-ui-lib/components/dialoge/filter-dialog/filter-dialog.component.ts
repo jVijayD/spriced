@@ -104,6 +104,7 @@ export class FilterDialogComponent {
       fields: {},
     };
     columns.forEach((col) => {
+      debugger;
       config.fields[col.name] = {
         name: col.displayName || col.name,
         type: col.dataType,

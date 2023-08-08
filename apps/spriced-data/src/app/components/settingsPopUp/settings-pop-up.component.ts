@@ -16,6 +16,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { NgxIndexedDBService } from "ngx-indexed-db";
+import { SettingsService } from "./service/settings.service";
 
 @Component({
   selector: "sp-settings-pop-up",
@@ -38,17 +39,30 @@ import { NgxIndexedDBService } from "ngx-indexed-db";
 })
 export class SettingsPopUpComponent {
   settingsdata: any;
-  constructor(
-    public dialogRef: MatDialogRef<SettingsPopUpComponent>,
-    private dbService: NgxIndexedDBService,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
-    console.log(data);
-  }
   noOfRecords = 0;
   freeze = 0;
   displayFormat: any;
-  showSystem = true;
+  showSystem = false;
+  constructor(
+    public dialogRef: MatDialogRef<SettingsPopUpComponent>,
+    private dbService: NgxIndexedDBService,
+    private settings: SettingsService,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    debugger;
+    let result = this.settings.getGlobalSettings();
+    console.log(result);
+    if (result) {
+      this.displayFormat = result.displayFormat || "code";
+      this.showSystem = result.showSystem || true;
+    }
+    let all = this.settings.getCurrentSettings(this.data.name);
+    if (all) {
+      this.noOfRecords = all.noOfRecords || 10;
+      this.freeze = all.freeze || 0;
+    }
+  }
+
   closeDialog() {
     this.dialogRef.close({ event: "Cancel" });
   }
@@ -66,15 +80,20 @@ export class SettingsPopUpComponent {
     let value: any = { noOfRecords: this.noOfRecords, freeze: this.freeze };
     localStorage.setItem(this.data.name, JSON.stringify(value));
 
-    this.dbService
-      .add("all_entity", {
-        id: 1,
-        displayFormat: this.displayFormat,
-        showSystem: this.showSystem,
-      })
-      .subscribe((key) => {
-        console.log("key: ", key);
-      });
+    // this.dbService
+    //   .add("all_entity", {
+    //     id: 1,
+    //     displayFormat: this.displayFormat,
+    //     showSystem: this.showSystem,
+    //   })
+    //   .subscribe((key) => {
+    //     console.log("key: ", key);
+    //   });
+    let all: any = {
+      displayFormat: this.displayFormat,
+      showSystem: this.showSystem,
+    };
+    localStorage.setItem("all_entity", JSON.stringify(all));
     this.dialogRef.close();
   }
 }

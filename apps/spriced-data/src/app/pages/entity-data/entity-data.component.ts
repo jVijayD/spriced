@@ -48,6 +48,7 @@ import { EntityDataService } from "../../services/entity-data.service";
 import { Subscription } from "rxjs";
 import * as moment from "moment";
 import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
+import { RouterModule } from "@angular/router";
 
 @Component({
   selector: "sp-entity-data",
@@ -65,6 +66,7 @@ import { SettingsService } from "../../components/settingsPopUp/service/settings
     SnackbarModule,
     EntitySelectComponent,
     MatExpansionModule,
+    RouterModule,
   ],
   viewProviders: [MatExpansionPanel],
   providers: [
@@ -108,6 +110,8 @@ export class EntityDataComponent implements OnDestroy {
   appForm!: AppForm;
   currentCriteria!: Criteria;
 
+  query?: any;
+
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
   constructor(
@@ -119,10 +123,6 @@ export class EntityDataComponent implements OnDestroy {
     private settings: SettingsService
   ) {
     this.setFormData("", []);
-    this.settings.getGlobalSettings().subscribe((result) => {
-      console.log(result);
-    });
-    console.log(this.settings.getCurrentSettings("ent"));
   }
   ngOnDestroy(): void {
     this.subscriptions.forEach((item) => item.unsubscribe());
@@ -182,10 +182,17 @@ export class EntityDataComponent implements OnDestroy {
       columns: this.getFilterColumns(),
       emptyMessage: "Please select filter criteria.",
       config: null,
+      query: this.query,
     });
 
     dialogResult.afterClosed().subscribe((val) => {
       if (val) {
+        this.query = dialogResult.componentInstance.data.query;
+        this.currentCriteria.filters = val;
+        this.loadEntityData(
+          this.currentSelectedEntity as Entity,
+          this.currentCriteria
+        );
       }
     });
   }
@@ -231,7 +238,12 @@ export class EntityDataComponent implements OnDestroy {
       data: this.currentSelectedEntity,
     });
     dialogResult.afterClosed().subscribe((val) => {
-      console.log(val);
+      if (val !== "Cancel") {
+        this.loadEntityData(
+          this.currentSelectedEntity as Entity,
+          this.currentCriteria
+        );
+      }
     });
   }
 
@@ -240,8 +252,17 @@ export class EntityDataComponent implements OnDestroy {
       data: this.appForm,
     });
   }
+  onModelSelectionChange() {
+    this.currentSelectedEntity = undefined;
+    // this.headers = [{ name: "", column: "" }];
+    this.dataGrid.table._internalColumns = [...[]];
+    this.rows = [...[]];
+    this.setFormData("", []);
+  }
 
   onEntitySelectionChange(entity: Entity | string) {
+    this.currentSelectedEntity = undefined;
+    this.dataGrid.table._internalColumns = [...[]];
     this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);
     this.createDynamicGrid(this.currentSelectedEntity);
     this.createDynamicUIMapping(this.currentSelectedEntity);
@@ -427,14 +448,13 @@ export class EntityDataComponent implements OnDestroy {
       this.loadEntityData(entity, {
         pager: { pageNumber: 0, pageSize: this.limit },
       });
-    } else {
-      this.headers = [];
     }
   }
 
   private getColumnDataType(
     attr: Attribute
   ): "string" | "number" | "date" | "category" | "boolean" {
+    debugger;
     switch (attr.dataType) {
       case "STRING_VAR":
       case "TEXT":
@@ -446,6 +466,7 @@ export class EntityDataComponent implements OnDestroy {
         return "boolean";
       case "INTEGER":
       case "SERIAL":
+      case "AUTO":
         return "number";
       default:
         return "string";
@@ -468,6 +489,7 @@ export class EntityDataComponent implements OnDestroy {
   private loadEntityData(entity: Entity, criteria: Criteria) {
     this.currentCriteria = criteria;
     if (entity) {
+      this.applyEntitySettings(entity);
       this.subscriptions.push(
         this.entityDataService.loadEntityData(entity.id, criteria).subscribe({
           next: (page) => {
@@ -482,6 +504,19 @@ export class EntityDataComponent implements OnDestroy {
       );
     } else {
       this.rows = [];
+    }
+  }
+
+  private applyEntitySettings(entity: Entity) {
+    const entitySettings = this.settings.getCurrentSettings(entity.name);
+    if (entitySettings) {
+      this.limit = entitySettings.noOfRecords;
+      this.headers.forEach((item, index) => {
+        item.pinned = undefined;
+        if (index === entitySettings.freeze) {
+          item.pinned = "left";
+        }
+      });
     }
   }
 

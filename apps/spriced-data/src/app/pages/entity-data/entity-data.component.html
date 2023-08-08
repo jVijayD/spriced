@@ -3,6 +3,7 @@
     <div class="page-header pb-0">Entity Data Management</div>
     <sp-entity-select
       (entitySelectionEvent)="onEntitySelectionChange($event)"
+      (modelSelectionEvent)="onModelSelectionChange()"
     ></sp-entity-select>
     <div class="flex-grow pl-2 pr-2">
       <sp-data-grid
@@ -157,11 +158,30 @@
           (resetEvent)="onClear()"
         ></sp-dynamic-form-container>
       </mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <b>Dependant Lookup Entities</b>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <b>Dependant Lookup Entities</b>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div
+          class="w-full flex flex-col space-y-1 text-sm pl-4 pr-4 pb-2 text-secondary-light"
+        >
+          <ng-container
+            *ngFor="let item of this.currentSelectedEntity?.attributes"
+          >
+            <a
+              *ngIf="item.type === 'LOOKUP'"
+              [href]="'/spriced-data/lookup/' + item.referencedTableId"
+              target="_blank"
+              >{{ item.referencedTableName || item.referencedTable }}</a
+            >
+            <!-- <a [href]="'/spriced-data/lookup/' + item.id" target="_blank">{{
+              item.displayName
+            }}</a> -->
+          </ng-container>
+        </div>
+      </mat-expansion-panel>
     </mat-accordion>
   </div>
 </sp-two-col-three-forth>
