@@ -20,7 +20,7 @@ import { NG_VALUE_ACCESSOR } from "@angular/forms";
   selector: "sp-lookup-select",
   templateUrl: "./lookup-select.component.html",
   styleUrls: ["./lookup-select.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -73,7 +73,7 @@ export class LookupSelectComponent
   }
 
   onClick() {
-    this.populateSourceOnDemand();
+    //this.populateSourceOnDemand();
   }
 
   private _initControlData(selectControl: GenericControl) {

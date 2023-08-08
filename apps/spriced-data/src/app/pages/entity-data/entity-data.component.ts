@@ -41,11 +41,10 @@ import {
   Attribute,
   Criteria,
   Entity,
-  RequestUtilityService,
 } from "@spriced-frontend/spriced-common-lib";
 import { Validators } from "@angular/forms";
 import { EntityDataService } from "../../services/entity-data.service";
-import { Subscription } from "rxjs";
+import { Subscription, of } from "rxjs";
 import * as moment from "moment";
 import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
 import { RouterModule } from "@angular/router";
@@ -72,22 +71,19 @@ import { RouterModule } from "@angular/router";
   providers: [
     EntityDataService,
     SettingsService,
+
+    // {
+    //   provide: FORM_DATA_SERVICE,
+    //   useValue: {
+    //     getMembers: (id: any) => {
+    //       alert(id);
+    //       return of([10, 20, 30, 40, 50]);
+    //     },
+    //   },
+    // },
     {
       provide: FORM_DATA_SERVICE,
-      useValue: {
-        //   getMembers: () => {
-        //     return of([10, 20, 30, 40, 50]);
-        //   },
-        //   getCountries: () => {
-        //     return of([
-        //       {
-        //         name: "England",
-        //         id: 4,
-        //         countryCode: "+95",
-        //       },
-        //     ]);
-        //   },
-      },
+      useExisting: EntityDataService,
     },
     DynamicFormService,
   ],
@@ -334,61 +330,96 @@ export class EntityDataComponent implements OnDestroy {
   }
 
   private getType(attr: Attribute): GenericControl {
-    switch (attr.dataType) {
-      case "STRING_VAR":
-      case "TEXT":
-      case "LINK":
-        return {
-          type: "input",
-          subType: "text",
-          name: attr.name,
-          placeholder: attr.displayName || attr.name,
-          label: attr.displayName || attr.name,
-          validations: this.getValidations(attr),
-          readOnly: attr.permission === "VIEW" ? true : false,
-        };
-      case "INTEGER":
-        return {
-          type: "numeric",
-          subType: "text",
-          name: attr.name,
-          placeholder: attr.displayName || attr.name,
-          label: attr.displayName || attr.name,
-          decimalCount: attr.numberOfDecimalValues,
-          validations: this.getValidations(attr),
-          readOnly: attr.permission === "VIEW" ? true : false,
-        };
+    if (attr.type === "LOOKUP") {
+      return {
+        type: "lookup-select",
+        name: attr.name,
+        label: attr.displayName || attr.name,
+        readOnly: attr.permission === "VIEW" ? true : false,
+        displayProp: "name",
+        valueProp: "code",
+        eventValue: "",
+        eventType: "lookup",
+        placeholder: {
+          value: "",
+          displayText: "--Select--",
+        },
+        data: {
+          api: {
+            onLoad: true,
+            isFixed: true,
+            method: "loadLookupData",
+            params: [attr.referencedTableId],
+            provider: FORM_DATA_SERVICE,
+          },
+        },
+        validations: [
+          {
+            name: "required",
+            message: `${
+              attr.displayName || attr.name
+            } is required.`.toLowerCase(),
+            validator: Validators.required,
+          },
+        ],
+      };
+    } else {
+      switch (attr.dataType) {
+        case "STRING_VAR":
+        case "TEXT":
+        case "LINK":
+          return {
+            type: "input",
+            subType: "text",
+            name: attr.name,
+            placeholder: attr.displayName || attr.name,
+            label: attr.displayName || attr.name,
+            validations: this.getValidations(attr),
+            readOnly: attr.permission === "VIEW" ? true : false,
+          };
+        case "INTEGER":
+          return {
+            type: "numeric",
+            subType: "text",
+            name: attr.name,
+            placeholder: attr.displayName || attr.name,
+            label: attr.displayName || attr.name,
+            decimalCount: attr.numberOfDecimalValues,
+            validations: this.getValidations(attr),
+            readOnly: attr.permission === "VIEW" ? true : false,
+          };
 
-      case "TIME_STAMP":
-        return {
-          name: attr.name,
-          type: "date",
-          format: attr.formatter ?? "MM/DD/YYYY",
-          label: "MM/DD/YYYY",
-          placeholder: attr.displayName || attr.name,
-          startDate: moment(new Date()).format("YYYY-MM-DD"),
-          startView: "month",
-          hiddenDefault: null,
-          validations: this.getValidations(attr),
-          readOnly: attr.permission === "VIEW" ? true : false,
-        };
-      case "BOOLEAN":
-        return {
-          type: "checkbox",
-          name: attr.name,
-          label: attr.displayName || attr.name,
-          validations: this.getValidations(attr),
-          readOnly: attr.permission === "VIEW" ? true : false,
-          value: false,
-        };
-      case "AUTO":
-      default:
-        return {
-          type: "input",
-          subType: "hidden",
-          name: attr.name,
-          label: "",
-        };
+        case "TIME_STAMP":
+          return {
+            name: attr.name,
+            type: "date",
+            format: attr.formatter ?? "MM/DD/YYYY",
+            label: "MM/DD/YYYY",
+            placeholder: attr.displayName || attr.name,
+            startDate: moment(new Date()).format("YYYY-MM-DD"),
+            startView: "month",
+            hiddenDefault: null,
+            validations: this.getValidations(attr),
+            readOnly: attr.permission === "VIEW" ? true : false,
+          };
+        case "BOOLEAN":
+          return {
+            type: "checkbox",
+            name: attr.name,
+            label: attr.displayName || attr.name,
+            validations: this.getValidations(attr),
+            readOnly: attr.permission === "VIEW" ? true : false,
+            value: false,
+          };
+        case "AUTO":
+        default:
+          return {
+            type: "input",
+            subType: "hidden",
+            name: attr.name,
+            label: "",
+          };
+      }
     }
   }
 

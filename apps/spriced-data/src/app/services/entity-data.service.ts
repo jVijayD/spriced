@@ -31,6 +31,21 @@ export class EntityDataService {
     return this.http.get<PageData>(url);
   }
 
+  loadLookupData(id: string | number): Observable<PageData> {
+    const criteria: Criteria = {
+      pager: {
+        pageSize: 100,
+        pageNumber: 0,
+      },
+    };
+    const url = this.requestUtility.addCriteria(
+      `${this.api_url}/entity/${id}/data`,
+      criteria
+    );
+    debugger;
+    return this.http.get<PageData>(url);
+  }
+
   createEntityData(id: string | number, data: any): Observable<any> {
     return this.http.post(`${this.api_url}/entity/${id}/data`, {
       data: [data],
