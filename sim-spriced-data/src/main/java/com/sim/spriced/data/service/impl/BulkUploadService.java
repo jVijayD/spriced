@@ -28,14 +28,13 @@ public class BulkUploadService implements IBulkUploadService {
 	public BulkEntityDetails uploadFileDetails(BulkEntityDetails fileEntity, MultipartFile file) {
 		String status = uploadCsvFiles(file, fileEntity);
 		fileEntity.setStatus(status);
-		String entity= fileEntity.getEntityName()+"_"+OffsetDateTime.now();
-		fileEntity.setEntityName(entity);
 		return processRepo.saveFileDetails(fileEntity);
 	}
 
 	public String uploadCsvFiles(MultipartFile file, BulkEntityDetails data ) {
-		String fileName = file.getOriginalFilename();
-		String filePath = dir + fileName;
+		String entity= data.getEntityName()+"_"+OffsetDateTime.now();
+		String filePath = dir + entity;
+		data.setEntityName(entity);
 		data.setFilePath(filePath);
 		try {
 			File destFile = new File(filePath);
