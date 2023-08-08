@@ -10,6 +10,7 @@ export class AppDataService {
   private menuData = new BehaviorSubject<MenuItem[]>([]);
   ERROR_LIST: BehaviorSubject<errorElement[]> = new BehaviorSubject<errorElement[]>([]);
   networkStatus$ = new Observable<boolean>();
+  public subConditionForm = new BehaviorSubject<any>(null);
 
   userData$ = this.userData.asObservable();
   menuData$ = this.menuData.asObservable();
