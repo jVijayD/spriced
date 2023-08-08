@@ -46,6 +46,7 @@ import { DateFormatDirectivedMMM__DD__YYYY } from "./directives/MMM-DD-YYYY.dire
 import { DateFormatDirectiveDD_MMM__YYYY } from "./directives/DD-MMM-YYYY.directive";
 import { DateFormatDirectiveYYYY__DD__MMM } from "./directives/YYYY-DD-MMM.directive";
 import { CheckboxComponent } from "./sub-components/checkbox/checkbox.component";
+import { MatSelectModule } from "@angular/material/select";
 
 @NgModule({
   declarations: [
@@ -104,6 +105,7 @@ import { CheckboxComponent } from "./sub-components/checkbox/checkbox.component"
     MatMomentDateModule,
     MatCheckboxModule,
     MatRadioModule,
+    MatSelectModule,
   ],
   exports: [
     InputComponent,
