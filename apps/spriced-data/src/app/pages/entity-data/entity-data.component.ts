@@ -41,6 +41,7 @@ import {
   Attribute,
   Criteria,
   Entity,
+  EntityService,
 } from "@spriced-frontend/spriced-common-lib";
 import { Validators } from "@angular/forms";
 import { EntityDataService } from "../../services/entity-data.service";
@@ -48,6 +49,7 @@ import { Subscription, of } from "rxjs";
 import * as moment from "moment";
 import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
 import { RouterModule } from "@angular/router";
+import { LookupPopupComponent } from "../../components/lookup-Popup/lookup-popup.component";
 
 @Component({
   selector: "sp-entity-data",
@@ -66,21 +68,12 @@ import { RouterModule } from "@angular/router";
     EntitySelectComponent,
     MatExpansionModule,
     RouterModule,
+    LookupPopupComponent,
   ],
   viewProviders: [MatExpansionPanel],
   providers: [
     EntityDataService,
     SettingsService,
-
-    // {
-    //   provide: FORM_DATA_SERVICE,
-    //   useValue: {
-    //     getMembers: (id: any) => {
-    //       alert(id);
-    //       return of([10, 20, 30, 40, 50]);
-    //     },
-    //   },
-    // },
     {
       provide: FORM_DATA_SERVICE,
       useExisting: EntityDataService,
@@ -115,6 +108,7 @@ export class EntityDataComponent implements OnDestroy {
     private dialogService: DialogService,
     private dynamicFormService: DynamicFormService,
     private entityDataService: EntityDataService,
+    private entityService: EntityService,
     private dialog: MatDialog,
     private settings: SettingsService
   ) {
@@ -126,6 +120,14 @@ export class EntityDataComponent implements OnDestroy {
     this.subscriptions.push(
       this.dynamicFormService.eventSubject$.subscribe((value) => {
         if (value.type == "lookup") {
+          //this.entityService.load(value)
+          // const dialogReference = this.dialogService.openDialog(
+          //   LookupPopupComponent,
+          //   {
+          //     data: "",
+          //   }
+          // );
+          // dialogReference.afterClosed().subscribe(() => {});
         }
       })
     );

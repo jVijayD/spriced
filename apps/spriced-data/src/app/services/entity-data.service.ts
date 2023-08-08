@@ -20,6 +20,7 @@ export class EntityDataService {
   upload(file: any, fileDetails: any) {
     return this.http.post(`${this.api_url}/bulk/upload`, file);
   }
+
   loadEntityData(
     id: string | number,
     criteria: Criteria
@@ -42,7 +43,6 @@ export class EntityDataService {
       `${this.api_url}/entity/${id}/data`,
       criteria
     );
-    debugger;
     return this.http.get<PageData>(url);
   }
 
