@@ -34,7 +34,7 @@ export class AppComponent {
     {
       name: "Rules",
       active: false,
-      path: "/spriced-data-definitions-ui/rule-management",
+      path: "/spriced-data-definition/rules/rule-management",
     },
     {
       name: "Model Access Management",

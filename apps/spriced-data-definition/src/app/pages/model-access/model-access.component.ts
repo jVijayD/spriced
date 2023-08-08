@@ -51,7 +51,7 @@ const POPULATE_ATTRIBUTES = false;
     CommonModule,
     DialogueModule,
   ],
-  providers: [HttpClient, DialogService,SnackBarService,AppDataService],
+  providers: [HttpClient, DialogService,SnackBarService],
   templateUrl: "./model-access.component.html",
   styleUrls: ["./model-access.component.scss"],
 })
