@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, distinctUntilChanged } from 'rxjs';
 import { SnackBarService } from '@spriced-frontend/spriced-ui-lib';
-import { AppDataService, ErrorPanelService, ErrorTypes } from '@spriced-frontend/shared/spriced-shared-lib';
+import { AppDataService, ErrorTypes, ErrorPanelService } from '@spriced-frontend/shared/spriced-shared-lib';
 // import {
 //   AppDataService,
 //   ErrorTypes,
@@ -34,7 +34,7 @@ export class MessageService {
             },
           ]);
         } else {
-          this.msgSrv.error(error.message);
+          // this.msgSrv.error(error.message);
           this.errorPanelService.setErrors([
             {
               type: ErrorTypes.ERROR,

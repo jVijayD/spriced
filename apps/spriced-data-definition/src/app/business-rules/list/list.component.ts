@@ -16,7 +16,6 @@ import * as moment from 'moment';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {
   AppDataService,
-  MessageService,
   ErrorPanelService
 } from '@spriced-frontend/shared/spriced-shared-lib';
 import { BusinessruleService } from '@spriced-frontend/spriced-common-lib';
@@ -32,7 +31,7 @@ import {
   forkJoin,
   takeUntil
 } from 'rxjs';
-
+import { MessageService } from './../services/message.service';
 @Component({
   selector: "sp-list",
   templateUrl: "./list.component.html",
@@ -422,6 +421,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.defValue = 'ALL';
 
     this.filterData = this.dataSource.filter((res: any) => res.entityId === id);
+    this.rows = this.filterData;
     this.currentDataSource = this.filterData.slice(
       this.pageIndex,
       this.pageIndex + this.pageSize

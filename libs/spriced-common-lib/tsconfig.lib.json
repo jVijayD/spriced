@@ -13,5 +13,5 @@
     "jest.config.ts",
     "src/**/*.test.ts"
   ],
-  "include": ["src/**/*.ts", "../shared/spriced-shared-lib/src/lib/app-data/app-data.service.ts", "../shared/spriced-shared-lib/src/lib/services/error-panel.service.ts", "../shared/spriced-shared-lib/src/lib/services/service.tokens.ts", "../shared/spriced-shared-lib/src/lib/services/form-data-fetch.service.ts", "../shared/spriced-shared-lib/src/lib/services/style-utility.service.ts", "../shared/spriced-shared-lib/src/lib/services/message.service.ts"]
+  "include": ["src/**/*.ts", "../shared/spriced-shared-lib/src/lib/app-data/app-data.service.ts", "../shared/spriced-shared-lib/src/lib/services/error-panel.service.ts", "../shared/spriced-shared-lib/src/lib/services/service.tokens.ts", "../shared/spriced-shared-lib/src/lib/services/form-data-fetch.service.ts", "../shared/spriced-shared-lib/src/lib/services/style-utility.service.ts", "../../apps/spriced-data-definition/src/app/business-rules/services/message.service.ts"]
 }
