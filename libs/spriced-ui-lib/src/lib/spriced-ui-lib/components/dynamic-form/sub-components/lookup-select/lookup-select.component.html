@@ -1,9 +1,10 @@
 <ng-container *ngIf="control.type === 'lookup-select' && visible">
   <div style="position: relative">
-    <div
+    <!-- <div
       class="flex flex-row space-x-1 justify-between items-center"
       *ngIf="count <= 100"
-    >
+    > -->
+    <div class="flex flex-row space-x-1 justify-between items-center">
       <mat-form-field
         class="flex-grow"
         appearance="outline"
@@ -11,27 +12,27 @@
       >
         <mat-label>{{ control.label }}</mat-label>
 
-        <select
+        <mat-select
           matNativeControl
           (blur)="onTouched()"
           [(ngModel)]="value"
           [disabled]="control.readOnly || disabled"
           (click)="onClick()"
         >
-          <option
+          <mat-option
             [value]="control.placeholder.value"
             *ngIf="control.placeholder"
           >
             {{ control.placeholder.displayText }}
-          </option>
+          </mat-option>
 
-          <option
+          <mat-option
             *ngFor="let option of source"
             [value]="control.valueProp ? option[control.valueProp] : option"
           >
             {{ control.displayProp ? option[control.displayProp] : option }}
-          </option>
-        </select>
+          </mat-option>
+        </mat-select>
 
         <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
         <mat-hint align="start" *ngIf="control.hint">{{
@@ -58,7 +59,7 @@
       </button>
     </div>
     <!--if count > 100-->
-    <div
+    <!-- <div
       class="flex flex-row space-x-1 justify-between items-center"
       *ngIf="count > 100"
     >
@@ -101,7 +102,7 @@
       >
         <mat-icon>grid_on</mat-icon>
       </button>
-    </div>
+    </div> -->
 
     <div
       *ngIf="source.length == 0"

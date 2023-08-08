@@ -253,7 +253,7 @@ export type LookupSelectControl = {
     value?: any;
     displayText: string;
   };
-  eventValue: string;
+  eventValue: any;
   eventType: string;
   data: IData;
   validations?: IValidator[];

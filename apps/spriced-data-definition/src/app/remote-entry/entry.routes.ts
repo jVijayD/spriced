@@ -14,6 +14,7 @@ export const remoteRoutes: Route[] = [
       { path: "entity", component: EntityComponent },
       { path: "model-list", component: ModelListComponent },
       { path: "model-access", component: ModelAccessComponent },
+      { path: "rules", loadChildren: () => import('../business-rules/business-rules.module').then( m => m.BusinessRulesModule)}
     ],
   },
 ];

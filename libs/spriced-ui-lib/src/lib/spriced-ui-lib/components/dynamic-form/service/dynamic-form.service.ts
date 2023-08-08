@@ -25,7 +25,10 @@ export class DynamicFormService {
 
   execFun(methodName: string, params: string[]): unknown {
     const paramValues = this.getValues(params);
-    return (this.formService as any)[methodName].apply(this, paramValues);
+    return (this.formService as any)[methodName].apply(
+      this.formService,
+      paramValues
+    );
   }
 
   publishEvent(event: EventElement) {
@@ -54,7 +57,7 @@ export class DynamicFormService {
 
 export const FORM_DATA_SERVICE = "FORM_DATA_SERVICE";
 export interface EventElement {
-  name: string;
+  data: unknown;
   type: string;
   value: unknown;
 }

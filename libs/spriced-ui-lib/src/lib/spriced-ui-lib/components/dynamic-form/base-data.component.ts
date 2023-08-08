@@ -7,7 +7,7 @@ export abstract class BaseDataComponent extends BaseComponent {
   dataPopulation$: Subject<unknown[]> = new Subject();
   private _dataSubscriptions: Subscription[] = [];
   source: any[] = [];
-  count = 101;
+  count = 0;
 
   constructor(dynamicService: DynamicFormService) {
     super(dynamicService);
@@ -35,15 +35,23 @@ export abstract class BaseDataComponent extends BaseComponent {
 
   private _getDataSource(controlData: IData) {
     if (this.visible) {
+      debugger;
       const observable$: any = this.dynamicFormService?.execFun(
         controlData.api?.method as string,
         controlData.api?.params || []
       );
 
       this._dataSubscriptions.push(
-        observable$.subscribe((items: unknown[]) => {
-          this.source = items;
-          this.dataPopulation$.next(items);
+        observable$.subscribe((items: any) => {
+          if (items.length) {
+            this.count = items.length;
+            this.source = items;
+            this.dataPopulation$.next(items);
+          } else {
+            this.count = items.totalElements;
+            this.source = items.content;
+            this.dataPopulation$.next(items.content);
+          }
         })
       );
     }

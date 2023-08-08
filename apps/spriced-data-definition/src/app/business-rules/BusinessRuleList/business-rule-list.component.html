@@ -1,0 +1,310 @@
+<!-- MANAGE BUSINESS CONDITION RULES -->
+<div
+    cdkDropList
+    class="item-dropzone parent"
+    [id]="parentItemId"
+    [cdkDropListData]="parentItem"
+    [cdkDropListConnectedTo]="allDropListsIds"
+    (cdkDropListDropped)="onDragDrop($event)"
+  >
+  <div 
+      cdkDrag
+      [id]="item?.value?.id"
+      *ngIf="item?.value?.id !== 'parent'"
+      [cdkDragData]="item"
+      [cdkDragDisabled]="dragDisabled || preview"
+     >
+    <form *ngIf="!!conditionForm" [formGroup]="conditionForm">
+      <div title="Drag this item with children" class="item-drag-handle" cdkDragHandle>
+
+        <div class="flex">
+          <i *ngIf="!dragDisabled && !preview" class="material-icons flex items-center"> drag_indicator </i>
+
+          <div class="rule-drop-down flex condition-conatiner">
+            <div class="example-container  mt-8 mr-5 flex flex-col">
+              <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
+                <mat-label>Condition</mat-label>
+                <mat-select [panelClass]="preview ? 'hideOption' : ''" [(value)]="defValue"
+                  formControlName="conditionType">
+                  <mat-option *ngFor="let condition of dataRules?.conditions"
+                    [disabled]="disable || condition.value === 'NONE'" [value]="condition?.value">
+                    {{condition.name}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-error class="text-sm italic text-red-500"
+                *ngIf="conditionForm.get('conditionType')!.invalid && conditionForm.get('conditionType')!.touched && conditionForm.get('conditionType')!.hasError('required')">
+                Condition value is required
+              </mat-error>
+            </div>
+
+            <div class="example-container  mt-8 mr-5 flex flex-col">
+              <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
+                <mat-label>Attribute</mat-label>
+                <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="attributeId"
+                  (valueChange)="handleAttributes($event, 'changeAttribute')">
+                  <mat-option *ngFor="let attribute of dataRules?.attributes" [value]="attribute?.id">
+                    {{attribute.name}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-error class="text-sm italic text-red-500"
+                *ngIf="conditionForm.get('attributeId')!.invalid && conditionForm.get('attributeId')!.touched && conditionForm.get('attributeId')!.hasError('required')">
+                Attribute value is required
+              </mat-error>
+            </div>
+
+            <div class="example-container  mt-8 mr-5 flex flex-col">
+              <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
+                <mat-label>Operator</mat-label>
+                <mat-select [panelClass]="preview ? 'hideOption' : ''" class="break-all"
+                  (valueChange)="handleValueChange($event, 'changeValue')" formControlName="operatorType">
+                  <mat-option *ngFor="let Operator of dataRules?.operators" [value]="Operator?.value">
+                    {{Operator.name}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-error class="text-sm italic text-red-500"
+                *ngIf="conditionForm.get('operatorType')!.invalid && conditionForm.get('operatorType')!.touched && conditionForm.get('operatorType')!.hasError('required')">
+                Operator value is required
+              </mat-error>
+            </div>
+
+            <div class="example-container mr-5 flex flex-col" *ngIf="value">
+              <mat-radio-group class="flex mb-2 radio-groups" aria-label="Select an option"
+                formControlName="operandType" (change)="handleValue($event.value, 'editValue')">
+                <ng-container *ngFor="let item of dataRules?.operands; let i = index">
+                  <mat-radio-button [disabled]="preview" color="primary" [value]="item.value" class="ml-4 capitalize">
+                    {{item.name}} </mat-radio-button>
+                </ng-container>
+              </mat-radio-group>
+
+              <ng-container *ngIf="valueConstant">
+                <!-- WHEN DATATYPE IS EQUAL TO STRING -->
+                <mat-form-field
+                  *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER'].includes(dataType)"
+                  [ngClass]="preview ? 'not-allow' : ''" class="w-52" appearance="outline">
+                  <mat-label>Value</mat-label>
+                  <input [readonly]="preview" [type]="dynamicInputType" [readonly]="preview" matInput
+                    placeholder="Add Value" formControlName="operand" [disabled]="isFieldDisabled">
+                </mat-form-field>
+
+                <!-- WHEN DATATYPE IS EQUAL TO BOOLEAN -->
+                <mat-form-field *ngIf="dataType === 'BOOLEAN'" [ngClass]="preview ? 'not-allow' : ''" class="w-52"
+                  appearance="outline">
+                  <mat-label>Value</mat-label>
+                  <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="operand">
+                    <mat-option value="True"> True </mat-option>
+                    <mat-option value="False"> False </mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <!-- WHEN DATATYPE IS EQUAL TO TEXT -->
+                <mat-form-field *ngIf="['TEXT'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-52"
+                  appearance="outline">
+                  <mat-label>Textarea</mat-label>
+                  <textarea class="text-box" [readonly]="preview" matInput placeholder="Add Value"
+                    formControlName="operand" [disabled]="isFieldDisabled"></textarea>
+                </mat-form-field>
+
+                <!-- WHEN DATATYPE IS EQUAL TO DATE -->
+                <mat-form-field *ngIf="['DATE'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-52"
+                  appearance="outline">
+                  <mat-label>Date</mat-label>
+                  <input matInput [readonly]="preview" [matDatepicker]="datepicker" formControlName="operand">
+                  <mat-datepicker-toggle [disabled]="preview" matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+                  <mat-datepicker #datepicker></mat-datepicker>
+                </mat-form-field>
+
+                <!-- WHEN DATATYPE IS EQUAL TO TIME STAMP -->
+                <mat-form-field *ngIf="['TIME_STAMP', 'DATE_TIME'].includes(dataType)"
+                  [ngClass]="preview ? 'not-allow' : ''" class="w-52" appearance="outline">
+                  <mat-label>DateTime</mat-label>
+                  <input matInput [readonly]="preview" [ngxMatDatetimePicker]="picker1" formControlName="operand">
+                  <mat-datepicker-toggle [disabled]="preview" matSuffix [for]="$any(picker1)"></mat-datepicker-toggle>
+                  <ngx-mat-datetime-picker [panelClass]="'matDatePopup'" #picker1></ngx-mat-datetime-picker>
+                </mat-form-field>
+              </ng-container>
+
+              <!-- WHEN OPERANDS TYPE IS ATTRIBUTE -->
+              <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-52" appearance="outline"
+                *ngIf="!valueConstant">
+                <mat-label>Attribute</mat-label>
+                <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="operand">
+                  <mat-option *ngFor="let attribute of dataRules?.attributes" [value]="attribute?.id">
+                    {{attribute.name}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-error class="text-sm italic text-red-500"
+                *ngIf="conditionForm.get('operand')!.invalid && conditionForm.get('operand')!.touched && conditionForm.get('operand')!.hasError('required')">
+                Value is required
+              </mat-error>
+              <mat-error class="text-sm italic text-red-500"
+                *ngIf="conditionForm.get('operand')!.hasError('pattern')">Please
+                enter a valid pattern</mat-error>
+            </div>
+
+            <div class="example-container mt-8 mr-5 flex flex-col" *ngIf="minValue">
+              <mat-form-field
+                *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER'].includes(dataType)"
+                [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
+                <mat-label>Min Value</mat-label>
+                <input [readonly]="preview" matInput placeholder="Add Value" formControlName="min_value">
+              </mat-form-field>
+
+              <!-- WHEN DATATYPE IS EQUAL TO BOOLEAN -->
+              <mat-form-field *ngIf="dataType === 'BOOLEAN'" [ngClass]="preview ? 'not-allow' : ''" class="w-52"
+                appearance="outline">
+                <mat-label>Value</mat-label>
+                <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="min_value">
+                  <mat-option value="True"> True </mat-option>
+                  <mat-option value="False"> False </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <!-- WHEN DATATYPE IS EQUAL TO TEXT -->
+              <mat-form-field *ngIf="['TEXT'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-52"
+                appearance="outline">
+                <mat-label>Textarea</mat-label>
+                <textarea class="text-box" [readonly]="preview" matInput placeholder="Add Value"
+                  formControlName="min_value" [disabled]="isFieldDisabled"></textarea>
+              </mat-form-field>
+
+              <!-- WHEN DATATYPE IS EQUAL TO DATE -->
+              <mat-form-field *ngIf="['DATE'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-52"
+                appearance="outline">
+                <mat-label>Date</mat-label>
+                <input matInput [readonly]="preview" [matDatepicker]="datepicker1" formControlName="min_value"
+                  [readonly]="preview">
+                <mat-datepicker-toggle [disabled]="preview" matIconSuffix [for]="datepicker1"></mat-datepicker-toggle>
+                <mat-datepicker #datepicker1></mat-datepicker>
+              </mat-form-field>
+
+              <!-- WHEN DATATPE IS EQUAL TO TIME STAMP -->
+              <mat-form-field *ngIf="['TIME_STAMP', 'DATE_TIME'].includes(dataType)"
+                [ngClass]="preview ? 'not-allow' : ''" class="w-52" appearance="outline">
+                <mat-label>DateTime</mat-label>
+                <input matInput [readonly]="preview" [ngxMatDatetimePicker]="mindatetimepicker1"
+                  formControlName="min_value">
+                <mat-datepicker-toggle [disabled]="preview" matSuffix
+                  [for]="$any(mindatetimepicker1)"></mat-datepicker-toggle>
+                <ngx-mat-datetime-picker #mindatetimepicker1 [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
+              </mat-form-field>
+
+              <mat-error class="text-sm italic text-red-500"
+                *ngIf="conditionForm.get('min_value')!.invalid && conditionForm.get('min_value')!.touched && conditionForm.get('min_value')!.hasError('required')">
+                Value is required
+              </mat-error>
+            </div>
+
+            <div class="example-container mt-8 mr-5 flex flex-col" *ngIf="maxValue">
+              <mat-form-field
+                *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER'].includes(dataType)"
+                [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
+                <mat-label>Max Value</mat-label>
+                <input [readonly]="preview" matInput placeholder="Add Value" formControlName="max_value">
+              </mat-form-field>
+
+              <!-- WHEN DATATYPE IS EQUAL TO BOOLEAN -->
+              <mat-form-field *ngIf="dataType === 'BOOLEAN'" [ngClass]="preview ? 'not-allow' : ''" class="w-52"
+                appearance="outline">
+                <mat-label>Value</mat-label>
+                <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="max_value">
+                  <mat-option value="True"> True </mat-option>
+                  <mat-option value="False"> False </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <!-- WHEN DATATYPE IS EQUAL TO TEXT -->
+              <mat-form-field *ngIf="['TEXT'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-52"
+                appearance="outline">
+                <mat-label>Textarea</mat-label>
+                <textarea class="text-box" [readonly]="preview" matInput placeholder="Add Value"
+                  formControlName="max_value" [disabled]="isFieldDisabled"></textarea>
+              </mat-form-field>
+
+              <!-- WHEN DATATYPE IS EQUAL TO DATE -->
+              <mat-form-field *ngIf="['DATE'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-52"
+                appearance="outline">
+                <mat-label>Date</mat-label>
+                <input matInput [readonly]="preview" [matDatepicker]="datepicker2" formControlName="max_value"
+                  [readonly]="preview">
+                <mat-datepicker-toggle [disabled]="preview" matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
+                <mat-datepicker #datepicker2></mat-datepicker>
+              </mat-form-field>
+
+              <!-- WHEN DATATPE IS EQUAL TO TIME STAMP -->
+              <mat-form-field *ngIf="['TIME_STAMP', 'DATE_TIME'].includes(dataType)"
+                [ngClass]="preview ? 'not-allow' : ''" class="w-52" appearance="outline">
+                <mat-label>DateTime</mat-label>
+                <input matInput [readonly]="preview" [ngxMatDatetimePicker]="maxdatetimepicker1"
+                  formControlName="max_value">
+                <mat-datepicker-toggle [disabled]="preview" matSuffix
+                  [for]="$any(maxdatetimepicker1)"></mat-datepicker-toggle>
+                <ngx-mat-datetime-picker #maxdatetimepicker1 [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
+              </mat-form-field>
+
+              <mat-error class="text-sm italic text-red-500"
+                *ngIf="conditionForm.get('max_value')!.invalid && conditionForm.get('max_value')!.touched && conditionForm.get('max_value')!.hasError('required')">
+                Value is required
+              </mat-error>
+            </div>
+
+            <div class="close-btn flex justify-center items-center" *ngIf="!preview">
+              <button type="button" mat-icon-button class="close-button" (click)="removeRow(conditionForm)">
+                <mat-icon class="close-icon flex justify-center items-center" color="warn">close</mat-icon>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </form>
+    <div class="item-drag-preview" *cdkDragPreview>
+      {{item?.value.conditionType}} {{item?.value?.operatorType}} {{item?.value?.operand}}
+    </div>
+  </div>
+
+  <!-- SUBCONDITIONS CONTAINER -->
+  <ul 
+     cdkDropList
+     class="item-dropzone"
+     [id]="item?.value.id"
+     [cdkDropListConnectedTo]="connectedDropListsIds"
+     [cdkDropListData]="item"
+     (cdkDropListDropped)="onDragDrop($event)"
+    >
+
+    <div *ngIf="!!conditionForm && item?.value.id !== 'parent'" [formGroup]="conditionForm">
+     <div class="example-container mr-5">
+      <mat-radio-group class="flex mb-2 radio-groups" aria-label="Select an option"
+      formControlName="subConditionType" *ngIf="!!conditionForm.value.subConditions.length">
+      <ng-container *ngFor="let item of subConditionType; let i = index">
+        <mat-radio-button [disabled]="preview" color="primary" [value]="item.value" class="[&:not(:first-child)]:ml-4 capitalize">
+          {{item.name}} </mat-radio-button>
+      </ng-container>
+     </mat-radio-group>
+     </div>
+    </div>
+
+    <li class="border-gray-400 border border-gray border-solid"
+      *ngFor="let subItem of item?.controls?.subConditions?.controls; let i = index">
+
+      <sp-business-rule-list
+            [item]="subItem"
+            [parentItem]="item"
+            [index]="i"
+            [preview]="preview"
+            [dataRules]="dataRules"
+            [connectedDropListsIds]="allDropListsIds"
+            (itemDrop)="onDragDrop($event)"
+          >
+      </sp-business-rule-list>
+
+    </li>
+
+  </ul>
+</div>
