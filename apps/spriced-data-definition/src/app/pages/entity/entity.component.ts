@@ -43,25 +43,40 @@ import * as moment from "moment";
 })
 export class EntityComponent {
   headers: Header[] = [
-    { column: "id", name: "Id", canAutoResize: true, isSortable: true },
-    { column: "name", name: "Name", canAutoResize: true, isSortable: true },
+    {
+      column: "id",
+      name: "Id",
+      canAutoResize: true,
+      isSortable: true,
+      width: 100,
+    },
+    {
+      column: "name",
+      name: "Name",
+      canAutoResize: true,
+      isSortable: true,
+      width: 100,
+    },
     {
       column: "displayName",
       name: "Display Name",
       canAutoResize: true,
       isSortable: true,
+      width: 100,
     },
     {
       column: "updatedBy",
       name: "Updated By",
       canAutoResize: true,
       isSortable: true,
+      width: 100,
     },
     {
       column: "updatedDate",
       name: "Updated Date",
       canAutoResize: true,
       isSortable: true,
+      width: 100,
       pipe: (data: any) => {
         return moment(data).format("MM-DD-YYYY");
       },
