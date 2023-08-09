@@ -25,7 +25,7 @@ export class DynamicFormContainerComponent {
   submitEvent = new EventEmitter<FormGroup>();
 
   @Output()
-  resetEvent = new EventEmitter();
+  resetEvent = new EventEmitter<any>();
 
   @Input()
   set appForm(appForm: AppForm) {
@@ -62,9 +62,10 @@ export class DynamicFormContainerComponent {
   }
 
   onFormReset() {
+    const val = { ...this.currentFormData?.form.value };
     this.formSubmitAttempt = false;
     this.currentFormData?.form?.reset({ ...this.itemsNotReset() });
-    this.resetEvent.emit();
+    this.resetEvent.emit(val);
   }
 
   private dispatchSubmitEvent(form: FormGroup) {
