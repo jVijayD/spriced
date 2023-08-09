@@ -231,7 +231,6 @@ export class ModelComponent implements OnInit, OnDestroy {
 
         this.temp = [];
         this.rows = this.filterData;
-        console.log(val);
         val.map((item: any, index: number) => {
           switch (item.operatorType) {
             case "LESS_THAN": {
