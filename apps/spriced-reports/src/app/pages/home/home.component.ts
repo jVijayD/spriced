@@ -20,7 +20,7 @@ export class HomeComponent implements OnInit {
       dashboardId = "f4adaabb-7e11-470a-b9e8-0f65964f80ee";
     }
 
-    this.getTokens();
+   
     // embedDashboard({
     //   id: "abc123", // given by the Superset embedding UI
     //   supersetDomain: "https://superset.example.com",
@@ -40,11 +40,5 @@ export class HomeComponent implements OnInit {
     // });
   }
 
-  private setDashboard() {
-    const login = {};
-    this.httpClient.post<any>(
-      "http://localhost:8787/api/v1/security/login",
-      login
-    );
-  }
+
 }
