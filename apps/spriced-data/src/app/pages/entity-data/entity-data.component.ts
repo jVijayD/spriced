@@ -52,6 +52,7 @@ import { RouterModule } from "@angular/router";
 
 import { AuditDataComponent } from "./audit-data/audit-data.component";
 import { LookupPopupComponent } from "../../components/lookup-Popup/lookup-popup.component";
+import { EntityGridService } from "./entity-grid.service";
 
 @Component({
   selector: "sp-entity-data",
@@ -74,6 +75,7 @@ import { LookupPopupComponent } from "../../components/lookup-Popup/lookup-popup
   ],
   viewProviders: [MatExpansionPanel],
   providers: [
+    EntityGridService,
     EntityDataService,
     SettingsService,
     {
@@ -112,7 +114,8 @@ export class EntityDataComponent implements OnDestroy {
     private entityDataService: EntityDataService,
     private entityService: EntityService,
     private dialog: MatDialog,
-    private settings: SettingsService
+    private settings: SettingsService,
+    private entityGridService: EntityGridService
   ) {
     this.setFormData("", []);
     this.subscribeToFormEvents();
@@ -195,7 +198,7 @@ export class EntityDataComponent implements OnDestroy {
   onFilter() {
     const dialogResult = this.dialogService.openFilterDialog({
       persistValueOnFieldChange: true,
-      columns: this.getFilterColumns(),
+      columns: this.entityGridService.getFilterColumns(this.headers),
       emptyMessage: "Please select filter criteria.",
       config: null,
       query: this.query,
@@ -276,7 +279,7 @@ export class EntityDataComponent implements OnDestroy {
     this.setFormData("", []);
   }
 
-  onAudit(){
+  onAudit() {
     this.dialogService.openDialog(AuditDataComponent, {
       data: this.currentSelectedEntity,
     });
@@ -293,7 +296,8 @@ export class EntityDataComponent implements OnDestroy {
   onSubmitEntityData(data: any) {
     if (data.valid) {
       const entityId = this.currentSelectedEntity?.id as number;
-      const finalData = this.removeNull(data.value);
+      //const finalData = this.removeNull(data.value);
+      const finalData = data.value;
       if (!this.selectedItem) {
         this.createEntityData(entityId, finalData);
       } else {
@@ -304,18 +308,18 @@ export class EntityDataComponent implements OnDestroy {
     }
   }
 
-  private getFilterColumns(): QueryColumns[] {
-    return this.headers
-      .filter((item) => item.isFilterable)
-      .map((col: any) => {
-        return {
-          name: col.column,
-          displayName: col.name,
-          dataType: col.dataType || "string",
-          options: col.dataType === "category" ? col.options : undefined,
-        };
-      });
-  }
+  // private getFilterColumns(): QueryColumns[] {
+  //   return this.headers
+  //     .filter((item) => item.isFilterable)
+  //     .map((col: any) => {
+  //       return {
+  //         name: col.column,
+  //         displayName: col.name,
+  //         dataType: col.dataType || "string",
+  //         options: col.dataType === "category" ? col.options : undefined,
+  //       };
+  //     });
+  // }
 
   private deleteEntityData(entityDataId: number) {
     return this.entityDataService
@@ -488,61 +492,11 @@ export class EntityDataComponent implements OnDestroy {
 
   private createDynamicGrid(entity: Entity | undefined) {
     if (entity) {
-      this.headers = entity.attributes
-        .filter((item) => {
-          return item.permission !== "DENY";
-        })
-        .map((attr: Attribute) => {
-          return {
-            column: attr.name,
-            name: attr.displayName || attr.name,
-            canAutoResize: true,
-            isSortable: true,
-            isFilterable: true,
-            dataType: this.getColumnDataType(attr),
-            options: this.getOptions(attr),
-          };
-        });
+      this.headers = this.entityGridService.getGridHeaders(entity);
       this.loadEntityData(entity, {
         pager: { pageNumber: 0, pageSize: this.limit },
       });
     }
-  }
-
-  private getColumnDataType(
-    attr: Attribute
-  ): "string" | "number" | "date" | "category" | "boolean" {
-    debugger;
-    switch (attr.dataType) {
-      case "STRING_VAR":
-      case "TEXT":
-      case "LINK":
-        return "string";
-      case "TIME_STAMP":
-        return "date";
-      case "BOOLEAN":
-        return "boolean";
-      case "INTEGER":
-      case "SERIAL":
-      case "DECIMAL":
-      case "AUTO":
-        return "number";
-      default:
-        return "string";
-    }
-  }
-
-  private getOptions(
-    attr: Attribute
-  ): { name: string; value: any }[] | undefined {
-    let options = undefined;
-    if (attr.dataType === "BOOLEAN") {
-      options = [
-        { name: "True", value: true },
-        { name: "False", value: false },
-      ];
-    }
-    return options;
   }
 
   private loadEntityData(entity: Entity, criteria: Criteria) {
@@ -579,15 +533,15 @@ export class EntityDataComponent implements OnDestroy {
     }
   }
 
-  private removeNull(data: any) {
-    let finalData: any = {};
-    for (let item in data) {
-      if (data[item] !== null && data[item] !== undefined) {
-        finalData[item] = data[item];
-      }
-    }
-    return finalData;
-  }
+  // private removeNull(data: any) {
+  //   let finalData: any = {};
+  //   for (let item in data) {
+  //     if (data[item] !== null && data[item] !== undefined) {
+  //       finalData[item] = data[item];
+  //     }
+  //   }
+  //   return finalData;
+  // }
 
   private createEntityData(entityId: number, data: any) {
     this.entityDataService.createEntityData(entityId, data).subscribe({
