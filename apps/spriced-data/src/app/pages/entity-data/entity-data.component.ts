@@ -123,16 +123,21 @@ export class EntityDataComponent implements OnDestroy {
       this.dynamicFormService.eventSubject$.subscribe((value) => {
         if (value.type == "lookup") {
           //this.entityService.load(value)
-          // const dialogReference = this.dialogService.openDialog(
-          //   LookupPopupComponent,
-          //   {
-          //     data: "",
-          //   }
-          // );
-          // dialogReference.afterClosed().subscribe(() => {});
+          this.loadLookupPopup(value.data);
         }
       })
     );
+  }
+
+  loadLookupPopup(data: any) {
+    //this.entityService.load(value)
+    const dialogReference = this.dialogService.openDialog(
+      LookupPopupComponent,
+      {
+        data: data,
+      }
+    );
+    dialogReference.afterClosed().subscribe(() => {});
   }
 
   ngOnDestroy(): void {
