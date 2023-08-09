@@ -191,10 +191,10 @@
                     <button mat-raised-button color="primary" (click)="onSubmit(myForm.value, 'save')"
                     [ngStyle]="{'opacity': !myForm.valid || saveButton ? '0.5' : '1'}"
                     [disabled]="!myForm.valid || saveButton" class="p-4 mr-2">Save</button>
-                <button [routerLink]="'/spriced-data-definition/rules/rule-management'" mat-raised-button color="primary"
+                <button (click)="backToListpage()" mat-raised-button color="primary"
                     class="p-4">Cancel</button>
             </div>
-            <button *ngIf="previewField" [routerLink]="'/spriced-data-definition/rules/rule-management'" mat-raised-button
+            <button *ngIf="previewField" (click)="backToListpage()" mat-raised-button
                 color="primary" class="p-4">Back</button>
         </div>
 

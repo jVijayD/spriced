@@ -47,6 +47,7 @@ export interface Attribute {
     | "STRING_VAR"
     | "TEXT"
     | "INTEGER"
+    | "DECIMAL"
     | "LINK"
     | "TIME_STAMP"
     | "BOOLEAN"

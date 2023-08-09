@@ -49,6 +49,8 @@ import { Subscription, of } from "rxjs";
 import * as moment from "moment";
 import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
 import { RouterModule } from "@angular/router";
+
+import { AuditDataComponent } from "./audit-data/audit-data.component";
 import { LookupPopupComponent } from "../../components/lookup-Popup/lookup-popup.component";
 
 @Component({
@@ -121,16 +123,21 @@ export class EntityDataComponent implements OnDestroy {
       this.dynamicFormService.eventSubject$.subscribe((value) => {
         if (value.type == "lookup") {
           //this.entityService.load(value)
-          // const dialogReference = this.dialogService.openDialog(
-          //   LookupPopupComponent,
-          //   {
-          //     data: "",
-          //   }
-          // );
-          // dialogReference.afterClosed().subscribe(() => {});
+          this.loadLookupPopup(value.data);
         }
       })
     );
+  }
+
+  loadLookupPopup(data: any) {
+    //this.entityService.load(value)
+    const dialogReference = this.dialogService.openDialog(
+      LookupPopupComponent,
+      {
+        data: data,
+      }
+    );
+    dialogReference.afterClosed().subscribe(() => {});
   }
 
   ngOnDestroy(): void {
@@ -269,6 +276,12 @@ export class EntityDataComponent implements OnDestroy {
     this.setFormData("", []);
   }
 
+  onAudit(){
+    this.dialogService.openDialog(AuditDataComponent, {
+      data: this.currentSelectedEntity,
+    });
+  }
+
   onEntitySelectionChange(entity: Entity | string) {
     this.currentSelectedEntity = undefined;
     this.dataGrid.table._internalColumns = [...[]];
@@ -391,6 +404,7 @@ export class EntityDataComponent implements OnDestroy {
             readOnly: attr.permission === "VIEW" ? true : false,
           };
         case "INTEGER":
+        case "DECIMAL":
           return {
             type: "numeric",
             subType: "text",
@@ -510,6 +524,7 @@ export class EntityDataComponent implements OnDestroy {
         return "boolean";
       case "INTEGER":
       case "SERIAL":
+      case "DECIMAL":
       case "AUTO":
         return "number";
       default:

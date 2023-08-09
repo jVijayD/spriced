@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { embedDashboard } from "@superset-ui/embedded-sdk";
 import { ActivatedRoute } from "@angular/router";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: "sp-home",
@@ -12,12 +13,14 @@ import { ActivatedRoute } from "@angular/router";
 })
 export class HomeComponent implements OnInit {
   //dashboardId:string="";
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute, private httpClient: HttpClient) {}
   ngOnInit(): void {
     let dashboardId = this.route.snapshot.paramMap.get("dashboardId");
     if (!dashboardId) {
       dashboardId = "f4adaabb-7e11-470a-b9e8-0f65964f80ee";
     }
+
+   
     // embedDashboard({
     //   id: "abc123", // given by the Superset embedding UI
     //   supersetDomain: "https://superset.example.com",
@@ -36,4 +39,6 @@ export class HomeComponent implements OnInit {
     //   },
     // });
   }
+
+
 }

@@ -18,14 +18,22 @@ import {
 } from "@swimlane/ngx-datatable";
 import { CustomToolTipComponent } from "../custom-tool-tip/custom-tool-tip.component";
 import { ToolTipRendererDirective } from "../directive/tool-tip-renderer.directive";
-import * as moment from 'moment';
+import * as moment from "moment";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 @Component({
   selector: "sp-data-grid",
   standalone: true,
-  imports: [CommonModule, NgxDatatableModule, CustomToolTipComponent, ToolTipRendererDirective, MatCheckboxModule, FormsModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    NgxDatatableModule,
+    CustomToolTipComponent,
+    ToolTipRendererDirective,
+    MatCheckboxModule,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: "./data-grid.component.html",
   styleUrls: ["./data-grid.component.scss"],
   //changeDetection: ChangeDetectionStrategy.OnPush,
@@ -125,10 +133,10 @@ export class DataGridComponent implements AfterViewInit {
   }
 
   /**
- * HANDLE THIS FUNCTION FOR EXPRESSION TOOLTIP
- * @param element any
- * @returns 
- */
+   * HANDLE THIS FUNCTION FOR EXPRESSION TOOLTIP
+   * @param element any
+   * @returns
+   */
   getExpressionTooltip(element: any): string {
     let tooltipText = `${this.getConditionTooltipText(element.condition, 3)}`;
     tooltipText += this.getActionTooltipText(element.conditionalAction);
@@ -137,44 +145,62 @@ export class DataGridComponent implements AfterViewInit {
   }
 
   /**
- * HANDLE THIS FUNCTION FOR HIERARCHICAL ADD CONDITIONS
- * @param conditions any
- * @param depth number
- * @returns 
- */
+   * HANDLE THIS FUNCTION FOR HIERARCHICAL ADD CONDITIONS
+   * @param conditions any
+   * @param depth number
+   * @returns
+   */
   private getConditionTooltipText(conditions: any[], depth: number): string {
     let tooltipConditionText = `<b>IF</b><br>`;
     tooltipConditionText += this.getIndent(depth);
-    let operand: any = '';
+    let operand: any = "";
 
     if (conditions && conditions.length > 0) {
       conditions.forEach((condition: any, index: number) => {
-        tooltipConditionText += index !== 0 ? this.getIndent(3) : '';
-        const attribute = this.attributes.find((item: any) => item.id === condition.attributeId);
-        const conditionType = condition?.conditionType !== 'NONE' ? condition?.conditionType : '';
-        const subConditionType = condition?.subConditionType !== 'NONE' ? condition?.subConditionType : '';
-        if (condition.operandType === 'ATTRIBUTE') {
-          operand = this.attributes.find((item: any) => item.id === condition.operand);
+        tooltipConditionText += index !== 0 ? this.getIndent(3) : "";
+        const attribute = this.attributes.find(
+          (item: any) => item.id === condition.attributeId
+        );
+        const conditionType =
+          condition?.conditionType !== "NONE" ? condition?.conditionType : "";
+        const subConditionType =
+          condition?.subConditionType !== "NONE"
+            ? condition?.subConditionType
+            : "";
+        if (condition.operandType === "ATTRIBUTE") {
+          operand = this.attributes.find(
+            (item: any) => item.id === condition.operand
+          );
           operand = operand?.name;
-        }
-        else if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute.dataType)) {
-          const dateTimes = condition?.operand.split(','); // Split the input string by commas
+        } else if (
+          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute.dataType)
+        ) {
+          const dateTimes = condition?.operand.split(","); // Split the input string by commas
 
-          const formattedDates = dateTimes.map((dateTime: any) => moment.utc(dateTime).format('YYYY/MM/DD'));
+          const formattedDates = dateTimes.map((dateTime: any) =>
+            moment.utc(dateTime).format("YYYY/MM/DD")
+          );
           const joinedString = formattedDates.join(" & ");
           const finalArray = [`${joinedString}`];
           operand = finalArray;
+        } else {
+          operand =
+            condition?.operand !== ""
+              ? condition?.operand
+              : condition?.operandType.toLowerCase();
         }
-        else {
-          operand = condition?.operand !== '' ? condition?.operand : condition?.operandType.toLowerCase();
-        }
-        tooltipConditionText += `${conditionType} ${attribute.name} ${condition?.operatorType.toLowerCase()} to ${operand}`;
+        tooltipConditionText += `${conditionType} ${
+          attribute.name
+        } ${condition?.operatorType.toLowerCase()} to ${operand}`;
         if (condition.subConditions && condition.subConditions.length > 0) {
           tooltipConditionText += ` ${subConditionType} (`;
-          tooltipConditionText += this.getSubConditionText(condition.subConditions, 1);
-          tooltipConditionText += ')';
+          tooltipConditionText += this.getSubConditionText(
+            condition.subConditions,
+            1
+          );
+          tooltipConditionText += ")";
         }
-        tooltipConditionText += '<br>';
+        tooltipConditionText += "<br>";
       });
     }
     return tooltipConditionText.trim();
@@ -184,39 +210,57 @@ export class DataGridComponent implements AfterViewInit {
    * HANDLE THIS FUNCTION FOR HIERARCHICAL ADD SUBCONDITIONS
    * @param subConditions any
    * @param depth number
-   * @returns 
+   * @returns
    */
   private getSubConditionText(subConditions: any[], depth: number): string {
-    let subConditionText = '';
-    let operand: any = '';
+    let subConditionText = "";
+    let operand: any = "";
 
     if (subConditions && subConditions.length > 0) {
       subConditions.forEach((condition: any, index: number) => {
-        subConditionText += index !== 0 ? this.getIndent(1) : '';
-        const attribute = this.attributes.find((item: any) => item.id === condition.attributeId);
-        const conditionType = condition?.conditionType !== 'NONE' ? condition?.conditionType : '';
-        const subConditionType = condition?.subConditionType !== 'NONE' ? condition?.subConditionType : '';
-        if (condition.operandType === 'ATTRIBUTE') {
-          operand = this.attributes.find((item: any) => item.id === condition.operand);
+        subConditionText += index !== 0 ? this.getIndent(1) : "";
+        const attribute = this.attributes.find(
+          (item: any) => item.id === condition.attributeId
+        );
+        const conditionType =
+          condition?.conditionType !== "NONE" ? condition?.conditionType : "";
+        const subConditionType =
+          condition?.subConditionType !== "NONE"
+            ? condition?.subConditionType
+            : "";
+        if (condition.operandType === "ATTRIBUTE") {
+          operand = this.attributes.find(
+            (item: any) => item.id === condition.operand
+          );
           operand = operand?.name;
-        }
-        else if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute.dataType)) {
-          const dateTimes = condition?.operand.split(','); // Split the input string by commas
+        } else if (
+          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute.dataType)
+        ) {
+          const dateTimes = condition?.operand.split(","); // Split the input string by commas
 
-          const formattedDates = dateTimes.map((dateTime: any) => moment.utc(dateTime).format('YYYY/MM/DD'));
+          const formattedDates = dateTimes.map((dateTime: any) =>
+            moment.utc(dateTime).format("YYYY/MM/DD")
+          );
           const joinedString = formattedDates.join(" & ");
           const finalArray = [`${joinedString}`];
           operand = finalArray;
-        }
-        else {
-          operand = condition?.operand !== '' ? condition?.operand : condition?.operandType.toLowerCase(1);
+        } else {
+          operand =
+            condition?.operand !== ""
+              ? condition?.operand
+              : condition?.operandType.toLowerCase(1);
         }
 
-        subConditionText += `${conditionType} ${attribute.name} ${condition?.operatorType.toLowerCase()} to ${operand}`;
+        subConditionText += `${conditionType} ${
+          attribute.name
+        } ${condition?.operatorType.toLowerCase()} to ${operand}`;
         if (condition.subConditions && condition.subConditions.length > 0) {
           subConditionText += ` ${subConditionType} (`;
-          subConditionText += this.getSubConditionText(condition.subConditions, 2);
-          subConditionText += ')';
+          subConditionText += this.getSubConditionText(
+            condition.subConditions,
+            2
+          );
+          subConditionText += ")";
         }
       });
     }
@@ -226,19 +270,26 @@ export class DataGridComponent implements AfterViewInit {
   /**
    * HANDLE THIS FUNCTION FOR ADD ACTIONS
    * @param action any
-   * @returns 
+   * @returns
    */
   public getActionTooltipText(action: any): string {
-    let tooltipActionText = '';
+    let tooltipActionText = "";
 
     if (action) {
-
       if (action.ifActions && action.ifActions.length > 0) {
-        tooltipActionText += `${this.getActionConditionsText(action.ifActions, 3, 'ELSE')}<br>`;
+        tooltipActionText += `${this.getActionConditionsText(
+          action.ifActions,
+          3,
+          "ELSE"
+        )}<br>`;
       }
 
       if (action.elseActions && action.elseActions.length > 0) {
-        tooltipActionText += this.getActionConditionsText(action.elseActions, 3, 'THEN');
+        tooltipActionText += this.getActionConditionsText(
+          action.elseActions,
+          3,
+          "THEN"
+        );
       }
     }
 
@@ -246,23 +297,31 @@ export class DataGridComponent implements AfterViewInit {
   }
 
   /**
-   * HANDLE THIS FUNCTION FOR ADD IFACTION AND ELSEACTION DATA 
+   * HANDLE THIS FUNCTION FOR ADD IFACTION AND ELSEACTION DATA
    * @param actions any
    * @param depth number
-   * @returns 
+   * @returns
    */
-  public getActionConditionsText(actions: any[], depth: number, type: any): string {
+  public getActionConditionsText(
+    actions: any[],
+    depth: number,
+    type: any
+  ): string {
     let tooltipActionConditionsText = `<b>${type}</b><br>`;
     tooltipActionConditionsText += this.getIndent(depth);
 
     if (actions && actions.length > 0) {
       actions.forEach((action: any, index: number) => {
-        tooltipActionConditionsText += index !== 0 ? this.getIndent(3) : '';
-        const operand = action?.operand !== '' ? action?.operand : 'Blank';
-        const attribute = this.attributes.find((item: any) => item.id === action.attributeId);
-        tooltipActionConditionsText += `${attribute.name} ${action.actionType.toLowerCase()} to ${operand}`;
+        tooltipActionConditionsText += index !== 0 ? this.getIndent(3) : "";
+        const operand = action?.operand !== "" ? action?.operand : "Blank";
+        const attribute = this.attributes.find(
+          (item: any) => item.id === action.attributeId
+        );
+        tooltipActionConditionsText += `${
+          attribute.name
+        } ${action.actionType.toLowerCase()} to ${operand}`;
         const lastAction = actions.length - 1;
-        lastAction != index ? tooltipActionConditionsText += '<br>' : '';
+        lastAction != index ? (tooltipActionConditionsText += "<br>") : "";
       });
     }
 
@@ -272,10 +331,10 @@ export class DataGridComponent implements AfterViewInit {
   /**
    * USE THIS FOR ADD EXTRA SPACES
    * @param depth number
-   * @returns 
+   * @returns
    */
   private getIndent(depth: number): string {
-    return '&nbsp;'.repeat(depth); // You can adjust the number of spaces for indentation
+    return "&nbsp;".repeat(depth); // You can adjust the number of spaces for indentation
   }
 
   ngAfterViewInit(): void {
@@ -302,6 +361,7 @@ export interface Header {
   sortDirection?: "asc" | "desc";
   canAutoResize?: boolean;
   pipe?: unknown;
+  contentProjection?: boolean;
 }
 
 export interface Paginate {

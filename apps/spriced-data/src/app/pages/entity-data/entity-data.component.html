@@ -44,6 +44,13 @@
             [disabled]="selectedItem == null && !isFullScreen"
             (actionClick)="onEdit()"
           ></sp-header-action> -->
+          <sp-header-action
+            icon="history"
+            text="Audit"
+            title="Audit"
+            [disabled]="this.currentSelectedEntity == null"
+            (actionClick)="onAudit()"
+          ></sp-header-action>
 
           <sp-header-action
             icon="delete"
@@ -171,9 +178,8 @@
             *ngFor="let item of this.currentSelectedEntity?.attributes"
           >
             <a
-              *ngIf="item.type === 'LOOKUP'"
-              [href]="'/spriced-data/lookup/' + item.referencedTableId"
-              target="_blank"
+              *ngIf="item.type === 'LOOKUP'" class="cursor-pointer"
+              (click)="loadLookupPopup(item.referencedTableId)"
               >{{ item.referencedTableName || item.referencedTable }}</a
             >
             <!-- <a [href]="'/spriced-data/lookup/' + item.id" target="_blank">{{

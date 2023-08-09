@@ -9,7 +9,7 @@
       <div class="mat_dropdown mt-4">
         <mat-form-field appearance="outline">
           <mat-label>Model:</mat-label>
-          <mat-select (valueChange)="handleEntityByModels($event)" [(value)]="defaultModel" formControlName="model">
+          <mat-select (valueChange)="handleEntityByModels($event, 'modelChange')" [(value)]="defaultModel" formControlName="model">
             <mat-option *ngFor="let model of models" [value]="model.id">
               {{model.displayName}}
             </mat-option>
