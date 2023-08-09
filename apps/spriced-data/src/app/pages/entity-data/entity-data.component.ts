@@ -49,6 +49,8 @@ import { Subscription, of } from "rxjs";
 import * as moment from "moment";
 import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
 import { RouterModule } from "@angular/router";
+
+import { AuditDataComponent } from "./audit-data/audit-data.component";
 import { LookupPopupComponent } from "../../components/lookup-Popup/lookup-popup.component";
 import { EntityGridService } from "./entity-grid.service";
 
@@ -277,6 +279,12 @@ export class EntityDataComponent implements OnDestroy {
     this.setFormData("", []);
   }
 
+  onAudit() {
+    this.dialogService.openDialog(AuditDataComponent, {
+      data: this.currentSelectedEntity,
+    });
+  }
+
   onEntitySelectionChange(entity: Entity | string) {
     this.currentSelectedEntity = undefined;
     this.dataGrid.table._internalColumns = [...[]];
@@ -400,6 +408,7 @@ export class EntityDataComponent implements OnDestroy {
             readOnly: attr.permission === "VIEW" ? true : false,
           };
         case "INTEGER":
+        case "DECIMAL":
           return {
             type: "numeric",
             subType: "text",

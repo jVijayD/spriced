@@ -44,6 +44,13 @@
             [disabled]="selectedItem == null && !isFullScreen"
             (actionClick)="onEdit()"
           ></sp-header-action> -->
+          <sp-header-action
+            icon="history"
+            text="Audit"
+            title="Audit"
+            [disabled]="this.currentSelectedEntity == null"
+            (actionClick)="onAudit()"
+          ></sp-header-action>
 
           <sp-header-action
             icon="delete"

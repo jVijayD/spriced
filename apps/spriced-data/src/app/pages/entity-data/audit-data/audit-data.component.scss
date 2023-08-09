@@ -1,0 +1,14 @@
+.container {
+  height: 90vh;
+  width: 80vw;
+}
+
+.close {
+  right: 2px;
+  position: absolute;
+  top: 2px;
+}
+
+.mat-mdc-icon-button ::ng-deep .mat-mdc-button-persistent-ripple {
+  display: none;
+}
