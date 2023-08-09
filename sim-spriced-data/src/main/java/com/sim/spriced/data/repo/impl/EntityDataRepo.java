@@ -24,8 +24,6 @@ import com.sim.spriced.framework.models.AttributeConstants.ConstraintType;
 import com.sim.spriced.framework.models.AttributeConstants.DataType;
 import com.sim.spriced.framework.repo.BaseRepo;
 
-import net.bytebuddy.implementation.bind.annotation.Super;
-
 import org.springframework.data.domain.Page;
 
 @Repository
