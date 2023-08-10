@@ -144,6 +144,7 @@ export class ModelAccessComponent {
 
   onSelectRole(event: MatSelectChange) {
     if (!this.selectedModel) return;
+    this.selectedModel.permission = this.selectedModel.initialPermission as PERMISSIONS;
     if (this.hasModified()) {
       this.showSaveChangesDialogue(event);
     } else {
@@ -208,6 +209,7 @@ export class ModelAccessComponent {
         if (entitiesList[0]) {
           this.updateParent(entitiesList[0]);
         }
+        model.initialPermission =  model.permission;
       });
   }
 
