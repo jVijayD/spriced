@@ -6,6 +6,7 @@ import javax.persistence.Column;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sim.spriced.framework.constants.ModelConstants;
 
 import lombok.Getter;
@@ -21,8 +22,10 @@ public abstract class BaseEntity {
 	
 	@Override
 	public String toString() {
-		ObjectMapper objectMapper = new ObjectMapper();
 		String value = super.toString();
+		ObjectMapper objectMapper = new ObjectMapper();
+	    objectMapper.registerModule(new JavaTimeModule());
+		
 		try {
 			value =  objectMapper.writeValueAsString(this);
 		} catch (JsonProcessingException e) {
