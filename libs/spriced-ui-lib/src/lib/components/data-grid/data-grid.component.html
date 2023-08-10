@@ -63,25 +63,32 @@
         </div> 
       </ng-template> -->
 
-      <ng-template let-row="row" ngx-datatable-cell-template>{{
-        isArray
-          ? this.renderData(row[i], header)
-          : this.renderData(row[header.column], header)
-      }}
+      <ng-template let-row="row" ngx-datatable-cell-template
+        >{{
+          isArray
+            ? this.renderData(row[i], header)
+            : this.renderData(row[header.column], header)
+        }}
 
-      <ng-container *ngIf="header.name === 'Expression'">
-        <img spToolTipRenderer  [contentTemplate]="template" class="w-7 h-7 cursor-pointer" src="assets/images/file.png" />
-        <ng-template #template>
-          <div [innerHTML]="getExpressionTooltip(row)"> </div>
-        </ng-template>
-      </ng-container>
+        <ng-container *ngIf="header.name === 'Expression'">
+          <img
+            spToolTipRenderer
+            [contentTemplate]="template"
+            class="w-7 h-7 cursor-pointer"
+            src="assets/images/file.png"
+          />
+          <ng-template #template>
+            <div [innerHTML]="getExpressionTooltip(row)"></div>
+          </ng-template>
+        </ng-container>
 
-      <ng-container *ngIf="header.name === 'Excluded'">
-        <mat-checkbox (change)="updateExcluded.emit({value: $event, item: row})" [(ngModel)]="row.isExcluded"></mat-checkbox>
-      </ng-container>
-    </ng-template>
-     
-      </ngx-datatable-column
-    >
+        <ng-container *ngIf="header.name === 'Excluded'">
+          <mat-checkbox
+            (change)="updateExcluded.emit({ value: $event, item: row })"
+            [(ngModel)]="row.isExcluded"
+          ></mat-checkbox>
+        </ng-container>
+      </ng-template>
+    </ngx-datatable-column>
   </ngx-datatable>
 </ng-container>

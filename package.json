@@ -34,6 +34,7 @@
     "@storybook/core-common": "^7.0.24",
     "@storybook/core-server": "7.0.27",
     "@tailwindcss/container-queries": "^0.1.1",
+    "@types/file-saver": "^2.0.5",
     "@types/jest": "^29.4.0",
     "@types/node": "^16.11.7",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
@@ -78,6 +79,8 @@
     "@ngrx/store": "~16.0.0",
     "@superset-ui/embedded-sdk": "^0.1.0-alpha.9",
     "@swimlane/ngx-datatable": "^20.1.0",
+    "exceljs": "^4.3.0",
+    "file-saver": "^2.0.5",
     "json-rules-engine": "^6.3.1",
     "keycloak-angular": "^14.0.0",
     "keycloak-js": "^21.1.2",
@@ -89,6 +92,7 @@
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "tw-elements": "^1.0.0-beta2",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.13.0"
   }
 }
