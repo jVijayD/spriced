@@ -17,11 +17,18 @@ export class EntityGridService {
       });
   }
 
-  public getGridHeaders(entity: Entity): Header[] {
+  public getGridHeaders(
+    entity: Entity,
+    showSystemAttributes: boolean
+  ): Header[] {
     return entity.attributes
       .filter((item) => {
+        console.log(`${item.systemAttribute}_${item.name}`);
         return (
-          item.permission !== "DENY" && item.constraintType !== "PRIMARY_KEY"
+          item.permission !== "DENY" &&
+          item.constraintType !== "PRIMARY_KEY" &&
+          (item.systemAttribute == false ||
+            (item.systemAttribute && showSystemAttributes))
         );
       })
       .map((attr: Attribute) => {
@@ -33,6 +40,7 @@ export class EntityGridService {
           isFilterable: true,
           dataType: this.getColumnDataType(attr),
           options: this.getOptions(attr),
+          width: 200,
           pipe: (data: any) => {
             return this.getTransform(data, attr);
           },

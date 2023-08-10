@@ -21,6 +21,7 @@ import { ToolTipRendererDirective } from "../directive/tool-tip-renderer.directi
 import * as moment from "moment";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { ExportFileService } from "./export-file";
 
 @Component({
   selector: "sp-data-grid",
@@ -34,6 +35,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
     FormsModule,
     ReactiveFormsModule,
   ],
+  providers: [ExportFileService],
   templateUrl: "./data-grid.component.html",
   styleUrls: ["./data-grid.component.scss"],
   //changeDetection: ChangeDetectionStrategy.OnPush,
@@ -112,6 +114,8 @@ export class DataGridComponent implements AfterViewInit {
   @Output()
   sort: EventEmitter<any> = new EventEmitter<any>();
 
+  constructor(private exportService: ExportFileService) {}
+
   onPaginate(e: Paginate) {
     this.paginate.emit(e);
   }
@@ -130,6 +134,34 @@ export class DataGridComponent implements AfterViewInit {
 
   public clearSelection() {
     this.table.selected = [];
+  }
+
+  public export(format: "csv" | "xlsx" | "pdf") {
+    switch (format) {
+      case "csv":
+        this.exportService.exportToCsv(this.rows, this.headers, this.title);
+        break;
+      case "xlsx":
+        this.exportService.exportToExcel(this.rows, this.headers, this.title);
+        break;
+      case "pdf":
+        this.exportService.exportToPdf(this.table._rows);
+        break;
+    }
+  }
+
+  public exportServerData(format: "csv" | "xlsx" | "pdf", data: any) {
+    switch (format) {
+      case "csv":
+        this.exportService.exportServerDataToCsv();
+        break;
+      case "xlsx":
+        this.exportService.exportServerDataToExcel();
+        break;
+      case "pdf":
+        this.exportService.exportServerDataToPdf();
+        break;
+    }
   }
 
   /**

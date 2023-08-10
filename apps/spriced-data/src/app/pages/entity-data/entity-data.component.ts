@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnDestroy,
+  OnInit,
   ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -45,7 +46,7 @@ import {
 } from "@spriced-frontend/spriced-common-lib";
 import { Validators } from "@angular/forms";
 import { EntityDataService } from "../../services/entity-data.service";
-import { Subscription, of } from "rxjs";
+import { Subscription } from "rxjs";
 import * as moment from "moment";
 import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
 import { RouterModule } from "@angular/router";
@@ -53,6 +54,7 @@ import { RouterModule } from "@angular/router";
 import { AuditDataComponent } from "./audit-data/audit-data.component";
 import { LookupPopupComponent } from "../../components/lookup-Popup/lookup-popup.component";
 import { EntityGridService } from "./entity-grid.service";
+import { EntityFormService } from "./entity-form.service";
 
 @Component({
   selector: "sp-entity-data",
@@ -76,6 +78,7 @@ import { EntityGridService } from "./entity-grid.service";
   viewProviders: [MatExpansionPanel],
   providers: [
     EntityGridService,
+    EntityFormService,
     EntityDataService,
     SettingsService,
     {
@@ -87,7 +90,8 @@ import { EntityGridService } from "./entity-grid.service";
   templateUrl: "./entity-data.component.html",
   styleUrls: ["./entity-data.component.scss"],
 })
-export class EntityDataComponent implements OnDestroy {
+export class EntityDataComponent implements OnDestroy, OnInit {
+  hide = false;
   limit: number = 8;
   subscriptions: Subscription[] = [];
   isFullScreen = false;
@@ -102,6 +106,7 @@ export class EntityDataComponent implements OnDestroy {
   //Dynamic Form
   appForm!: AppForm;
   currentCriteria!: Criteria;
+  globalSettings!: any;
 
   query?: any;
 
@@ -112,20 +117,21 @@ export class EntityDataComponent implements OnDestroy {
     private dialogService: DialogService,
     private dynamicFormService: DynamicFormService,
     private entityDataService: EntityDataService,
-    private entityService: EntityService,
     private dialog: MatDialog,
     private settings: SettingsService,
-    private entityGridService: EntityGridService
+    private entityGridService: EntityGridService,
+    private entityFormService: EntityFormService
   ) {
+    this.globalSettings = this.settings.getGlobalSettings();
     this.setFormData("", []);
     this.subscribeToFormEvents();
   }
+  ngOnInit(): void {}
 
   subscribeToFormEvents() {
     this.subscriptions.push(
       this.dynamicFormService.eventSubject$.subscribe((value) => {
         if (value.type == "lookup") {
-          //this.entityService.load(value)
           this.loadLookupPopup(value.data);
         }
       })
@@ -193,6 +199,11 @@ export class EntityDataComponent implements OnDestroy {
 
   onFullScreen() {
     this.isFullScreen = !this.isFullScreen;
+    this.hide = true;
+    // Temp Fix for rendering the grid
+    setTimeout(() => {
+      this.hide = false;
+    }, 100);
   }
 
   onFilter() {
@@ -223,7 +234,6 @@ export class EntityDataComponent implements OnDestroy {
 
     dialogResult.afterClosed().subscribe((val) => {
       if (val) {
-        console.log(val.data);
         const fileDetails = {
           source: "web",
           entityName: this.currentSelectedEntity?.name,
@@ -247,9 +257,7 @@ export class EntityDataComponent implements OnDestroy {
   onStatus() {
     const dialogResult = this.dialog.open(StatusComponent, {});
 
-    dialogResult.afterClosed().subscribe((val) => {
-      console.log(val);
-    });
+    dialogResult.afterClosed().subscribe((val) => {});
   }
 
   onSettings() {
@@ -308,6 +316,10 @@ export class EntityDataComponent implements OnDestroy {
     }
   }
 
+  onExport() {
+    this.dataGrid.export("xlsx");
+  }
+
   // private getFilterColumns(): QueryColumns[] {
   //   return this.headers
   //     .filter((item) => item.isFilterable)
@@ -344,155 +356,20 @@ export class EntityDataComponent implements OnDestroy {
   private createDynamicUIMapping(entity: Entity | undefined) {
     let formFields: FormFieldControls = [];
     if (entity) {
-      console.log(entity.attributes);
-      entity.attributes
-        .filter((item) => {
-          return (
-            (item.permission !== "DENY" && item.editable === true) ||
-            item.constraintType == "PRIMARY_KEY"
-          );
-        })
-        .forEach((attr: Attribute) => {
-          formFields.push(this.getType(attr));
-        });
+      formFields = this.entityFormService.getFormFieldControls(entity);
     }
     this.setFormData("", formFields);
   }
 
-  private getType(attr: Attribute): GenericControl {
-    if (attr.type === "LOOKUP") {
-      return {
-        type: "lookup-select",
-        name: attr.name,
-        label: attr.displayName || attr.name,
-        readOnly: attr.permission === "VIEW" ? true : false,
-        displayProp: "name",
-        valueProp: "code",
-        eventValue: attr.referencedTableId,
-        eventType: "lookup",
-        placeholder: {
-          value: "",
-          displayText: "--Select--",
-        },
-        data: {
-          api: {
-            onLoad: true,
-            isFixed: true,
-            method: "loadLookupData",
-            params: [attr.referencedTableId],
-            provider: FORM_DATA_SERVICE,
-          },
-        },
-        validations: [
-          {
-            name: "required",
-            message: `${
-              attr.displayName || attr.name
-            } is required.`.toLowerCase(),
-            validator: Validators.required,
-          },
-        ],
-      };
-    } else {
-      switch (attr.dataType) {
-        case "STRING_VAR":
-        case "TEXT":
-        case "LINK":
-          return {
-            type: "input",
-            subType: "text",
-            name: attr.name,
-            placeholder: attr.displayName || attr.name,
-            label: attr.displayName || attr.name,
-            validations: this.getValidations(attr),
-            readOnly: attr.permission === "VIEW" ? true : false,
-          };
-        case "INTEGER":
-        case "DECIMAL":
-          return {
-            type: "numeric",
-            subType: "text",
-            name: attr.name,
-            placeholder: attr.displayName || attr.name,
-            label: attr.displayName || attr.name,
-            decimalCount: attr.numberOfDecimalValues,
-            validations: this.getValidations(attr),
-            readOnly: attr.permission === "VIEW" ? true : false,
-          };
-
-        case "TIME_STAMP":
-          return {
-            name: attr.name,
-            type: "date",
-            format: attr.formatter ?? "MM/DD/YYYY",
-            label: "MM/DD/YYYY",
-            placeholder: attr.displayName || attr.name,
-            startDate: moment(new Date()).format("YYYY-MM-DD"),
-            startView: "month",
-            hiddenDefault: null,
-            validations: this.getValidations(attr),
-            readOnly: attr.permission === "VIEW" ? true : false,
-          };
-        case "BOOLEAN":
-          return {
-            type: "checkbox",
-            name: attr.name,
-            label: attr.displayName || attr.name,
-            validations: this.getValidations(attr),
-            readOnly: attr.permission === "VIEW" ? true : false,
-            value: false,
-          };
-        case "AUTO":
-        default:
-          return {
-            type: "input",
-            subType: "hidden",
-            name: attr.name,
-            label: "",
-          };
-      }
-    }
-  }
-
-  private getValidations(attr: Attribute): IValidator[] {
-    let validations: IValidator[] = [];
-
-    if (!attr.nullable) {
-      validations.push({
-        name: `required`,
-        message: `${attr.displayName || attr.name} is required.`.toLowerCase(),
-        validator: Validators.required,
-      });
-    }
-
-    if (
-      attr.size &&
-      (attr.dataType === "LINK" ||
-        attr.dataType === "STRING_VAR" ||
-        attr.dataType === "TEXT")
-    ) {
-      validations.push({
-        name: `maxlength`,
-        message: `Maximum length is ${attr.size}.`.toLowerCase(),
-        validator: Validators.maxLength,
-      });
-    }
-
-    if (attr.dataType === "LINK") {
-      validations.push({
-        name: `${attr.name}_pattern`,
-        message: `Invalid pattern for link`.toLowerCase(),
-        validator: Validators.pattern(
-          "(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?"
-        ),
-      });
-    }
-    return validations;
-  }
-
   private createDynamicGrid(entity: Entity | undefined) {
     if (entity) {
-      this.headers = this.entityGridService.getGridHeaders(entity);
+      const showSystemAttributes = this.globalSettings
+        ? this.globalSettings.showSystem
+        : false;
+      this.headers = this.entityGridService.getGridHeaders(
+        entity,
+        showSystemAttributes
+      );
       this.loadEntityData(entity, {
         pager: { pageNumber: 0, pageSize: this.limit },
       });
