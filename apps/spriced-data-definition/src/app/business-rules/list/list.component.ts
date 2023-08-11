@@ -132,7 +132,6 @@ export class ListComponent implements OnInit, OnDestroy {
   selectionType: SelectionType = SelectionType.single;
   sortType = SortType.single;
   isFullScreen = false;
-  totalElements = 10000;
   rows: any[] = [];
   selectedItem: any = null;
 
