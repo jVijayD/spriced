@@ -229,11 +229,6 @@ export class EntityComponent {
   onFilter() {
     const columns: QueryColumns[] = [
       {
-        name: "id",
-        displayName: "Id",
-        dataType: "number",
-      },
-      {
         name: "name",
         displayName: "Name",
         dataType: "string",
