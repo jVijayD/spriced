@@ -158,9 +158,10 @@ export class ListComponent implements OnInit, OnDestroy {
    * Initialization tasks or data fetching can be done here
    */
   async ngOnInit() {
-    const user = localStorage.getItem('user')
-      ? JSON.parse(localStorage.getItem('user')!)
-      : null;
+    
+    // const user = localStorage.getItem('user')
+    //   ? JSON.parse(localStorage.getItem('user')!)
+    //   : null;
     this.loading = true;
     this.formbuild();
 
@@ -172,10 +173,10 @@ export class ListComponent implements OnInit, OnDestroy {
       }
     });
 
-    const param = {
-      userLoggedIn: user.userLoggedIn,
-      appName: 'Data-Defination',
-    };
+    // const param = {
+    //   userLoggedIn: user.userLoggedIn,
+    //   appName: 'Data-Defination',
+    // };
     // this.appStoreService.appStore.next(param);
 
     // HANDLE THIS FOR GET RULES AND MODELS APIS
@@ -414,6 +415,7 @@ export class ListComponent implements OnInit, OnDestroy {
    * @param id number
    */
   public handleAttributeByEntity(id: number) {
+    
     this.entityId = id;
     this.loading = true;
     const entity = this.entities.find((item: any) => item.id == id);
@@ -444,6 +446,7 @@ export class ListComponent implements OnInit, OnDestroy {
    * @param event any
    */
   public onPageChange(event: any) {
+    
     const index = event.pageIndex * event.pageSize;
     this.currentDataSource = this.filterData.slice(
       index,
@@ -598,6 +601,7 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   private getData(pageSize: number, pageNumber: number) {
+    
     const startIndex = pageNumber * pageSize;
     const endIndex = startIndex + pageSize;
     return this.dataSource.filter((item: any, index: number) => {
@@ -606,7 +610,10 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   onPaginate(e: Paginate) {
-    this.rows = this.getData(e.limit, e.offset);
+    
+    const data = this.getData(e.limit, e.offset);
+    this.filterData = data.filter((res: any) => res.entityId === this.entityId);
+    this.rows = this.filterData;
   }
 
   /**
