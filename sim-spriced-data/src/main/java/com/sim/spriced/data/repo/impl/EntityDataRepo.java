@@ -23,6 +23,7 @@ import com.sim.spriced.framework.models.Attribute;
 import com.sim.spriced.framework.models.AttributeConstants.ConstraintType;
 import com.sim.spriced.framework.models.AttributeConstants.DataType;
 import com.sim.spriced.framework.repo.BaseRepo;
+
 import org.springframework.data.domain.Page;
 
 @Repository
@@ -209,7 +210,7 @@ public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 			boolean isChange = jsonObj.has(CHANGE) && jsonObj.getBoolean(CHANGE);
 
 			jsonObj.put(ModelConstants.UPDATED_BY, this.contextManager.getRequestContext().getUser());
-			jsonObj.put(ModelConstants.UPDATED_DATE, this.timeStamp);
+			jsonObj.put(ModelConstants.UPDATED_DATE,this.getCurrentDateTime());
 			if(!jsonObj.has(ModelConstants.IS_VALID)) {
 				jsonObj.put(ModelConstants.IS_VALID, true);
 			}
