@@ -41,6 +41,7 @@ export class TreeNode {
     let retObj = Object.create(ob);
     Object.assign(ob, this);
     Object.setPrototypeOf(retObj, ob);
+    retObj.initialPermission = retObj.permission;
     return retObj;
   }
 
@@ -69,12 +70,12 @@ export class TreeNode {
   }
 
   public hasModified(): boolean {
-    let a = Object.assign({}, this);
-    delete a.initialData;
-    let b = this.initialData;
-    delete b?.initialData;
+    // let a = Object.assign({}, this);
+    // delete a.initialData;
+    // let b = this.initialData;
+    // delete b?.initialData;
     // return JSON.stringify(a) !== JSON.stringify(b);
-    return this.initialPermission !== this.permission;
+    return (this.initialPermission != undefined  && this.initialPermission !== this.permission) ? true : false;
   }
 }
 export class AttributeDTO extends TreeNode {
@@ -139,6 +140,7 @@ export class EntityDTO extends TreeNode {
         : attribPermissions.size == 1
         ? [...attribPermissions][0]
         : PERMISSIONS.DENY;
+    this.initialPermission = this.permission;
   }
 }
 

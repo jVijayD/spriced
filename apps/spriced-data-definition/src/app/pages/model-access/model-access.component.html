@@ -48,9 +48,9 @@
           <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-min">
             <mat-select (selectionChange)="updateValue($event, rowIndex,row)" [value]="row.permission">
               <ng-container *ngFor="let item of getPermissions() ">
-                <mat-option value="{{item}}" *ngIf="(row.level < 2 && item === 'PARTIAL')"
+                <mat-option value="{{item}}" style="display: none;" *ngIf="(item === 'PARTIAL')"
                   disabled>{{item}}</mat-option>
-                <mat-option value="{{item}}" *ngIf="!(row.level < 2 && item === 'PARTIAL')">{{item}}</mat-option>
+                <mat-option value="{{item}}" *ngIf="item !== 'PARTIAL'">{{item}}</mat-option>
               </ng-container>
             </mat-select>
           </mat-form-field>

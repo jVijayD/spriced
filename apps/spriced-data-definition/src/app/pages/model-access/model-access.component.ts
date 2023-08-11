@@ -32,7 +32,10 @@ import {
   RoleGroupPermissionMapping,
   RoleEntityPermissionMapping,
 } from "./models/ModelAccesTypes.class";
-import { ErrorTypes, AppDataService } from "@spriced-frontend/shared/spriced-shared-lib";
+import {
+  ErrorTypes,
+  AppDataService,
+} from "@spriced-frontend/shared/spriced-shared-lib";
 import { MatSnackBar } from "@angular/material/snack-bar";
 const POPULATE_ATTRIBUTES = false;
 @Component({
@@ -47,11 +50,12 @@ const POPULATE_ATTRIBUTES = false;
     NgxDatatableModule,
     MatIconModule,
     MatFormFieldModule,
-    MatSelectModule,SnackbarModule,
+    MatSelectModule,
+    SnackbarModule,
     CommonModule,
     DialogueModule,
   ],
-  providers: [HttpClient, DialogService,SnackBarService],
+  providers: [HttpClient, DialogService, SnackBarService],
   templateUrl: "./model-access.component.html",
   styleUrls: ["./model-access.component.scss"],
 })
@@ -84,7 +88,7 @@ export class ModelAccessComponent {
         return mdl;
       });
     });
-    this.statusPannelService.init()
+    this.statusPannelService.init();
   }
 
   getPermissions() {
@@ -129,13 +133,16 @@ export class ModelAccessComponent {
         .subscribe((data: any) => {
           console.log(data);
           this.snackbarService.success("Succesfully Saved");
+          if (this.selectedModel) {
+            this.loadTree(this.selectedModel);
+          }
           // this.onClearClick();
         });
     }
   }
 
   onClearClick() {
-    this.statusPannelService.init()
+    this.statusPannelService.init();
     this.selectedRole = null;
     this.selectedModel = null;
     this.treeStore.data = [];
@@ -191,7 +198,9 @@ export class ModelAccessComponent {
   }
 
   private populateEntities(model: ModelDTO) {
-    if (!this.selectedRole) return;
+    if (!this.selectedRole || !this.selectedModel) {
+      return;
+    }
     this.myService
       .getEntities(model.id, this.selectedRole.name)
       .subscribe((data: EntityDTO[]) => {
@@ -208,6 +217,7 @@ export class ModelAccessComponent {
         if (entitiesList[0]) {
           this.updateParent(entitiesList[0]);
         }
+        model.initialPermission = model.permission;
       });
   }
 
