@@ -33,6 +33,8 @@ public class SpecificationFactory {
 //			case DOES_NOT_CONTAIN_SUBSET:
 			case DOES_NOT_END_WITH:
 				return new DoesNotEndWithPattern(colName, operand, condition.getConditionType(), condition.getOperandType(), condition.getSubConditionType());
+			case ENDS_WITH:
+				return new EndsWithPattern(colName, operand, condition.getConditionType(), condition.getOperandType(), condition.getSubConditionType());
 			case DOES_NOT_START_WITH:
 				return new DoesNotStartWithPattern(colName, operand, condition.getConditionType(), condition.getOperandType(), condition.getSubConditionType());
 			case EQUALS:
