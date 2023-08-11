@@ -20,6 +20,7 @@ import {
 } from '@spriced-frontend/shared/spriced-shared-lib';
 import { BusinessruleService } from '@spriced-frontend/spriced-common-lib';
 import {
+  DataGridComponent,
   DialogboxComponent,
   Header,
   Paginate,
@@ -39,6 +40,7 @@ import { MessageService } from './../services/message.service';
 })
 export class ListComponent implements OnInit, OnDestroy {
   @ViewChild('pagination') paginator!: MatPaginator;
+  @ViewChild('dataGrid') dataGrid!: DataGridComponent;
   public subscription: any;
   public notifier$: Subject<boolean> = new Subject();
   public listForm!: FormGroup;
@@ -273,7 +275,7 @@ export class ListComponent implements OnInit, OnDestroy {
       id: event.item.id,
       isExcluded: excluded,
     };
-    let message: any = !event.item.isExcluded ? 'The rule is not going to be <strong>Excluded!</strong> Are you sure?' : 'Are you sure you want to <b>Exclud</b> the <b>rule?</b>'
+    let message: any = !event.item.isExcluded ? 'The rule is not going to be <strong>Exclude!</strong> Are you sure?' : 'Are you sure you want to <b>Exclude</b> the <b>rule?</b>'
     // OPEN DIALOG BOX
     const dialogRef = this.dialog.open(DialogboxComponent, {
       minWidth: '330px',
@@ -613,6 +615,7 @@ export class ListComponent implements OnInit, OnDestroy {
   onRefresh() {
     this.getRulesAndModelsData();
     this.selectedItem = null;
+    this.dataGrid.clearSelection();
   }
 
   /**

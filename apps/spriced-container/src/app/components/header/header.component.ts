@@ -39,7 +39,7 @@ export class HeaderComponent {
     {
       e.preventDefault();
       e.stopPropagation();
-      this.keycloakService.logout();
+      this.keycloakService.logout(window.location.origin);
     }
   }
   capitalizeFirstLetter(str: string): string {
