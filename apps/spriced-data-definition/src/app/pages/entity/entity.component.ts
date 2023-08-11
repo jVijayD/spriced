@@ -138,6 +138,7 @@ export class EntityComponent {
         //enableAuditTrial: false,
         attributes: result.attributes,
         enableAuditTrial: result.enableAuditTrial,
+        width:result.width
       };
       this.entityService.add(entity).subscribe({
         next: (results: any) => {
@@ -178,8 +179,9 @@ export class EntityComponent {
         id: result.id,
         groupId: this.groupId,
         isDisabled: false,
-        enableAuditTrial: false,
+        enableAuditTrial: result.enableAuditTrial,
         attributes: result.attributes,
+        width:result.width
       };
       this.entityService.edit(entity).subscribe({
         next: (results: any) => {
