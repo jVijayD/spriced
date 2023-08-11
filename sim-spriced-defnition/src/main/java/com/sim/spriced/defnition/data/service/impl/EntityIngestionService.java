@@ -72,7 +72,9 @@ public class EntityIngestionService implements IEntityIngestionService, IObserve
         List<String> dateFields = new ArrayList<>();
         List<String> primaryKey = new ArrayList<>();
         defnition.getAttributes().forEach(attribute -> {
-            attributeNames.add(attribute.getName());
+            if (!attribute.getDataType().equals(AttributeConstants.DataType.AUTO)) {
+                attributeNames.add(attribute.getName());
+            }
             if (attribute.getDataType().equals(AttributeConstants.DataType.TIME_STAMP)) {
                 dateFields.add(attribute.getName());
             }
@@ -146,9 +148,12 @@ public class EntityIngestionService implements IEntityIngestionService, IObserve
     private Map<String, String> getDataTypes(List<Attribute> attributes) {
         Map<String, String> attributeList = new HashMap<>();
         attributes.forEach(attribute ->{
-            switch (attribute.getDataType()) {
-                case INTEGER, AUTO -> attributeList.put(attribute.getName(), "int64");
-                case DECIMAL, DOUBLE, FLOAT -> attributeList.put(attribute.getName(), "float64");
+            if (!attribute.getDataType().equals(AttributeConstants.DataType.AUTO)) {
+                switch (attribute.getDataType()) {
+                    case INTEGER -> attributeList.put(attribute.getName(), "int64");
+                    case DECIMAL, DOUBLE, FLOAT -> attributeList.put(attribute.getName(), "float64");
+                    case STRING_VAR, STRING, TEXT, CHARACTER -> attributeList.put(attribute.getName(), "string");
+                }
             }
         });
         return attributeList;
@@ -236,8 +241,8 @@ public class EntityIngestionService implements IEntityIngestionService, IObserve
         sinkConfig.put("auto.evolve", true);
         sinkConfig.put("insert.mode","upsert");
         sinkConfig.put("pk.mode", "record_value");
-        sinkConfig.put("pk.fields",String.join(",", primaryKey));
-        sinkConfig.put("table.name.format", table);
+        sinkConfig.put("pk.fields","name");
+        sinkConfig.put("table.name.format", table.toLowerCase());
         sinkConfig.put("fields.whitelist",String.join(",", attributeNames));
         if (transformFields.size()!=0){
             sinkConfig.put("transforms",String.join(",",transformFields));

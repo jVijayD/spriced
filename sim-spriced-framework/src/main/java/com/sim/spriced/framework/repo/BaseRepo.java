@@ -73,12 +73,6 @@ public abstract class BaseRepo {
 	@Autowired
 	protected SPricedContextManager contextManager;
 
-	protected final Timestamp timeStamp;
-
-	protected BaseRepo() {
-		this.timeStamp = new Timestamp(System.currentTimeMillis());
-	}
-
 	protected Field<Object> column(String name) {
 		return DSL.field(DSL.name(name));
 	}
@@ -142,7 +136,7 @@ public abstract class BaseRepo {
                 tableDetails.setUpdatedByAndUpdatedDate(
                         this.contextManager
                                 .getRequestContext()
-                                .getUser(), this.timeStamp);
+                                .getUser());
                 return this.createQueryForGeneratedID(tableDetails).execute();
             } catch (DataIntegrityViolationException ex) {
                 ex.printStackTrace();
@@ -153,13 +147,13 @@ public abstract class BaseRepo {
 	// Dynamic SQL based on Annotations
 	protected <T> T create(T entity) {
 		TableData tableDetails = this.getTableData(entity);
-		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser(), this.timeStamp);
+		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser());
 		return this.create(entity, tableDetails);
 	}
 
 	protected <T> T create(T entity, Function<Record, T> converter) {
  		TableData tableDetails = this.getTableData(entity);
-		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser(), this.timeStamp);
+		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser());
 		return this.create(tableDetails, converter);
 	}
 
@@ -232,19 +226,19 @@ public abstract class BaseRepo {
 
 	public <T> T update(T entity) {
 		TableData tableDetails = this.getTableData(entity);
-		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser(), this.timeStamp);
+		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser());
 		return this.update(entity, tableDetails, null);
 	}
 
 	public <T> T update(T entity, Function<Record, T> converter) {
 		TableData tableDetails = this.getTableData(entity);
-		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser(), this.timeStamp);
+		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser());
 		return this.update(tableDetails, converter, null);
 	}
 
 	public <T> T update(T entity, Condition condition) {
 		TableData tableDetails = this.getTableData(entity);
-		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser(), this.timeStamp);
+		tableDetails.setUpdatedByAndUpdatedDate(this.contextManager.getRequestContext().getUser());
 		return this.update(entity, tableDetails, condition);
 	}
 
@@ -659,12 +653,12 @@ public abstract class BaseRepo {
 		private IDType idType = IDType.NONE;
 		private String businessString;
 
-		public void setUpdatedByAndUpdatedDate(String user, Timestamp timeStamp) {
+		public void setUpdatedByAndUpdatedDate(String user) {
 			this.recordDataList.forEach(item -> {
 				if (item.field.getName().equals(ModelConstants.UPDATED_BY)) {
 					item.setValue(user);
 				} else if (item.field.getName().equals(ModelConstants.UPDATED_DATE)) {
-					item.setValue(timeStamp);
+					item.setValue(getCurrentDateTime());
 				}
 			});
 		}
@@ -695,9 +689,10 @@ public abstract class BaseRepo {
 				return item.isPrimaryKey();
 			}).collect(Collectors.toMap(item -> item.getField(), item -> item.getValue()));
 		}
-
 	}
-
+	public OffsetDateTime getCurrentDateTime() {
+		return OffsetDateTime.now();
+	}
 	@Getter
 	@Setter
 	@NoArgsConstructor

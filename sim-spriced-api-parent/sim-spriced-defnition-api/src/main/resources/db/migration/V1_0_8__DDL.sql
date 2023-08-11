@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS audit_table RENAME COLUMN "user" TO updated_by
