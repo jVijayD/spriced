@@ -49,7 +49,13 @@ import * as moment from "moment";
 })
 export class ModelComponent implements OnInit, OnDestroy {
   headers: Header[] = [
-    { column: "id", name: "Id", canAutoResize: true, isSortable: true },
+    {
+      column: "id",
+      name: "Id",
+      canAutoResize: true,
+      isSortable: true,
+      hidden: true,
+    },
     { column: "name", name: "Name", canAutoResize: true, isSortable: true },
     {
       column: "displayName",

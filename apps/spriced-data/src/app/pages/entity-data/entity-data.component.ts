@@ -363,6 +363,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   private createDynamicGrid(entity: Entity | undefined) {
     if (entity) {
+      debugger;
       const showSystemAttributes = this.globalSettings
         ? this.globalSettings.showSystem
         : false;

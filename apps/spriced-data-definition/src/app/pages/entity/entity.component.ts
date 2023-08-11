@@ -48,6 +48,7 @@ export class EntityComponent {
       name: "Id",
       canAutoResize: true,
       isSortable: true,
+      hidden: true,
       width: 100,
     },
     {

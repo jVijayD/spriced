@@ -23,7 +23,6 @@ export class EntityGridService {
   ): Header[] {
     return entity.attributes
       .filter((item) => {
-        console.log(`${item.systemAttribute}_${item.name}`);
         return (
           item.permission !== "DENY" &&
           item.constraintType !== "PRIMARY_KEY" &&

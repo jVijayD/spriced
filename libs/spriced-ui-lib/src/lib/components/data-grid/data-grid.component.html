@@ -36,59 +36,60 @@
         >{{ rowIndex + 1 }}</ng-template
       ></ngx-datatable-column
     >
-
-    <ngx-datatable-column
-      *ngFor="let header of headers; let i = index"
-      [name]="header.name"
-      [flexGrow]="header.flexGrow || 1"
-      [frozenLeft]="header.pinned === 'left' ? true : false"
-      [frozenRight]="header.pinned === 'right' ? true : false"
-      [width]="header.width || 0"
-      [resizeable]="true"
-      [sortable]="true"
-      [draggable]="true"
-      [canAutoResize]="header.canAutoResize || true"
-    >
-      <!-- <ng-template
-        let-column="column"
-        ngx-datatable-header-template
-        let-sort="sortFn"
+    <ng-container *ngFor="let header of headers; let i = index">
+      <ngx-datatable-column
+        [name]="header.name"
+        [flexGrow]="header.flexGrow || 1"
+        [frozenLeft]="header.pinned === 'left' ? true : false"
+        [frozenRight]="header.pinned === 'right' ? true : false"
+        [width]="header.width || 0"
+        [resizeable]="true"
+        [sortable]="true"
+        [draggable]="true"
+        [canAutoResize]="header.canAutoResize || true"
+        *ngIf="!header.hidden"
       >
-        <div class="reportfilterbackground">
-          <input
-            type="text"
-            class="form-control reportfilter"
-            aria-describedby="basic-addon1"
-          />
-        </div> 
-      </ng-template> -->
+        <!-- <ng-template
+    let-column="column"
+    ngx-datatable-header-template
+    let-sort="sortFn"
+  >
+    <div class="reportfilterbackground">
+      <input
+        type="text"
+        class="form-control reportfilter"
+        aria-describedby="basic-addon1"
+      />
+    </div> 
+  </ng-template> -->
 
-      <ng-template let-row="row" ngx-datatable-cell-template
-        >{{
-          isArray
-            ? this.renderData(row[i], header)
-            : this.renderData(row[header.column], header)
-        }}
+        <ng-template let-row="row" ngx-datatable-cell-template
+          >{{
+            isArray
+              ? this.renderData(row[i], header)
+              : this.renderData(row[header.column], header)
+          }}
 
-        <ng-container *ngIf="header.name === 'Expression'">
-          <img
-            spToolTipRenderer
-            [contentTemplate]="template"
-            class="w-7 h-7 cursor-pointer"
-            src="assets/images/file.png"
-          />
-          <ng-template #template>
-            <div [innerHTML]="getExpressionTooltip(row)"></div>
-          </ng-template>
-        </ng-container>
+          <ng-container *ngIf="header.name === 'Expression'">
+            <img
+              spToolTipRenderer
+              [contentTemplate]="template"
+              class="w-7 h-7 cursor-pointer"
+              src="assets/images/file.png"
+            />
+            <ng-template #template>
+              <div [innerHTML]="getExpressionTooltip(row)"></div>
+            </ng-template>
+          </ng-container>
 
-        <ng-container *ngIf="header.name === 'Excluded'">
-          <mat-checkbox
-            (change)="updateExcluded.emit({ value: $event, item: row })"
-            [(ngModel)]="row.isExcluded"
-          ></mat-checkbox>
-        </ng-container>
-      </ng-template>
-    </ngx-datatable-column>
+          <ng-container *ngIf="header.name === 'Excluded'">
+            <mat-checkbox
+              (change)="updateExcluded.emit({ value: $event, item: row })"
+              [(ngModel)]="row.isExcluded"
+            ></mat-checkbox>
+          </ng-container>
+        </ng-template>
+      </ngx-datatable-column>
+    </ng-container>
   </ngx-datatable>
 </ng-container>

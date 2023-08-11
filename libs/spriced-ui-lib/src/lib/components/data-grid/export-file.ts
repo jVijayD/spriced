@@ -42,7 +42,7 @@ export class ExportFileService {
     worksheet.getRow(0).font = { bold: true };
     return workbook;
   }
-  public exportToPdf(data: any) {}
+  public exportToPdf(data: any[], headers: Header[], title: string) {}
 
   public exportServerDataToCsv() {}
 

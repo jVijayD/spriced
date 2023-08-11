@@ -145,7 +145,7 @@ export class DataGridComponent implements AfterViewInit {
         this.exportService.exportToExcel(this.rows, this.headers, this.title);
         break;
       case "pdf":
-        this.exportService.exportToPdf(this.table._rows);
+        this.exportService.exportToPdf(this.rows, this.headers, this.title);
         break;
     }
   }
