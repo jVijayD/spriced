@@ -41,7 +41,7 @@
 <sp-data-grid
       class="w-full mt-8 block"
       #dataGrid
-      title="Rule List"
+      [title]="'Rule List'"
       [enableRowIndex]="false"
       [isArray]="false"
       [headers]="headers"
@@ -56,7 +56,7 @@
       [isExternalPaging]="true"
       [isExternalSorting]="false"
       [sortType]="sortType"
-      [count]="totalElements"
+      [count]="rows.length"
       [attributes]="attributes"
       (paginate)="onPaginate($event)"
       (itemSelected)="onItemSelected($event)"
