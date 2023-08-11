@@ -54,7 +54,7 @@ export class SettingsPopUpComponent {
     console.log(result);
     if (result) {
       this.displayFormat = result.displayFormat || "code";
-      this.showSystem = result.showSystem || true;
+      this.showSystem = result.showSystem;
     }
     let all = this.settings.getCurrentSettings(this.data.name);
     if (all) {

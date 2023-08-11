@@ -204,6 +204,10 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   content: "\e4f5";
 }
 
+.ngx-datatable .datatable-body-row > div {
+  transform: translate3d(0, 0px, 0px) !important;
+}
+
 .ngx-datatable .datatable-footer-inner {
   overflow-y: hidden;
 }
