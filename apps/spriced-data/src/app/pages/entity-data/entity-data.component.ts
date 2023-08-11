@@ -227,7 +227,17 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     });
   }
 
-  onEdit() {}
+  onEdit() {
+    if (this.selectedItem) {
+      this.dialogService.openDialog(AddModelComponent, {
+        data: {
+          appForm: this.appForm,
+          entity: this.currentSelectedEntity,
+          selectedItem: this.selectedItem,
+        },
+      });
+    }
+  }
 
   onUpload() {
     const dialogResult = this.dialog.open(UploadDialogeComponent, {});
@@ -276,7 +286,11 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   showAddPopup() {
     this.dialogService.openDialog(AddModelComponent, {
-      data: this.appForm,
+      data: {
+        appForm: this.appForm,
+        entity: this.currentSelectedEntity,
+        selectedItem: this.selectedItem,
+      },
     });
   }
   onModelSelectionChange() {
@@ -363,7 +377,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   private createDynamicGrid(entity: Entity | undefined) {
     if (entity) {
-      debugger;
       const showSystemAttributes = this.globalSettings
         ? this.globalSettings.showSystem
         : false;

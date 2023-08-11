@@ -8,7 +8,10 @@
 >
 
 <div class="container">
-  <sp-dynamic-form [appFormData]="this.currentFormData"></sp-dynamic-form>
+  <sp-dynamic-form
+    [appFormData]="this.currentFormData"
+    [singleCol]="singleCol"
+  ></sp-dynamic-form>
   <div class="submit-container">
     <div class="divider"></div>
     <div class="button-container">

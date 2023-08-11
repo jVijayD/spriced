@@ -74,4 +74,5 @@ export interface Attribute {
   editable: boolean;
   showInForm: boolean;
   systemAttribute: boolean;
+  width: number;
 }
