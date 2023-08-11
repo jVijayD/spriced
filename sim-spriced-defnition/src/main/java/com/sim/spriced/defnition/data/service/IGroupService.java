@@ -22,6 +22,7 @@ public interface IGroupService {
 	List<Group> fetchAll(String name,boolean loadDisabled);
 	Page<Group> fetchAll(String name,boolean loadDisabled,Pageable pageable);
 	List<Group> fetchAll(boolean loadDisabled);
+    List<Group> fetchAllByRole(boolean loadDisabled,String role);
 	Page<Group> fetchAll(boolean loadDisabled,Pageable pageable);
 	
 }

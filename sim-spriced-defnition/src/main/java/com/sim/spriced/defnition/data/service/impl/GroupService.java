@@ -15,105 +15,113 @@ import com.sim.spriced.framework.models.Group;
 @Service
 public class GroupService extends BaseService implements IGroupService {
 
-	@Autowired
-	private GroupRepo grpRepo;
+    @Autowired
+    private GroupRepo grpRepo;
 
-	@Override
-	public Group create(Group group) {
-		group.validate();
-		return this.grpRepo.add(group);
-	}
+    @Autowired
+    RolePermissionService rolePermissionService;
 
-	@Override
-	public int deleteByName(String name) {
-		Group grp = new Group();
-		grp.setName(name);
-		return this.grpRepo.delete(grp);
-	}
+    @Override
+    public Group create(Group group) {
+        group.validate();
+        return this.grpRepo.add(group);
+    }
 
-	@Override
-	public Group fetchByName(String name, boolean loadDisabled) {
-		Group grp = new Group();
-		grp.setName(name);
-		grp.setIsDisabled(loadDisabled);
-		return this.grpRepo.fetchOne(grp);
-	}
+    @Override
+    public int deleteByName(String name) {
+        Group grp = new Group();
+        grp.setName(name);
+        return this.grpRepo.delete(grp);
+    }
 
-	@Override
-	public List<Group> fetchAll(String name, boolean loadDisabled) {
-		return this.grpRepo.fetchAll(loadDisabled);
-	}
+    @Override
+    public Group fetchByName(String name, boolean loadDisabled) {
+        Group grp = new Group();
+        grp.setName(name);
+        grp.setIsDisabled(loadDisabled);
+        return this.grpRepo.fetchOne(grp);
+    }
 
-	@Override
-	public Page<Group> fetchAll(String name, boolean loadDisabled, Pageable pageable) {
-		Group grp = new Group();
-		grp.setName(name);
-		grp.setIsDisabled(loadDisabled);
-		return this.grpRepo.fetchAll(grp, Group.class, pageable);
-	}
+    @Override
+    public List<Group> fetchAll(String name, boolean loadDisabled) {
+        return this.grpRepo.fetchAll(loadDisabled);
+    }
 
-	@Override
-	public int delete(int id) {
-		Group grp = new Group();
-		grp.setId(id);
-		return this.grpRepo.remove(grp);
-	}
+    @Override
+    public Page<Group> fetchAll(String name, boolean loadDisabled, Pageable pageable) {
+        Group grp = new Group();
+        grp.setName(name);
+        grp.setIsDisabled(loadDisabled);
+        return this.grpRepo.fetchAll(grp, Group.class, pageable);
+    }
 
-	@Override
-	public Group changeName(int id, String newName) {
-		Group grp = new Group();
-		grp.setId(id);
-		grp.setDisplayName(newName);
-		return this.grpRepo.update(grp);
-	}
+    @Override
+    public int delete(int id) {
+        Group grp = new Group();
+        grp.setId(id);
+        return this.grpRepo.remove(grp);
+    }
 
-	@Override
-	public Group disableGroup(int id) {
-		Group grp = new Group();
-		grp.setId(id);
-		grp.setIsDisabled(true);
-		return this.grpRepo.update(grp);
-	}
+    @Override
+    public Group changeName(int id, String newName) {
+        Group grp = new Group();
+        grp.setId(id);
+        grp.setDisplayName(newName);
+        return this.grpRepo.update(grp);
+    }
 
-	@Override
-	public Group enableGroup(int id) {
-		Group grp = new Group();
-		grp.setId(id);
-		grp.setIsDisabled(false);
-		return this.grpRepo.update(grp);
-	}
+    @Override
+    public Group disableGroup(int id) {
+        Group grp = new Group();
+        grp.setId(id);
+        grp.setIsDisabled(true);
+        return this.grpRepo.update(grp);
+    }
 
-	@Override
-	public Group fetch(int id, boolean loadDisabled) {
-		Group grp = new Group();
-		grp.setId(id);
-		grp.setIsDisabled(loadDisabled);
-		return this.grpRepo.fetchOne(grp);
-	}
+    @Override
+    public Group enableGroup(int id) {
+        Group grp = new Group();
+        grp.setId(id);
+        grp.setIsDisabled(false);
+        return this.grpRepo.update(grp);
+    }
 
-	@Override
-	public List<Group> fetchAll(boolean loadDisabled) {
-		return this.grpRepo.fetchAll(loadDisabled);
-	}
+    @Override
+    public Group fetch(int id, boolean loadDisabled) {
+        Group grp = new Group();
+        grp.setId(id);
+        grp.setIsDisabled(loadDisabled);
+        return this.grpRepo.fetchOne(grp);
+    }
 
-	@Override
-	public Page<Group> fetchAll(boolean loadDisabled, Pageable pageable) {
-		return this.grpRepo.fetchAll(loadDisabled, pageable);
-	}
+    @Override
+    public List<Group> fetchAll(boolean loadDisabled) {
+        return this.grpRepo.fetchAll(loadDisabled);
+    }
 
-	@Override
-	public Group changeName(String currentName, String newName) {
-		return this.grpRepo.changeName(currentName, newName);
-	}
+    @Override
+    public List<Group> fetchAllByRole(boolean loadDisabled, String role) {
+        return rolePermissionService.applyGroupPermission(this.grpRepo.fetchAll(loadDisabled), role != null ? role.split(",") : null);
+    }
 
-	@Override
-	public Group disableGroupByName(String name) {
-		return this.grpRepo.disableGroupByName(name);
-	}
+    @Override
+    public Page<Group> fetchAll(boolean loadDisabled, Pageable pageable) {
+        return this.grpRepo.fetchAll(loadDisabled, pageable);
+    }
 
-	@Override
-	public Group enableGroupByName(String name) {
-		return this.grpRepo.enableGroupByName(name);
-	}
+    @Override
+    public Group changeName(String currentName, String newName) {
+        return this.grpRepo.changeName(currentName, newName);
+    }
+
+    @Override
+    public Group disableGroupByName(String name) {
+        return this.grpRepo.disableGroupByName(name);
+    }
+
+    @Override
+    public Group enableGroupByName(String name) {
+        return this.grpRepo.enableGroupByName(name);
+    }
 
 }

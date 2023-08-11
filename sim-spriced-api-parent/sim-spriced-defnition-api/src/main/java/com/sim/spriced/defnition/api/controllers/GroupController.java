@@ -24,6 +24,7 @@ import com.sim.spriced.defnition.data.service.IGroupService;
 import com.sim.spriced.framework.models.Group;
 
 import io.micrometer.core.annotation.Timed;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Controller for managing the model
@@ -44,8 +45,8 @@ public class GroupController {
 
 	@Timed(value = "group.getAll.time", description = "Time taken to return groups")
 	@GetMapping()
-	public ResponseEntity<List<GroupDto>> get() {
-		return new ResponseEntity<>(mapper.toGroupDtoList(this.grpService.fetchAll(false)), HttpStatus.OK);
+	public ResponseEntity<List<GroupDto>> get(@RequestParam(required = false) String roleName) {
+		return new ResponseEntity<>(mapper.toGroupDtoList(this.grpService.fetchAllByRole(false,roleName)), HttpStatus.OK);
 	}
 
 	@Timed(value = "group.get.time", description = "Time taken to return group")
