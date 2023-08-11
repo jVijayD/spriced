@@ -25,9 +25,9 @@ export class ModelAccessService {
   api_url = process.env["NX_API_DEFINITION_URL"] as string;
   getRoles() {
     return [
-      { name: "admin" },
-      { name: "john" },
-      { name: "outside" }
+      { name: "Admin" },
+      { name: "John" },
+      { name: "External" }
     ];
   }
   public getEntities(id: any,role: string): Observable<EntityDTO[]> {

@@ -44,7 +44,7 @@ export class AuthGuard extends KeycloakAuthGuard {
     let roles =
       this.keycloak.getKeycloakInstance().tokenParsed?.realm_access?.roles;
     console.log(roles);
-    return roles != undefined && !roles.includes("outside") && roles.length > 1 ;
+    return roles != undefined && !roles.includes("External") && roles.length > 1 ;
   }
   async intercept(
     req: HttpRequest<any>,
