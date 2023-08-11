@@ -15,7 +15,11 @@
         <ng-container *ngIf="ctrl.visible == null || ctrl.visible">
           <!--Remove if marked hidden-->
           <sp-input
-            class="item"
+            [ngClass]="{
+              item: singleCol && ctrl.subType !== 'hidden',
+              'item-popup': !singleCol && ctrl.subType !== 'hidden',
+              'item-0': ctrl.subType === 'hidden'
+            }"
             [control]="ctrl"
             [formControlName]="ctrl.name"
             *ngIf="ctrl.type === 'input'"
@@ -23,7 +27,7 @@
           </sp-input>
 
           <sp-numeric
-            class="item"
+            [ngClass]="{ item: singleCol, 'item-popup': !singleCol }"
             [control]="ctrl"
             [formControlName]="ctrl.name"
             *ngIf="ctrl.type === 'numeric'"
@@ -31,7 +35,7 @@
           </sp-numeric>
 
           <sp-select
-            class="item"
+            [ngClass]="{ item: singleCol, 'item-popup': !singleCol }"
             [control]="ctrl"
             [formControlName]="ctrl.name"
             *ngIf="ctrl.type === 'select'"
@@ -39,7 +43,7 @@
           </sp-select>
 
           <sp-lookup-select
-            class="item"
+            [ngClass]="{ item: singleCol, 'item-popup': !singleCol }"
             [control]="ctrl"
             [formControlName]="ctrl.name"
             *ngIf="ctrl.type === 'lookup-select'"
@@ -47,7 +51,7 @@
           </sp-lookup-select>
 
           <sp-select-extended
-            class="item"
+            [ngClass]="{ item: singleCol, 'item-popup': !singleCol }"
             [control]="ctrl"
             [formControlName]="ctrl.name"
             *ngIf="ctrl.type === 'select-extended'"
@@ -55,7 +59,7 @@
           </sp-select-extended>
 
           <sp-date-picker
-            class="item"
+            [ngClass]="{ item: singleCol, 'item-popup': !singleCol }"
             [control]="ctrl"
             [formControlName]="ctrl.name"
             *ngIf="ctrl.type === 'date'"
@@ -63,7 +67,7 @@
           </sp-date-picker>
 
           <sp-checkbox-group
-            class="item"
+            [ngClass]="{ item: singleCol, 'item-popup': !singleCol }"
             [control]="ctrl"
             [formControlName]="ctrl.name"
             *ngIf="ctrl.type === 'checkbox-group'"
@@ -71,7 +75,7 @@
           </sp-checkbox-group>
 
           <sp-radio-group
-            class="item"
+            [ngClass]="{ item: singleCol, 'item-popup': !singleCol }"
             [control]="ctrl"
             [formControlName]="ctrl.name"
             *ngIf="ctrl.type === 'radio-group'"
@@ -79,7 +83,7 @@
           </sp-radio-group>
 
           <sp-checkbox
-            class="item"
+            [ngClass]="{ item: singleCol, 'item-popup': !singleCol }"
             [control]="ctrl"
             [formControlName]="ctrl.name"
             *ngIf="ctrl.type === 'checkbox'"

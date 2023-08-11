@@ -31,6 +31,7 @@ export class EntityGridService {
         );
       })
       .map((attr: Attribute) => {
+        console.log(attr.width);
         return {
           column: attr.name,
           name: attr.displayName || attr.name,
@@ -39,7 +40,7 @@ export class EntityGridService {
           isFilterable: true,
           dataType: this.getColumnDataType(attr),
           options: this.getOptions(attr),
-          width: 200,
+          width: attr.width || 0,
           pipe: (data: any) => {
             return this.getTransform(data, attr);
           },

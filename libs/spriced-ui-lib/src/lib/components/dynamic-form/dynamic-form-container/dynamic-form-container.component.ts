@@ -45,6 +45,9 @@ export class DynamicFormContainerComponent {
   }
 
   @Input()
+  singleCol: boolean = true;
+
+  @Input()
   save = "Save";
 
   @Input()

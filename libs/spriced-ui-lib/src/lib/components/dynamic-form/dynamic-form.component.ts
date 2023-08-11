@@ -44,6 +44,9 @@ export class DynamicFormComponent {
     this.dynamicService.setRoles(roles || []);
   }
 
+  @Input()
+  singleCol: boolean = true;
+
   constructor(
     private fb: FormBuilder,
     private dynamicService: DynamicFormService

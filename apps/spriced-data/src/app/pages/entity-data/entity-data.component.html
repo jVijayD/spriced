@@ -30,27 +30,27 @@
         *ngIf="!hide"
       >
         <ng-container>
-          <sp-header-action
+          <!-- <sp-header-action
             [disabled]="!this.isFullScreen"
             icon="add_box"
             text="Add"
             title="Add Entity"
             (actionClick)="showAddPopup()"
-          ></sp-header-action>
+          ></sp-header-action> -->
 
-          <sp-header-action
+          <!-- <sp-header-action
             icon="edit"
             text="Edit"
             title="Edit Entity"
-            [disabled]="selectedItem !== null && !isFullScreen"
+            [disabled]="selectedItem && !isFullScreen"
             (actionClick)="onEdit()"
-          ></sp-header-action>
+          ></sp-header-action> -->
 
           <sp-header-action
             icon="delete"
             text="Delete"
             title="Delete Entity"
-            [disabled]="selectedItem == null"
+            [disabled]="selectedItem == null || selectedItem == undefined"
             (actionClick)="onDelete()"
           ></sp-header-action>
 
@@ -66,7 +66,10 @@
             icon="history"
             text="Audit"
             title="Audit"
-            [disabled]="this.currentSelectedEntity == null"
+            [disabled]="
+              this.currentSelectedEntity == null ||
+              this.currentSelectedEntity === undefined
+            "
             (actionClick)="onAudit()"
           ></sp-header-action>
 
@@ -125,7 +128,10 @@
             icon="settings"
             text="Settings"
             title="Settings"
-            [disabled]="this.currentSelectedEntity == null"
+            [disabled]="
+              this.currentSelectedEntity == null ||
+              this.currentSelectedEntity == undefined
+            "
             (actionClick)="onSettings()"
           ></sp-header-action>
         </ng-container>
@@ -144,8 +150,8 @@
           (click)="onFullScreen()"
         >
           <mat-icon>fullscreen</mat-icon>
-        </button>
-        <button mat-icon-button>
+        </button> -->
+        <!-- <button mat-icon-button>
           <mat-icon>keyboard_arrow_left</mat-icon>
         </button>
         <button mat-icon-button>

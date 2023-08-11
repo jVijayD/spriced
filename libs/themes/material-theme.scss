@@ -189,6 +189,9 @@ $my-app-dark-theme: mat.define-dark-theme(
   padding: 0px !important;
 }
 
+.mat-expansion-panel-spacing {
+  margin: 0px !important;
+}
 // mat-form-field.error {
 //   border-style: solid;
 //   border-width: 1px;
