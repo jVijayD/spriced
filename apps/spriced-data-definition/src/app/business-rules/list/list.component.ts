@@ -275,7 +275,7 @@ export class ListComponent implements OnInit, OnDestroy {
       id: event.item.id,
       isExcluded: excluded,
     };
-    let message: any = !event.item.isExcluded ? 'The rule is not going to be <strong>Exclude!</strong> Are you sure?' : 'Are you sure you want to <b>Exclude</b> the <b>rule?</b>'
+    let message: any = !event.item.isExcluded ? 'The rule is not going to be <strong>Excluded!</strong> Are you sure?' : 'Are you sure you want to <b>Exclude</b> the <b>rule?</b>'
     // OPEN DIALOG BOX
     const dialogRef = this.dialog.open(DialogboxComponent, {
       minWidth: '330px',
