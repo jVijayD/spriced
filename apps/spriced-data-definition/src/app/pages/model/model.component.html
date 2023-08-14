@@ -10,7 +10,7 @@
     [rows]="rows"
     [rowHeight]="40"
     [headerHeight]="40"
-    [footerHeight]="40"
+    [footerHeight]="0"
     [columnMode]="columnMode"
     [virtualScroll]="true"
     [selectionType]="selectionType"
@@ -55,19 +55,19 @@
         (actionClick)="onClear()"
       ></sp-header-action>
 
-      <sp-header-action
+      <!-- <sp-header-action
         icon="sync"
         text="Refresh"
         title="Refresh"
         (actionClick)="onRefresh()"
-      ></sp-header-action>
+      ></sp-header-action> -->
 
-      <sp-header-action
+      <!-- <sp-header-action
         icon="filter_list"
         text="Filter"
         title="Filter"
         (actionClick)="onFilter()"
-      ></sp-header-action>
+      ></sp-header-action> -->
     </ng-container>
   </sp-data-grid>
 </sp-one-col>

@@ -1,15 +1,17 @@
 <div class="container">
   <!-- <label>Add/Edit Entity</label> -->
-  <button
+  <!-- <button
     mat-icon-button
     color="transparent"
     class="close"
     (click)="onClose(null)"
   >
     <mat-icon>close</mat-icon>
-  </button>
+  </button> -->
   <sp-dynamic-form-container
     [appForm]="appForm"
+    (resetEvent)="onReset($event)"
     (submitEvent)="onSubmit($event)"
+    reset="Cancel"
   ></sp-dynamic-form-container>
 </div>

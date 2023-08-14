@@ -7,11 +7,23 @@
     >
     <mat-form-field appearance="outline" class="mb-4">
       <mat-label> Records per page</mat-label>
-      <input [(ngModel)]="noOfRecords" matInput type="number" />
+      <input
+        [(ngModel)]="noOfRecords"
+        matInput
+        type="number"
+        min="1"
+        oninput="validity.valid||(value='');"
+      />
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Freeze columns</mat-label>
-      <input [(ngModel)]="freeze" matInput type="number" />
+      <input
+        [(ngModel)]="freeze"
+        matInput
+        type="number"
+        min="1"
+        oninput="validity.valid||(value='');"
+      />
     </mat-form-field>
   </mat-card>
   <mat-card style="padding: 20px; margin-top: 4px" class="drop-shadow">

@@ -59,7 +59,7 @@ export class ModelListComponent {
       isSortable: true,
       isTreeColumn: false,
       pipe: (data: any) => {
-        return moment(data).format("MM-DD-YYYY");
+        return moment(data).format("MM/DD/YYYY HH:mm:ss a");
       },
     },
   ];
