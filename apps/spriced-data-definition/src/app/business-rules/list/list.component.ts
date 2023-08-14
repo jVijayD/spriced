@@ -106,16 +106,16 @@ export class ListComponent implements OnInit, OnDestroy {
       isSortable: true,
       width: 150
     },
-    {
-      column: "notification",
-      name: "Notification",
-      canAutoResize: true,
-      isSortable: true,
-      width: 120
-    },
+    // {
+    //   column: "notification",
+    //   name: "Notification",
+    //   canAutoResize: true,
+    //   isSortable: true,
+    //   width: 120
+    // },
     {
       column: "updatedDate",
-      name: "Modified_Date",
+      name: "Updated Date",
       canAutoResize: true,
       isSortable: true,
       width: 150
