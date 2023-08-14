@@ -193,6 +193,10 @@ export class DataGridComponent implements AfterViewInit {
         const attribute = this.attributes.find(
           (item: any) => item.id === condition.attributeId
         );
+        if (attribute && attribute.name.includes('_') || condition?.operatorType.includes('_')) {
+          attribute.name = attribute?.name.replace(/_/g, ' ');
+          condition.operatorType = condition?.operatorType.replace(/_/g, ' ');
+        }
         const conditionType =
           condition?.conditionType !== "NONE" ? condition?.conditionType : "";
         const subConditionType =
@@ -221,9 +225,10 @@ export class DataGridComponent implements AfterViewInit {
               ? condition?.operand
               : condition?.operandType.toLowerCase();
         }
-        tooltipConditionText += `${conditionType} ${
-          attribute.name
-        } ${condition?.operatorType.toLowerCase()} to ${operand}`;
+        tooltipConditionText += `${conditionType} ${attribute.name
+          }  
+        ${condition?.operatorType.toLowerCase()} to ${operand}`;
+
         if (condition.subConditions && condition.subConditions.length > 0) {
           tooltipConditionText += ` ${subConditionType} (`;
           tooltipConditionText += this.getSubConditionText(
@@ -254,6 +259,10 @@ export class DataGridComponent implements AfterViewInit {
         const attribute = this.attributes.find(
           (item: any) => item.id === condition.attributeId
         );
+        if (attribute && attribute.name.includes('_') || condition.operatorType.includes('_')) {
+          attribute.name = attribute?.name.replace(/_/g, ' ');
+          condition.operatorType = condition?.operatorType.replace(/_/g, ' ');
+        }
         const conditionType =
           condition?.conditionType !== "NONE" ? condition?.conditionType : "";
         const subConditionType =
@@ -283,9 +292,8 @@ export class DataGridComponent implements AfterViewInit {
               : condition?.operandType.toLowerCase(1);
         }
 
-        subConditionText += `${conditionType} ${
-          attribute.name
-        } ${condition?.operatorType.toLowerCase()} to ${operand}`;
+        subConditionText += `${conditionType} ${attribute.name
+          } ${condition?.operatorType.toLowerCase()} to ${operand}`;
         if (condition.subConditions && condition.subConditions.length > 0) {
           subConditionText += ` ${subConditionType} (`;
           subConditionText += this.getSubConditionText(
@@ -312,7 +320,7 @@ export class DataGridComponent implements AfterViewInit {
         tooltipActionText += `${this.getActionConditionsText(
           action.ifActions,
           3,
-          "ELSE"
+          "THEN"
         )}<br>`;
       }
 
@@ -320,7 +328,7 @@ export class DataGridComponent implements AfterViewInit {
         tooltipActionText += this.getActionConditionsText(
           action.elseActions,
           3,
-          "THEN"
+          "ELSE"
         );
       }
     }
@@ -341,17 +349,33 @@ export class DataGridComponent implements AfterViewInit {
   ): string {
     let tooltipActionConditionsText = `<b>${type}</b><br>`;
     tooltipActionConditionsText += this.getIndent(depth);
+    let operand: any = '';
 
     if (actions && actions.length > 0) {
       actions.forEach((action: any, index: number) => {
         tooltipActionConditionsText += index !== 0 ? this.getIndent(3) : "";
-        const operand = action?.operand !== "" ? action?.operand : "Blank";
+        operand = action?.operand !== "" ? action?.operand : "Blank";
         const attribute = this.attributes.find(
           (item: any) => item.id === action.attributeId
         );
-        tooltipActionConditionsText += `${
-          attribute.name
-        } ${action.actionType.toLowerCase()} to ${operand}`;
+        if (attribute && attribute.name.includes('_') || action.actionType.includes('_')) {
+          attribute.name = attribute?.name.replace(/_/g, ' ');
+          action.actionType = action?.actionType.replace(/_/g, ' ')
+        }
+        if (
+          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute.dataType)
+        ) {
+          const dateTimes = action?.operand.split(","); // Split the input string by commas
+
+          const formattedDates = dateTimes.map((dateTime: any) =>
+            moment.utc(dateTime).format("YYYY/MM/DD")
+          );
+          const joinedString = formattedDates.join(" & ");
+          const finalArray = [`${joinedString}`];
+          operand = finalArray;
+        }
+        tooltipActionConditionsText += `${attribute.name
+          } ${action.actionType.toLowerCase()} to ${operand}`;
         const lastAction = actions.length - 1;
         lastAction != index ? (tooltipActionConditionsText += "<br>") : "";
       });

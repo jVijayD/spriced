@@ -288,9 +288,9 @@ export class ListComponent implements OnInit, OnDestroy {
           confirmation: 'Yes',
           cancel: 'No',
         },
-      },
+      }, 
     });
-
+   
     // Handling for dialog confirmation
     dialogRef
       .afterClosed()
@@ -298,8 +298,8 @@ export class ListComponent implements OnInit, OnDestroy {
       .subscribe((result: any) => {
         if (result === true) {
           this.loading = true;
-          (event.item.status === 'Active' ? this.businessRuleService
-            .updateBusinessRule(event.item.id, param) : this.businessRuleService.updateSaveBusinessRule(event.item.id, param))
+          this.businessRuleService
+            .updateBusinessRule(event.item.id, param)
             .pipe(takeUntil(this.notifier$))
             .subscribe(
               (res: any) => {
@@ -313,6 +313,7 @@ export class ListComponent implements OnInit, OnDestroy {
                 //     duration: 3000,
                 //   }
                 // );
+                this.onRefresh();
               },
               (error: any) => {
                 this.loading = false;

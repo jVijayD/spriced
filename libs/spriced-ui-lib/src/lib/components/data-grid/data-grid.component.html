@@ -85,6 +85,7 @@
           <ng-container *ngIf="header.name === 'Excluded'">
             <mat-checkbox
               (change)="updateExcluded.emit({ value: $event, item: row })"
+              [disabled]="!['Active', 'Excluded'].includes(row.status)"
               [(ngModel)]="row.isExcluded"
             ></mat-checkbox>
           </ng-container>
