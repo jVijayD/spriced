@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Attribute, Entity } from "@spriced-frontend/spriced-common-lib";
 import { Header, QueryColumns } from "@spriced-frontend/spriced-ui-lib";
+import * as moment from "moment";
 
 @Injectable()
 export class EntityGridService {
@@ -86,20 +87,28 @@ export class EntityGridService {
     if (attr.dataType === "BOOLEAN") {
       return data ? "True" : "False";
     } else if (attr.dataType === "INTEGER") {
-      // if (attr.formatter) {
-      //   if(data<0){
-      //     return `{(${data})}`
-      //   }
-      // }
+      if (attr.formatter) {
+        if (data < 0 && attr.formatter == "-####") {
+          return `{-${data}}`;
+        } else if (data < 0 && attr.formatter == "(####)") {
+          return `{(${data})}`;
+        } else {
+          return data;
+        }
+      }
       return data;
     } else if (attr.dataType === "DECIMAL") {
-      // if (attr.formatter) {
-      // }
-      return data;
+      if (data < 0 && attr.formatter == "-####") {
+        return `{-${data}}`;
+      } else if (data < 0 && attr.formatter == "(####)") {
+        return `{(${data})}`;
+      } else {
+        return data;
+      }
     } else if (attr.dataType === "TIME_STAMP") {
-      // if (attr.formatter) {
-      // }
-      return data;
+      if (attr.formatter) {
+        return moment(data).format(attr.formatter);
+      }
     }
     return data;
   }
