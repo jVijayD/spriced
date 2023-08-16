@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
+import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,14 +59,21 @@ public class RolePermissionService implements IRolePermissionService {
 
     @Override
     public List<Group> applyGroupPermission(List<Group> groups, String[] roles) {
+        List<Integer> groupIds = groups.stream()
+                .map(g -> g.getId())
+                .collect(Collectors.toList());    
+        
+        List<RoleGroupPermissionMapping> groupPermissions = rolePermissionRepo.fetchRoleGroupMapping(
+                groupIds.toArray(Integer[]::new),
+                roles);
+
         groups = groups.stream().filter(g -> {
-            List<RoleGroupPermissionMapping> groupPermissions ;
-            groupPermissions = rolePermissionRepo.fetchRoleGroupMapping(g.getId(), roles);
             return isAdmin(roles) || getLeastPermission(groupPermissions.stream()
+                    .filter(gp -> gp.getGroupId().intValue() == g.getId())
                     .map(gp -> gp.getPermission())
                     .distinct()
                     .collect(Collectors.toList())) != ModelConstants.ModelPermission.DENY;
-        }).collect(Collectors.toList()); 
+        }).collect(Collectors.toList());
         return groups;
     }
 
@@ -78,7 +86,10 @@ public class RolePermissionService implements IRolePermissionService {
     public EntityDefnition applyPermission(EntityDefnition entityDefnition, String[] roles) {
         //Fetching group permissions from DB
         List<RoleGroupPermissionMapping> groupPermissions;
-        groupPermissions = rolePermissionRepo.fetchRoleGroupMapping(entityDefnition.getGroupId(), roles);
+        groupPermissions = rolePermissionRepo.fetchRoleGroupMapping(
+                Arrays.asList(entityDefnition.getGroupId())
+                        .toArray(Integer[]::new),
+                roles);
         // if there are multiple permissions are assigned for the same group 
         // choose least permission that has least priority
         ModelConstants.ModelPermission permission = getLeastPermission(groupPermissions.stream()
@@ -119,7 +130,7 @@ public class RolePermissionService implements IRolePermissionService {
     public List<EntityDefnition> applyPermission(List<EntityDefnition> entityDefnitions, String[] roles) {
         return entityDefnitions.stream()
                 .map(e -> applyPermission(e, roles))
-                .map(e -> isAdmin(roles) && roles == null || roles.length == 0 ? getAuthorizedEntity(e) : e)
+                .map(e -> !isAdmin(roles) || roles != null && roles.length == 0 ? getAuthorizedEntity(e) : e)
                 .filter(e -> !e.getAttributes().isEmpty())
                 .collect(Collectors.toList());
     }

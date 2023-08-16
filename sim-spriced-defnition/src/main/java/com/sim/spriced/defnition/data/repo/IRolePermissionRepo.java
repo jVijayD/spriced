@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface IRolePermissionRepo {
 
-    List<RoleGroupPermissionMapping> fetchRoleGroupMapping(int group_id,String roles[]);
+    List<RoleGroupPermissionMapping> fetchRoleGroupMapping(Integer[] group_ids,String roles[]);
     List<RoleEntityPermissionMapping> fetchRoleEntityMappings(int group_id,String roles[]);
     List<RoleEntityPermissionMapping> fetchRoleEntityMapping(int entity_id,String roles[]);
 
