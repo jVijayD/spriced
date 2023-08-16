@@ -185,7 +185,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onDelete() {
     const dialog = this.dialogService.openConfirmDialoge({
-      message: "Do you want to delete the record?",
+      message: "Do you want to delete?",
       title: "Delete",
       icon: "delete",
     });

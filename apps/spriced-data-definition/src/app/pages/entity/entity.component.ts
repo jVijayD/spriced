@@ -49,37 +49,37 @@ export class EntityComponent {
       canAutoResize: true,
       isSortable: true,
       hidden: true,
-      width: 100,
+      // width: 100,
     },
     {
       column: "name",
       name: "Name",
       canAutoResize: true,
       isSortable: true,
-      width: 100,
+      // width: 100,
     },
     {
       column: "displayName",
       name: "Display Name",
       canAutoResize: true,
       isSortable: true,
-      width: 100,
+      // width: 100,
     },
     {
       column: "updatedBy",
       name: "Updated By",
       canAutoResize: true,
       isSortable: true,
-      width: 100,
+      // width: 100,
     },
     {
       column: "updatedDate",
       name: "Updated Date",
       canAutoResize: true,
       isSortable: true,
-      width: 100,
+      // width: 100,
       pipe: (data: any) => {
-        return moment(data).format("MM-DD-YYYY");
+        return moment(data).format("MM/DD/YYYY HH:mm:ss a");
       },
     },
   ];
@@ -129,16 +129,17 @@ export class EntityComponent {
       //maxHeight: "400px",
     });
     dialogRef.componentInstance.dataChange.subscribe((result: any) => {
+      console.log(result);
       const entity = {
         name: result.name,
         displayName: result.displayName,
         id: result.id,
         groupId: this.groupId,
         isDisabled: false,
-        //enableAuditTrial: false,
+        autoNumberCode: result.autoNumberCode,
         attributes: result.attributes,
         enableAuditTrial: result.enableAuditTrial,
-        width:result.width
+        width: result.width,
       };
       this.entityService.add(entity).subscribe({
         next: (results: any) => {
@@ -179,9 +180,10 @@ export class EntityComponent {
         id: result.id,
         groupId: this.groupId,
         isDisabled: false,
+        autoNumberCode: result.autoNumberCode,
         enableAuditTrial: result.enableAuditTrial,
         attributes: result.attributes,
-        width:result.width
+        width: result.width,
       };
       this.entityService.edit(entity).subscribe({
         next: (results: any) => {

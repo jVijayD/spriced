@@ -47,7 +47,7 @@ export class ListComponent implements OnInit, OnDestroy {
   public models: any = [];
   public entities: any = [];
   public attributes: any = [];
-  public defValue: any;
+  public defaultAttribute: any;
   public memberTypes = [{ value: 'Leaf', viewValue: 'Leaf' }];
   public filterData: any;
   public entityId: any;
@@ -56,13 +56,11 @@ export class ListComponent implements OnInit, OnDestroy {
   public pageIndex = 0;
   public pageNo = 0;
   public pageSize = 5;
-
   public loading = false;
   public dataSource: any = [];
   public currentDataSource: any = [];
   public defaultModel: any;
   public defaultEntity: any;
-
   displayedColumns: string[] = [
     'Priority',
     'Excluded',
@@ -106,16 +104,16 @@ export class ListComponent implements OnInit, OnDestroy {
       isSortable: true,
       width: 150
     },
-    {
-      column: "notification",
-      name: "Notification",
-      canAutoResize: true,
-      isSortable: true,
-      width: 120
-    },
+    // {
+    //   column: "notification",
+    //   name: "Notification",
+    //   canAutoResize: true,
+    //   isSortable: true,
+    //   width: 120
+    // },
     {
       column: "updatedDate",
-      name: "Modified_Date",
+      name: "Updated Date",
       canAutoResize: true,
       isSortable: true,
       width: 150
@@ -151,6 +149,7 @@ export class ListComponent implements OnInit, OnDestroy {
   ) {
     this.entityId = +this.activeRoute?.snapshot?.queryParams?.['entity_id'];
     this.modelId = +this.activeRoute?.snapshot?.queryParams?.['model_id'];
+    
   }
 
   /**
@@ -186,9 +185,9 @@ export class ListComponent implements OnInit, OnDestroy {
   public async getRulesAndModelsData() {
     // eslint-disable-next-line prefer-const
     let { rules, models } = await this.getALlApis();
-    this.defaultModel = this.modelId ? this.modelId : models[0]?.id;
-    this.handleEntityByModels(this.defaultModel);
-
+    // this.defaultModel = this.modelId ? this.modelId : models[0]?.id;
+    // this.handleEntityByModels(this.defaultModel);
+    
     if (rules && models) {
       // Handling order by id
       rules.sort((a: any, b: any) => {
@@ -202,7 +201,16 @@ export class ListComponent implements OnInit, OnDestroy {
           'MM/dd/yyyy hh:mm:ss a'
         ),
       }));
-      this.models = models;
+      // this.models = models;
+      this.models = [];
+    this.models= [{
+      displayName:'All',
+            id: 'ALL'
+    },
+  ...models
+    ];
+  this.defaultModel = 'ALL';
+  this.handleEntityByModels(this.defaultModel);
       this.dataSource = rules;
       this.rows = rules;
       this.filterData = this.rows;
@@ -222,9 +230,9 @@ export class ListComponent implements OnInit, OnDestroy {
    */
   public formbuild() {
     this.listForm = this.fb.group({
-      model: new FormControl(this.defaultModel, [Validators.required]),
-      entity: new FormControl(this.defaultEntity, [Validators.required]),
-      attrubute: new FormControl('', [Validators.required]),
+      model: new FormControl('', [Validators.required]),
+      entity: new FormControl('', [Validators.required]),
+      attrubute: new FormControl('',[Validators.required]),
     });
   }
 
@@ -395,30 +403,70 @@ export class ListComponent implements OnInit, OnDestroy {
   }
   /**
    * HANDLE FOR ENTITIES BY MODEL ID
-   * @param id number
+   * @param id any
    */
-  public handleEntityByModels(id: number, text?: any) {
+  public handleEntityByModels(id: any, text?: any) {
+    if (id === 'ALL') {
+        this.entities = [
+            { 
+                displayName: 'All',
+                id: 'ALL'
+            }
+        ];
+        this.defaultEntity = 'ALL';
+        this.attributes = [
+            {
+                name: 'All',
+                id: 'ALL'
+            }
+        ];
+        this.defaultAttribute = 'ALL';
+        const ids = this.entities.map((item:any)=>item.id)
+        ids.length > 1 ? this.rows = this.dataSource.filter((item:any)=>ids.includes(item.entityId)):this.rows = this.dataSource;
+        return;
+    }
     this.businessRuleService
-      .getAllEntitesByModuleId(id)
-      .pipe(takeUntil(this.notifier$))
-      .subscribe((res: any) => {
-        this.entities = res;
-        const entity = res.find((el: any) => el.groupId === this.defaultModel)
-        this.defaultEntity = this.entityId && !text ? this.entityId : entity?.id;
-        this.modelId = id;
-        this.handleAttributeByEntity(this.defaultEntity);
-      });
-  }
+        .getAllEntitesByModuleId(id)
+        .pipe(takeUntil(this.notifier$))
+        .subscribe((res: any) => {
+            this.entities = [
+                { 
+                    displayName: 'All',
+                    id: 'ALL'
+                },
+                ...res
+            ];
+            this.defaultEntity = 'ALL';
+            this.defaultModel = id;
+            this.modelId = id;
+            this.handleAttributeByEntity(this.defaultEntity);
+            const ids = this.entities.map((item:any)=>item.id)
+            ids.length > 1 ? this.rows = this.dataSource.filter((item:any)=>ids.includes(item.entityId)):this.rows = this.dataSource;
+        });
+}
+
 
   /**
    * HANDLE FOR ATTRIBUTES BY ENTITY ID
    * @param id number
    */
-  public handleAttributeByEntity(id: number) {
-    
+  public handleAttributeByEntity(id: any) {
+    if(id == 'ALL'){
+      this.attributes=[
+        {
+          name: 'All',
+            id: 'ALL'
+        }
+      ]
+      this.defaultAttribute = 'ALL';
+      const ids = this.entities.map((item:any)=>item.id)
+      ids.length > 1 ? this.rows = this.dataSource.filter((item:any)=>ids.includes(item.entityId)):this.rows = this.dataSource;
+      return;
+    }
     this.entityId = id;
     this.loading = true;
     const entity = this.entities.find((item: any) => item.id == id);
+    entity.attributes.filter((item:any)=>item.systemAttribute == false);
     this.attributes = [];
     this.attributes = [
       {
@@ -427,10 +475,6 @@ export class ListComponent implements OnInit, OnDestroy {
       },
       ...entity.attributes,
     ];
-    this.defValue = 'ALL';
-
-    // this.attributes = entity.attributes;
-
     this.filterData = this.dataSource.filter((res: any) => res.entityId === id);
     this.rows = this.filterData;
     this.currentDataSource = this.filterData.slice(
@@ -439,7 +483,7 @@ export class ListComponent implements OnInit, OnDestroy {
     );
     this.paginator?.firstPage();
     this.loading = false;
-  }
+}
 
   /**
    * HANDLING FOR CHANGE PAGE

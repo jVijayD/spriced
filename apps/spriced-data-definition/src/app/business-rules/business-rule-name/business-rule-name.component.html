@@ -15,32 +15,33 @@
                 <mat-form-field [ngClass]="previewField ? 'not-allow' : ''" class="w-52 p-0" appearance="outline">
                     <mat-label>Business Rule Name</mat-label>
                     <input [readonly]="previewField" formControlName="name" matInput placeholder="Enter Rule Name">
-                    <mat-error class="text-sm italic text-red-500 p-0"
+                </mat-form-field>
+                <mat-error class="text-sm italic text-red-500 p-0"
                         *ngIf="myForm.get('name')!.invalid && myForm.get('name')!.touched && myForm.get('name')!.hasError('required')">
                         Rule name is required
                     </mat-error>
-                </mat-form-field>
             </div>
 
             <!-- PRIORITY DROPDOWN -->
             <div class="example-container mt-1.5 flex flex-col ml-2">
-                <mat-form-field [ngClass]="previewField ? 'not-allow' : ''" class="w-52" appearance="outline">
+                <mat-form-field [ngClass]="{'not-allow': previewField}" class="w-52" appearance="outline">
                     <mat-label>Priority</mat-label>
-                    <input [readonly]="previewField" formControlName="priority" matInput type="number"
-                        placeholder="Enter only number">
-                    <mat-error class="text-sm italic text-red-500"
-                        *ngIf="myForm.get('priority')!.invalid && myForm.get('priority')!.touched && myForm.get('priority')!.hasError('required')">
-                        Priority is required
-                    </mat-error>
-                    <mat-error class="text-sm italic text-red-500"
-                        *ngIf="myForm.get('priority')!.hasError('min') || myForm.get('priority')!.hasError('max')">
-                        Number must be between 1 and 100
-                    </mat-error>
+                    <input [readonly]="previewField" formControlName="priority" matInput type="number" placeholder="Enter number in range 1-100">
                 </mat-form-field>
+                <mat-error class="text-sm italic text-red-500"
+                 *ngIf="myForm.get('priority')!.invalid && myForm.get('priority')!.touched && myForm.get('priority')!.hasError('required')">
+                 Priority is required
+                 </mat-error>
+                 <mat-error class="text-sm italic text-red-500"
+                *ngIf="myForm.get('priority')!.hasError('min') || myForm.get('priority')!.hasError('max')">
+                 Number must be between 1 and 1000
+                 </mat-error>
             </div>
+            
+            
 
             <!-- SEND NOTIFICATION MULTISELECT DROPDOWN -->
-            <div class="example-container mt-1.5 flex flex-col ml-2">
+            <!-- <div class="example-container mt-1.5 flex flex-col ml-2">
                 <mat-form-field [ngClass]="previewField ? 'not-allow' : ''" appearance="outline">
                     <mat-label>Send Notification</mat-label>
                     <mat-select [panelClass]="previewField ? 'hideOption' : ''" formControlName="notification" multiple>
@@ -52,7 +53,7 @@
                         This field is required
                     </mat-error>
                 </mat-form-field>
-            </div>
+            </div> -->
 
             <!-- RULE TYPE DROPDOWN -->
             <div class="example-container mt-1.5 flex flex-col ml-2">
@@ -63,11 +64,11 @@
                         <mat-option *ngFor="let item of conditionsData?.ruleTypes"
                             [value]="item.value"><span class="capitalize">{{item.name}}</span></mat-option>
                     </mat-select>
-                    <mat-error class="text-sm italic text-red-500 p-0"
-                        *ngIf="myForm.get('group')!.invalid && myForm.get('group')!.touched && myForm.get('group')!.hasError('required')">
-                        This field is required
-                    </mat-error>
                 </mat-form-field>
+                <mat-error class="text-sm italic text-red-500 p-0"
+                *ngIf="myForm.get('group')!.invalid && myForm.get('group')!.touched && myForm.get('group')!.hasError('required')">
+                This field is required
+            </mat-error>
             </div>
 
         </div>
@@ -78,11 +79,11 @@
                 <mat-label>Description</mat-label>
                 <textarea [readonly]="previewField" matInput placeholder="Add description"
                     formControlName="description"></textarea>
-                <mat-error class="text-sm italic text-red-500"
-                    *ngIf="myForm.get('description')!.invalid && myForm.get('description')!.touched && myForm.get('description')!.hasError('required')">
-                    Descrioption is required
-                </mat-error>
             </mat-form-field>
+            <mat-error class="text-sm italic text-red-500"
+                    *ngIf="myForm.get('description')!.invalid && myForm.get('description')!.touched && myForm.get('description')!.hasError('required')">
+                    Description is required
+                </mat-error>
         </div>
 
         <ng-container
