@@ -80,6 +80,7 @@
 			<artifactId>sim-spriced-framework</artifactId>
 			<version>0.0.1</version>
 		</dependency>
+
 	</dependencies>
 
 	<dependencyManagement>

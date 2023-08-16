@@ -1,5 +1,6 @@
 package com.sim.spriced.framework.api.interceptors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 
@@ -21,11 +22,12 @@ public class FeignClientConfig {
 	
 	@Bean
     public RequestInterceptor requestInterceptor() {
+		
         return requestTemplate -> {
             requestTemplate.header("Content-Type", "application/json");
             requestTemplate.header("Accept", "application/json");
             requestTemplate.header(HeaderInterceptor.APPLICATIONS, contextManager.getRequestContext().getApplications());
-            requestTemplate.header(HeaderInterceptor.ROLES, contextManager.getRequestContext().getRoles());
+            requestTemplate.header(HeaderInterceptor.ROLES,StringUtils.join(contextManager.getRequestContext().getRoles(),",") );
             requestTemplate.header(HeaderInterceptor.TENANT, contextManager.getRequestContext().getTenant());
             requestTemplate.header(HeaderInterceptor.TRANSACTION_ID, contextManager.getRequestContext().getTransactionId());
             requestTemplate.header(HeaderInterceptor.USER, contextManager.getRequestContext().getUser());
