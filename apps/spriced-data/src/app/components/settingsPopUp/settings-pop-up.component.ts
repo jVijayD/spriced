@@ -40,7 +40,7 @@ import { SettingsService } from "./service/settings.service";
 export class SettingsPopUpComponent {
   settingsdata: any;
   noOfRecords = 50;
-  freeze = 1;
+  freeze = 0;
   displayFormat: any;
   showSystem = false;
   constructor(

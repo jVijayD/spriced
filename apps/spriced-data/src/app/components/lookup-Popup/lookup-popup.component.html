@@ -25,6 +25,14 @@
       (paginate)="onPaginate($event)"
       (itemSelected)="onItemSelected($event)"
     >
+      <ng-container>
+        <sp-header-action
+          icon="filter_list"
+          text="Filter"
+          title="Filter"
+          (actionClick)="onFilter()"
+        ></sp-header-action
+      ></ng-container>
     </sp-data-grid>
   </div>
 </div>

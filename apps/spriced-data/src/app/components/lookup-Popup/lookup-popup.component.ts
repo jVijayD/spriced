@@ -2,6 +2,7 @@ import { Component, Inject, Optional } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   DataGridComponent,
+  DialogService,
   Header,
   Paginate,
 } from "@spriced-frontend/spriced-ui-lib";
@@ -20,6 +21,7 @@ import {
 } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
+import { EntityGridService } from "../../pages/entity-data/entity-grid.service";
 
 @Component({
   selector: "sp-lookup-popup",
@@ -47,11 +49,14 @@ export class LookupPopupComponent {
   currentSelectedEntity?: Entity;
   subscriptions: Subscription[] = [];
   currentCriteria!: Criteria;
+  query?: any;
 
   constructor(
     private entityDataService: EntityDataService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<LookupPopupComponent>
+    public dialogRef: MatDialogRef<LookupPopupComponent>,
+    private dialogService: DialogService,
+    private entityGridService: EntityGridService
   ) {
     this.entityDataService.loadEntity(data).subscribe({
       next: (result: any) => {
@@ -153,7 +158,7 @@ export class LookupPopupComponent {
   }
 
   onClose() {
-    this.dialogRef.close({ event: "Cancel" });
+    this.dialogRef.close({ event: "Cancel", data: this.selectedItem });
   }
 
   onPaginate(e: Paginate) {
@@ -165,5 +170,26 @@ export class LookupPopupComponent {
       },
     };
     this.loadEntityData(this.currentSelectedEntity as Entity, criteria);
+  }
+
+  onFilter() {
+    const dialogResult = this.dialogService.openFilterDialog({
+      persistValueOnFieldChange: true,
+      columns: this.entityGridService.getFilterColumns(this.headers),
+      emptyMessage: "Please select filter criteria.",
+      config: null,
+      query: this.query,
+    });
+
+    dialogResult.afterClosed().subscribe((val) => {
+      if (val) {
+        this.query = dialogResult.componentInstance.data.query;
+        this.currentCriteria.filters = val;
+        this.loadEntityData(
+          this.currentSelectedEntity as Entity,
+          this.currentCriteria
+        );
+      }
+    });
   }
 }
