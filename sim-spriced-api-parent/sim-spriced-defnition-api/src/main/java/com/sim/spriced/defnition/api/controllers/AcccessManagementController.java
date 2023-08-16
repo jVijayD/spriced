@@ -1,6 +1,5 @@
 package com.sim.spriced.defnition.api.controllers;
 
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,17 +39,18 @@ public class AcccessManagementController {
     @PostMapping
     public ResponseEntity<RoleGroupPermissionMappingDto> create(@Valid @RequestBody RoleGroupPermissionMappingDto groupPermissionDTO) {
         RoleGroupPermissionMapping grp = mapper.toRoleGroupPermissionMapping(groupPermissionDTO);
-        int status = this.accessMngmntService.saveRoleEntityAccessPermissions(grp,groupPermissionDTO.getEntityPermissions());
-        if(status>0){
-        return new ResponseEntity<>(
-                mapper.toRoleGroupPermissionMappingDto(grp),
-                HttpStatus.CREATED
-        );
-        }else{
-          return new ResponseEntity<>(
-                mapper.toRoleGroupPermissionMappingDto(grp),
-                HttpStatus.NOT_MODIFIED
-        );}
-        
+        int status = this.accessMngmntService.saveRoleEntityAccessPermissions(grp, groupPermissionDTO.getEntityPermissions());
+        if (status > 0) {
+            return new ResponseEntity<>(
+                    mapper.toRoleGroupPermissionMappingDto(grp),
+                    HttpStatus.CREATED
+            );
+        } else {
+            return new ResponseEntity<>(
+                    mapper.toRoleGroupPermissionMappingDto(grp),
+                    HttpStatus.NOT_MODIFIED
+            );
+        }
+
     }
 }

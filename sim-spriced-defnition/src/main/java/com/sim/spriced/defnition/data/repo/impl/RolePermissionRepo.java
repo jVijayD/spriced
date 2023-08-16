@@ -20,16 +20,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class RolePermissionRepo extends BaseRepo implements IRolePermissionRepo {
 
-    private static final String ROLE_ENTITY_PERMISSION_TABLE = "roleentitypermissionmapping";
-    private static final String ROLE_GRPUP_PERMISSION_TABLE = "rolegrouppermissionmapping";
-
-//    public List<RoleEntityPermissionMapping> create(List<RoleEntityPermissionMapping> entityPermissions) {
-//        return context.insertInto(DBUtils.getTable(ROLE_ENTITY_PERMISSION_TABLE))
-//                .values(entityPermissions.get(0))
-//                .returning(DSL.asterisk())
-//                .fetch()
-//                .into(RoleEntityPermissionMapping.class);
-//    }
     public int create(RoleGroupPermissionMapping groupPermissions) {
         return createWithoutReturn(groupPermissions);
     }
@@ -46,22 +36,16 @@ public class RolePermissionRepo extends BaseRepo implements IRolePermissionRepo 
     }
 
     @Override
-    public List<RoleGroupPermissionMapping> fetchRoleGroupMapping(int group_id, String roles[]) {
-        if (roles == null || roles.length == 0) {
-            roles = contextManager.getRequestContext().getRoles();
-        }
-        Condition roleCondition = column("role").in(Arrays.asList(roles));
-        Condition groupCondition = column("group_id").eq(group_id);
+    public List<RoleGroupPermissionMapping> fetchRoleGroupMapping(List<Integer> group_ids, String roles[]) {
+        Condition roleCondition = getRoleConditionFromRoles(roles);
+        Condition groupCondition = column("group_id").in(group_ids);
 
         return super.fetchAll(RoleGroupPermissionMapping.TABLE, roleCondition.and(groupCondition), RoleGroupPermissionMapping.class);
     }
 
     @Override
     public List<RoleEntityPermissionMapping> fetchRoleEntityMappings(int group_id, String roles[]) {
-        if (roles == null || roles.length == 0) {
-            roles = contextManager.getRequestContext().getRoles();
-        }
-        Condition roleCondition = column("role").in(Arrays.asList(roles));
+        Condition roleCondition = getRoleConditionFromRoles(roles);
         Condition groupCondition = column("group_id").eq(group_id);
 
         return super.fetchAll(RoleEntityPermissionMapping.TABLE, roleCondition.and(groupCondition), RoleEntityPermissionMapping.class);
@@ -69,12 +53,18 @@ public class RolePermissionRepo extends BaseRepo implements IRolePermissionRepo 
 
     @Override
     public List<RoleEntityPermissionMapping> fetchRoleEntityMapping(int entity_id, String roles[]) {
-        if (roles == null || roles.length == 0) {
-            roles = contextManager.getRequestContext().getRoles();
-        }
-        Condition roleCondition = column("role").in(Arrays.asList(roles));
+        Condition roleCondition = getRoleConditionFromRoles(roles);
         Condition entityCondition = column("entity_id").eq(entity_id);
         return super.fetchAll(RoleEntityPermissionMapping.TABLE, roleCondition.and(entityCondition), RoleEntityPermissionMapping.class);
+    }
+    
+    private Condition getRoleConditionFromRoles(String[] roles){
+       if (roles == null || roles.length == 0) {
+            roles = contextManager.getRequestContext().getRoles();
+       }
+       List<String> rolesList = Arrays.asList(roles);
+        Condition roleCondition = column("role").in(rolesList);
+        return roleCondition;
     }
 
 }

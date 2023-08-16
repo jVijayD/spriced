@@ -3,14 +3,19 @@ package com.sim.spriced.defnition.data.service.impl;
 import com.sim.spriced.defnition.data.repo.impl.RolePermissionRepo;
 import com.sim.spriced.defnition.data.service.IRolePermissionService;
 import com.sim.spriced.framework.constants.ModelConstants;
+import com.sim.spriced.framework.context.SPricedContextManager;
 import com.sim.spriced.framework.exceptions.data.CreateEntityException;
 import com.sim.spriced.framework.models.EntityDefnition;
+import com.sim.spriced.framework.models.Group;
 import com.sim.spriced.framework.models.RoleEntityPermissionMapping;
 import com.sim.spriced.framework.models.RoleGroupPermissionMapping;
+import com.sim.spriced.framework.security.SecurityConstants;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
+import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +28,8 @@ public class RolePermissionService implements IRolePermissionService {
 
     @Autowired
     RolePermissionRepo rolePermissionRepo;
+    @Autowired
+    protected SPricedContextManager contextManager;
 
     @Transactional
     @Override
@@ -34,9 +41,7 @@ public class RolePermissionService implements IRolePermissionService {
 
         rolePermissionRepo.delete(deleteGroup);
         int status = rolePermissionRepo.create(groupPermission);
-        if (status > 0) {
-        }
-        if (entityPermissions.size() > 0) {
+        if (!entityPermissions.isEmpty()) {
             RoleEntityPermissionMapping deleteEnitty = new RoleEntityPermissionMapping();
 
             deleteEnitty.setRole(groupPermission.getRole());
@@ -53,6 +58,24 @@ public class RolePermissionService implements IRolePermissionService {
     }
 
     @Override
+    public List<Group> applyGroupPermission(List<Group> groups, String[] roles) {
+        List<Integer> groupIds = groups.stream()
+                .map(g -> g.getId())
+                .collect(Collectors.toList());
+
+        List<RoleGroupPermissionMapping> groupPermissions = rolePermissionRepo.fetchRoleGroupMapping(groupIds, roles);
+
+        groups = groups.stream().filter(g -> {
+            return isAdmin(roles) || getLeastPermission(groupPermissions.stream()
+                    .filter(gp -> gp.getGroupId().intValue() == g.getId())
+                    .map(gp -> gp.getPermission())
+                    .distinct()
+                    .collect(Collectors.toList())) != ModelConstants.ModelPermission.DENY;
+        }).collect(Collectors.toList());
+        return groups;
+    }
+
+    @Override
     public EntityDefnition applyPermission(EntityDefnition entityDefnition) {
         return applyPermission(entityDefnition, null);
     }
@@ -60,8 +83,10 @@ public class RolePermissionService implements IRolePermissionService {
     @Override
     public EntityDefnition applyPermission(EntityDefnition entityDefnition, String[] roles) {
         //Fetching group permissions from DB
-        List<RoleGroupPermissionMapping> groupPermissions = null;
-        groupPermissions = rolePermissionRepo.fetchRoleGroupMapping(entityDefnition.getGroupId(), roles);
+        List<RoleGroupPermissionMapping> groupPermissions;
+        groupPermissions = rolePermissionRepo.fetchRoleGroupMapping(
+                Arrays.asList(entityDefnition.getGroupId()),
+                roles);
         // if there are multiple permissions are assigned for the same group 
         // choose least permission that has least priority
         ModelConstants.ModelPermission permission = getLeastPermission(groupPermissions.stream()
@@ -91,12 +116,6 @@ public class RolePermissionService implements IRolePermissionService {
         return (entityDefnition);
     }
 
-    public EntityDefnition applyPermission(EntityDefnition entityDefnition, boolean filterAttributeByPermission) {
-        return filterAttributeByPermission
-                ? getAuthorizedEntity(applyPermission(entityDefnition))
-                : applyPermission(entityDefnition);
-    }
-
     @Override
     public List<EntityDefnition> applyPermission(List<EntityDefnition> entityDefnitions) {
         return entityDefnitions.stream()
@@ -108,7 +127,17 @@ public class RolePermissionService implements IRolePermissionService {
     public List<EntityDefnition> applyPermission(List<EntityDefnition> entityDefnitions, String[] roles) {
         return entityDefnitions.stream()
                 .map(e -> applyPermission(e, roles))
+                .map(e -> !isAdmin(roles) || roles != null && roles.length == 0 ? getAuthorizedEntity(e) : e)
+                .filter(e -> !e.getAttributes().isEmpty())
                 .collect(Collectors.toList());
+    }
+
+    private boolean isAdmin(String[] roles) {
+        if (roles == null || roles.length == 0) {
+            roles = contextManager.getRequestContext().getRoles();
+        }
+        List<String> rolesList = Arrays.asList(roles);
+        return rolesList.contains(SecurityConstants.ADMIN_ROLE) || rolesList.contains(SecurityConstants.SUPER_ADMIN_ROLE);
     }
 
     private ModelConstants.ModelPermission getLeastAttributePermissionById(List<RoleEntityPermissionMapping> entityPermissions, String id) {

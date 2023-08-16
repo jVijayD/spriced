@@ -35,6 +35,8 @@ public class HeaderInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
+		
+		
 		String tenant = request.getHeader(TENANT);
 		String user = request.getHeader(USER);
 		String txId = request.getHeader(TRANSACTION_ID);

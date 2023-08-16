@@ -1,5 +1,6 @@
 package com.sim.spriced.data.api.controllers;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -8,8 +9,6 @@ import java.util.concurrent.ExecutionException;
 
 import javax.validation.Valid;
 
-import com.sim.spriced.framework.models.AttributeConstants;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sim.spriced.data.api.clients.IDefnitionService;
@@ -41,10 +39,11 @@ import com.sim.spriced.data.service.IEntityDataService;
 import com.sim.spriced.framework.annotations.CriteriaParam;
 import com.sim.spriced.framework.api.exception.ResourceNotFoundException;
 import com.sim.spriced.framework.data.filters.Criteria;
-import com.sim.spriced.framework.data.filters.FilterCondition;
 import com.sim.spriced.framework.data.filters.Filter;
+import com.sim.spriced.framework.data.filters.FilterCondition;
 import com.sim.spriced.framework.data.filters.FilterTypes;
 import com.sim.spriced.framework.models.Attribute;
+import com.sim.spriced.framework.models.AttributeConstants;
 import com.sim.spriced.framework.rule.IRule;
 
 import io.micrometer.core.annotation.Timed;
@@ -68,31 +67,6 @@ public class EntityDataController {
 	@Autowired
 	IEntityDataRuleService dataRuleService;
 
-//	@Timed(value = "data.getAll.time", description = "Time taken to return all data")
-//	@GetMapping("")
-//	public ResponseEntity<JSONArray> get(@PathVariable int entityId,@RequestParam(required = false) Integer pageNo,@RequestParam(required = false) Integer pageSize,@RequestParam(required = false) String sortBy,@RequestParam(required = false) String sortDir)
-//			throws ParseException, InterruptedException, ExecutionException {
-//		EntityDto entityDto = this.getEntity(entityId).get();
-//		if (entityDto != null) {
-//			EntityData data = new EntityData();
-//			data.setEntityName(entityDto.getName());
-//			data.setAttributes(entityDto.getAttributes());
-//			
-//			if(pageSize==null || pageSize==0) {
-//				var result = this.dataService.fetchAll(data);
-//				return new ResponseEntity<>(this.convertToSimpleJSONArray(result), HttpStatus.OK);
-//			}
-//			else {
-//				Pageable pageable = this.createPageable(pageNo, pageSize, sortBy, sortDir);
-//				var result = this.dataService.fetchAll(data,pageable);
-//				return new ResponseEntity<>(this.convertToSimpleJSONArray(result), HttpStatus.OK);
-//			}	
-//			
-//		} else {
-//			throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
-//		}
-//	}
-
 	@Timed(value = "data.getAll.time", description = "Time taken to return all data")
 	@GetMapping("")
 	public ResponseEntity<List<Map<String, Object>>> get(@PathVariable int entityId,
@@ -109,6 +83,29 @@ public class EntityDataController {
 			throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
 		}
 	}
+	
+//	 @GetMapping("/export/{:type}")
+//		public ResponseEntity<List<Map<String, Object>>> getExport(@PathVariable int entityId,@PathVariable String type,HttpServletResponse response,
+//				@CriteriaParam(required = false) Criteria searchCriteria)
+//				throws ParseException, InterruptedException, ExecutionException {
+//			EntityDto entityDto = this.getEntity(entityId).get();
+//			if (entityDto != null) {
+//				
+//				String filename = entityDto.getDisplayName()+".csv";
+//
+//			      response.setContentType("text/csv");
+//			      response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+//			            "attachment; filename=\"" + filename + "\"");
+//			      
+//				EntityData data = new EntityData();
+//				data.setEntityName(entityDto.getName());
+//				data.setAttributes(entityDto.getAttributes());
+//				var result = this.dataService.fetchAllAsMapPage(data, searchCriteria);
+//				return new ResponseEntity(result, HttpStatus.OK);
+//			} else {
+//				throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
+//			}
+//		}
 
 	@Timed(value = "data.getAll.time", description = "Time taken to return all data")
 	@GetMapping("/json/items")
