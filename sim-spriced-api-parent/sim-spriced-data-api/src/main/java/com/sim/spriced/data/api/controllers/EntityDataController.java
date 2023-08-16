@@ -68,31 +68,6 @@ public class EntityDataController {
 	@Autowired
 	IEntityDataRuleService dataRuleService;
 
-//	@Timed(value = "data.getAll.time", description = "Time taken to return all data")
-//	@GetMapping("")
-//	public ResponseEntity<JSONArray> get(@PathVariable int entityId,@RequestParam(required = false) Integer pageNo,@RequestParam(required = false) Integer pageSize,@RequestParam(required = false) String sortBy,@RequestParam(required = false) String sortDir)
-//			throws ParseException, InterruptedException, ExecutionException {
-//		EntityDto entityDto = this.getEntity(entityId).get();
-//		if (entityDto != null) {
-//			EntityData data = new EntityData();
-//			data.setEntityName(entityDto.getName());
-//			data.setAttributes(entityDto.getAttributes());
-//			
-//			if(pageSize==null || pageSize==0) {
-//				var result = this.dataService.fetchAll(data);
-//				return new ResponseEntity<>(this.convertToSimpleJSONArray(result), HttpStatus.OK);
-//			}
-//			else {
-//				Pageable pageable = this.createPageable(pageNo, pageSize, sortBy, sortDir);
-//				var result = this.dataService.fetchAll(data,pageable);
-//				return new ResponseEntity<>(this.convertToSimpleJSONArray(result), HttpStatus.OK);
-//			}	
-//			
-//		} else {
-//			throw new ResourceNotFoundException(String.format(MESSAGE, entityId));
-//		}
-//	}
-
 	@Timed(value = "data.getAll.time", description = "Time taken to return all data")
 	@GetMapping("")
 	public ResponseEntity<List<Map<String, Object>>> get(@PathVariable int entityId,

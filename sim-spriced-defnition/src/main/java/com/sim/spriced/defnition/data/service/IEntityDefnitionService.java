@@ -32,9 +32,7 @@ public interface IEntityDefnitionService {
 
     List<EntityDefnition> fetchAll(int groupId);
 
-    List<EntityDefnition> fetchByRole(int groupId, String role);
+    List<EntityDefnition> fetchByRole(int groupId, String[] roles);
 
     EntityDefnition fetchByRole(int entityId);
-//	Page<EntityDefnition> fetchAll(int groupId,boolean loadDisabled,Pageable pageable);
-//	Page<EntityDefnition> fetchAll(int groupId,Pageable pageable);
 }
