@@ -43,11 +43,15 @@ public class GroupController {
 	@Autowired
 	private GroupDtoMapper mapper;
 
-	@Timed(value = "group.getAll.time", description = "Time taken to return groups")
-	@GetMapping()
-	public ResponseEntity<List<GroupDto>> get(@RequestParam(required = false) String roleName) {
-		return new ResponseEntity<>(mapper.toGroupDtoList(this.grpService.fetchAllByRole(false,roleName)), HttpStatus.OK);
-	}
+        @Timed(value = "group.getAll.time", description = "Time taken to return groups")
+        @GetMapping()
+        public ResponseEntity<List<GroupDto>> get(@RequestParam(required = false) String roleName) {
+            return new ResponseEntity<>(
+                    mapper.toGroupDtoList(
+                            this.grpService.fetchAllByRole(false, roleName != null ? roleName.split(",") : null)),
+                            HttpStatus.OK
+                    );
+        }
 
 	@Timed(value = "group.get.time", description = "Time taken to return group")
 	@GetMapping("/{id}")

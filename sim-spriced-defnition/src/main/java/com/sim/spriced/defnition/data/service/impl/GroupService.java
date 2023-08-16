@@ -100,8 +100,8 @@ public class GroupService extends BaseService implements IGroupService {
     }
 
     @Override
-    public List<Group> fetchAllByRole(boolean loadDisabled, String role) {
-        return rolePermissionService.applyGroupPermission(this.grpRepo.fetchAll(loadDisabled), role != null ? role.split(",") : null);
+    public List<Group> fetchAllByRole(boolean loadDisabled, String[] roles) {
+        return rolePermissionService.applyGroupPermission(this.grpRepo.fetchAll(loadDisabled), roles);
     }
 
     @Override
