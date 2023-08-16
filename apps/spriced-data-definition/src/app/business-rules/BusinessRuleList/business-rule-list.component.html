@@ -60,7 +60,7 @@
                 <mat-select [panelClass]="preview ? 'hideOption' : ''" class="break-all"
                   (valueChange)="handleValueChange($event, 'changeValue')" formControlName="operatorType">
                   <mat-option *ngFor="let Operator of dataRules?.operators" [value]="Operator?.value">
-                    {{Operator.name}}
+                    <p>{{this.capitalizeOperatorType(Operator.value)}}</p>
                   </mat-option>
                 </mat-select>
               </mat-form-field>
