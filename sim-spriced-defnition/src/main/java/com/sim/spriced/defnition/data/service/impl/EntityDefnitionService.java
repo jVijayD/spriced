@@ -107,8 +107,8 @@ public class EntityDefnitionService extends BaseService
     }
 
     @Override
-    public List<EntityDefnition> fetchByRole(int groupId, String role) {
-        return rolePermissionService.applyPermission(this.defnitionRepo.getAll(groupId, false), role!=null?role.split(","):null);
+    public List<EntityDefnition> fetchByRole(int groupId, String[] roles) {
+        return rolePermissionService.applyPermission(this.defnitionRepo.getAll(groupId, false), roles);
     }
 
     @Override
