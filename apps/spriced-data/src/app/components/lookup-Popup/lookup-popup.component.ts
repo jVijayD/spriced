@@ -4,6 +4,7 @@ import {
   DataGridComponent,
   DialogService,
   Header,
+  HeaderActionComponent,
   Paginate,
 } from "@spriced-frontend/spriced-ui-lib";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
@@ -32,7 +33,9 @@ import { EntityGridService } from "../../pages/entity-data/entity-grid.service";
     DataGridComponent,
     MatIconModule,
     MatButtonModule,
+    HeaderActionComponent,
   ],
+  providers: [EntityGridService],
   templateUrl: "./lookup-popup.component.html",
   styleUrls: ["./lookup-popup.component.scss"],
 })
@@ -94,7 +97,6 @@ export class LookupPopupComponent {
   private getColumnDataType(
     attr: Attribute
   ): "string" | "number" | "date" | "category" | "boolean" {
-    debugger;
     switch (attr.dataType) {
       case "STRING_VAR":
       case "TEXT":
