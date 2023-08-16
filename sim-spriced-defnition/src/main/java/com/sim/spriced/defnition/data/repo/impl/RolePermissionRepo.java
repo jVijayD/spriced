@@ -36,7 +36,7 @@ public class RolePermissionRepo extends BaseRepo implements IRolePermissionRepo 
     }
 
     @Override
-    public List<RoleGroupPermissionMapping> fetchRoleGroupMapping(Integer[] group_ids, String roles[]) {
+    public List<RoleGroupPermissionMapping> fetchRoleGroupMapping(List<Integer> group_ids, String roles[]) {
         Condition roleCondition = getRoleConditionFromRoles(roles);
         Condition groupCondition = column("group_id").in(group_ids);
 

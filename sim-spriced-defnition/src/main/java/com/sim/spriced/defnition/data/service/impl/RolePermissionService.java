@@ -61,11 +61,9 @@ public class RolePermissionService implements IRolePermissionService {
     public List<Group> applyGroupPermission(List<Group> groups, String[] roles) {
         List<Integer> groupIds = groups.stream()
                 .map(g -> g.getId())
-                .collect(Collectors.toList());    
-        
-        List<RoleGroupPermissionMapping> groupPermissions = rolePermissionRepo.fetchRoleGroupMapping(
-                groupIds.toArray(Integer[]::new),
-                roles);
+                .collect(Collectors.toList());
+
+        List<RoleGroupPermissionMapping> groupPermissions = rolePermissionRepo.fetchRoleGroupMapping(groupIds, roles);
 
         groups = groups.stream().filter(g -> {
             return isAdmin(roles) || getLeastPermission(groupPermissions.stream()
@@ -87,8 +85,7 @@ public class RolePermissionService implements IRolePermissionService {
         //Fetching group permissions from DB
         List<RoleGroupPermissionMapping> groupPermissions;
         groupPermissions = rolePermissionRepo.fetchRoleGroupMapping(
-                Arrays.asList(entityDefnition.getGroupId())
-                        .toArray(Integer[]::new),
+                Arrays.asList(entityDefnition.getGroupId()),
                 roles);
         // if there are multiple permissions are assigned for the same group 
         // choose least permission that has least priority
