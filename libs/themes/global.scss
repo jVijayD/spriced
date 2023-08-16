@@ -219,14 +219,15 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   @apply text-white font-medium text-base p-2;
 }
 
-.mdc-checkbox .mdc-checkbox__native-control:enabled~.mdc-checkbox__background .mdc-checkbox__checkmark{
+.mdc-checkbox .mdc-checkbox__native-control:enabled~.mdc-checkbox__background .mdc-checkbox__checkmark {
   color: #fff !important
 }
 
-.mdc-checkbox .mdc-checkbox__native-control:enabled~.mdc-checkbox__background .mdc-checkbox__checkmark{
+.mdc-checkbox .mdc-checkbox__native-control:enabled~.mdc-checkbox__background .mdc-checkbox__checkmark {
   background-color: #c4312b !important;
 }
 
-.mdc-checkbox .mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background{
+.mdc-checkbox .mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background {
   border-color: #c4312b !important;
 }
+

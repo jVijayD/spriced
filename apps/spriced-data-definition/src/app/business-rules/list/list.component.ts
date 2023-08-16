@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, Output, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, Output, OnDestroy, ViewChild, TemplateRef } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -41,6 +41,7 @@ import { MessageService } from './../services/message.service';
 export class ListComponent implements OnInit, OnDestroy {
   @ViewChild('pagination') paginator!: MatPaginator;
   @ViewChild('dataGrid') dataGrid!: DataGridComponent;
+  @ViewChild('template') template!: any;
   public subscription: any;
   public notifier$: Subject<boolean> = new Subject();
   public listForm!: FormGroup;
@@ -75,7 +76,7 @@ export class ListComponent implements OnInit, OnDestroy {
 
   headers: Header[] = [
     { column: "priority", name: "Priority", canAutoResize: true, isSortable: true, width: 100 },
-    { column: "excluded", name: "Excluded", canAutoResize: true, isSortable: true, width: 100 },
+    { column: "isExcluded", name: "Excluded", canAutoResize: true, isSortable: true, checkbox: true, disableCheckbox: (row: any) => !['Active', 'Excluded'].includes(row.status), width: 100 },
     {
       column: "name",
       name: "Name",
@@ -95,6 +96,9 @@ export class ListComponent implements OnInit, OnDestroy {
       name: "Expression",
       canAutoResize: true,
       isSortable: true,
+      tooltip: true,
+      tooltipTemplate: (row: any) => this.getExpressionTooltip(row),
+      imgsrc: 'assets/images/file.png',
       width: 100
     },
     {
@@ -117,14 +121,7 @@ export class ListComponent implements OnInit, OnDestroy {
       canAutoResize: true,
       isSortable: true,
       width: 150
-    },
-    // {
-    //   column: "action",
-    //   name: "Action",
-    //   canAutoResize: true,
-    //   isSortable: true,
-    //   width:100
-    // },
+    }
   ];
   columnMode: ColumnMode = ColumnMode.force;
   selectionType: SelectionType = SelectionType.single;
@@ -156,7 +153,7 @@ export class ListComponent implements OnInit, OnDestroy {
    * Initialization tasks or data fetching can be done here
    */
   async ngOnInit() {
-    
+
     // const user = localStorage.getItem('user')
     //   ? JSON.parse(localStorage.getItem('user')!)
     //   : null;
@@ -296,9 +293,9 @@ export class ListComponent implements OnInit, OnDestroy {
           confirmation: 'Yes',
           cancel: 'No',
         },
-      }, 
+      },
     });
-   
+
     // Handling for dialog confirmation
     dialogRef
       .afterClosed()
@@ -466,14 +463,13 @@ export class ListComponent implements OnInit, OnDestroy {
     this.entityId = id;
     this.loading = true;
     const entity = this.entities.find((item: any) => item.id == id);
-    entity.attributes.filter((item:any)=>item.systemAttribute == false);
-    this.attributes = [];
+    this.attributes =  entity.attributes.filter((item:any)=>item.systemAttribute == false);
     this.attributes = [
       {
         name: 'All',
         id: 'ALL',
       },
-      ...entity.attributes,
+      ...this.attributes,
     ];
     this.filterData = this.dataSource.filter((res: any) => res.entityId === id);
     this.rows = this.filterData;
@@ -490,7 +486,7 @@ export class ListComponent implements OnInit, OnDestroy {
    * @param event any
    */
   public onPageChange(event: any) {
-    
+
     const index = event.pageIndex * event.pageSize;
     this.currentDataSource = this.filterData.slice(
       index,
@@ -499,10 +495,10 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   /**
-* HANDLE THIS FUNCTION FOR EXPRESSION TOOLTIP
-* @param element any
-* @returns 
-*/
+     * HANDLE THIS FUNCTION FOR EXPRESSION TOOLTIP
+     * @param element any
+     * @returns
+     */
   getExpressionTooltip(element: any): string {
     let tooltipText = `${this.getConditionTooltipText(element.condition, 3)}`;
     tooltipText += this.getActionTooltipText(element.conditionalAction);
@@ -511,44 +507,67 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   /**
- * HANDLE THIS FUNCTION FOR HIERARCHICAL ADD CONDITIONS
- * @param conditions any
- * @param depth number
- * @returns 
- */
+   * HANDLE THIS FUNCTION FOR HIERARCHICAL ADD CONDITIONS
+   * @param conditions any
+   * @param depth number
+   * @returns
+   */
   private getConditionTooltipText(conditions: any[], depth: number): string {
     let tooltipConditionText = `<b>IF</b><br>`;
     tooltipConditionText += this.getIndent(depth);
-    let operand: any = '';
+    let operand: any = "";
 
     if (conditions && conditions.length > 0) {
       conditions.forEach((condition: any, index: number) => {
-        tooltipConditionText += index !== 0 ? this.getIndent(3) : '';
-        const attribute = this.attributes.find((item: any) => item.id === condition.attributeId);
-        const conditionType = condition?.conditionType !== 'NONE' ? condition?.conditionType : '';
-        const subConditionType = condition?.subConditionType !== 'NONE' ? condition?.subConditionType : '';
-        if (condition.operandType === 'ATTRIBUTE') {
-          operand = this.attributes.find((item: any) => item.id === condition.operand);
-          operand = operand?.name;
+        tooltipConditionText += index !== 0 ? this.getIndent(3) : "";
+        const attribute = this.attributes.find(
+          (item: any) => item.id === condition.attributeId
+        );
+        if (attribute && attribute.name.includes('_') || condition?.operatorType.includes('_')) {
+          attribute.name = attribute?.name.replace(/_/g, ' ');
+          condition.operatorType = condition?.operatorType.replace(/_/g, ' ');
         }
-        else if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute.dataType)) {
-          const dateTimes = condition?.operand.split(','); // Split the input string by commas
+        const conditionType =
+          condition?.conditionType !== "NONE" ? condition?.conditionType : "";
+        const subConditionType =
+          condition?.subConditionType !== "NONE"
+            ? condition?.subConditionType
+            : "";
+        if (condition.operandType === "ATTRIBUTE") {
+          operand = this.attributes.find(
+            (item: any) => item.id === condition.operand
+          );
+          operand = operand?.name;
+        } else if (
+          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute.dataType)
+        ) {
+          const dateTimes = condition?.operand.split(","); // Split the input string by commas
 
-          const formattedDates = dateTimes.map((dateTime: any) => moment.utc(dateTime).format('YYYY/MM/DD'));
+          const formattedDates = dateTimes.map((dateTime: any) =>
+            moment.utc(dateTime).format("YYYY/MM/DD")
+          );
           const joinedString = formattedDates.join(" & ");
           const finalArray = [`${joinedString}`];
           operand = finalArray;
+        } else {
+          operand =
+            condition?.operand !== ""
+              ? condition?.operand
+              : condition?.operandType.toLowerCase();
         }
-        else {
-          operand = condition?.operand !== '' ? condition?.operand : condition?.operandType.toLowerCase();
-        }
-        tooltipConditionText += `${conditionType} ${attribute.name} ${condition?.operatorType.toLowerCase()} to ${operand}`;
+        tooltipConditionText += `${conditionType} ${attribute.name
+          }  
+      ${condition?.operatorType.toLowerCase()} to ${operand}`;
+
         if (condition.subConditions && condition.subConditions.length > 0) {
           tooltipConditionText += ` ${subConditionType} (`;
-          tooltipConditionText += this.getSubConditionText(condition.subConditions, 1);
-          tooltipConditionText += ')';
+          tooltipConditionText += this.getSubConditionText(
+            condition.subConditions,
+            1
+          );
+          tooltipConditionText += ")";
         }
-        tooltipConditionText += '<br>';
+        tooltipConditionText += "<br>";
       });
     }
     return tooltipConditionText.trim();
@@ -558,31 +577,60 @@ export class ListComponent implements OnInit, OnDestroy {
    * HANDLE THIS FUNCTION FOR HIERARCHICAL ADD SUBCONDITIONS
    * @param subConditions any
    * @param depth number
-   * @returns 
+   * @returns
    */
   private getSubConditionText(subConditions: any[], depth: number): string {
-    let subConditionText = '';
-    let operand: any = '';
+    let subConditionText = "";
+    let operand: any = "";
 
     if (subConditions && subConditions.length > 0) {
       subConditions.forEach((condition: any, index: number) => {
-        subConditionText += index !== 0 ? this.getIndent(1) : '';
-        const attribute = this.attributes.find((item: any) => item.id === condition.attributeId);
-        const conditionType = condition?.conditionType !== 'NONE' ? condition?.conditionType : '';
-        const subConditionType = condition?.subConditionType !== 'NONE' ? condition?.subConditionType : '';
-        if (condition.operandType === 'ATTRIBUTE') {
-          operand = this.attributes.find((item: any) => item.id === condition.operand);
-          operand = operand?.name;
+        subConditionText += index !== 0 ? this.getIndent(1) : "";
+        const attribute = this.attributes.find(
+          (item: any) => item.id === condition.attributeId
+        );
+        if (attribute && attribute.name.includes('_') || condition.operatorType.includes('_')) {
+          attribute.name = attribute?.name.replace(/_/g, ' ');
+          condition.operatorType = condition?.operatorType.replace(/_/g, ' ');
         }
-        else {
-          operand = condition?.operand !== '' ? condition?.operand : condition?.operandType.toLowerCase(1);
+        const conditionType =
+          condition?.conditionType !== "NONE" ? condition?.conditionType : "";
+        const subConditionType =
+          condition?.subConditionType !== "NONE"
+            ? condition?.subConditionType
+            : "";
+        if (condition.operandType === "ATTRIBUTE") {
+          operand = this.attributes.find(
+            (item: any) => item.id === condition.operand
+          );
+          operand = operand?.name;
+        } else if (
+          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute.dataType)
+        ) {
+          const dateTimes = condition?.operand.split(","); // Split the input string by commas
+
+          const formattedDates = dateTimes.map((dateTime: any) =>
+            moment.utc(dateTime).format("YYYY/MM/DD")
+          );
+          const joinedString = formattedDates.join(" & ");
+          const finalArray = [`${joinedString}`];
+          operand = finalArray;
+        } else {
+          operand =
+            condition?.operand !== ""
+              ? condition?.operand
+              : condition?.operandType.toLowerCase(1);
         }
 
-        subConditionText += `${conditionType} ${attribute.name} ${condition?.operatorType.toLowerCase()} to ${operand}`;
+        subConditionText += `${conditionType} ${attribute.name
+          } ${condition?.operatorType.toLowerCase()} to ${operand}`;
         if (condition.subConditions && condition.subConditions.length > 0) {
           subConditionText += ` ${subConditionType} (`;
-          subConditionText += this.getSubConditionText(condition.subConditions, 2);
-          subConditionText += ')';
+          subConditionText += this.getSubConditionText(
+            condition.subConditions,
+            2
+          );
+          subConditionText += ")";
         }
       });
     }
@@ -592,19 +640,26 @@ export class ListComponent implements OnInit, OnDestroy {
   /**
    * HANDLE THIS FUNCTION FOR ADD ACTIONS
    * @param action any
-   * @returns 
+   * @returns
    */
   public getActionTooltipText(action: any): string {
-    let tooltipActionText = '';
+    let tooltipActionText = "";
 
     if (action) {
-
       if (action.ifActions && action.ifActions.length > 0) {
-        tooltipActionText += `${this.getActionConditionsText(action.ifActions, 3, 'ELSE')}<br>`;
+        tooltipActionText += `${this.getActionConditionsText(
+          action.ifActions,
+          3,
+          "THEN"
+        )}<br>`;
       }
 
       if (action.elseActions && action.elseActions.length > 0) {
-        tooltipActionText += this.getActionConditionsText(action.elseActions, 3, 'THEN');
+        tooltipActionText += this.getActionConditionsText(
+          action.elseActions,
+          3,
+          "ELSE"
+        );
       }
     }
 
@@ -612,23 +667,47 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * HANDLE THIS FUNCTION FOR ADD IFACTION AND ELSEACTION DATA 
+   * HANDLE THIS FUNCTION FOR ADD IFACTION AND ELSEACTION DATA
    * @param actions any
    * @param depth number
-   * @returns 
+   * @returns
    */
-  public getActionConditionsText(actions: any[], depth: number, type: any): string {
+  public getActionConditionsText(
+    actions: any[],
+    depth: number,
+    type: any
+  ): string {
     let tooltipActionConditionsText = `<b>${type}</b><br>`;
     tooltipActionConditionsText += this.getIndent(depth);
+    let operand: any = '';
 
     if (actions && actions.length > 0) {
       actions.forEach((action: any, index: number) => {
-        tooltipActionConditionsText += index !== 0 ? this.getIndent(3) : '';
-        const operand = action?.operand !== '' ? action?.operand : 'Blank';
-        const attribute = this.attributes.find((item: any) => item.id === action.attributeId);
-        tooltipActionConditionsText += `${attribute.name} ${action.actionType.toLowerCase()} to ${operand}`;
+        tooltipActionConditionsText += index !== 0 ? this.getIndent(3) : "";
+        operand = action?.operand !== "" ? action?.operand : "Blank";
+        const attribute = this.attributes.find(
+          (item: any) => item.id === action.attributeId
+        );
+        if (attribute && attribute.name.includes('_') || action.actionType.includes('_')) {
+          attribute.name = attribute?.name.replace(/_/g, ' ');
+          action.actionType = action?.actionType.replace(/_/g, ' ')
+        }
+        if (
+          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute.dataType)
+        ) {
+          const dateTimes = action?.operand.split(","); // Split the input string by commas
+
+          const formattedDates = dateTimes.map((dateTime: any) =>
+            moment.utc(dateTime).format("YYYY/MM/DD")
+          );
+          const joinedString = formattedDates.join(" & ");
+          const finalArray = [`${joinedString}`];
+          operand = finalArray;
+        }
+        tooltipActionConditionsText += `${attribute.name
+          } ${action.actionType.toLowerCase()} to ${operand}`;
         const lastAction = actions.length - 1;
-        lastAction != index ? tooltipActionConditionsText += '<br>' : '';
+        lastAction != index ? (tooltipActionConditionsText += "<br>") : "";
       });
     }
 
@@ -638,14 +717,13 @@ export class ListComponent implements OnInit, OnDestroy {
   /**
    * USE THIS FOR ADD EXTRA SPACES
    * @param depth number
-   * @returns 
+   * @returns
    */
   private getIndent(depth: number): string {
-    return '&nbsp;'.repeat(depth); // You can adjust the number of spaces for indentation
+    return "&nbsp;".repeat(depth); // You can adjust the number of spaces for indentation
   }
 
   private getData(pageSize: number, pageNumber: number) {
-    
     const startIndex = pageNumber * pageSize;
     const endIndex = startIndex + pageSize;
     return this.dataSource.filter((item: any, index: number) => {
@@ -654,7 +732,6 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   onPaginate(e: Paginate) {
-    
     const data = this.getData(e.limit, e.offset);
     this.filterData = data.filter((res: any) => res.entityId === this.entityId);
     this.rows = this.filterData;
