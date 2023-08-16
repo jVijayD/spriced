@@ -5,6 +5,7 @@
 package com.sim.spriced.defnition.data.service;
 
 import com.sim.spriced.framework.models.EntityDefnition;
+import com.sim.spriced.framework.models.Group;
 import com.sim.spriced.framework.models.RoleEntityPermissionMapping;
 import com.sim.spriced.framework.models.RoleGroupPermissionMapping;
 import java.util.List;
@@ -15,13 +16,14 @@ import java.util.List;
  */
 public interface IRolePermissionService {
 
-//    public RoleGroupPermissionMapping saveRoleEntityAccessPermissions(RoleGroupPermissionMapping groupPermissions);
     public int saveRoleEntityAccessPermissions(RoleGroupPermissionMapping groupPermissions,List<RoleEntityPermissionMapping> entityDefnitions);
 
     public EntityDefnition applyPermission(EntityDefnition entityDefnition);
 
     public List<EntityDefnition> applyPermission(List<EntityDefnition> entityDefnitions);
     
+    public List<Group> applyGroupPermission(List<Group> groups,String[] roles);
+     
     public EntityDefnition applyPermission(EntityDefnition entityDefnition,String[] roles);
 
     public List<EntityDefnition> applyPermission(List<EntityDefnition> entityDefnitions,String[] roles);

@@ -213,6 +213,9 @@ public class EntityIngestionService implements IEntityIngestionService, IObserve
         sourceConfig.put("csv.null.field.indicator", "EMPTY_SEPARATORS");
         sourceConfig.put("nullable.fields", nonNullableFields);
         sourceConfig.put("halt.on.error", false);
+        sourceConfig.put("errors.tolerance","all");
+        sourceConfig.put("errors.deadletterqueue.topic.name","dead_"+topic);
+        sourceConfig.put("errors.deadletterqueue.topic.replication.factor",1);
         return sourceConfig;
     }
 
@@ -244,6 +247,9 @@ public class EntityIngestionService implements IEntityIngestionService, IObserve
         sinkConfig.put("pk.fields","name");
         sinkConfig.put("table.name.format", table.toLowerCase());
         sinkConfig.put("fields.whitelist",String.join(",", attributeNames));
+        sinkConfig.put("errors.tolerance","all");
+        sinkConfig.put("errors.deadletterqueue.topic.name","dead_"+topic);
+        sinkConfig.put("errors.deadletterqueue.topic.replication.factor",1);
         if (transformFields.size()!=0){
             sinkConfig.put("transforms",String.join(",",transformFields));
             transformFields.forEach(field -> {
