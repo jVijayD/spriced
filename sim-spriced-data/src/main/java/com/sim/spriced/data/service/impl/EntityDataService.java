@@ -51,7 +51,7 @@ public class EntityDataService implements IEntityDataService {
 	@Override
 	public EntityDataResult deleteBulk(EntityData data) {
                 var filteredAttributes = this.getAttributesWithAccess(data);
-                if(filteredAttributes.isEmpty()){
+                if(filteredAttributes.size() <= 1){
                     throw new PermissionException(data.getEntityName());
                 }
 		return EntityDataResult.builder().rowsChanged(this.dataRepo.deleteBulk(data)).build();
