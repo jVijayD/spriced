@@ -258,7 +258,6 @@ export class BusinessRuleListComponent {
 
 
   public capitalizeOperatorType(value: any): string {
-    debugger
     return value.replace(/_/g, ' ').replace(/\w\S*/g, (word: string) => {
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
   });

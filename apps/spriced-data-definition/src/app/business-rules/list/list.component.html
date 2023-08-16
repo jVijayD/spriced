@@ -27,7 +27,7 @@
 
         <mat-form-field class="ml-4" appearance="outline">
           <mat-label>Attribute:</mat-label>
-          <mat-select [value]="defValue" formControlName="attrubute">
+          <mat-select [(value)]="defaultAttribute" formControlName="attrubute">
             <mat-option *ngFor="let attribute of attributes" [value]="attribute.id">
               {{attribute.name}}
             </mat-option>
