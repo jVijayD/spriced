@@ -6,7 +6,6 @@ import * as moment from "moment";
 @Injectable()
 export class EntityGridService {
   public getFilterColumns(headers: Header[]): QueryColumns[] {
-    debugger;
     return headers
       .filter((item) => item.isFilterable)
       .map((col: any) => {
@@ -90,7 +89,7 @@ export class EntityGridService {
     } else if (attr.dataType === "INTEGER" || attr.dataType === "DECIMAL") {
       if (attr.formatter === "(####)") {
         if (data < 0) {
-          return `{(${data})}`;
+          return `(${data * -1})`;
         }
       }
       return data;
