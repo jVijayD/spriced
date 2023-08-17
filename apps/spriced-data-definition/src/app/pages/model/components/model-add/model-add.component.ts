@@ -110,7 +110,9 @@ export class ModelAddComponent {
   onClose(data: any) {
     this.dialogRef.close(data);
   }
-
+  onReset(event: any) {
+    this.dialogRef.close(null);
+  }
   onSubmit(data: FormGroup<any>) {
     if (data.valid) {
       if (this.data.action == "Add") {

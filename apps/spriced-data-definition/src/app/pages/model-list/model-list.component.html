@@ -9,7 +9,7 @@
     [rows]="rows"
     [rowHeight]="40"
     [headerHeight]="40"
-    [footerHeight]="40"
+    [footerHeight]="0"
     [columnMode]="columnMode"
     [virtualScroll]="true"
     [selectionType]="selectionType"
@@ -17,7 +17,7 @@
     [isExternalPaging]="false"
     [isExternalSorting]="false"
     [sortType]="sortType"
-    [count]="totalElements"
+    [count]="rows.length"
     (paginate)="onPaginate($event)"
     (itemSelected)="onItemSelected($event)"
     (onTreeExpand)="onTreeAction($event)"
@@ -35,7 +35,7 @@
         icon="visibility"
         text="View"
         title="View Entity"
-        [disabled]="selectedItem == null || selectedItem.icon !== 'table_chart'"
+        [disabled]="selectedItem == null"
         (actionClick)="onView()"
       ></sp-header-action>
     </ng-container>

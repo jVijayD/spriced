@@ -1,6 +1,8 @@
 import { Injectable } from "@angular/core";
 import { Workbook } from "exceljs";
 import * as fs from "file-saver";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 import { Header } from "./data-grid.component";
 
 @Injectable()
@@ -42,7 +44,22 @@ export class ExportFileService {
     worksheet.getRow(0).font = { bold: true };
     return workbook;
   }
-  public exportToPdf(data: any[], headers: Header[], title: string) {}
+  public exportToPdf(data: any[], headers: Header[], title: string) {
+    const doc = new jsPDF();
+    const tabHeaders: string[] = headers.map((item) => item.name);
+    const tabData = data.map((item) => {
+      if (Array.isArray(item)) {
+        return item;
+      } else {
+        return Object.keys(item).map((dataItem) => item[dataItem]);
+      }
+    });
+    autoTable(doc, {
+      head: [tabHeaders],
+      body: tabData,
+    });
+    doc.save(title + ".pdf");
+  }
 
   public exportServerDataToCsv() {}
 

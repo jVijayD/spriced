@@ -24,6 +24,7 @@ import {
   GenericControl,
   IValidator,
   QueryColumns,
+  GridConstants,
 } from "@spriced-frontend/spriced-ui-lib";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
@@ -92,7 +93,7 @@ import { EntityFormService } from "./entity-form.service";
 })
 export class EntityDataComponent implements OnDestroy, OnInit {
   hide = false;
-  limit: number = 8;
+  limit: number = GridConstants.LIMIT;
   subscriptions: Subscription[] = [];
   isFullScreen = false;
   headers: Header[] = [];
@@ -174,7 +175,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onItemSelected(e: any) {
     this.selectedItem = e;
-    this.dynamicFormService.parentForm?.setValue(this.selectedItem);
+    //this.dynamicFormService.parentForm?.setValue(this.selectedItem);
+    this.dynamicFormService.parentForm?.setValue(this.entityFormService.extraxtFormFieldsOnly(this.selectedItem,this.dynamicFormService.parentForm?.value));
   }
 
   onClear() {
@@ -185,7 +187,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onDelete() {
     const dialog = this.dialogService.openConfirmDialoge({
-      message: "Do you want to delete the record?",
+      message: "Do you want to delete?",
       title: "Delete",
       icon: "delete",
     });
@@ -316,22 +318,27 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   onSubmitEntityData(data: any) {
-    if (data.valid) {
-      const entityId = this.currentSelectedEntity?.id as number;
-      //const finalData = this.removeNull(data.value);
-      const finalData = data.value;
-      if (!this.selectedItem) {
-        this.createEntityData(entityId, finalData);
-      } else {
-        this.editEntityData(entityId, this.selectedItem.id, finalData);
-      }
+    debugger;
+    if (this.headers.length < 1) {
+      this.snackbarService.warn("Please check whether user has permission.");
     } else {
-      this.snackbarService.warn("Invalid record data.");
+      if (data.valid) {
+        const entityId = this.currentSelectedEntity?.id as number;
+        //const finalData = this.removeNull(data.value);
+        const finalData = data.value;
+        if (!this.selectedItem) {
+          this.createEntityData(entityId, finalData);
+        } else {
+          this.editEntityData(entityId, this.selectedItem.id, finalData);
+        }
+      } else {
+        this.snackbarService.warn("Invalid record data.");
+      }
     }
   }
 
-  onExport() {
-    this.dataGrid.export("xlsx");
+  onExport(format: "csv" | "xlsx" | "pdf") {
+    this.dataGrid.export(format);
   }
 
   // private getFilterColumns(): QueryColumns[] {

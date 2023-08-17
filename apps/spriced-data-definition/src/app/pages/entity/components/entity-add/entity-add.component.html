@@ -170,9 +170,7 @@
             appearance="outline"
             class="mb-2"
             *ngIf="
-              (attDetails.dataType === 'TEXT' ||
-                attDetails.dataType === 'STRING_VAR' ||
-                attDetails.dataType === 'LINK') &&
+              attDetails.dataType === 'STRING_VAR' &&
               attDetails.type !== 'LOOKUP'
             "
           >
@@ -182,11 +180,6 @@
               type="number"
               min="0"
               [(ngModel)]="attDetails.size"
-          /></mat-form-field>
-
-          <mat-form-field appearance="outline" class="mb-2">
-            <mat-label>Width</mat-label
-            ><input matInput type="number" [(ngModel)]="attDetails.width"
           /></mat-form-field>
 
           <div
@@ -247,6 +240,15 @@
               <mat-option value="(####)">(####)</mat-option>
             </mat-select>
           </mat-form-field>
+          <mat-form-field appearance="outline" class="mb-2">
+            <mat-label>Width</mat-label
+            ><input
+              matInput
+              type="number"
+              min="0"
+              [(ngModel)]="attDetails.width"
+          /></mat-form-field>
+
           <mat-divider></mat-divider>
           <div class="flex justify-end p-5">
             <button

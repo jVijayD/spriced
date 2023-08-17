@@ -27,7 +27,7 @@
 
         <mat-form-field class="ml-4" appearance="outline">
           <mat-label>Attribute:</mat-label>
-          <mat-select [value]="defValue" formControlName="attrubute">
+          <mat-select [(value)]="defaultAttribute" formControlName="attrubute">
             <mat-option *ngFor="let attribute of attributes" [value]="attribute.id">
               {{attribute.name}}
             </mat-option>
@@ -48,7 +48,7 @@
       [rows]="rows"
       [rowHeight]="40"
       [headerHeight]="40"
-      [footerHeight]="40"
+      [footerHeight]="0"
       [columnMode]="columnMode"
       [virtualScroll]="false"
       [selectionType]="selectionType"
@@ -60,7 +60,7 @@
       [attributes]="attributes"
       (paginate)="onPaginate($event)"
       (itemSelected)="onItemSelected($event)"
-      (updateExcluded)="updateExcluded($event)"
+      (checkbox)="updateExcluded($event)"
     >
       <ng-container>
         <sp-header-action

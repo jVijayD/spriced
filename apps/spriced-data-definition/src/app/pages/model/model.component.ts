@@ -55,31 +55,42 @@ export class ModelComponent implements OnInit, OnDestroy {
       canAutoResize: true,
       isSortable: true,
       hidden: true,
+      // width: 100,
     },
-    { column: "name", name: "Name", canAutoResize: true, isSortable: true },
+    {
+      column: "name",
+      name: "Name",
+      canAutoResize: true,
+      isSortable: true,
+      // width: 100,
+    },
     {
       column: "displayName",
       name: "Display Name",
       canAutoResize: true,
       isSortable: true,
+      // width: 100,
     },
     {
       column: "updatedBy",
       name: "Updated By",
       canAutoResize: true,
       isSortable: true,
+      // width: 100,
     },
     {
       column: "updatedDate",
       name: "Updated Date",
       canAutoResize: true,
       isSortable: true,
+      // width: 100,
+
       pipe: (data: any) => {
-        return moment(data).format("MM-DD-YYYY");
+        return moment(data).format("MM/DD/YYYY HH:mm:ss a");
       },
     },
   ];
-  columnMode: ColumnMode = ColumnMode.flex;
+  columnMode: ColumnMode = ColumnMode.force;
   selectionType: SelectionType = SelectionType.single;
   sortType = SortType.single;
   isFullScreen = false;
