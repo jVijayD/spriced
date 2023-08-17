@@ -428,7 +428,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.limit = entitySettings.noOfRecords;
       this.headers.forEach((item, index) => {
         item.pinned = undefined;
-        if (index === entitySettings.freeze) {
+        if (index+1=== entitySettings.freeze) {
           item.pinned = "left";
         }
       });
