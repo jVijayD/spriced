@@ -220,7 +220,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
   public formbuild() {
     this.myForm = this.formbuilder.group({
       name: ['', [Validators.required]],
-      priority: ['', [Validators.required, Validators.min(1), Validators.max(100)]],
+      priority: ['', [Validators.required, Validators.min(1), Validators.max(1000)]],
       description: ['', [Validators.required]],
       notification: [''],
       group: ['DEFAULT_VALUE_ACTION', [Validators.required]],
@@ -271,7 +271,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     this.ruleId = res.id;
     this.myForm = this.formbuilder.group({
       name: [res.name, Validators.required],
-      priority: [res.priority, Validators.required],
+      priority: [res.priority, [Validators.required ,Validators.min(1),Validators.max(1000)]],
       description: [res.description, [Validators.required]],
       notification: [res.notification],
       group: [res.group],

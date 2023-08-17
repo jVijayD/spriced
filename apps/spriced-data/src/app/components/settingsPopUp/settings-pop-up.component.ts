@@ -39,7 +39,7 @@ import { SettingsService } from "./service/settings.service";
 })
 export class SettingsPopUpComponent {
   settingsdata: any;
-  noOfRecords = 0;
+  noOfRecords = 50;
   freeze = 0;
   displayFormat: any;
   showSystem = false;
@@ -58,8 +58,8 @@ export class SettingsPopUpComponent {
     }
     let all = this.settings.getCurrentSettings(this.data.name);
     if (all) {
-      this.noOfRecords = all.noOfRecords || 10;
-      this.freeze = all.freeze || 0;
+      this.noOfRecords = all.noOfRecords || 50;
+      this.freeze = all.freeze || 1;
     }
   }
 

@@ -239,7 +239,7 @@ export class BusinessRuleListComponent {
   {
     this.appStore.subConditionForm.next(item);
   }
-
+  
   /**
    * HANDLE FOR DROP LIST IDS
    */
@@ -255,4 +255,11 @@ export class BusinessRuleListComponent {
   public get parentItemId(): string {
     return this.dragDisabled ? '' : this.parentItem?.value!.id;
   }
+
+
+  public capitalizeOperatorType(value: any): string {
+    return value.replace(/_/g, ' ').replace(/\w\S*/g, (word: string) => {
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  });
+}
 }
