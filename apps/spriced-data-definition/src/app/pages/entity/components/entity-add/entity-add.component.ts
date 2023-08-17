@@ -35,7 +35,7 @@ import {
   Paginate,
 } from "@spriced-frontend/spriced-ui-lib";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
-
+const DEFAULT_ATTRIBUTE_WIDTH = 200;
 export interface PeriodicElement {
   name: string;
   id: number;
@@ -127,7 +127,7 @@ export class EntityAddComponent implements OnInit {
   ) {
     this.attDetails.dataType = "STRING_VAR";
     this.attDetails.type = "FREE_FORM";
-    this.attDetails.width = 250;
+    this.attDetails.width = DEFAULT_ATTRIBUTE_WIDTH;
     this.local_data = { ...data.row };
     this.entityList = data.entities;
 
@@ -189,7 +189,7 @@ export class EntityAddComponent implements OnInit {
     this.attDetails = {};
     this.attDetails.dataType = "STRING_VAR";
     this.attDetails.type = "FREE_FORM";
-    this.attDetails.width = 250;
+    this.attDetails.width = DEFAULT_ATTRIBUTE_WIDTH;
     this.cdr.detectChanges();
   }
   selectedEntity(event: any) {
@@ -226,7 +226,7 @@ export class EntityAddComponent implements OnInit {
           constraintType: this.constraintType
             ? "UNIQUE_KEY"
             : row_obj.constraintType,
-          width: row_obj.width || 250,
+          width: row_obj.width || DEFAULT_ATTRIBUTE_WIDTH,
         });
       } else {
         this.rows.push({
@@ -237,7 +237,7 @@ export class EntityAddComponent implements OnInit {
           referencedTableId: row_obj.referencedTableId,
           referencedTable: this.referencedTable,
           referencedTableDisplayName: this.referencedTableDisplayName,
-          width: row_obj.width || 250,
+          width: row_obj.width || DEFAULT_ATTRIBUTE_WIDTH,
         });
       }
       this.rows = [...this.rows];
