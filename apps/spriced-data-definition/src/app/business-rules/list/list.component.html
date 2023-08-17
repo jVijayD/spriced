@@ -60,7 +60,7 @@
       [attributes]="attributes"
       (paginate)="onPaginate($event)"
       (itemSelected)="onItemSelected($event)"
-      (updateExcluded)="updateExcluded($event)"
+      (checkbox)="updateExcluded($event)"
     >
       <ng-container>
         <sp-header-action
