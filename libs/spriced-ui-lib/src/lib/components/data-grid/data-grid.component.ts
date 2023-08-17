@@ -370,7 +370,7 @@ export class DataGridComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.table.virtualization = true;
+    this.table.virtualization = false;
   }
 
   public renderData(data: any, itemHeader: Header) {
