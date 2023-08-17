@@ -449,7 +449,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.entityDataService.createEntityData(entityId, data).subscribe({
       next: (item) => {
         // Validation rule failure
-        if (item.ruleValidations && item.ruleValidations.length > 0) {
+        const isBusinessRuleSuccess = item.result[0].is_valid;
+        if (!isBusinessRuleSuccess) {
           let errorMessage = "";
           item.ruleValidations.forEach((rulVal: any) => {
             rulVal.ruleResults.forEach((rulResult: any) => {
@@ -481,12 +482,23 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     data.id = recordId;
     this.entityDataService.updateEntityData(entityId, data).subscribe({
       next: (item) => {
-        this.onClear();
-        this.snackbarService.success("Record updated successfully.");
-        this.loadEntityData(
-          this.currentSelectedEntity as Entity,
-          this.currentCriteria
-        );
+        const isBusinessRuleSuccess = item.result[0].is_valid;
+        if (!isBusinessRuleSuccess) {
+          let errorMessage = "";
+          item.ruleValidations.forEach((rulVal: any) => {
+            rulVal.ruleResults.forEach((rulResult: any) => {
+              errorMessage += rulResult.message;
+            });
+          });
+          this.snackbarService.error(errorMessage);
+        } else {
+          this.onClear();
+          this.snackbarService.success("Record updated successfully.");
+          this.loadEntityData(
+            this.currentSelectedEntity as Entity,
+            this.currentCriteria
+          );
+        }
       },
       error: (err) => {
         console.error(err);
