@@ -218,3 +218,9 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
 .component-header-with-background {
   @apply text-white font-medium text-base p-2;
 }
+
+.fontawesomeicon::before {
+  display: inline-block;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+}

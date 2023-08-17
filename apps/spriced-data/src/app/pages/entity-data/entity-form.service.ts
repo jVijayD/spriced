@@ -24,6 +24,17 @@ export class EntityFormService {
       });
   }
 
+  public extraxtFormFieldsOnly(selectedItem: any, value: any) {
+    let extractedFields: any = {};
+
+    Object.keys(value).forEach((key) => {
+      if (selectedItem.hasOwnProperty(key)) {
+        extractedFields[key] = selectedItem[key];
+      }
+    });
+    return extractedFields;
+  }
+
   private getType(attr: Attribute): GenericControl {
     if (attr.type === "LOOKUP") {
       return {
@@ -59,6 +70,7 @@ export class EntityFormService {
         ],
       };
     } else {
+      debugger;
       switch (attr.dataType) {
         case "STRING_VAR":
         case "TEXT":
@@ -89,8 +101,8 @@ export class EntityFormService {
           return {
             name: attr.name,
             type: "date",
-            format: attr.formatter ?? "MM/DD/YYYY",
-            label: "MM/DD/YYYY",
+            format: this.getDateFormatter(attr.formatter || "MM/dd/YYYY"),
+            label: attr.formatter || "MM/dd/yyyy",
             placeholder: attr.displayName || attr.name,
             startDate: moment(new Date()).format("YYYY-MM-DD"),
             startView: "month",
@@ -153,5 +165,34 @@ export class EntityFormService {
       });
     }
     return validations;
+  }
+
+  public getDateFormatter(mask: string) {
+    switch (mask) {
+      case "MM/dd/yy":
+        return "MM/DD/YY";
+      case "MM/dd/yyyy":
+        return "MM/DD/YYYY";
+      case "dd/MM/yy":
+        return "DD/MM/YY";
+      case "dd/MM/yyyy":
+        return "DD/MM/YYYY";
+      case "yy/MM/dd":
+        return "YY/MM/DD";
+      case "yyyy/MM/dd":
+        return "YYYY/MM/DD";
+      case "dd-MM-yy":
+        return "DD-MM-YY";
+      case "dd-MM-yyyy":
+        return "DD-MM/YYYY";
+      case "yy-MM-dd":
+        return "YY-MM-DD";
+      case "yyyy-MM-dd":
+        return "YYYY-MM-DD";
+      case "MM/yyyy":
+        return "MM/YYYY";
+      default:
+        return "MM/DD/YYYY";
+    }
   }
 }

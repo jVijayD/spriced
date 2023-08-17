@@ -1,3 +1,21 @@
 .mat-expansion-panel-body {
   padding: 0px;
 }
+
+.grid-container {
+  @apply h-full w-full pl-2 pr-2;
+  //overflow-y: hidden;
+  overflow: auto;
+}
+
+.grid-height {
+  display: block;
+  //height: calc(100% - 6rem);
+  height: calc(100% - 3rem);
+}
+
+// .file-excel::before {
+//   font: 20px;
+//   color: var(--white);
+//   content: " \f1c3";
+// }

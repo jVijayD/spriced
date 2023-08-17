@@ -4,9 +4,6 @@ export function initializeKeycloak(keycloak: KeycloakService) {
   return () => {
     return keycloak.init({
       config: {
-        // url: "https://auth.dev.simadvisory.com/auth",
-        // realm: "SPRICED_DEV",
-        // clientId: "SPRICED_DEV_CLIENT",
         url: process.env["NX_KEY_CLOAK_URL"],
         realm: process.env["NX_KEY_CLOAK_REALM"] as string,
         clientId: process.env["NX_KEY_CLOAK_CLIENT_ID"] as string,

@@ -7,7 +7,8 @@
     <div class="flex flex-row"><ng-content></ng-content></div>
   </div>
   <ngx-datatable
-    style="height: 100%; overflow-y: hidden"
+    style="height: 100%"
+    *ngIf="!hidden"
     #table
     class="material"
     [rows]="rows"
@@ -76,6 +77,7 @@
               [contentTemplate]="template"
               class="w-7 h-7 cursor-pointer"
               src="assets/images/file.png"
+              alt=""
             />
             <ng-template #template>
               <div [innerHTML]="getExpressionTooltip(row)"></div>
@@ -91,5 +93,37 @@
         </ng-template>
       </ngx-datatable-column>
     </ng-container>
+
+    <ngx-datatable-footer *ngIf="true">
+      <ng-template
+        ngx-datatable-footer-template
+        let-rowCount="rowCount"
+        let-pageSize="pageSize"
+        let-selectedCount="selectedCount"
+        let-curPage="curPage"
+        let-offset="offset"
+      >
+        <div style="padding: 5px 10px">
+          <div>
+            Rows: {{ rowCount !== "NaN" ? rowCount : 0 }} | Page Size:
+            {{ pageSize !== "NaN" ? pageSize : 0 }} | Current Page:
+            {{ curPage !== "NaN" ? curPage : 0 }} | Offset:
+            {{ offset !== "NaN" ? offset : 0 }}
+          </div>
+        </div>
+        <datatable-pager
+          [pagerLeftArrowIcon]="'datatable-icon-left'"
+          [pagerRightArrowIcon]="'datatable-icon-right'"
+          [pagerPreviousIcon]="'datatable-icon-prev'"
+          [pagerNextIcon]="'datatable-icon-skip'"
+          [page]="curPage"
+          [size]="pageSize"
+          [count]="rowCount"
+          [hidden]="!(rowCount / pageSize > 1)"
+          (change)="table.onFooterPage($event)"
+        >
+        </datatable-pager>
+      </ng-template>
+    </ngx-datatable-footer>
   </ngx-datatable>
 </ng-container>
