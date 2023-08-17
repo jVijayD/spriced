@@ -1,55 +1,49 @@
 <ng-container>
-  <div
-    style="width: 100%"
-    class="w-full bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5"
-  >
+  <div style="width: 100%"
+    class="w-full bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
     <span class="float-left text-white font-medium">{{ title }}</span>
     <div class="flex flex-row"><ng-content></ng-content></div>
   </div>
-  <ngx-datatable
-    style="height: 100%"
-    *ngIf="!hidden"
-    #table
-    class="material"
-    [rows]="rows"
-    [columnMode]="columnMode"
-    [headerHeight]="headerHeight"
-    [footerHeight]="footerHeight"
-    [rowHeight]="rowHeight"
-    [scrollbarV]="virtualScroll"
-    [scrollbarH]="true"
-    [selectionType]="selectionType"
-    [offset]="offset"
-    (page)="onPaginate($event)"
-    (select)="onSelect($event)"
-    [externalSorting]="isExternalSorting"
-    [sortType]="sortType"
-    [externalPaging]="isExternalPaging"
-    [limit]="limit"
-    [count]="count"
-    (sort)="onSort($event)"
-  >
+  <ngx-datatable 
+       style="height: calc( 100% - 55px); overflow-y: hidden" 
+       #table class="material" [rows]="rows"
+       [columnMode]="columnMode" 
+       [headerHeight]="headerHeight" 
+       [footerHeight]="footerHeight" 
+       [rowHeight]="rowHeight"
+       [scrollbarV]="virtualScroll"
+       [scrollbarH]="true" 
+       [selectionType]="selectionType" 
+       [offset]="offset"
+       (page)="onPaginate($event)" 
+       (select)="onSelect($event)" 
+       [externalSorting]="isExternalSorting" 
+       [sortType]="sortType"
+       [externalPaging]="isExternalPaging" 
+       [limit]="limit" 
+       [count]="count" 
+       (sort)="onSort($event)">
     <ngx-datatable-column *ngIf="enableRowIndex" name="#">
-      <ng-template
-        let-rowIndex="rowIndex"
-        let-row="row"
-        ngx-datatable-cell-template
-        >{{ rowIndex + 1 }}</ng-template
-      ></ngx-datatable-column
-    >
-    <ng-container *ngFor="let header of headers; let i = index">
-      <ngx-datatable-column
-        [name]="header.name"
+      <ng-template 
+        let-rowIndex="rowIndex" 
+        let-row="row" 
+        ngx-datatable-cell-template>
+        {{ rowIndex + 1}}
+    </ng-template>
+    </ngx-datatable-column>
+    <ng-container 
+      *ngFor="let header of headers; let i = index">
+       <ngx-datatable-column
+        [name]="header.name" 
         [flexGrow]="header.flexGrow || 1"
-        [frozenLeft]="header.pinned === 'left' ? true : false"
+        [frozenLeft]="header.pinned === 'left' ? true : false" 
         [frozenRight]="header.pinned === 'right' ? true : false"
-        [width]="header.width || 0"
-        [resizeable]="true"
-        [sortable]="true"
+        [width]="header.width || 0" 
+        [resizeable]="true" 
+        [sortable]="true" 
         [draggable]="true"
-        [canAutoResize]="header.canAutoResize || true"
-        *ngIf="!header.hidden"
-      >
+        [canAutoResize]="header.canAutoResize || true" 
+        *ngIf="!header.hidden">
         <!-- <ng-template
     let-column="column"
     ngx-datatable-header-template
@@ -64,31 +58,31 @@
     </div> 
   </ng-template> -->
 
-        <ng-template let-row="row" ngx-datatable-cell-template
-          >{{
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <ng-container *ngIf="!header?.checkbox">{{
             isArray
-              ? this.renderData(row[i], header)
-              : this.renderData(row[header.column], header)
-          }}
-
-          <ng-container *ngIf="header.name === 'Expression'">
+            ? this.renderData(row[i], header)
+            : this.renderData(row[header.column], header)
+            }}
+          </ng-container>
+          <ng-container *ngIf="header?.tooltip">
             <img
-              spToolTipRenderer
-              [contentTemplate]="template"
               class="w-7 h-7 cursor-pointer"
-              src="assets/images/file.png"
-              alt=""
-            />
+              spToolTipRenderer 
+              [contentTemplate]="template" 
+              [src]="header?.imgsrc" />
             <ng-template #template>
-              <div [innerHTML]="getExpressionTooltip(row)"></div>
+              <div [innerHTML]="header?.tooltipTemplate(row)"></div>
             </ng-template>
           </ng-container>
 
-          <ng-container *ngIf="header.name === 'Excluded'">
+          <ng-container *ngIf="header?.checkbox">
             <mat-checkbox
-              (change)="updateExcluded.emit({ value: $event, item: row })"
-              [(ngModel)]="row.isExcluded"
-            ></mat-checkbox>
+             color="primary"
+             (change)="checkbox.emit({ value: $event, item: row })"
+             [disabled]="header?.disableCheckbox(row)"
+             [(ngModel)]="row[header.column]">
+            </mat-checkbox>
           </ng-container>
         </ng-template>
       </ngx-datatable-column>

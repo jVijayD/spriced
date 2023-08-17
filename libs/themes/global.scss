@@ -219,6 +219,10 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   @apply text-white font-medium text-base p-2;
 }
 
+.mdc-checkbox .mdc-checkbox__native-control:enabled~.mdc-checkbox__background .mdc-checkbox__checkmark {
+  color: var(--white) !important;
+}
+
 .fontawesomeicon::before {
   display: inline-block;
   text-rendering: auto;
