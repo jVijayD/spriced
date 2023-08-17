@@ -41,7 +41,6 @@ import { MessageService } from './../services/message.service';
 export class ListComponent implements OnInit, OnDestroy {
   @ViewChild('pagination') paginator!: MatPaginator;
   @ViewChild('dataGrid') dataGrid!: DataGridComponent;
-  @ViewChild('template') template!: any;
   public subscription: any;
   public notifier$: Subject<boolean> = new Subject();
   public listForm!: FormGroup;
@@ -75,8 +74,20 @@ export class ListComponent implements OnInit, OnDestroy {
   ];
 
   headers: Header[] = [
-    { column: "priority", name: "Priority", canAutoResize: true, isSortable: true, width: 100 },
-    { column: "isExcluded", name: "Excluded", canAutoResize: true, isSortable: true, checkbox: true, disableCheckbox: (row: any) => !['Active', 'Excluded'].includes(row.status), width: 100 },
+    { column: "priority",
+     name: "Priority", 
+     canAutoResize: true, 
+     isSortable: true, 
+     width: 100 
+    },
+    { column: "isExcluded",
+     name: "Excluded", 
+     canAutoResize: true, 
+     isSortable: true, 
+     checkbox: true, 
+     disableCheckbox: (row: any) => !['Active', 'Excluded'].includes(row.status),
+      width: 100 
+    },
     {
       column: "name",
       name: "Name",

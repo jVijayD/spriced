@@ -1,16 +1,27 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ViewEncapsulation,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
+import { MatMenuModule } from "@angular/material/menu";
 
 @Component({
   selector: "sp-header-action",
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatMenuModule],
   templateUrl: "./header-action.component.html",
   styleUrls: ["./header-action.component.scss"],
+  encapsulation: ViewEncapsulation.None,
 })
 export class HeaderActionComponent {
+  @Input()
+  context = false;
+
   @Input()
   icon!: string;
 

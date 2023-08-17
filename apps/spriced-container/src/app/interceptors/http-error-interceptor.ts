@@ -1,15 +1,17 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import {
   HttpErrorResponse,
   HttpEvent,
   HttpHandler,
   HttpInterceptor,
   HttpRequest,
-} from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-import { AppDataService, ErrorTypes } from '@spriced-frontend/shared/spriced-shared-lib';
-
+} from "@angular/common/http";
+import { Observable, throwError } from "rxjs";
+import { catchError, map } from "rxjs/operators";
+import {
+  AppDataService,
+  ErrorTypes,
+} from "@spriced-frontend/shared/spriced-shared-lib";
 
 @Injectable()
 export class ErrorCatchingInterceptor implements HttpInterceptor {
@@ -23,17 +25,21 @@ export class ErrorCatchingInterceptor implements HttpInterceptor {
         return res;
       }),
       catchError((error: HttpErrorResponse) => {
-        let errorMsg = '';
+        let errorMsg = "";
         if (error.error instanceof ErrorEvent) {
           errorMsg = `Error: ${error.error.message}`;
         } else {
-          errorMsg = `Error Code: ${error.status},  Message: ${error.message}`;
+          errorMsg = `Error Code: ${error.status},  Message: ${
+            error?.error?.message ? error.error.message : error.message
+          }`;
         }
         if (errorMsg) {
-          this.statusPannelService.setErrors([{
-            type: ErrorTypes.ERROR,
-            msg: errorMsg
-          }]);
+          this.statusPannelService.setErrors([
+            {
+              type: ErrorTypes.ERROR,
+              msg: errorMsg,
+            },
+          ]);
         }
         return throwError(() => error);
       })

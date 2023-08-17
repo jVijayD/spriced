@@ -223,11 +223,8 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   color: #fff !important
 }
 
-.mdc-checkbox .mdc-checkbox__native-control:enabled~.mdc-checkbox__background .mdc-checkbox__checkmark {
-  background-color: #c4312b !important;
+.fontawesomeicon::before {
+  display: inline-block;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
 }
-
-.mdc-checkbox .mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background {
-  border-color: #c4312b !important;
-}
-
