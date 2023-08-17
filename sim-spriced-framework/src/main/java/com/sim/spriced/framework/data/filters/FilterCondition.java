@@ -62,10 +62,24 @@ public class FilterCondition<T> extends Filter {
                     field.like((String) value);
                 case ILIKE ->
                     field.likeIgnoreCase((String) value);
+                case IS_NOT_LIKE ->
+                    field.notLike((String) value);
+                case CONTAINS ->
+                    field.contains((String) value);
+                case NOT_CONTAINS ->
+                    field.notContains((String) value);
                 case IS_NOT_EQUAL ->
-                    field.ne((String) value);
+                    field.ne(value);
                 case IN ->
                     field.in(((String) value).split(","));
+                case IS_NULL ->
+                    field.isNull();
+                case IS_NOT_NULL ->
+                    field.isNotNull();
+                case STARTS_WITH ->
+                    field.startsWith(value);
+                case ENDS_WITH ->
+                    field.endsWith(value);
                 //TODO consider DataType and cast it to corresponding DT
                 default ->
                     field.eq(value);

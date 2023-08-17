@@ -15,6 +15,10 @@ import org.jooq.impl.DSL;
  */
 public class FilterGenerator {
 
+    private FilterGenerator() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static Condition generate(List<Filter> filters, List<Field<Object>> fieldsList) {
         Condition condition = DSL.noCondition();
         if (filters == null) {
@@ -23,11 +27,16 @@ public class FilterGenerator {
         for (Filter f : filters) {
             if (null != f.getJoinType()) {
                 condition = switch (f.getJoinType()) {
-                    case AND -> condition.and(f.generate(fieldsList));
-                    case OR -> condition.or(f.generate(fieldsList));
-                    case NOT -> condition.andNot(f.generate(fieldsList));
-                    case NONE -> f.generate(fieldsList);
-                    default ->  f.generate(fieldsList);
+                    case AND ->
+                        condition.and(f.generate(fieldsList));
+                    case OR ->
+                        condition.or(f.generate(fieldsList));
+                    case NOT ->
+                        condition.andNot(f.generate(fieldsList));
+                    case NONE ->
+                        f.generate(fieldsList);
+                    default ->
+                        f.generate(fieldsList);
                 };
             }
         }

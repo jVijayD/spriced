@@ -21,15 +21,23 @@ public class FilterTypes {
 
     public enum OperatorType {
         EQUALS,
-        IN,
-        ILIKE,
-        LIKE,
         IS_NOT_EQUAL,
         GREATER_THAN,
         GREATER_THAN_EQUALS,
         LESS_THAN,
-        LESS_THAN_EQUALS;
-     
+        LESS_THAN_EQUALS,
+        IS_NULL,
+        IS_NOT_NULL,
+        // String 
+        IN,
+        ILIKE,
+        LIKE,
+        IS_NOT_LIKE,
+        STARTS_WITH,
+        ENDS_WITH,
+        CONTAINS,
+        NOT_CONTAINS;
+
     }
     
 }
