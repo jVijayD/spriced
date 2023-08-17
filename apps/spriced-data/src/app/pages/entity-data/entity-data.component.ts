@@ -176,7 +176,12 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   onItemSelected(e: any) {
     this.selectedItem = e;
     //this.dynamicFormService.parentForm?.setValue(this.selectedItem);
-    this.dynamicFormService.parentForm?.setValue(this.entityFormService.extraxtFormFieldsOnly(this.selectedItem,this.dynamicFormService.parentForm?.value));
+    this.dynamicFormService.parentForm?.setValue(
+      this.entityFormService.extraxtFormFieldsOnly(
+        this.selectedItem,
+        this.dynamicFormService.parentForm?.value
+      )
+    );
   }
 
   onClear() {
@@ -318,7 +323,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   onSubmitEntityData(data: any) {
-    debugger;
     if (this.headers.length < 1) {
       this.snackbarService.warn("Please check whether user has permission.");
     } else {
@@ -444,12 +448,23 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   private createEntityData(entityId: number, data: any) {
     this.entityDataService.createEntityData(entityId, data).subscribe({
       next: (item) => {
-        this.dynamicFormService.parentForm?.reset();
-        this.snackbarService.success("Record created successfully.");
-        this.loadEntityData(
-          this.currentSelectedEntity as Entity,
-          this.currentCriteria
-        );
+        // Validation rule failure
+        if (item.ruleValidations && item.ruleValidations.length > 0) {
+          let errorMessage = "";
+          item.ruleValidations.forEach((rulVal: any) => {
+            rulVal.ruleResults.forEach((rulResult: any) => {
+              errorMessage += rulResult.message;
+            });
+          });
+          this.snackbarService.error(errorMessage);
+        } else {
+          this.dynamicFormService.parentForm?.reset();
+          this.snackbarService.success("Record created successfully.");
+          this.loadEntityData(
+            this.currentSelectedEntity as Entity,
+            this.currentCriteria
+          );
+        }
       },
       error: (err) => {
         console.error(err);

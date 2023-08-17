@@ -75,22 +75,32 @@ export class FilterDialogComponent {
   private getOperatorType(operator: string) {
     let operatorType: OperatorType | undefined = undefined;
     switch (operator) {
-      case "=":
-      case "equals":
+      case "Is equal to":
         return OperatorType.EQUALS;
-      case "!=":
-      case "not equal to":
+      case "Is not equal to":
         return OperatorType.IS_NOT_EQUAL;
-      case ">":
+      case "Is greater than":
         return OperatorType.GREATER_THAN;
-      case ">=":
+      case "Is greater than or equal to":
         return OperatorType.GREATER_THAN_EQUALS;
-      case "<":
+      case "Is less than":
         return OperatorType.LESS_THAN;
-      case "<=":
+      case "Is less than or equal to":
         return OperatorType.LESS_THAN_EQUALS;
-      case "contains":
-        return OperatorType.LIKE;
+      case "Contains pattern":
+        return OperatorType.CONTAINS;
+      case "Does not contain pattern":
+        return OperatorType.NOT_CONTAINS;
+      case "Is NULL":
+        return OperatorType.IS_NULL;
+      case "Is not NULL":
+        return OperatorType.IS_NOT_NULL;
+      case "Starts with":
+        return OperatorType.STARTS_WITH;
+      case "Ends with":
+        return OperatorType.ENDS_WITH;
+      case "IN":
+        return OperatorType.IN;
       // case "starts with":
       //   return OperatorType.ILIKE;
       // case "ends with":
@@ -119,13 +129,43 @@ export class FilterDialogComponent {
   private mapOperators(type: string) {
     switch (type) {
       case "string":
-        return ["equals", "contains", "not equal to"];
+        return [
+          "Is equal to",
+          "Is not equal to",
+          "Is greater than",
+          "Is less than",
+          "Is greater than or equal to",
+          "Is less than or equal to",
+          "Contains pattern",
+          "Does not contain pattern",
+          "Is NULL",
+          "Is not NULL",
+          "Starts with",
+          "Ends with",
+        ];
       case "date":
-        return [">", "<", ">=", "<=", "=", "!="];
+        return [
+          "Is equal to",
+          "Is not equal to",
+          "Is greater than",
+          "Is less than",
+          "Is greater than or equal to",
+          "Is less than or equal to",
+          "Is NULL",
+          "Is not NULL",
+          "IN",
+        ];
       case "number":
-        return [">", "<", ">=", "<=", "=", "!="];
+        return [
+          "Is equal to",
+          "Is not equal to",
+          "Is greater than",
+          "Is less than",
+          "Is greater than or equal to",
+          "Is less than or equal to",
+        ];
       case "boolean":
-        return ["=", "!="];
+        return ["Is equal to", "Is not equal to"];
     }
     return [];
   }
@@ -169,14 +209,21 @@ enum JoinType {
 
 enum OperatorType {
   EQUALS = "EQUALS",
-  IN = "IN",
-  ILIKE = "ILIKE",
-  LIKE = "LIKE",
   IS_NOT_EQUAL = "IS_NOT_EQUAL",
+  LIKE = "LIKE",
+  IS_NOT_LIKE = " IS_NOT_LIKE",
   GREATER_THAN = "GREATER_THAN",
-  GREATER_THAN_EQUALS = "GREATER_THAN_EQUALS",
   LESS_THAN = "LESS_THAN",
+  GREATER_THAN_EQUALS = "GREATER_THAN_EQUALS",
   LESS_THAN_EQUALS = "LESS_THAN_EQUALS",
+  CONTAINS = "CONTAINS",
+  NOT_CONTAINS = "NOT_CONTAINS",
+  IS_NULL = "IS_NULL",
+  IS_NOT_NULL = "IS_NOT_NULL",
+  STARTS_WITH = "STARTS_WITH",
+  ENDS_WITH = "ENDS_WITH",
+  IN = "IN",
+  //ILIKE = "ILIKE",
 }
 
 export interface QueryColumns {

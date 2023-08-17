@@ -8,7 +8,7 @@ export class NumericDirective {
 
   private check(value: string) {
     if (this.decimals <= 0) {
-      return String(value).match(new RegExp(/^\d+$/));
+      return String(value).match(new RegExp(/^(-?\d*)$/));
     } else {
       const regExpString =
         "^\\s*((\\d+(\\.\\d{0," +
@@ -50,6 +50,7 @@ export class NumericDirective {
         " ",
         "Enter",
         ".",
+        "-",
         "ArrowLeft",
         "ArrowRight",
       ].indexOf(event.key) === -1
