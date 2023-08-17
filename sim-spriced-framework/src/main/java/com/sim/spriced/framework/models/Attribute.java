@@ -2,6 +2,7 @@ package com.sim.spriced.framework.models;
 
 
 
+import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -46,6 +47,7 @@ public class Attribute {
 	private boolean isEditable = true;
 	private boolean showInForm = true;
 	private boolean isSystemAttribute=false;
+	private List<Attribute> attributes = null;
 	
 	public Attribute(String name) {
 		this.name = name;

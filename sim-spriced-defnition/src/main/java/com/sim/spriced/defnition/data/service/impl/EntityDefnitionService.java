@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PreDestroy;
+import javax.swing.text.html.HTML.Attribute;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -16,6 +17,7 @@ import com.sim.spriced.defnition.data.repo.IEntityDefnitionRepo;
 import com.sim.spriced.defnition.data.service.BaseService;
 import com.sim.spriced.defnition.data.service.EntityDefnitionEvent;
 import com.sim.spriced.defnition.data.service.IEntityDefnitionService;
+import com.sim.spriced.framework.models.AttributeConstants;
 import com.sim.spriced.framework.models.EntityDefnition;
 import com.sim.spriced.framework.pubsub.EventType;
 import com.sim.spriced.framework.pubsub.IObservable;
@@ -113,7 +115,14 @@ public class EntityDefnitionService extends BaseService
 
     @Override
     public EntityDefnition fetchByRole(int entityId) {
-        return rolePermissionService.applyPermission(this.defnitionRepo.get(entityId), null);
+    	EntityDefnition entity = rolePermissionService.applyPermission(this.defnitionRepo.get(entityId), null);
+    	for(var attribute: entity.getAttributes()) {
+    		if(attribute.getType().equals(AttributeConstants.Type.LOOKUP)) {
+    			int id = Integer.parseInt(attribute.getReferencedTableId().toString());
+    			attribute.setAttributes(rolePermissionService.applyPermission(this.defnitionRepo.get(id), null).getAttributes());
+    		}
+    	}
+        return entity;
     }
 
     @PreDestroy
