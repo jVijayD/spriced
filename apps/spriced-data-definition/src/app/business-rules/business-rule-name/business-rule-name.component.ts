@@ -725,7 +725,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       group: item.group,
       condition: item.condition,
       entityId: +this.entityId,
-      isExcluded: this.rulesData ? this.rulesData.isExcluded : false,
+      isExcluded: this.rulesData && text !== 'save' ? this.rulesData.isExcluded : false,
       status: this.rulesData ? this.rulesData.status : 'In Progress',
       conditionalAction: {
         ifActions: item.action,
