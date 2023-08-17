@@ -220,7 +220,7 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
 }
 
 .mdc-checkbox .mdc-checkbox__native-control:enabled~.mdc-checkbox__background .mdc-checkbox__checkmark {
-  color: #fff !important
+  color: var(--white) !important;
 }
 
 .fontawesomeicon::before {
