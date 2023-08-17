@@ -94,7 +94,13 @@ export class EntityGridService {
       }
       return data;
     } else if (attr.dataType === "TIME_STAMP") {
-      return moment(data).format(attr.formatter || "MM/DD/YYYY");
+      let formattedData = data;
+      try {
+        formattedData = moment(data).format(attr.formatter || "MM/DD/YYYY");
+      } catch (err) {
+        console.error(err);
+      }
+      return formattedData;
     }
     return data;
   }
