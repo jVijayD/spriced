@@ -121,7 +121,7 @@ public class EntityDefnitionService extends BaseService
     			int id = Integer.parseInt(attribute.getReferencedTableId().toString());
     			attribute.setAttributes(rolePermissionService.applyPermission(this.defnitionRepo.get(id), null).getAttributes());
     		}
-    	}
+    	} 
         return entity;
     }
 

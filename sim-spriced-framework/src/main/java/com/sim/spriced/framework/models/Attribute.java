@@ -48,7 +48,7 @@ public class Attribute {
 	private boolean showInForm = true;
 	private boolean isSystemAttribute=false;
 	private List<Attribute> attributes = null;
-	
+		
 	public Attribute(String name) {
 		this.name = name;
 	}
