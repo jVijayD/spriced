@@ -1,11 +1,10 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
+  OnDestroy,
   Output,
-  PipeTransform,
   ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -44,6 +43,7 @@ export class DataGridComponent implements AfterViewInit {
   @ViewChild(DatatableComponent)
   table!: DatatableComponent;
   loading: boolean = false;
+  hidden: boolean = false;
 
   @Input()
   title = "";
@@ -162,6 +162,14 @@ export class DataGridComponent implements AfterViewInit {
         this.exportService.exportServerDataToPdf();
         break;
     }
+  }
+
+  public redraw() {
+    this.hidden = true;
+    const timeOut = setTimeout(() => {
+      this.hidden = false;
+      clearTimeout(timeOut);
+    }, 10);
   }
 
   /**
@@ -401,4 +409,8 @@ export interface Paginate {
   pageSize: number;
   limit: number;
   offset: number;
+}
+
+export class GridConstants {
+  static LIMIT = 50;
 }

@@ -1,10 +1,12 @@
 import { Injectable } from "@angular/core";
 import { Attribute, Entity } from "@spriced-frontend/spriced-common-lib";
 import { Header, QueryColumns } from "@spriced-frontend/spriced-ui-lib";
+import * as moment from "moment";
 
 @Injectable()
 export class EntityGridService {
   public getFilterColumns(headers: Header[]): QueryColumns[] {
+    debugger;
     return headers
       .filter((item) => item.isFilterable)
       .map((col: any) => {
@@ -23,6 +25,7 @@ export class EntityGridService {
   ): Header[] {
     return entity.attributes
       .filter((item) => {
+        console.log(item);
         return (
           item.permission !== "DENY" &&
           item.constraintType !== "PRIMARY_KEY" &&
@@ -31,7 +34,6 @@ export class EntityGridService {
         );
       })
       .map((attr: Attribute) => {
-        console.log(attr.width);
         return {
           column: attr.name,
           name: attr.displayName || attr.name,
@@ -40,7 +42,7 @@ export class EntityGridService {
           isFilterable: true,
           dataType: this.getColumnDataType(attr),
           options: this.getOptions(attr),
-          width: attr.width || 0,
+          //width: attr.width || 0,
           pipe: (data: any) => {
             return this.getTransform(data, attr);
           },
@@ -85,21 +87,15 @@ export class EntityGridService {
   private getTransform(data: any, attr: Attribute) {
     if (attr.dataType === "BOOLEAN") {
       return data ? "True" : "False";
-    } else if (attr.dataType === "INTEGER") {
-      // if (attr.formatter) {
-      //   if(data<0){
-      //     return `{(${data})}`
-      //   }
-      // }
-      return data;
-    } else if (attr.dataType === "DECIMAL") {
-      // if (attr.formatter) {
-      // }
+    } else if (attr.dataType === "INTEGER" || attr.dataType === "DECIMAL") {
+      if (attr.formatter === "(####)") {
+        if (data < 0) {
+          return `{(${data})}`;
+        }
+      }
       return data;
     } else if (attr.dataType === "TIME_STAMP") {
-      // if (attr.formatter) {
-      // }
-      return data;
+      return moment(data).format(attr.formatter || "MM/DD/YYYY");
     }
     return data;
   }

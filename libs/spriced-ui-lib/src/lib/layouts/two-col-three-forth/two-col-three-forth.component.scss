@@ -6,11 +6,11 @@
 .col-left {
   @apply h-full rounded-t-xl shadow-lg shadow-black p-0;
   height: 100%;
-  overflow-y: auto;
+  //overflow-y: auto;
 }
 
 .col-right {
   @apply w-1/4 h-full rounded-t-xl shadow-lg shadow-black p-0;
   height: 100%;
-  overflow-y: auto;
+  //overflow-y: auto;
 }
