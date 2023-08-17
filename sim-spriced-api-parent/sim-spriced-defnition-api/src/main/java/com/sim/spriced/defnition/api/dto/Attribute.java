@@ -19,6 +19,7 @@ public class Attribute {
 	@NotEmpty
 	private Type type=Type.FREE_FORM;
 	private int size=1;
+	private int width=1;
 	private boolean nullable = true;
 	private Object defaultValue=null;
 	
