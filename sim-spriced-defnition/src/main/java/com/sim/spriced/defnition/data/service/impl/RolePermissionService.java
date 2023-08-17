@@ -127,7 +127,7 @@ public class RolePermissionService implements IRolePermissionService {
     public List<EntityDefnition> applyPermission(List<EntityDefnition> entityDefnitions, String[] roles) {
         return entityDefnitions.stream()
                 .map(e -> applyPermission(e, roles))
-                .map(e -> !isAdmin(roles) || roles != null && roles.length == 0 ? getAuthorizedEntity(e) : e)
+                .map(e -> isAdmin(roles) || roles != null && roles.length != 0 ? e : getAuthorizedEntity(e))
                 .filter(e -> !e.getAttributes().isEmpty())
                 .collect(Collectors.toList());
     }
