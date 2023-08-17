@@ -59,7 +59,7 @@ export class SettingsPopUpComponent {
     let all = this.settings.getCurrentSettings(this.data.name);
     if (all) {
       this.noOfRecords = all.noOfRecords || 50;
-      this.freeze = all.freeze || 1;
+      this.freeze = all.freeze || 0;
     }
   }
 
