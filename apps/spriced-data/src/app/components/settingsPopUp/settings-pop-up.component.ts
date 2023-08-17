@@ -17,6 +17,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { NgxIndexedDBService } from "ngx-indexed-db";
 import { SettingsService } from "./service/settings.service";
+import { GridConstants } from "@spriced-frontend/spriced-ui-lib";
 
 @Component({
   selector: "sp-settings-pop-up",
@@ -39,7 +40,7 @@ import { SettingsService } from "./service/settings.service";
 })
 export class SettingsPopUpComponent {
   settingsdata: any;
-  noOfRecords = 50;
+  noOfRecords = GridConstants.LIMIT;
   freeze = 0;
   displayFormat: any;
   showSystem = false;
@@ -58,7 +59,7 @@ export class SettingsPopUpComponent {
     }
     let all = this.settings.getCurrentSettings(this.data.name);
     if (all) {
-      this.noOfRecords = all.noOfRecords || 50;
+      this.noOfRecords = all.noOfRecords || GridConstants.LIMIT;
       this.freeze = all.freeze || 0;
     }
   }
