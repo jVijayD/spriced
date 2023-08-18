@@ -61,6 +61,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
   public item: any;
   public idsBr: any;
   public modelId: any;
+  public attributeId: any;
 
   // DEMO LIST CODE
   public get connectedBRDropListsIds(): string[] {
@@ -98,11 +99,13 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
 
     // Handling initial data for Edit Rule
     const ruleId = this.activeRoute?.snapshot?.params?.['id'];
+    this.attributeId = this.activeRoute?.snapshot?.queryParams?.['attribute_id'];
     const previewRule = this.activeRoute?.snapshot?.params?.['preview'];
     const entity_id = this.activeRoute?.snapshot?.queryParams?.['entity_id'];
     const model_id = this.activeRoute?.snapshot?.queryParams?.['model_id'];
     this.previewField = !['', undefined, null].includes(previewRule);
     this.modelId = model_id;
+
     /**
      * Handling create rule when entity id is present
      */
@@ -767,7 +770,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       const message: any = this.ruleId ? 'Rule is updated successfully!' : 'Rule is created successfully!';
       this.messageservice.snackMessage.next(message);
       this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
-        queryParams: { entity_id: this.entityId, model_id: this.modelId},
+        queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId},
       });
     },
       // Handle the api error as needed
@@ -775,7 +778,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         console.error('Error occurred during API request:', error);
         this.messageservice.snackMessage.next('Error occurred during API request:')
         this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
-          queryParams: { entity_id: this.entityId, model_id: this.modelId},
+          queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId},
         });
         this.saveButton = false;
       });
@@ -784,7 +787,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
   public backToListpage()
   {
     this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
-      queryParams: { entity_id: this.entityId, model_id: this.modelId},
+      queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId},
     });
   }
 
