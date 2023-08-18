@@ -46,4 +46,8 @@ export class HeaderComponent {
   capitalizeFirstLetter(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
+goToLink()
+{
+   window.open(process.env["NX_HELP"] as string, "_blank");
+}
 }

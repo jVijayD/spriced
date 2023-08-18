@@ -1,24 +1,26 @@
 <!-- Main navigation container -->
 <nav
   class="top-header relative flex py-2 z-[1000] shadow-md shadow-black/5 dark:bg-neutral-600 dark:shadow-black/10 lg:flex-wrap lg:justify-start lg:py-[1rem]"
-  data-te-navbar-ref
->
+  data-te-navbar-ref>
   <sp-top-menu [menuData]="menuData"></sp-top-menu>
 
   <!-- Right elements -->
-  <div class="relative flex items-center">
-    <span class="text-white">Hi, {{ user }} </span>
+  <div class="flex">
+    <span class="text-white mt-1">Hi, {{ user }} </span>
     <div class="vl"></div>
     <button mat-icon-button class="btn" aria-label="" routerLink="/">
       <mat-icon class="icon-size_home">home</mat-icon>
     </button>
-    <button
-      mat-icon-button
-      [matMenuTriggerFor]="menu"
-      class="btn"
-      aria-label=""
-    >
-      <mat-icon class="icon-size">account_circle</mat-icon>
+
+
+    <button mat-icon-button class="btn" aria-label="" (click)="goToLink()">
+      <mat-icon class="icon-size_home">help_outline</mat-icon>
+    </button>
+
+
+
+    <button mat-icon-button [matMenuTriggerFor]="menu" class="btn" aria-label="">
+      <mat-icon class="icon-size_home">account_circle</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="logOut($event)">
