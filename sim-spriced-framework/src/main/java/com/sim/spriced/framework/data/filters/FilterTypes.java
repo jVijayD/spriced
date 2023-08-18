@@ -13,15 +13,18 @@ public class FilterTypes {
         AND;
 
     }
-    public enum DataType {
-        STR,
-        INT,
-        DEC,
-        BOOL,
-        DATE;
-    }
-    
-    
+
+    // public enum DataType {
+    //     BOOLEAN,
+    //     STRING,
+    //     NUMBER,
+    //     DATE;
+        
+    //     public String getValue(DataType y){
+    //         return y.toString().toLowerCase(); 
+    //     }
+      
+    // }
 
     public enum FilterType {
         CONDITION,
@@ -48,5 +51,5 @@ public class FilterTypes {
         NOT_CONTAINS;
 
     }
-    
+
 }

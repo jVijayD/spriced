@@ -36,31 +36,24 @@ import org.jooq.impl.DSL;
 public class FilterCondition<T> extends Filter {
 
     String key;
-    DataType dataType;
+    String dataType;
     T value;
     OperatorType operatorType;
 
     private Object getParsedValue() throws ParseException {
-        switch (dataType) {
-            case STR -> {
-                return value.toString();
-            }
-            case BOOL -> {
-                return Boolean.valueOf(value.toString());
-            }
-            case DATE -> {
-                return new SimpleDateFormat("yyyy-MM-dd").parse(value.toString());
-            }
-            case DEC -> {
-                return Long.valueOf(value.toString());
-            }
-            case INT -> {
-                return Integer.valueOf(value.toString());
-            }
-            default -> {
-                return value;
-            }
-        }
+        return switch (dataType) {
+            case "string" ->
+                value.toString();
+            case "boolean" ->
+                Boolean.valueOf(value.toString());
+            case "date" ->
+                new SimpleDateFormat("yyyy-MM-dd")
+                .parse(value.toString());
+            case "number" ->
+                Long.valueOf(value.toString());
+            default ->
+                value;
+        };
     }
 
     @Override
