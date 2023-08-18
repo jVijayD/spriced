@@ -112,8 +112,8 @@ export class FilterDialogComponent {
         return OperatorType.STARTS_WITH;
       case "Ends with":
         return OperatorType.ENDS_WITH;
-      case "IN":
-        return OperatorType.IN;
+      //case "IN":
+      //return OperatorType.IN;
       // case "starts with":
       //   return OperatorType.ILIKE;
       // case "ends with":
