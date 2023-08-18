@@ -5,7 +5,7 @@
     <div class="flex flex-row"><ng-content></ng-content></div>
   </div>
   <ngx-datatable 
-       style="height: calc( 100% - 55px); overflow-y: hidden" 
+       style="height: calc( 100% - 50px); overflow-y: hidden" 
        #table class="material" [rows]="rows"
        [columnMode]="columnMode" 
        [headerHeight]="headerHeight" 
@@ -101,8 +101,9 @@
           <div>
             Rows: {{ rowCount !== "NaN" ? rowCount : 0 }} | Page Size:
             {{ pageSize !== "NaN" ? pageSize : 0 }} | Current Page:
-            {{ curPage !== "NaN" ? curPage : 0 }} | Offset:
-            {{ offset !== "NaN" ? offset : 0 }}
+            {{ curPage !== "NaN" ? curPage : 0 }} 
+            <!-- | Offset:
+            {{ offset !== "NaN" ? offset : 0 }} -->
           </div>
         </div>
         <datatable-pager
