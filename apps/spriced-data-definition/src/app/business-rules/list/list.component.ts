@@ -61,6 +61,7 @@ export class ListComponent implements OnInit, OnDestroy {
   public currentDataSource: any = [];
   public defaultModel: any;
   public defaultEntity: any;
+  public currentAttributeId: string = '';
   displayedColumns: string[] = [
     'Priority',
     'Excluded',
@@ -142,6 +143,7 @@ export class ListComponent implements OnInit, OnDestroy {
   isFullScreen = false;
   rows: any[] = [];
   selectedItem: any = null;
+  public attributeId: any;
 
   constructor(
     private businessRuleService: BusinessruleService,
@@ -159,6 +161,8 @@ export class ListComponent implements OnInit, OnDestroy {
   ) {
     this.entityId = +this.activeRoute?.snapshot?.queryParams?.['entity_id'];
     this.modelId = +this.activeRoute?.snapshot?.queryParams?.['model_id'];
+    this.attributeId = this.activeRoute?.snapshot?.queryParams?.['attribute_id'];
+    this.currentAttributeId = this.attributeId;
   }
 
   /**
@@ -256,6 +260,7 @@ export class ListComponent implements OnInit, OnDestroy {
    * @param attributeId string
    */
   public handleFilterRuleByAttribute(attributeId: any) {
+    this.currentAttributeId = attributeId;
     if (attributeId !== 'ALL') {
       let filteredRules = [];
       for (const rule of this.dataSource) {
@@ -450,7 +455,7 @@ export class ListComponent implements OnInit, OnDestroy {
     const routePath = text === 'preview' ? `${item.id}/preview` : item.id;
     this.route.navigate([
       `/spriced-data-definition/rules/business-rule/${routePath}`,
-    ]);
+    ], {queryParams: {model_id: this.modelId, entity_id: this.entityId, attribute_id: this.currentAttributeId}});
   }
   /**
    * HANDLE FOR ENTITIES BY MODEL ID
@@ -486,7 +491,7 @@ export class ListComponent implements OnInit, OnDestroy {
       },
       ...entity.attributes,
     ];
-    this.defaultAttribute = 'ALL';
+    this.defaultAttribute = this.attributeId ? this.attributeId : 'ALL';
     // this.attributes = entity.attributes;
     this.filterData = this.dataSource.filter((res: any) => res.entityId === id);
     this.rows = this.filterData;
