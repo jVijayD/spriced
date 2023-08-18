@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Attribute, Component, Inject } from "@angular/core";
 
 import { QueryBuilderConfig } from "ngx-angular-query-builder";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -36,7 +36,7 @@ export class FilterDialogComponent {
 
   private convertToFilters(query: any) {
     let filters: Filter[] = [];
-
+    debugger;
     query.rules.forEach((item: any, index: number) => {
       const operatorType = this.getOperatorType(item.operator);
 
@@ -55,6 +55,7 @@ export class FilterDialogComponent {
         key: item.field,
         value: item.value,
         filters: groupFilters,
+        dataType: this.getDataType(this.data.columns, item.field),
       };
       filters.push(filter);
     });
@@ -70,6 +71,18 @@ export class FilterDialogComponent {
     } else {
       return JoinType.AND;
     }
+  }
+
+  private getDataType(
+    columns: QueryColumns[] | undefined,
+    name: string
+  ): "string" | "number" | "date" | "boolean" | "category" {
+    let dataType: "string" | "number" | "date" | "boolean" | "category" =
+      "string";
+    const col = columns?.find((item) => item.name === name);
+    dataType = col?.dataType || "string";
+    dataType = dataType === "category" ? "boolean" : dataType;
+    return dataType;
   }
 
   private getOperatorType(operator: string) {
@@ -99,8 +112,8 @@ export class FilterDialogComponent {
         return OperatorType.STARTS_WITH;
       case "Ends with":
         return OperatorType.ENDS_WITH;
-      case "IN":
-        return OperatorType.IN;
+      //case "IN":
+      //return OperatorType.IN;
       // case "starts with":
       //   return OperatorType.ILIKE;
       // case "ends with":
@@ -193,6 +206,7 @@ interface Filter {
   joinType: JoinType;
   operatorType?: OperatorType;
   filters?: Filter[];
+  dataType: "number" | "string" | "date" | "boolean" | "category";
 }
 
 enum FilterType {
