@@ -1,6 +1,6 @@
 package com.sim.spriced.framework.data.filters;
 
-import com.sim.spriced.framework.data.filters.FilterTypes.DataType;
+//import com.sim.spriced.framework.data.filters.FilterTypes.DataType;
 import com.sim.spriced.framework.data.filters.FilterTypes.OperatorType;
 import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.EQUALS;
 import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.GREATER_THAN;
@@ -14,7 +14,6 @@ import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.LI
 import com.sim.spriced.framework.exceptions.data.FilterParsingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
