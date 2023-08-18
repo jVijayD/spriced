@@ -337,6 +337,7 @@ private static final int PRECISION_DEFAULT_VALUE=1000;
 
 	@Override
 	public void createTrigger(String entityName){
+                this.dropTrigger(entityName);
 		String trigger = "CREATE TRIGGER " + entityName + "_trigger " +
 				"AFTER INSERT OR UPDATE ON " + entityName + " FOR EACH ROW " +
 				"EXECUTE FUNCTION history_trigger();";
