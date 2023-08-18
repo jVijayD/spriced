@@ -14,6 +14,18 @@ public class FilterTypes {
 
     }
 
+    // public enum DataType {
+    //     BOOLEAN,
+    //     STRING,
+    //     NUMBER,
+    //     DATE;
+        
+    //     public String getValue(DataType y){
+    //         return y.toString().toLowerCase(); 
+    //     }
+      
+    // }
+
     public enum FilterType {
         CONDITION,
         CONDITIONGROUP
@@ -39,5 +51,5 @@ public class FilterTypes {
         NOT_CONTAINS;
 
     }
-    
+
 }
