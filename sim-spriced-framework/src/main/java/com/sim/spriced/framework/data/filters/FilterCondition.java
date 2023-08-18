@@ -1,5 +1,6 @@
 package com.sim.spriced.framework.data.filters;
 
+import com.sim.spriced.framework.data.filters.FilterTypes.DataType;
 import com.sim.spriced.framework.data.filters.FilterTypes.OperatorType;
 import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.EQUALS;
 import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.GREATER_THAN;
@@ -11,6 +12,9 @@ import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.LE
 import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.LESS_THAN_EQUALS;
 import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.LIKE;
 import com.sim.spriced.framework.exceptions.data.FilterParsingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +27,7 @@ import org.jooq.impl.DSL;
 /**
  *
  * @author mukil.manohar_simadv
+ * @param <T>
  */
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,8 +36,32 @@ import org.jooq.impl.DSL;
 public class FilterCondition<T> extends Filter {
 
     String key;
+    DataType dataType;
     T value;
     OperatorType operatorType;
+
+    private Object getParsedValue() throws ParseException {
+        switch (dataType) {
+            case STR -> {
+                return value.toString();
+            }
+            case BOOL -> {
+                return Boolean.valueOf(value.toString());
+            }
+            case DATE -> {
+                return new SimpleDateFormat("yyyy-MM-dd").parse(value.toString());
+            }
+            case DEC -> {
+                return Long.valueOf(value.toString());
+            }
+            case INT -> {
+                return Integer.valueOf(value.toString());
+            }
+            default -> {
+                return value;
+            }
+        }
+    }
 
     @Override
     public Condition generate(List fields) {
@@ -49,42 +78,42 @@ public class FilterCondition<T> extends Filter {
         try {
             cnd = switch (operatorType) {
                 case EQUALS ->
-                    field.eq(value);
+                    field.eq(getParsedValue());
                 case GREATER_THAN ->
-                    field.greaterThan(value);
+                    field.greaterThan(getParsedValue());
                 case GREATER_THAN_EQUALS ->
-                    field.greaterOrEqual(value);
+                    field.greaterOrEqual(getParsedValue());
                 case LESS_THAN ->
-                    field.lessThan(value);
+                    field.lessThan(getParsedValue());
                 case LESS_THAN_EQUALS ->
-                    field.lessOrEqual(value);
+                    field.lessOrEqual(getParsedValue());
                 case LIKE ->
-                    field.like((String) value);
+                    field.like(getParsedValue().toString());
                 case ILIKE ->
-                    field.likeIgnoreCase((String) value);
+                    field.likeIgnoreCase(getParsedValue().toString());
                 case IS_NOT_LIKE ->
-                    field.notLike((String) value);
+                    field.notLike(getParsedValue().toString());
                 case CONTAINS ->
-                    field.contains((String) value);
+                    field.contains(getParsedValue());
                 case NOT_CONTAINS ->
-                    field.notContains((String) value);
+                    field.notContains(getParsedValue());
                 case IS_NOT_EQUAL ->
-                    field.ne(value);
+                    field.ne(getParsedValue());
                 case IN ->
-                    field.in(((String) value).split(","));
+                    field.in(getParsedValue().toString().split(","));
                 case IS_NULL ->
                     field.isNull();
                 case IS_NOT_NULL ->
                     field.isNotNull();
                 case STARTS_WITH ->
-                    field.startsWith(value);
+                    field.startsWith(getParsedValue());
                 case ENDS_WITH ->
-                    field.endsWith(value);
+                    field.endsWith(getParsedValue());
                 //TODO consider DataType and cast it to corresponding DT
                 default ->
-                    field.eq(value);
+                    field.eq(getParsedValue());
             };
-        } catch (Exception e) {
+        } catch (ParseException e) {
             e.printStackTrace();
         }
         return cnd;

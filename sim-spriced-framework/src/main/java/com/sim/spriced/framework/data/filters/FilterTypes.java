@@ -13,6 +13,15 @@ public class FilterTypes {
         AND;
 
     }
+    public enum DataType {
+        STR,
+        INT,
+        DEC,
+        BOOL,
+        DATE;
+    }
+    
+    
 
     public enum FilterType {
         CONDITION,
