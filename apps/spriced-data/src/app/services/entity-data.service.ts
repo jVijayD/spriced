@@ -15,6 +15,7 @@ export class EntityDataService {
     private http: HttpClient,
     private requestUtility: RequestUtilityService
   ) {
+    debugger
     this.api_url = process.env["NX_API_DATA_URL"] as string;
     this.def_url = process.env["NX_API_DEFINITION_URL"] as string;
   }
@@ -47,6 +48,7 @@ export class EntityDataService {
   }
   
   loadLookupData(id: string | number): Observable<PageData> {
+    debugger
     const criteria: Criteria = {
       pager: {
         pageSize: 100,
