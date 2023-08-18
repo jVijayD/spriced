@@ -61,6 +61,7 @@ export class ListComponent implements OnInit, OnDestroy {
   public currentDataSource: any = [];
   public defaultModel: any;
   public defaultEntity: any;
+  public currentAttributeId: string = '';
   displayedColumns: string[] = [
     'Priority',
     'Excluded',
@@ -74,19 +75,21 @@ export class ListComponent implements OnInit, OnDestroy {
   ];
 
   headers: Header[] = [
-    { column: "priority",
-     name: "Priority", 
-     canAutoResize: true, 
-     isSortable: true, 
-     width: 100 
+    {
+      column: "priority",
+      name: "Priority",
+      canAutoResize: true,
+      isSortable: true,
+      width: 100
     },
-    { column: "isExcluded",
-     name: "Excluded", 
-     canAutoResize: true, 
-     isSortable: true, 
-     checkbox: true, 
-     disableCheckbox: (row: any) => !['Active', 'Excluded'].includes(row.status),
-      width: 100 
+    {
+      column: "isExcluded",
+      name: "Excluded",
+      canAutoResize: true,
+      isSortable: true,
+      checkbox: true,
+      disableCheckbox: (row: any) => !['Active', 'Excluded'].includes(row.status),
+      width: 100
     },
     {
       column: "name",
@@ -140,6 +143,7 @@ export class ListComponent implements OnInit, OnDestroy {
   isFullScreen = false;
   rows: any[] = [];
   selectedItem: any = null;
+  public attributeId: any;
 
   constructor(
     private businessRuleService: BusinessruleService,
@@ -157,17 +161,14 @@ export class ListComponent implements OnInit, OnDestroy {
   ) {
     this.entityId = +this.activeRoute?.snapshot?.queryParams?.['entity_id'];
     this.modelId = +this.activeRoute?.snapshot?.queryParams?.['model_id'];
-    
+    this.attributeId = this.activeRoute?.snapshot?.queryParams?.['attribute_id'];
+    this.currentAttributeId = this.attributeId;
   }
 
   /**
    * Initialization tasks or data fetching can be done here
    */
   async ngOnInit() {
-
-    // const user = localStorage.getItem('user')
-    //   ? JSON.parse(localStorage.getItem('user')!)
-    //   : null;
     this.loading = true;
     this.formbuild();
 
@@ -179,12 +180,6 @@ export class ListComponent implements OnInit, OnDestroy {
       }
     });
 
-    // const param = {
-    //   userLoggedIn: user.userLoggedIn,
-    //   appName: 'Data-Defination',
-    // };
-    // this.appStoreService.appStore.next(param);
-
     // HANDLE THIS FOR GET RULES AND MODELS APIS
     this.getRulesAndModelsData();
   }
@@ -193,15 +188,13 @@ export class ListComponent implements OnInit, OnDestroy {
   public async getRulesAndModelsData() {
     // eslint-disable-next-line prefer-const
     let { rules, models } = await this.getALlApis();
-    // this.defaultModel = this.modelId ? this.modelId : models[0]?.id;
-    // this.handleEntityByModels(this.defaultModel);
-    
+    this.defaultModel = this.modelId ? this.modelId : models[0]?.id;
+    this.handleEntityByModels(this.defaultModel);
     if (rules && models) {
       // Handling order by id
       rules.sort((a: any, b: any) => {
         return a.id - b.id;
       });
-
       rules = rules.map((item: any) => ({
         ...item,
         updatedDate: this.datePipe.transform(
@@ -209,16 +202,7 @@ export class ListComponent implements OnInit, OnDestroy {
           'MM/dd/yyyy hh:mm:ss a'
         ),
       }));
-      // this.models = models;
-      this.models = [];
-    this.models= [{
-      displayName:'All',
-            id: 'ALL'
-    },
-  ...models
-    ];
-  this.defaultModel = 'ALL';
-  this.handleEntityByModels(this.defaultModel);
+      this.models = models;
       this.dataSource = rules;
       this.rows = rules;
       this.filterData = this.rows;
@@ -240,7 +224,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.listForm = this.fb.group({
       model: new FormControl('', [Validators.required]),
       entity: new FormControl('', [Validators.required]),
-      attrubute: new FormControl('',[Validators.required]),
+      attrubute: new FormControl('', [Validators.required]),
     });
   }
 
@@ -269,6 +253,70 @@ export class ListComponent implements OnInit, OnDestroy {
         }
       );
     });
+  }
+
+  /**
+   * HANDLE THIS FOR FILTER THE RULE DATA BY ATTRIBUTE ID
+   * @param attributeId string
+   */
+  public handleFilterRuleByAttribute(attributeId: any) {
+    this.currentAttributeId = attributeId;
+    if (attributeId !== 'ALL') {
+      let filteredRules = [];
+      for (const rule of this.dataSource) {
+        if (this.ruleContainsAttributeId(rule, attributeId) || this.actionContainsAttributeId(rule, attributeId) || this.elseActionContainsAttributeId(rule, attributeId)) {
+          filteredRules.push(rule);
+        }
+      }
+      this.rows = filteredRules;
+      return
+    }
+    this.rows = this.currentDataSource;
+  }
+
+  /**
+   * HANDLE THIS FOR FILTER THE CONDTIONS BY ATTRIBUTEID
+   * @param rule any
+   * @param id string
+   * @returns 
+   */
+  ruleContainsAttributeId(rule: any, id: string): boolean {
+    for (const condition of rule.condition) {
+      if (condition.attributeId === id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * HANDLE THIS FOR FILTER THE IF ACTIONS BY ATTRIBUTEID
+   * @param rule any
+   * @param id string
+   * @returns 
+   */
+  actionContainsAttributeId(rule: any, id: string): boolean {
+    for (const action of rule.conditionalAction.ifActions) {
+      if (action.attributeId === id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * HANDLE THIS FOR FILTER THE ELSE ACTIONS BY ATTRIBUTEID
+   * @param rule any
+   * @param id string
+   * @returns 
+   */
+  elseActionContainsAttributeId(rule: any, id: string): boolean {
+    for (const action of rule.conditionalAction.elseActions) {
+      if (action.attributeId === id) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -407,51 +455,24 @@ export class ListComponent implements OnInit, OnDestroy {
     const routePath = text === 'preview' ? `${item.id}/preview` : item.id;
     this.route.navigate([
       `/spriced-data-definition/rules/business-rule/${routePath}`,
-    ]);
+    ], {queryParams: {model_id: this.modelId, entity_id: this.entityId, attribute_id: this.currentAttributeId}});
   }
   /**
    * HANDLE FOR ENTITIES BY MODEL ID
    * @param id any
    */
   public handleEntityByModels(id: any, text?: any) {
-    if (id === 'ALL') {
-        this.entities = [
-            { 
-                displayName: 'All',
-                id: 'ALL'
-            }
-        ];
-        this.defaultEntity = 'ALL';
-        this.attributes = [
-            {
-                name: 'All',
-                id: 'ALL'
-            }
-        ];
-        this.defaultAttribute = 'ALL';
-        const ids = this.entities.map((item:any)=>item.id)
-        ids.length > 1 ? this.rows = this.dataSource.filter((item:any)=>ids.includes(item.entityId)):this.rows = this.dataSource;
-        return;
-    }
     this.businessRuleService
-        .getAllEntitesByModuleId(id)
-        .pipe(takeUntil(this.notifier$))
-        .subscribe((res: any) => {
-            this.entities = [
-                { 
-                    displayName: 'All',
-                    id: 'ALL'
-                },
-                ...res
-            ];
-            this.defaultEntity = 'ALL';
-            this.defaultModel = id;
-            this.modelId = id;
-            this.handleAttributeByEntity(this.defaultEntity);
-            const ids = this.entities.map((item:any)=>item.id)
-            ids.length > 1 ? this.rows = this.dataSource.filter((item:any)=>ids.includes(item.entityId)):this.rows = this.dataSource;
-        });
-}
+    .getAllEntitesByModuleId(id)
+    .pipe(takeUntil(this.notifier$))
+    .subscribe((res: any) => {
+      this.entities = res;
+      const entity = res.find((el: any) => el.groupId === this.defaultModel)
+      this.defaultEntity = this.entityId && !text ? this.entityId : entity?.id;
+      this.modelId = id;
+      this.handleAttributeByEntity(this.defaultEntity);
+    });
+  }
 
 
   /**
@@ -459,29 +480,19 @@ export class ListComponent implements OnInit, OnDestroy {
    * @param id number
    */
   public handleAttributeByEntity(id: any) {
-    if(id == 'ALL'){
-      this.attributes=[
-        {
-          name: 'All',
-            id: 'ALL'
-        }
-      ]
-      this.defaultAttribute = 'ALL';
-      const ids = this.entities.map((item:any)=>item.id)
-      ids.length > 1 ? this.rows = this.dataSource.filter((item:any)=>ids.includes(item.entityId)):this.rows = this.dataSource;
-      return;
-    }
     this.entityId = id;
     this.loading = true;
     const entity = this.entities.find((item: any) => item.id == id);
-    this.attributes =  entity.attributes.filter((item:any)=>item.systemAttribute == false);
+    this.attributes = [];
     this.attributes = [
       {
         name: 'All',
         id: 'ALL',
       },
-      ...this.attributes,
+      ...entity.attributes,
     ];
+    this.defaultAttribute = this.attributeId ? this.attributeId : 'ALL';
+    // this.attributes = entity.attributes;
     this.filterData = this.dataSource.filter((res: any) => res.entityId === id);
     this.rows = this.filterData;
     this.currentDataSource = this.filterData.slice(
@@ -490,7 +501,7 @@ export class ListComponent implements OnInit, OnDestroy {
     );
     this.paginator?.firstPage();
     this.loading = false;
-}
+  }
 
   /**
    * HANDLING FOR CHANGE PAGE

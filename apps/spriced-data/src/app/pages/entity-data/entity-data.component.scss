@@ -14,6 +14,10 @@
   height: calc(100% - 3rem);
 }
 
+mat-accordion.mat-accordion {
+  overflow: auto;
+}
+
 // .file-excel::before {
 //   font: 20px;
 //   color: var(--white);
