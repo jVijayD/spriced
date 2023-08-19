@@ -21,6 +21,9 @@ export class DynamicFormContainerComponent {
   currentFormData!: AppFormData;
   formSubmitAttempt = false;
 
+  @Input()
+  disableSubmit: boolean = false;
+
   @Output()
   submitEvent = new EventEmitter<FormGroup>();
 

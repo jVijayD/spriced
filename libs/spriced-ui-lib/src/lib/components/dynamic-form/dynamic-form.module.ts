@@ -26,27 +26,18 @@ import { MatNativeDateModule, MatOptionModule } from "@angular/material/core";
 import { DatePickerComponent } from "./sub-components/date-picker/date-picker.component";
 import { DateTimePickerComponent } from "./sub-components/date-time-picker/date-time-picker.component";
 import { DateRangeComponent } from "./sub-components/date-range/date-range.component";
-import { DateFormatDirective } from "./directives/dateformat-yyyymmdd.directive";
-import { DateFormatDirectiveMMddyy } from "./directives/dateformat-MMddyy.directive";
-import { DateFormatDirectiveMMddyyyy } from "./directives/dateformat-MMddyyyy.directive";
-import { DateFormatDirectiveddMMYY } from "./directives/dateformat-ddMMyy.directive";
-import { DateFormatDirectiveYYMMdd } from "./directives/dateformat-yyMMdd.directive";
-import { DateFormatDirectivedd_MM_YY } from "./directives/dateformat-dd.MM.yy.directive";
-import { DateFormatDirectivedd_MM_YYYY } from "./directives/dateformat-dd.MM.yyyy.directive";
-import { DateFormatDirectiveYY__MM__dd } from "./directives/dateformat-yy-MM-dd.directive";
-import { DateFormatDirectiveYYYY__MM__dd } from "./directives/dateformat-yyyy-MM-dd.directive";
-import { DateFormatDirectivedd__MM__YYYY } from "./directives/dateformat-dd-MM-yyyy.directive";
-import { DateFormatDirectivedd__MM__YY } from "./directives/dateformat-dd-MM-yy.directive";
-import { DateFormatDirectiveYY_MM_dd } from "./directives/dateformat-yy.MM.dd.directive";
-import { DateFormatDirectiveYYYY_MM_dd } from "./directives/dateformat-yyyy.mm.dd.directive";
-import { DateFormatDirectiveMMDDyy } from "./directives/dateformat.MMDDyy.directive";
-import { DateFormatDirectiveMMDDyyyy } from "./directives/dateformat.MMDDyyyy.directive";
-import { DateFormatDirectiveDDMMYY } from "./directives/dateformat-DDMMMyy.directive";
-import { DateFormatDirectivedMMM__DD__YYYY } from "./directives/MMM-DD-YYYY.directive";
-import { DateFormatDirectiveDD_MMM__YYYY } from "./directives/DD-MMM-YYYY.directive";
-import { DateFormatDirectiveYYYY__DD__MMM } from "./directives/YYYY-DD-MMM.directive";
+
 import { CheckboxComponent } from "./sub-components/checkbox/checkbox.component";
 import { MatSelectModule } from "@angular/material/select";
+import { DateFormatDirectiveDDMMYY } from "./directives/dateformat-ddMMyy.directive";
+import { DateFormatDirectiveDDMMYYYY } from "./directives/dateformat-DDMMYYYY.directive";
+import { DateFormatDirectiveMMDDYY } from "./directives/dateformat.MMDDyy.directive";
+import { DateFormatDirectiveMMDDYYYY } from "./directives/dateformat.MMDDyyyy.directive";
+import { DateFormatDirectiveYYMMDD } from "./directives/dateformat-yyMMdd.directive";
+import { DateFormatDirectiveDD__MM__YY } from "./directives/dateformat-dd-MM-yy.directive";
+import { DateFormatDirectiveDD__MM__YYYY } from "./directives/dateformat-dd-MM-yyyy.directive";
+import { DateFormatDirectiveYY__MM__DD } from "./directives/dateformat-yy-MM-dd.directive";
+import { DateFormatDirectiveYYYY__MM__DD } from "./directives/dateformat-yyyy-MM-dd.directive";
 
 @NgModule({
   declarations: [
@@ -69,26 +60,15 @@ import { MatSelectModule } from "@angular/material/select";
     DatePickerComponent,
     DateTimePickerComponent,
     DateRangeComponent,
-    DateFormatDirective,
-    DateFormatDirectiveMMddyy,
-    DateFormatDirectiveMMddyyyy,
-    DateFormatDirectiveddMMYY,
-    DateFormatDirectiveYYMMdd,
-    DateFormatDirectivedd_MM_YY,
-    DateFormatDirectivedd_MM_YYYY,
-    DateFormatDirectiveYY__MM__dd,
-    DateFormatDirectiveYYYY__MM__dd,
-    DateFormatDirectivedd_MM_YY,
-    DateFormatDirectivedd__MM__YY,
-    DateFormatDirectivedd__MM__YYYY,
-    DateFormatDirectiveYY_MM_dd,
-    DateFormatDirectiveYYYY_MM_dd,
-    DateFormatDirectiveMMDDyy,
-    DateFormatDirectiveMMDDyyyy,
+    DateFormatDirectiveMMDDYY,
+    DateFormatDirectiveMMDDYYYY,
     DateFormatDirectiveDDMMYY,
-    DateFormatDirectivedMMM__DD__YYYY,
-    DateFormatDirectiveDD_MMM__YYYY,
-    DateFormatDirectiveYYYY__DD__MMM,
+    DateFormatDirectiveDDMMYYYY,
+    DateFormatDirectiveYYMMDD,
+    DateFormatDirectiveDD__MM__YY,
+    DateFormatDirectiveDD__MM__YYYY,
+    DateFormatDirectiveYY__MM__DD,
+    DateFormatDirectiveYYYY__MM__DD,
     CheckboxComponent,
   ],
   imports: [
@@ -127,26 +107,15 @@ import { MatSelectModule } from "@angular/material/select";
     DatePickerComponent,
     DateTimePickerComponent,
     DateRangeComponent,
-    DateFormatDirective,
-    DateFormatDirectiveMMddyy,
-    DateFormatDirectiveMMddyyyy,
-    DateFormatDirectiveddMMYY,
-    DateFormatDirectiveYYMMdd,
-    DateFormatDirectivedd_MM_YY,
-    DateFormatDirectivedd_MM_YYYY,
-    DateFormatDirectiveYY__MM__dd,
-    DateFormatDirectiveYYYY__MM__dd,
-    DateFormatDirectivedd_MM_YY,
-    DateFormatDirectivedd__MM__YY,
-    DateFormatDirectivedd__MM__YYYY,
-    DateFormatDirectiveYY_MM_dd,
-    DateFormatDirectiveYYYY_MM_dd,
-    DateFormatDirectiveMMDDyy,
-    DateFormatDirectiveMMDDyyyy,
+    DateFormatDirectiveMMDDYY,
+    DateFormatDirectiveMMDDYYYY,
     DateFormatDirectiveDDMMYY,
-    DateFormatDirectivedMMM__DD__YYYY,
-    DateFormatDirectiveDD_MMM__YYYY,
-    DateFormatDirectiveYYYY__DD__MMM,
+    DateFormatDirectiveDDMMYYYY,
+    DateFormatDirectiveYYMMDD,
+    DateFormatDirectiveDD__MM__YY,
+    DateFormatDirectiveDD__MM__YYYY,
+    DateFormatDirectiveYY__MM__DD,
+    DateFormatDirectiveYYYY__MM__DD,
     CheckboxComponent,
   ],
 })

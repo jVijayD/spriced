@@ -3,17 +3,17 @@ import { MAT_DATE_FORMATS } from "@angular/material/core";
 
 const FORMAT = {
   parse: {
-    dateInput: "YY/MM/dd",
+    dateInput: "YY/MM/DD",
   },
   display: {
-    dateInput: "YY/MM/dd",
+    dateInput: "YY/MM/DD",
     monthYearLabel: "MMM YYYY",
     dateA11yLabel: "LL",
     monthYearA11yLabel: "MMMM YYYY",
   },
 };
 @Directive({
-  selector: "[spDateFormatYYMMdd]",
+  selector: "[spDateFormatYYMMDD]",
   providers: [{ provide: MAT_DATE_FORMATS, useValue: FORMAT }],
 })
-export class DateFormatDirectiveYYMMdd {}
+export class DateFormatDirectiveYYMMDD {}

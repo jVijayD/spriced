@@ -104,6 +104,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   totalElements = 0;
   rows: any[] = [];
   currentSelectedEntity?: Entity;
+  disableSubmit: boolean = false;
   //Dynamic Form
   appForm!: AppForm;
   currentCriteria!: Criteria;
@@ -177,7 +178,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.selectedItem = e;
     //this.dynamicFormService.parentForm?.setValue(this.selectedItem);
     this.dynamicFormService.parentForm?.setValue(
-      this.entityFormService.extraxtFormFieldsOnly(
+      this.entityFormService.extractFormFieldsOnly(
         this.selectedItem,
         this.dynamicFormService.parentForm?.value
       )
@@ -382,6 +383,9 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     let formFields: FormFieldControls = [];
     if (entity) {
       formFields = this.entityFormService.getFormFieldControls(entity);
+      this.disableSubmit = !entity.attributes.reduce((prev, current) => {
+        return prev || current.permission === "UPDATE";
+      }, false);
     }
     this.setFormData("", formFields);
   }
@@ -428,7 +432,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.limit = entitySettings.noOfRecords;
       this.headers.forEach((item, index) => {
         item.pinned = undefined;
-        if (index+1=== entitySettings.freeze) {
+        if (index + 1 === entitySettings.freeze) {
           item.pinned = "left";
         }
       });

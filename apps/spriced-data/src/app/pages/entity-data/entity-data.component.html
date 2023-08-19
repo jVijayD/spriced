@@ -169,7 +169,7 @@
         [headerHeight]="40"
         [footerHeight]="40"
         [columnMode]="columnMode"
-        [virtualScroll]="true"
+        [virtualScroll]="false"
         [selectionType]="selectionType"
         [count]="totalElements"
         [limit]="limit"
@@ -342,11 +342,12 @@
           [appForm]="appForm"
           reset="Reset"
           save="Save"
+          [disableSubmit]="disableSubmit"
           (submitEvent)="onSubmitEntityData($event)"
           (resetEvent)="onClear()"
         ></sp-dynamic-form-container>
       </mat-expansion-panel>
-      <mat-expansion-panel>
+      <!-- <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>
             <b>Dependant Lookup Entities</b>
@@ -366,7 +367,7 @@
             >
           </ng-container>
         </div>
-      </mat-expansion-panel>
+      </mat-expansion-panel> -->
     </mat-accordion>
   </div>
 </sp-two-col-three-forth>

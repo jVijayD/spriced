@@ -41,26 +41,16 @@ export * from "./lib/components/dynamic-form/sub-components/date-time-picker/dat
 export * from "./lib/components/dynamic-form/sub-components/date-range/date-range.component";
 export * from "./lib/components/dynamic-form/sub-components/numeric/numeric.component";
 
-export * from "./lib/components/dynamic-form/directives/dateformat-yyyymmdd.directive";
-export * from "./lib/components/dynamic-form/directives/dateformat-MMddyy.directive";
-export * from "./lib/components/dynamic-form/directives/dateformat-MMddyyyy.directive";
 export * from "./lib/components/dynamic-form/directives/dateformat-ddMMyy.directive";
+export * from "./lib/components/dynamic-form/directives/dateformat-DDMMYYYY.directive";
+export * from "./lib/components/dynamic-form/directives/dateformat.MMDDyy.directive";
+export * from "./lib/components/dynamic-form/directives/dateformat.MMDDyyyy.directive";
 export * from "./lib/components/dynamic-form/directives/dateformat-yyMMdd.directive";
-export * from "./lib/components/dynamic-form/directives/dateformat-dd.MM.yy.directive";
-export * from "./lib/components/dynamic-form/directives/dateformat-dd.MM.yyyy.directive";
-export * from "./lib/components/dynamic-form/directives/dateformat-yy-MM-dd.directive";
-export * from "./lib/components/dynamic-form/directives/dateformat-yyyy-MM-dd.directive";
 export * from "./lib/components/dynamic-form/directives/dateformat-dd-MM-yy.directive";
 export * from "./lib/components/dynamic-form/directives/dateformat-dd-MM-yyyy.directive";
-export * from "./lib/components/dynamic-form/directives/dateformat-yy.MM.dd.directive";
+export * from "./lib/components/dynamic-form/directives/dateformat-yy-MM-dd.directive";
 export * from "./lib/components/dynamic-form/directives/dateformat-yyyy-MM-dd.directive";
-export * from "./lib/components/dynamic-form/directives/dateformat-yyyy.mm.dd.directive";
-export * from "./lib/components/dynamic-form/directives/dateformat.MMDDyy.directive";
-export * from "./lib/components/dynamic-form/directives/dateformat-DDMMMyy.directive";
-export * from "./lib/components/dynamic-form/directives/DD-MMM-YYYY.directive";
-export * from "./lib/components/dynamic-form/directives/YYYY-DD-MMM.directive";
-export * from "./lib/components/dynamic-form/directives/MMM-DD-YYYY.directive";
-export * from "./lib/components/dynamic-form/directives/dateformat.MMDDyyyy.directive";
+
 export * from "./lib/layouts/one-col/one-col.component";
 export * from "./lib/layouts/hbox/hbox.component";
 export * from "./lib/layouts/vbox/vbox.component";

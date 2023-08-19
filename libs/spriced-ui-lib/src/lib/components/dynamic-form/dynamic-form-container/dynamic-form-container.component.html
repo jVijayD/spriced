@@ -31,9 +31,10 @@
         type="submit"
         (click)="onFormSubmit()"
         [disabled]="
-          this.currentFormData && this.currentFormData.form
+          disableSubmit ||
+          (this.currentFormData && this.currentFormData.form
             ? !this.currentFormData.form.valid
-            : true
+            : true)
         "
       >
         {{ save }}
