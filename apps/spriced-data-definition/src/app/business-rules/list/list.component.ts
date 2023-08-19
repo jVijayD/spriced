@@ -204,8 +204,7 @@ export class ListComponent implements OnInit, OnDestroy {
       }));
       this.models = models;
       this.dataSource = rules;
-      this.rows = rules;
-      this.filterData = this.rows;
+      this.filterData = this.dataSource;
       // this.currentDataSource =  this.dataSource;
       this.currentDataSource = this.rows.slice(
         this.pageIndex,
