@@ -26,7 +26,15 @@
             <div class="example-container mt-1.5 flex flex-col ml-2">
                 <mat-form-field [ngClass]="{'not-allow': previewField}" class="w-52" appearance="outline">
                     <mat-label>Priority</mat-label>
-                    <input [readonly]="previewField" formControlName="priority" matInput type="number" placeholder="Enter number in range 1-100">
+                    <input
+                     onkeypress="return (this.value + String.fromCharCode(event.charCode) <= 1000 && this.value + String.fromCharCode(event.charCode) > 0)"
+                     min="1"
+                     max="1000"
+                     [readonly]="previewField"
+                     formControlName="priority"
+                     matInput 
+                     type="number" 
+                     placeholder="Enter number in range 1-100">
                 </mat-form-field>
                 <mat-error class="text-sm italic text-red-500"
                  *ngIf="myForm.get('priority')!.invalid && myForm.get('priority')!.touched && myForm.get('priority')!.hasError('required')">

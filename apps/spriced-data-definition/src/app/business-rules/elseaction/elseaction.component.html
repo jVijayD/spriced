@@ -7,7 +7,7 @@
             <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="attributeId"
                 (valueChange)="handleAttributes($event, 'changeAttribute')">
                 <mat-option *ngFor="let attribute of dataRules?.attributes" [value]="attribute?.id">
-                    {{attribute.name}}
+                    {{attribute.displayName}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
