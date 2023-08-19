@@ -24,7 +24,7 @@ export class EntityFormService {
       });
   }
 
-  public extraxtFormFieldsOnly(selectedItem: any, value: any) {
+  public extractFormFieldsOnly(selectedItem: any, value: any) {
     let extractedFields: any = {};
 
     Object.keys(value).forEach((key) => {
@@ -41,7 +41,7 @@ export class EntityFormService {
         type: "lookup-select",
         name: attr.name,
         label: attr.displayName || attr.name,
-        readOnly: attr.permission === "VIEW" ? true : false,
+        readOnly: attr.permission === "READ" ? true : false,
         displayProp: "name",
         valueProp: "code",
         eventValue: attr.referencedTableId,
@@ -82,33 +82,35 @@ export class EntityFormService {
             placeholder: attr.displayName || attr.name,
             label: attr.displayName || attr.name,
             validations: this.getValidations(attr),
-            readOnly: attr.permission === "VIEW" ? true : false,
+            readOnly: attr.permission === "READ" ? true : false,
           };
         case "INTEGER":
         case "DECIMAL":
+          debugger;
           return {
             type: "numeric",
             subType: "text",
             name: attr.name,
             placeholder: attr.displayName || attr.name,
             label: attr.displayName || attr.name,
-            decimalCount: attr.numberOfDecimalValues,
+            decimalCount: attr.size,
             validations: this.getValidations(attr),
-            readOnly: attr.permission === "VIEW" ? true : false,
+            readOnly: attr.permission === "READ" ? true : false,
           };
 
         case "TIME_STAMP":
+          debugger;
           return {
             name: attr.name,
             type: "date",
-            format: this.getDateFormatter(attr.formatter || "MM/dd/YYYY"),
-            label: attr.formatter || "MM/dd/yyyy",
+            format: attr.formatter || "MM/DD/yyyy",
+            label: attr.formatter || "MM/DD/yyyy",
             placeholder: attr.displayName || attr.name,
             startDate: moment(new Date()).format("YYYY-MM-DD"),
             startView: "month",
             hiddenDefault: null,
             validations: this.getValidations(attr),
-            readOnly: attr.permission === "VIEW" ? true : false,
+            readOnly: attr.permission === "READ" ? true : false,
           };
         case "BOOLEAN":
           return {
@@ -116,7 +118,7 @@ export class EntityFormService {
             name: attr.name,
             label: attr.displayName || attr.name,
             validations: this.getValidations(attr),
-            readOnly: attr.permission === "VIEW" ? true : false,
+            readOnly: attr.permission === "READ" ? true : false,
             value: false,
           };
         case "AUTO":
@@ -167,32 +169,32 @@ export class EntityFormService {
     return validations;
   }
 
-  public getDateFormatter(mask: string) {
-    switch (mask) {
-      case "MM/dd/yy":
-        return "MM/DD/YY";
-      case "MM/dd/yyyy":
-        return "MM/DD/YYYY";
-      case "dd/MM/yy":
-        return "DD/MM/YY";
-      case "dd/MM/yyyy":
-        return "DD/MM/YYYY";
-      case "yy/MM/dd":
-        return "YY/MM/DD";
-      case "yyyy/MM/dd":
-        return "YYYY/MM/DD";
-      case "dd-MM-yy":
-        return "DD-MM-YY";
-      case "dd-MM-yyyy":
-        return "DD-MM/YYYY";
-      case "yy-MM-dd":
-        return "YY-MM-DD";
-      case "yyyy-MM-dd":
-        return "YYYY-MM-DD";
-      case "MM/yyyy":
-        return "MM/YYYY";
-      default:
-        return "MM/DD/YYYY";
-    }
-  }
+  // public getDateFormatter(mask: string) {
+  //   switch (mask) {
+  //     case "MM/dd/yy":
+  //       return "MM/DD/YY";
+  //     case "MM/dd/yyyy":
+  //       return "MM/DD/YYYY";
+  //     case "dd/MM/yy":
+  //       return "DD/MM/YY";
+  //     case "dd/MM/yyyy":
+  //       return "DD/MM/YYYY";
+  //     case "yy/MM/dd":
+  //       return "YY/MM/DD";
+  //     case "yyyy/MM/dd":
+  //       return "YYYY/MM/DD";
+  //     case "dd-MM-yy":
+  //       return "DD-MM-YY";
+  //     case "dd-MM-yyyy":
+  //       return "DD-MM/YYYY";
+  //     case "yy-MM-dd":
+  //       return "YY-MM-DD";
+  //     case "yyyy-MM-dd":
+  //       return "YYYY-MM-DD";
+  //     case "MM/yyyy":
+  //       return "MM/YYYY";
+  //     default:
+  //       return "MM/DD/YYYY";
+  //   }
+  // }
 }

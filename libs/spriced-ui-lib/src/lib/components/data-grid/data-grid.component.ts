@@ -176,7 +176,7 @@ export class DataGridComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.table.virtualization = false;
+    //this.table.virtualization = false;
   }
 
   public renderData(data: any, itemHeader: Header) {
@@ -204,7 +204,7 @@ export interface Header {
   tooltip?: boolean;
   tooltipTemplate?: any;
   imgsrc?: any;
-  disableCheckbox?: any
+  disableCheckbox?: any;
 }
 
 export interface Paginate {

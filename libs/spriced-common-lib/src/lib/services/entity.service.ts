@@ -62,8 +62,8 @@ export interface Attribute {
   referencedTableId?: string | number;
   businessIdAppender?: string;
   formatter?: string;
-  numberOfDecimalValues: number;
-  permission: "UPDATE" | "DENY" | "VIEW";
+  //numberOfDecimalValues: number;
+  permission: "UPDATE" | "DENY" | "READ";
   constraintType:
     | "NONE"
     | "PRIMARY_KEY"

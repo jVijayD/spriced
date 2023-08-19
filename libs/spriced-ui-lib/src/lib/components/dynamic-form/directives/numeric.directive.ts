@@ -25,6 +25,7 @@ export class NumericDirective {
       const currentValue = this.el.nativeElement.value;
       if (currentValue !== "" && !this.check(currentValue)) {
         this.el.nativeElement.value = oldValue;
+        //(this.el.nativeElement as HTMLInputElement).value = oldValue;
       }
     });
   }
@@ -33,6 +34,11 @@ export class NumericDirective {
 
   @HostListener("keydown", ["$event"])
   onKeyDown(event: KeyboardEvent) {
+    let decimalCount = 0;
+    const val = this.el.nativeElement.value.split(".");
+    if (val.length > 1) {
+      decimalCount = val[1].length;
+    }
     if (
       [
         "0",
@@ -57,6 +63,7 @@ export class NumericDirective {
     ) {
       event.preventDefault();
     }
+
     this.run(this.el.nativeElement.value);
   }
 
