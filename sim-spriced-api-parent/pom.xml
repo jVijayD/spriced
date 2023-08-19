@@ -18,10 +18,12 @@
 		<module>../sim-spriced-framework</module>
 		<module>../sim-spriced-framework-api</module>
 		<module>../sim-spriced-defnition</module>
-		<module>sim-spriced-defnition-api</module>
+		<module>../sim-spriced-user-access</module>
 		<module>../sim-spriced-data</module>
+		<module>sim-spriced-defnition-api</module>
 		<module>sim-spriced-data-api</module>
 		<module>sim-spriced-reports-api</module>
+		<module>sim-spriced-user-access-api</module>
 	</modules>
 
 	<dependencies>
