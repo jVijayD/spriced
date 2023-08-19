@@ -152,7 +152,7 @@ public class EntityDataController {
 			}
 			List<Filter> filters = searchCriteria.getFilters();
 			filters.add(
-					new FilterCondition<>(jsonObj.keys().next(), Integer.valueOf(id), FilterTypes.OperatorType.EQUALS));
+					new FilterCondition(jsonObj.keys().next(),"number", Integer.valueOf(id), FilterTypes.OperatorType.EQUALS));
 			searchCriteria.setFilters(filters);
 			var result = this.dataService.fetchOne(data, searchCriteria);
 			return new ResponseEntity<>(this.convertToSimpleJSONObject(result), HttpStatus.OK);
