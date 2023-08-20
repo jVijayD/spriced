@@ -57,7 +57,7 @@ public class FilterCondition<T> extends Filter {
                 new Date(new SimpleDateFormat("yyyy-MM-dd")
                 .parse(value.toString()).getTime());
             case "number" ->
-                Long.valueOf(value.toString());
+                Double.valueOf(value.toString());
             default ->
                 value;
         };
