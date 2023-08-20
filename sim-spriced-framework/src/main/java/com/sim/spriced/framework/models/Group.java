@@ -42,6 +42,7 @@ public class Group extends BaseEntity {
 
 	@Override
 	public boolean validate() {
+		this.name = this.name.toLowerCase();
 		this.setDefaultValues();
 		return true;
 	}

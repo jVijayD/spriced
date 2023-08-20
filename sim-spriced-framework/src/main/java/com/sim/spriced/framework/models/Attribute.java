@@ -27,7 +27,7 @@ public class Attribute {
 	private DataType dataType=DataType.STRING;
 	private Type type=Type.FREE_FORM;
 	private int size=25;
-	private int width=250;
+	private int width=200;
 	private boolean nullable = true;
 	private Object defaultValue=null;
 	
