@@ -454,7 +454,7 @@ export class ListComponent implements OnInit, OnDestroy {
     const routePath = text === 'preview' ? `${item.id}/preview` : item.id;
     this.route.navigate([
       `/spriced-data-definition/rules/business-rule/${routePath}`,
-    ], {queryParams: {model_id: this.modelId, entity_id: this.entityId, attribute_id: this.currentAttributeId}});
+    ], { queryParams: { model_id: this.modelId, entity_id: this.entityId, attribute_id: this.currentAttributeId } });
   }
   /**
    * HANDLE FOR ENTITIES BY MODEL ID
@@ -462,15 +462,15 @@ export class ListComponent implements OnInit, OnDestroy {
    */
   public handleEntityByModels(id: any, text?: any) {
     this.businessRuleService
-    .getAllEntitesByModuleId(id)
-    .pipe(takeUntil(this.notifier$))
-    .subscribe((res: any) => {
-      this.entities = res;
-      const entity = res.find((el: any) => el.groupId === this.defaultModel)
-      this.defaultEntity = this.entityId && !text ? this.entityId : entity?.id;
-      this.modelId = id;
-      this.handleAttributeByEntity(this.defaultEntity);
-    });
+      .getAllEntitesByModuleId(id)
+      .pipe(takeUntil(this.notifier$))
+      .subscribe((res: any) => {
+        this.entities = res;
+        const entity = res.find((el: any) => el.groupId === this.defaultModel)
+        this.defaultEntity = this.entityId && !text ? this.entityId : entity?.id;
+        this.modelId = id;
+        this.handleAttributeByEntity(this.defaultEntity);
+      });
   }
 
 
@@ -725,6 +725,15 @@ export class ListComponent implements OnInit, OnDestroy {
           const finalArray = [`${joinedString}`];
           operand = finalArray;
         }
+        if (action.actionType.toLowerCase().trim().endsWith('to'))
+        {
+          const lastindex = action.actionType.toLowerCase().lastIndexOf('to');
+          if (
+            (lastindex > -1) && (lastindex === 0 || action.actionType[lastindex - 1] === ' ')
+          ){
+            action.actionType = action.actionType.substring(0,lastindex)
+          }
+        };
         tooltipActionConditionsText += `${attribute.name
           } ${action.actionType.toLowerCase()} to ${operand}`;
         const lastAction = actions.length - 1;
