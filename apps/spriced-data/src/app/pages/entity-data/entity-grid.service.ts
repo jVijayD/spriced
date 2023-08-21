@@ -63,6 +63,7 @@ export class EntityGridService {
         return "boolean";
       case "INTEGER":
       case "SERIAL":
+      case "DECIMAL": 
       case "AUTO":
         return "number";
       default:
