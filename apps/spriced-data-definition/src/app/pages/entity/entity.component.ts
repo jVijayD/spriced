@@ -79,7 +79,7 @@ export class EntityComponent {
       isSortable: true,
       // width: 100,
       pipe: (data: any) => {
-        return moment(data).format("MM/DD/YYYY HH:mm:ss ");
+        return moment(data).format("MM/DD/YYYY HH:mm:ss");
       },
     },
   ];
