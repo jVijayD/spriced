@@ -36,7 +36,7 @@
         </mat-form-field>
       </div>
       <div class="autoCheck">
-        <mat-checkbox [(ngModel)]="local_data.autoNumberCode" color="primary"
+        <mat-checkbox [disabled]="action=='Edit'" [(ngModel)]="local_data.autoNumberCode" color="primary"
           >Auto generate Code</mat-checkbox
         >
         <mat-checkbox [(ngModel)]="local_data.enableAuditTrial" color="primary"
