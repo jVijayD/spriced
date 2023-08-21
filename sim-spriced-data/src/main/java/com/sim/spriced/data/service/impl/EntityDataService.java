@@ -1,7 +1,9 @@
 package com.sim.spriced.data.service.impl;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -99,8 +101,17 @@ public class EntityDataService implements IEntityDataService {
 			List<FactResult<JSONObject>> ruleResults = this.dataRuleService.executeRules(rules, data.getValues());
 			List<JSONObject> dataAfterRuleExecution = this.setRuleExecutionErrorStatus(ruleResults);
 			data.setValues(dataAfterRuleExecution);
-
-			EntityDataResult result = upsertLogic.apply(data);
+			EntityDataResult result =null;
+			if(data.getValues().isEmpty()) {
+				List<Map<String, Object>> ruleResult=new ArrayList<>();
+				Map<String,Object> map=new HashMap<>();
+				ruleResult.add(map);
+				map.put("is_valid",false);
+				result = EntityDataResult.builder().rowsChanged(new int[] { 0 }).result(ruleResult).build();
+			}
+			else {
+				result = upsertLogic.apply(data);
+			}
 			result.setRuleValidations(ruleResults);
 			return result;
 		} else {
@@ -109,21 +120,28 @@ public class EntityDataService implements IEntityDataService {
 
 	}
 
+//	private List<JSONObject> setRuleExecutionErrorStatus(List<FactResult<JSONObject>> ruleResults) {
+//		return ruleResults.parallelStream().map(result -> {
+//			if (!result.isSucces()) {
+//				List<Result> item = result.getRuleResults();
+//				ObjectMapper objectMapper = new ObjectMapper();
+//				try {
+//					JSON jsonVal = JSON.json(objectMapper.writeValueAsString(item));
+//					result.getOutput().put(ModelConstants.ERROR, jsonVal);
+//				} catch (JsonProcessingException e) {
+//					// No action if not able to serialize
+//				}
+//				result.getOutput().put(ModelConstants.IS_VALID, false);
+//			} else {
+//				result.getOutput().put(ModelConstants.IS_VALID, true);
+//			}
+//			return result.getOutput();
+//		}).toList();
+//	}
+	
 	private List<JSONObject> setRuleExecutionErrorStatus(List<FactResult<JSONObject>> ruleResults) {
-		return ruleResults.parallelStream().map(result -> {
-			if (!result.isSucces()) {
-				List<Result> item = result.getRuleResults();
-				ObjectMapper objectMapper = new ObjectMapper();
-				try {
-					JSON jsonVal = JSON.json(objectMapper.writeValueAsString(item));
-					result.getOutput().put(ModelConstants.ERROR, jsonVal);
-				} catch (JsonProcessingException e) {
-					// No action if not able to serialize
-				}
-				result.getOutput().put(ModelConstants.IS_VALID, false);
-			} else {
-				result.getOutput().put(ModelConstants.IS_VALID, true);
-			}
+		return ruleResults.parallelStream().filter(result->result.isSucces()).map(result -> {
+			result.getOutput().put(ModelConstants.IS_VALID, true);
 			return result.getOutput();
 		}).toList();
 	}

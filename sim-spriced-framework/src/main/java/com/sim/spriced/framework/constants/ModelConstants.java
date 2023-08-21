@@ -17,6 +17,8 @@ public class ModelConstants {
     public static final String COMMENT = "comment";
     public static final String ERROR = "error";
     public static final String ENABLE_AUDIT_TRIAL = "enable_audit_trial";
+    public static final String DATE_FORMAT = "MM/DD/YYYY HH:mm:ss";
+   
 
     public static final String GROUP_TABLE_NAME = "group";
     public static final String ENTITY_TABLE_NAME = "entity";
