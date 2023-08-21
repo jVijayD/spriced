@@ -145,7 +145,7 @@ public class EntityDefnition extends BaseEntity {
 //				attr.setEditable(false);
 //				commentPresent = true;
 //			}
-			
+			attr.validate();
 		}
 		
 		if(primaryKeyCount==0) {

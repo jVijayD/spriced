@@ -29,7 +29,7 @@ import org.springframework.data.domain.Page;
 @Repository
 public class EntityDataRepo extends BaseRepo implements IEntityDataRepo {
 
-	private static final String CHANGE = "change";
+	private static final String CHANGE = "__sys_change";
 	private EnumMap<DataType,Object> nullValueMap = new EnumMap<>(DataType.class);
 	
 	public EntityDataRepo(){
