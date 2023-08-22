@@ -94,6 +94,6 @@ export class SettingsPopUpComponent {
       showSystem: this.showSystem,
     };
     localStorage.setItem("all_entity", JSON.stringify(all));
-    this.dialogRef.close();
+    this.dialogRef.close('ok');
   }
 }

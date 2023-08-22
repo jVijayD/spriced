@@ -285,7 +285,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       data: this.currentSelectedEntity,
     });
     dialogResult.afterClosed().subscribe((val) => { 
-      if (val !== "Cancel") { 
+      if (val === "ok") { 
         this.loadEntityData(
           this.currentSelectedEntity as Entity,
           this.currentCriteria      
