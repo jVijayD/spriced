@@ -2,16 +2,24 @@ package com.sim.spriced.framework.data.filters;
 
 //import com.sim.spriced.framework.data.filters.FilterTypes.DataType;
 import com.sim.spriced.framework.data.filters.FilterTypes.OperatorType;
+import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.CONTAINS;
+import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.ENDS_WITH;
 import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.EQUALS;
 import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.GREATER_THAN;
 import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.GREATER_THAN_EQUALS;
 import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.ILIKE;
 import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.IN;
 import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.IS_NOT_EQUAL;
+import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.IS_NOT_LIKE;
+import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.IS_NOT_NULL;
+import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.IS_NULL;
 import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.LESS_THAN;
 import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.LESS_THAN_EQUALS;
 import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.LIKE;
+import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.NOT_CONTAINS;
+import static com.sim.spriced.framework.data.filters.FilterTypes.OperatorType.STARTS_WITH;
 import com.sim.spriced.framework.exceptions.data.FilterParsingException;
+import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -46,10 +54,10 @@ public class FilterCondition<T> extends Filter {
             case "boolean" ->
                 Boolean.valueOf(value.toString());
             case "date" ->
-                new SimpleDateFormat("yyyy-MM-dd")
-                .parse(value.toString());
+                new Date(new SimpleDateFormat("yyyy-MM-dd")
+                .parse(value.toString()).getTime());
             case "number" ->
-                Long.valueOf(value.toString());
+                Double.valueOf(value.toString());
             default ->
                 value;
         };
@@ -68,6 +76,37 @@ public class FilterCondition<T> extends Filter {
         }
         // used trycatch to catch cast exceptions later need to consider datatype also
         try {
+            if (dataType.equalsIgnoreCase("date")) {
+                Date start = (Date)getParsedValue();
+                long ltime = start.getTime() + 1 * 24 * 60 * 60 * 1000;
+                Date end = new Date(ltime);
+                cnd = switch (operatorType) {
+                    case EQUALS ->
+                        field.greaterOrEqual(start)
+                        .and(
+                        field.lessThan(end)
+                        );
+                    case GREATER_THAN ->
+                        field.greaterThan(start);
+                    case GREATER_THAN_EQUALS ->
+                        field.greaterOrEqual(start);
+                    case LESS_THAN ->
+                        field.lessThan(start);
+                    case LESS_THAN_EQUALS ->
+                        field.lessThan(end);
+                    case IS_NULL ->
+                        field.isNull();
+                    case IS_NOT_NULL ->
+                        field.isNotNull();
+
+                    default ->
+                        field.greaterThan(start)
+                        .and(
+                        field.lessThan(end)
+                        );
+                };
+                return cnd;
+            }
             cnd = switch (operatorType) {
                 case EQUALS ->
                     field.eq(getParsedValue());

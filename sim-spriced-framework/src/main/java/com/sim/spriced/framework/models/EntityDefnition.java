@@ -132,6 +132,7 @@ public class EntityDefnition extends BaseEntity {
 			else if (attr.getName().equals(ModelConstants.UPDATED_DATE)) {
 				attr.setEditable(false);
 				attr.setShowInForm(false);
+				attr.setFormatter(ModelConstants.DATE_FORMAT);
 				updatedDatePresent = true;
 			}
 			else if (attr.getName().equals(ModelConstants.COMMENT)) {
@@ -144,7 +145,7 @@ public class EntityDefnition extends BaseEntity {
 //				attr.setEditable(false);
 //				commentPresent = true;
 //			}
-			
+			attr.validate();
 		}
 		
 		if(primaryKeyCount==0) {
@@ -191,6 +192,7 @@ public class EntityDefnition extends BaseEntity {
 			//updatedDateAttr.setShowInForm(false);
 			updatedDateAttr.setSystemAttribute(true);
 			updatedDateAttr.setDisplayName("Updated Date");
+			updatedDateAttr.setFormatter(ModelConstants.DATE_FORMAT);
 			this.attributes.add(updatedDateAttr);
 		}
 		

@@ -26,7 +26,7 @@ public class Attribute {
 	private String displayName;
 	private DataType dataType=DataType.STRING;
 	private Type type=Type.FREE_FORM;
-	private int size=25;
+	private int size=0;
 	private int width=200;
 	private boolean nullable = true;
 	private Object defaultValue=null;
@@ -62,6 +62,13 @@ public class Attribute {
 	public Attribute(String name,Type type,DataType dataType,int size) {
 		this(name,type,dataType);
 		this.size=size;
+	}
+	
+	boolean validate(){
+		if(this.dataType==DataType.STRING_VAR && this.size==0) {
+			this.size=25;
+		}
+		return true;
 	}
         
 }
