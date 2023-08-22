@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sim.spriced.defnition.api.dto.EntityDto;
 import com.sim.spriced.defnition.api.dto.mapper.EntityDtoMapper;
 import com.sim.spriced.defnition.data.service.IEntityDefnitionService;
-import com.sim.spriced.framework.models.Attribute;
 import com.sim.spriced.framework.models.EntityDefnition;
 
 import io.micrometer.core.annotation.Timed;
@@ -76,6 +75,12 @@ public class EntityController {
 	@GetMapping("/entities/{id}")
 	public ResponseEntity<EntityDto> get(@PathVariable int id) {
 		return new ResponseEntity<>(mapper.toEntityDto(this.entityDefnitionService.fetchByRole(id)), HttpStatus.OK);
+	}
+	
+	@Timed(value = "related entity.get.time", description = "Time taken to return related entities.")
+	@GetMapping("/models/{groupId}/entities/{id}/related")
+	public ResponseEntity<List<EntityDto>> getrelatedEntity(@PathVariable int id,@PathVariable int groupId) {
+		return new ResponseEntity<>(mapper.toEntityDtoList(this.entityDefnitionService.fetchRelatedEntities(groupId,id)), HttpStatus.OK);
 	}
 	
 }

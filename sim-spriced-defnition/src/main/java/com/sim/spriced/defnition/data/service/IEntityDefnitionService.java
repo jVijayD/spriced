@@ -37,4 +37,5 @@ public interface IEntityDefnitionService {
 
     EntityDefnition fetchByRole(int entityId);
 
+    List<EntityDefnition> fetchRelatedEntities(int entityId,int groupId);
 }
