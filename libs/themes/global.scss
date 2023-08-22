@@ -115,11 +115,12 @@ body {
   .datatable-body
   .datatable-body-row
   .datatable-body-cell {
-  padding: 0.5rem 1.2rem;
+  //padding: 0.5rem 1.2rem;
+  padding: 0.1rem 1.2rem;
 }
 
 ngx-datatable.material .datatable-header .datatable-header-cell {
-  padding: 0.5rem 1.2rem !important;
+  padding: 0.1rem 1.2rem !important;
 }
 
 .ngx-datatable.material .datatable-header {
@@ -137,6 +138,13 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   border-right-color: var(--primary-light);
   border-style: solid;
   border-right-width: 0.05px;
+}
+
+.ngx-datatable.material
+  .datatable-body
+  .datatable-body-row
+  .datatable-body-cell {
+  font-size: 14px;
 }
 
 .ngx-datatable {
@@ -186,7 +194,7 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
 
 .ngx-datatable .datatable-header .datatable-header-cell .sort-btn {
   float: right;
-  padding-top: 5px;
+  padding-top: 2.5px;
 }
 .ngx-datatable.material .empty-row {
   display: flex;
@@ -219,7 +227,10 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   @apply text-white font-medium text-base p-2;
 }
 
-.mdc-checkbox .mdc-checkbox__native-control:enabled~.mdc-checkbox__background .mdc-checkbox__checkmark {
+.mdc-checkbox
+  .mdc-checkbox__native-control:enabled
+  ~ .mdc-checkbox__background
+  .mdc-checkbox__checkmark {
   color: var(--white) !important;
 }
 
