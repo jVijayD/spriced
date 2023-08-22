@@ -163,4 +163,9 @@ public class EntityDefnitionService extends BaseService
         return this.delete(defnition);
     }
 
+	@Override
+	public List<EntityDefnition> fetchRelatedEntities(int entityId) {
+		return this.defnitionRepo.fetchRelatedEntities(entityId);
+	}
+
 }

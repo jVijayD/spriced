@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.jooq.JSON;
 import org.jooq.Record;
+import org.jooq.Result;
+import org.jooq.impl.DSL;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -110,6 +112,13 @@ public class EntityDefnitionRepo extends BaseRepo implements IEntityDefnitionRep
 		defnition.setGroupId(groupId);
 		defnition.setIsDisabled(loadDisabled);
 		return super.fetchAll(defnition, this::convertToEntityDefnition, pagable);
+	}
+
+	@Override
+	public List<EntityDefnition> fetchRelatedEntities(int entityId) {
+		var condition = String.format("attributes::jsonb @> '[{\"referencedTableId\":%d}]'",entityId);
+		Result<Record> records = this.context.selectFrom(ModelConstants.ENTITY_TABLE_NAME).where(condition).fetch();
+		return records.stream().map(this::convertToEntityDefnition).toList();
 	}
        
 }
