@@ -50,7 +50,6 @@ export class SettingsPopUpComponent {
     private settings: SettingsService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    debugger;
     let result = this.settings.getGlobalSettings();
     console.log(result);
     if (result) {
@@ -65,7 +64,7 @@ export class SettingsPopUpComponent {
   }
 
   closeDialog() {
-    this.dialogRef.close({ event: "Cancel" });
+    this.dialogRef.close("Cancel");
   }
 
   save() {
@@ -95,6 +94,6 @@ export class SettingsPopUpComponent {
       showSystem: this.showSystem,
     };
     localStorage.setItem("all_entity", JSON.stringify(all));
-    this.dialogRef.close();
+    this.dialogRef.close('ok');
   }
 }

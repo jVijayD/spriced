@@ -63,6 +63,7 @@ export class EntityGridService {
         return "boolean";
       case "INTEGER":
       case "SERIAL":
+      case "DECIMAL": 
       case "AUTO":
         return "number";
       default:
@@ -93,7 +94,7 @@ export class EntityGridService {
         }
       }
       return data;
-    } else if (attr.dataType === "TIME_STAMP") {
+    } else if (attr.dataType === "TIME_STAMP" && data!==null ) {
       let formattedData = data;
       try {
         formattedData = moment(data).format(attr.formatter || "MM/DD/YYYY");

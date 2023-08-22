@@ -114,6 +114,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
+  pageNumber: number=0;
   constructor(
     private snackbarService: SnackBarService,
     private dialogService: DialogService,
@@ -156,6 +157,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   onPaginate(e: Paginate) {
+    this.pageNumber=e.offset
     const criteria: Criteria = {
       ...this.currentCriteria,
       pager: {
@@ -282,11 +284,11 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     const dialogResult = this.dialog.open(SettingsPopUpComponent, {
       data: this.currentSelectedEntity,
     });
-    dialogResult.afterClosed().subscribe((val) => {
-      if (val !== "Cancel") {
+    dialogResult.afterClosed().subscribe((val) => { 
+      if (val === "ok") { 
         this.loadEntityData(
           this.currentSelectedEntity as Entity,
-          this.currentCriteria
+          this.currentCriteria      
         );
       }
     });
@@ -430,6 +432,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     const entitySettings = this.settings.getCurrentSettings(entity.name);
     if (entitySettings) {
       this.limit = entitySettings.noOfRecords;
+       this.currentCriteria.pager={pageNumber:this.pageNumber,pageSize:this.limit}
       this.headers.forEach((item, index) => {
         item.pinned = undefined;
         if (index + 1 === entitySettings.freeze) {
