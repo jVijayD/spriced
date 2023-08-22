@@ -115,9 +115,9 @@ public class EntityDefnitionRepo extends BaseRepo implements IEntityDefnitionRep
 	}
 
 	@Override
-	public List<EntityDefnition> fetchRelatedEntities(int entityId) {
+	public List<EntityDefnition> fetchRelatedEntities(int entityId,int groupId) {
 		var condition = String.format("attributes::jsonb @> '[{\"referencedTableId\":%d}]'",entityId);
-		Result<Record> records = this.context.selectFrom(ModelConstants.ENTITY_TABLE_NAME).where(condition).fetch();
+		Result<Record> records = this.context.selectFrom(ModelConstants.ENTITY_TABLE_NAME).where(String.format("group_id=%d",groupId)).and(condition).fetch();
 		return records.stream().map(this::convertToEntityDefnition).toList();
 	}
        

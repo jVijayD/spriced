@@ -78,9 +78,9 @@ public class EntityController {
 	}
 	
 	@Timed(value = "related entity.get.time", description = "Time taken to return related entities.")
-	@GetMapping("/entities/{id}/related")
-	public ResponseEntity<List<EntityDto>> getrelatedEntity(@PathVariable int id) {
-		return new ResponseEntity<>(mapper.toEntityDtoList(this.entityDefnitionService.fetchRelatedEntities(id)), HttpStatus.OK);
+	@GetMapping("/models/{groupId}/entities/{id}/related")
+	public ResponseEntity<List<EntityDto>> getrelatedEntity(@PathVariable int id,@PathVariable int groupId) {
+		return new ResponseEntity<>(mapper.toEntityDtoList(this.entityDefnitionService.fetchRelatedEntities(groupId,id)), HttpStatus.OK);
 	}
 	
 }

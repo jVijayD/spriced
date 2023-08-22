@@ -164,8 +164,8 @@ public class EntityDefnitionService extends BaseService
     }
 
 	@Override
-	public List<EntityDefnition> fetchRelatedEntities(int entityId) {
-		return this.defnitionRepo.fetchRelatedEntities(entityId);
+	public List<EntityDefnition> fetchRelatedEntities(int entityId,int groupId) {
+		return this.defnitionRepo.fetchRelatedEntities(entityId,groupId);
 	}
 
 }

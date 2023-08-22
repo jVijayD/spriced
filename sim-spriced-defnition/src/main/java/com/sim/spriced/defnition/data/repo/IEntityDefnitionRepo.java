@@ -26,7 +26,7 @@ public interface IEntityDefnitionRepo {
 	public Page<EntityDefnition> getAll(boolean loadDisabled,Pageable pagable);
 	public Page<EntityDefnition> getAll(int groupId,boolean loadDisabled,Pageable pagable);
 	
-	public List<EntityDefnition> fetchRelatedEntities(int entityId);
+	public List<EntityDefnition> fetchRelatedEntities(int entityId,int groupId);
     
 //	public List<EntityDefnition> fetchAll(boolean loadDisabled);
 //	public Page<EntityDefnition> fetchAll(boolean loadDisabled,Pageable pagable);
