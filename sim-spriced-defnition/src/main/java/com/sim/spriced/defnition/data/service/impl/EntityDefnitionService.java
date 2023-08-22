@@ -17,7 +17,6 @@ import com.sim.spriced.defnition.data.service.BaseService;
 import com.sim.spriced.defnition.data.service.EntityDefnitionEvent;
 import com.sim.spriced.defnition.data.service.IEntityDefnitionService;
 import com.sim.spriced.framework.models.Attribute;
-import com.sim.spriced.framework.models.AttributeConstants;
 import com.sim.spriced.framework.models.EntityDefnition;
 import com.sim.spriced.framework.pubsub.EventType;
 import com.sim.spriced.framework.pubsub.IObservable;
@@ -158,16 +157,12 @@ public class EntityDefnitionService extends BaseService
     }
 
     @CacheEvict(value = "entities", key = "#id")
-    @Transactional
+    @Transactional	
     @Override
     public int delete(int id) {
         EntityDefnition defnition = this.defnitionRepo.get(id);
         return this.delete(defnition);
     }
 
-	@Override
-	public List<Attribute> fetchAttributesByEntityId(int referenceId) {
-		return rolePermissionService.applyPermission(this.defnitionRepo.get(referenceId), null).getAttributes();
-	}
 
 }

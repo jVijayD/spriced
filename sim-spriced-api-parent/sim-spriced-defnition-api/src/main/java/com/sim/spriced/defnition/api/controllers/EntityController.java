@@ -78,9 +78,4 @@ public class EntityController {
 		return new ResponseEntity<>(mapper.toEntityDto(this.entityDefnitionService.fetchByRole(id)), HttpStatus.OK);
 	}
 	
-	@Timed(value = "attributes.get.time", description = "Time taken to return list of attributes.")
-	@GetMapping("/entities/{referenceId}/getattributes")
-	public ResponseEntity<List<Attribute>> fetchAttributesByEntityId(@PathVariable int referenceId) {
-		return new ResponseEntity<>(this.entityDefnitionService.fetchAttributesByEntityId(referenceId), HttpStatus.OK);
-	}
 }
