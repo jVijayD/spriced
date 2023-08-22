@@ -223,6 +223,25 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   color: var(--white) !important;
 }
 
+.mat-datepicker-content-container {
+  background-color:var(--white) !important;
+  box-shadow: 0 2px 4px -1px #0003, 
+   0 4px 5px #00000024,
+   0 1px 10px #0000001f;
+}
+.mat-calendar-body-cell-content:hover {
+  background-color:var(--primary-light);
+  
+}
+.mat-calendar-body-cell-content.mat-focus-indicator.mat-calendar-body-selected{
+  background-color:var(--primary-dark);
+  color:var(--white) !important;
+ 
+}
+.mat-calendar-body-cell-content {
+  border-color: transparent !important;
+}
+
 .fontawesomeicon::before {
   display: inline-block;
   text-rendering: auto;
