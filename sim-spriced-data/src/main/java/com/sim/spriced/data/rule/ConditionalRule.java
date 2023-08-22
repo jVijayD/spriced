@@ -60,6 +60,12 @@ public class ConditionalRule implements IRule<JSONObject> {
 
 	@Override
 	public boolean isMatch(JSONObject input) {
+		if(this.conditions == null) {
+			// if conditions not present then 
+			// the evaluated result of the 
+			// condition is ALWAYS true
+			return true;
+		}
 		return this.conditions.isSatisfied(input);
 	}
 
