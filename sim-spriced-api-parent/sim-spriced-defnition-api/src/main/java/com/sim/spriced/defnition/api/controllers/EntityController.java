@@ -15,15 +15,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sim.spriced.defnition.api.dto.EntityDto;
 import com.sim.spriced.defnition.api.dto.mapper.EntityDtoMapper;
 import com.sim.spriced.defnition.data.service.IEntityDefnitionService;
+import com.sim.spriced.framework.models.Attribute;
 import com.sim.spriced.framework.models.EntityDefnition;
 
 import io.micrometer.core.annotation.Timed;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @CrossOrigin(origins = "*")
 @RestController()
@@ -77,5 +78,9 @@ public class EntityController {
 		return new ResponseEntity<>(mapper.toEntityDto(this.entityDefnitionService.fetchByRole(id)), HttpStatus.OK);
 	}
 	
-	
+	@Timed(value = "attributes.get.time", description = "Time taken to return list of attributes.")
+	@GetMapping("/entities/{referenceId}/getattributes")
+	public ResponseEntity<List<Attribute>> fetchAttributesByEntityId(@PathVariable int referenceId) {
+		return new ResponseEntity<>(this.entityDefnitionService.fetchAttributesByEntityId(referenceId), HttpStatus.OK);
+	}
 }

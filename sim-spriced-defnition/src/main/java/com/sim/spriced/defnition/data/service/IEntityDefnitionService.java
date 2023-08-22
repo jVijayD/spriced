@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.sim.spriced.framework.models.EntityDefnition;
 import com.sim.spriced.framework.models.Group;
+import com.sim.spriced.framework.models.Attribute;
 
 public interface IEntityDefnitionService {
 
@@ -35,4 +36,6 @@ public interface IEntityDefnitionService {
     List<EntityDefnition> fetchByRole(int groupId, String[] roles);
 
     EntityDefnition fetchByRole(int entityId);
+    
+    List<Attribute> fetchAttributesByEntityId(int entityId);
 }
