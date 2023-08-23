@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 
 import com.sim.spriced.framework.models.EntityDefnition;
 import com.sim.spriced.framework.models.Group;
-import com.sim.spriced.framework.models.Attribute;
 
 public interface IEntityDefnitionService {
 

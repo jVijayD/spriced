@@ -16,7 +16,6 @@ import com.sim.spriced.defnition.data.repo.IEntityDefnitionRepo;
 import com.sim.spriced.defnition.data.service.BaseService;
 import com.sim.spriced.defnition.data.service.EntityDefnitionEvent;
 import com.sim.spriced.defnition.data.service.IEntityDefnitionService;
-import com.sim.spriced.framework.models.Attribute;
 import com.sim.spriced.framework.models.EntityDefnition;
 import com.sim.spriced.framework.pubsub.EventType;
 import com.sim.spriced.framework.pubsub.IObservable;

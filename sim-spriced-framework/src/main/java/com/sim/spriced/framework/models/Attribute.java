@@ -2,7 +2,6 @@ package com.sim.spriced.framework.models;
 
 
 
-import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
