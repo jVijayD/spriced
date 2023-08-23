@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sim.spriced.defnition.api.dto.EntityDto;
@@ -23,7 +24,6 @@ import com.sim.spriced.defnition.data.service.IEntityDefnitionService;
 import com.sim.spriced.framework.models.EntityDefnition;
 
 import io.micrometer.core.annotation.Timed;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @CrossOrigin(origins = "*")
 @RestController()

@@ -35,6 +35,6 @@ public interface IEntityDefnitionService {
     List<EntityDefnition> fetchByRole(int groupId, String[] roles);
 
     EntityDefnition fetchByRole(int entityId);
-    
+
     List<EntityDefnition> fetchRelatedEntities(int entityId,int groupId);
 }

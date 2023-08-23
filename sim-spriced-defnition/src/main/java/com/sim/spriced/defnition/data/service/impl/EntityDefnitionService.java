@@ -113,7 +113,7 @@ public class EntityDefnitionService extends BaseService
 
     @Override
     public EntityDefnition fetchByRole(int entityId) {
-        return rolePermissionService.applyPermission(this.defnitionRepo.get(entityId), null);
+    	return rolePermissionService.applyPermission(this.defnitionRepo.get(entityId), null);
     }
 
     @PreDestroy
@@ -156,7 +156,7 @@ public class EntityDefnitionService extends BaseService
     }
 
     @CacheEvict(value = "entities", key = "#id")
-    @Transactional
+    @Transactional	
     @Override
     public int delete(int id) {
         EntityDefnition defnition = this.defnitionRepo.get(id);
