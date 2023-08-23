@@ -5,25 +5,27 @@
   <label class="text-secondary-dark m-2 font-bold text-lg">Lookup</label>
   <div class="container">
     <sp-data-grid
-      #dataGrid
-      [title]="this.currentSelectedEntity?.displayName || ''"
-      [enableRowIndex]="false"
-      [isArray]="false"
-      [headers]="headers"
-      [rows]="rows"
-      [rowHeight]="40"
-      [headerHeight]="40"
-      [footerHeight]="40"
-      [columnMode]="columnMode"
-      [virtualScroll]="false"
-      [selectionType]="selectionType"
-      [count]="totalElements"
-      [limit]="limit"
-      [isExternalPaging]="true"
-      [isExternalSorting]="true"
-      [sortType]="sortType"
-      (paginate)="onPaginate($event)"
-      (itemSelected)="onItemSelected($event)"
+    class="w-full h-full"
+    #dataGrid
+    [title]="this.currentSelectedEntity?.displayName || ''"
+    [enableRowIndex]="false"
+    [isArray]="false"
+    [headers]="headers"
+    [rows]="rows"
+    [rowHeight]="30"
+    [headerHeight]="30"
+    [footerHeight]="30"
+    [columnMode]="columnMode"
+    [virtualScroll]="false"
+    [selectionType]="selectionType"
+    [count]="totalElements"
+    [limit]="limit"
+    [isExternalPaging]="true"
+    [isExternalSorting]="true"
+    [sortType]="sortType"
+    (paginate)="onPaginate($event)"
+    (itemSelected)="onItemSelected($event)"
+    *ngIf="!hide"
     >
       <ng-container>
         <sp-header-action

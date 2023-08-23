@@ -37,6 +37,7 @@ import {
   AppDataService,
 } from "@spriced-frontend/shared/spriced-shared-lib";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { UserAccessService } from "@spriced-frontend/spriced-common-lib";
 const POPULATE_ATTRIBUTES = false;
 @Component({
   selector: "sp-model-access",
@@ -55,7 +56,7 @@ const POPULATE_ATTRIBUTES = false;
     CommonModule,
     DialogueModule,
   ],
-  providers: [HttpClient, DialogService, SnackBarService],
+  providers: [HttpClient, UserAccessService, DialogService, SnackBarService],
   templateUrl: "./model-access.component.html",
   styleUrls: ["./model-access.component.scss"],
 })
@@ -73,6 +74,7 @@ export class ModelAccessComponent {
   constructor(
     private cd: ChangeDetectorRef,
     private dialogService: DialogService,
+    private userAccessService: UserAccessService,
     private snackbarService: SnackBarService,
     private statusPannelService: AppDataService,
     private myService: ModelAccessService // private service: DataDefListService
@@ -80,12 +82,19 @@ export class ModelAccessComponent {
     this.onInit();
   }
   onInit() {
-    this.roleList = this.myService.getRoles();
+    
     this.myService.getModels().subscribe((data: ModelDTO[]) => {
       this.modelList = data.map((m) => {
         let mdl = new ModelDTO(Number.parseInt(m.id.toString())).parse(m);
         // this.modelListBkp.push(mdl.parse(m));
         return mdl;
+      });
+    });
+    this.userAccessService
+    .loadAllRoles()
+    .subscribe((roles: string[]) => {
+      this.roleList = roles.map((m) => {
+        return { name: m } as RoleDTO;
       });
     });
     this.statusPannelService.init();

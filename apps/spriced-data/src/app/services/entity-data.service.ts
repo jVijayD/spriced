@@ -34,18 +34,18 @@ export class EntityDataService {
     return this.http.get<PageData>(url);
   }
 
-  
+
   loadAuditData(
     entityName: string ,
     criteria: Criteria
   ): Observable<PageData> {
     const url = this.requestUtility.addCriteria(
       `${this.api_url}/audit-trial`,
-        criteria
+      criteria
     );
     return this.http.get<PageData>(url);
   }
-  
+
   loadLookupData(id: string | number): Observable<PageData> {
     const criteria: Criteria = {
       pager: {
@@ -73,7 +73,9 @@ export class EntityDataService {
       `${this.api_url}/entity/${id}/data/${entityDataId}`
     );
   }
-
+  getRelatedEntity(groupId: any, entityId: any) {
+    return this.http.get(`${this.def_url}/models/${groupId}/entities/${entityId}/related`);
+  }
   getStatus() {
     return this.http.get(`${this.api_url}/bulk/getAll`);
   }

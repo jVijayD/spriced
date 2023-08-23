@@ -53,6 +53,7 @@ export class LookupPopupComponent {
   subscriptions: Subscription[] = [];
   currentCriteria!: Criteria;
   query?: any;
+  hide = false;
 
   constructor(
     private entityDataService: EntityDataService,
@@ -129,6 +130,7 @@ export class LookupPopupComponent {
   }
 
   private loadEntityData(entity: Entity, criteria: Criteria) {
+    this.currentCriteria = criteria;
     if (entity) {
       this.subscriptions.push(
         this.entityDataService.loadEntityData(entity.id, criteria).subscribe({
@@ -146,7 +148,6 @@ export class LookupPopupComponent {
       this.rows = [];
     }
   }
-
   onSort(e: any) {
     const sorters = e.sorts.map((sort: any) => {
       return { direction: sort.dir.toUpperCase(), property: sort.prop };
@@ -154,7 +155,6 @@ export class LookupPopupComponent {
     const criteria: Criteria = { ...this.currentCriteria, sorters: sorters };
     this.loadEntityData(this.currentSelectedEntity as Entity, criteria);
   }
-
   onItemSelected(e: any) {
     this.selectedItem = e;
   }
@@ -194,4 +194,13 @@ export class LookupPopupComponent {
       }
     });
   }
+  onFullScreen() {
+    this.isFullScreen = !this.isFullScreen;
+    this.hide = true;
+    // Temp Fix for rendering the grid
+    setTimeout(() => {
+      this.hide = false;
+    }, 100);
+  }
+
 }

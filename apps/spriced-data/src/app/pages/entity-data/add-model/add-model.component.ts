@@ -81,7 +81,7 @@ export class AddModelComponent implements OnInit {
   }
 
   onSubmit(data: FormGroup<any>) {
-    debugger;
+    //debugger;
     if (data.valid) {
       const entityId = this.selectedItem.id as number;
       //const finalData = this.removeNull(data.value);
@@ -138,7 +138,7 @@ export class AddModelComponent implements OnInit {
   }
 
   onClear(submittedData: any) {
-    debugger;
+    //debugger;
     this.dynamicFormService.parentForm?.setValue(submittedData);
   }
 }
