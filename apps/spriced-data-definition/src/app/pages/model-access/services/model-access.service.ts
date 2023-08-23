@@ -15,37 +15,23 @@ const headers = new HttpHeaders()
 })
 export class ModelAccessService {
   constructor(private http: HttpClient) {}
-  headers = new HttpHeaders()
-    .set("tenant", "meritor")
-    .set("user", "anand.kumar@simadvisory.com")
-    .set("transactionId", "AQWSIDSTWERTXWSATYYOKLMH")
-    .set("roles", "admin,manager,viewer")
-    .set("applications", "app1,app2,app3")
-    .set("Access-Control-Allow-Origin", "*");
+  
   api_url = process.env["NX_API_DEFINITION_URL"] as string;
-  getRoles() {
-    return [
-      { name: "Admin" },
-      { name: "John" },
-      { name: "External" }
-    ];
-  }
+
   public getEntities(id: any,role: string): Observable<EntityDTO[]> {
     return this.http
       .get(`${this.api_url}/models/${id}/entities`, {
-        headers: headers,
         params:{roleName:role}
       })
       .pipe(Object.assign);
   }
   public getModels(): Observable<any> {
-    return this.http.get(`${this.api_url}/models`, { headers: headers });
+    return this.http.get(`${this.api_url}/models`, {});
   }
   public saveModelAccessPermission(
     body: RoleGroupPermissionMapping
   ): Observable<any> {
     return this.http.post(`${this.api_url}/accessmanagement`, body, {
-      headers: headers,
     });
   }
 }
