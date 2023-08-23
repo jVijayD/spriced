@@ -355,7 +355,9 @@
         </mat-expansion-panel-header>
         <div
           class="w-full flex flex-col space-y-1 text-sm pl-4 pr-4 pb-2 text-secondary-light"
+          *ngIf="relatedEntity?.length!=0"
         >
+        <b class="mb-2">These entities use the {{currentSelectedEntity?.displayName}} as a domain-based attribute:</b>
           <ng-container
             *ngFor="let item of relatedEntity"
           >
