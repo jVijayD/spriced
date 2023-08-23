@@ -24,11 +24,5 @@ public class RoleManagementController {
 	ResponseEntity<List<String>> get() {
 		return new ResponseEntity<>(this.roleService.getRoles(), HttpStatus.OK);
 	}
-	
-	
-	@GetMapping("/hello")
-	String hello() {
-		return "hello";
-	}
 
 }

@@ -29,58 +29,59 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController()
 @RequestMapping("")
 public class EntityController {
-	
+
 	@Autowired
 	IEntityDefnitionService entityDefnitionService;
-	
+
 	@Autowired
 	EntityDtoMapper mapper;
-	
-	
+
 	@Timed(value = "entity.create.time", description = "Time taken to create entity.")
 	@PostMapping("/entities")
 	public EntityDto create(@Valid @RequestBody EntityDto entity) {
-		EntityDefnition defnition= mapper.toEntityDefnition(entity);
+		EntityDefnition defnition = mapper.toEntityDefnition(entity);
 		defnition.setIsDisabled(false);
 		defnition = this.entityDefnitionService.create(defnition);
 		return mapper.toEntityDto(defnition);
 	}
-	
+
 	@Timed(value = "entity.update.time", description = "Time taken to update entity.")
 	@PutMapping("/entities/{id}")
-	public ResponseEntity<EntityDto> update(@PathVariable int id,@Valid @RequestBody EntityDto entity) {
+	public ResponseEntity<EntityDto> update(@PathVariable int id, @Valid @RequestBody EntityDto entity) {
 		EntityDefnition defnition = mapper.toEntityDefnition(entity);
 		defnition.setId(id);
 		defnition = this.entityDefnitionService.update(defnition);
 		return new ResponseEntity<>(mapper.toEntityDto(defnition), HttpStatus.CREATED);
 	}
-	
+
 	@Timed(value = "entity.delete.time", description = "Time taken to delete entity.")
 	@DeleteMapping("/entities/{id}")
 	public int delete(@PathVariable int id) {
 		return this.entityDefnitionService.delete(id);
 	}
-	
-        @Timed(value = "entity.getAll.time", description = "Time taken to return entities.")
-        @GetMapping("/models/{groupId}/entities")
-        public ResponseEntity<List<EntityDto>> getAll(@PathVariable int groupId, @RequestParam(required = false) String roleName) {
-            // TO DO: temporary Sorting
-            List<EntityDefnition> entityList;
-            entityList = this.entityDefnitionService.fetchByRole(groupId, roleName!=null ? roleName.split(",") : null);
-            entityList.sort((a, b) -> a.getDisplayName().compareTo(b.getDisplayName()));
-            return new ResponseEntity<>(mapper.toEntityDtoList(entityList), HttpStatus.OK);
-        }
-        
+
+	@Timed(value = "entity.getAll.time", description = "Time taken to return entities.")
+	@GetMapping("/models/{groupId}/entities")
+	public ResponseEntity<List<EntityDto>> getAll(@PathVariable int groupId,
+			@RequestParam(required = false) String roleName) {
+		// TO DO: temporary Sorting
+		List<EntityDefnition> entityList;
+		entityList = this.entityDefnitionService.fetchByRole(groupId, roleName != null ? roleName.split(",") : null);
+		entityList.sort((a, b) -> a.getDisplayName().compareTo(b.getDisplayName()));
+		return new ResponseEntity<>(mapper.toEntityDtoList(entityList), HttpStatus.OK);
+	}
+
 	@Timed(value = "entity.get.time", description = "Time taken to return entity.")
 	@GetMapping("/entities/{id}")
 	public ResponseEntity<EntityDto> get(@PathVariable int id) {
 		return new ResponseEntity<>(mapper.toEntityDto(this.entityDefnitionService.fetchByRole(id)), HttpStatus.OK);
 	}
-	
+
 	@Timed(value = "related entity.get.time", description = "Time taken to return related entities.")
 	@GetMapping("/models/{groupId}/entities/{id}/related")
-	public ResponseEntity<List<EntityDto>> getrelatedEntity(@PathVariable int id,@PathVariable int groupId) {
-		return new ResponseEntity<>(mapper.toEntityDtoList(this.entityDefnitionService.fetchRelatedEntities(groupId,id)), HttpStatus.OK);
+	public ResponseEntity<List<EntityDto>> getrelatedEntity(@PathVariable int id, @PathVariable int groupId) {
+		return new ResponseEntity<>(
+				mapper.toEntityDtoList(this.entityDefnitionService.fetchRelatedEntities(groupId, id)), HttpStatus.OK);
 	}
-	
+
 }
