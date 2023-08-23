@@ -1,4 +1,5 @@
 import { CommonModule } from "@angular/common";
+import { HttpClient } from "@angular/common/http";
 import { Component, Input } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
@@ -29,7 +30,8 @@ export class HeaderComponent {
   @Input() menuData: any;
   user = "";
   constructor(
-    private keycloakService: KeycloakService //  private dbService: NgxIndexedDBService,
+    private keycloakService: KeycloakService, //  private dbService: NgxIndexedDBService,
+    private httpClient: HttpClient
   ) {
     this.user = this.keycloakService.getUsername();
     this.user = this.capitalizeFirstLetter(this.user);
@@ -43,11 +45,20 @@ export class HeaderComponent {
       localStorage.clear();
     }
   }
+
   capitalizeFirstLetter(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
-goToLink()
-{
-   window.open(process.env["NX_HELP"] as string, "_blank");
-}
+
+  goToLink() {
+    const url_help_access = process.env["NX_API_USER_ACCESS"] as string;
+    this.httpClient
+      .post(`${url_help_access}/help-access`, { token: "" })
+      .subscribe((data) => {
+        if (data) {
+          window.open(process.env["NX_HELP"] as string, "_blank");
+        }
+      });
+    //window.open(process.env["NX_HELP"] as string, "_blank");
+  }
 }
