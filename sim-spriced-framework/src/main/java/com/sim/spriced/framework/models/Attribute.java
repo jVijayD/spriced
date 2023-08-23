@@ -46,7 +46,7 @@ public class Attribute {
 	private boolean isEditable = true;
 	private boolean showInForm = true;
 	private boolean isSystemAttribute=false;
-	
+		
 	public Attribute(String name) {
 		this.name = name;
 	}

@@ -28,8 +28,8 @@ public class ContainsPattern extends BaseSpecification {
 		}
 
 		if (value != null && this.isString(value)) {
-			Pattern p = Pattern.compile(convertToString(value));
-			result = p.matcher(this.value.toString()).find();
+			Pattern p = Pattern.compile(convertToString(this.value));
+			result = p.matcher(value.toString()).find();
 		}
 		return result;
 	}

@@ -28,8 +28,7 @@ public class DoesNotEndWithPattern extends BaseSpecification {
 		}
 		
 		if(value != null && this.isString(value)) {
-			Pattern p = Pattern.compile(convertToString(value)+ "$");
-			result = !(p.matcher(this.value.toString()).find());
+			result = !(this.value.toString().endsWith(value.toString()));
 		}
 		return result;
 	}

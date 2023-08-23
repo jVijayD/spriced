@@ -1,7 +1,5 @@
 package com.sim.spriced.data.rule.condition.specification;
 
-import java.util.regex.Pattern;
-
 import org.json.JSONObject;
 
 import com.sim.spriced.framework.models.Condition;
@@ -27,8 +25,7 @@ public class DoesNotStartWithPattern extends BaseSpecification {
 		}
 		
 		if(value != null && this.isString(value)) {
-			Pattern p = Pattern.compile("^" + convertToString(value));
-			result = !(p.matcher(this.value.toString()).find());
+			result = !(this.value.toString().startsWith(value.toString()));
 		}
 		return result;
 	}

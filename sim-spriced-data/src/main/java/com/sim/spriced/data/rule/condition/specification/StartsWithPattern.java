@@ -30,8 +30,7 @@ public class StartsWithPattern extends BaseSpecification {
 
 		if (value != null) {
 			if (this.isString(value)) {
-				Pattern p = Pattern.compile("^" + convertToString(value));
-				result = p.matcher(this.value.toString()).find();
+				result = this.value.toString().startsWith(value.toString());
 			}
 		}
 

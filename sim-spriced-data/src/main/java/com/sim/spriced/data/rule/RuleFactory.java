@@ -44,9 +44,9 @@ public class RuleFactory {
 		List<IAction<JSONObject>> elseActionList = this.getActionList(rule.getConditionalAction().getElseActions(),
 				attributes, rule.getGroup());
 
-		ISpecification<JSONObject> condition = this.getCondition(rule.getCondition(), attributes);
+		Optional<ISpecification<JSONObject>> optionalCondition = this.getCondition(rule.getCondition(), attributes);
+		ISpecification<JSONObject> condition = optionalCondition.isPresent() ? optionalCondition.get() : null;
 		return new ConditionalRule(rule, ifActionList, elseActionList, attributes, condition);
-
 	}
 
 	private List<IAction<JSONObject>> getActionList(List<Action> actions, List<Attribute> attributes,
@@ -54,7 +54,10 @@ public class RuleFactory {
 		return actions.parallelStream().map(item -> this.createAction(item, ruleActionGroup, attributes)).toList();
 	}
 	
-	private ISpecification<JSONObject> getCondition(List<Condition> conditions, List<Attribute> attributes) {
+	private Optional<ISpecification<JSONObject>> getCondition(List<Condition> conditions, List<Attribute> attributes) {
+		if(conditions.isEmpty()) {
+			return Optional.ofNullable(null);
+		}
 		List<CompositeSpecification<JSONObject>> finalList = new ArrayList<>();
 		for(int m = 0; m < conditions.size(); m++) {
 			var condition = conditions.get(m);
@@ -98,7 +101,7 @@ public class RuleFactory {
 								.map(item -> ((BaseSpecification) item).getConditionType()).toList();
 		var completeSolution = getMergedConditions(finalList, conditionTypes, false);
 
-		return completeSolution;
+		return Optional.of(completeSolution);
 	}
 	
 	private CompositeSpecification<JSONObject> getMergedConditions(List<CompositeSpecification<JSONObject>> list, List<ConditionType> conditionTypes, boolean isSubCondition) {
