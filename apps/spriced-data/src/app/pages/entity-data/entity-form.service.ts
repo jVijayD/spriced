@@ -70,7 +70,7 @@ export class EntityFormService {
         ],
       };
     } else {
-      debugger;
+      // //debugger;
       switch (attr.dataType) {
         case "STRING_VAR":
         case "TEXT":
@@ -86,7 +86,7 @@ export class EntityFormService {
           };
         case "INTEGER":
         case "DECIMAL":
-          debugger;
+          //debugger;
           return {
             type: "numeric",
             subType: "text",
@@ -99,7 +99,7 @@ export class EntityFormService {
           };
 
         case "TIME_STAMP":
-          debugger;
+          //debugger;
           return {
             name: attr.name,
             type: "date",
