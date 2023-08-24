@@ -23,7 +23,7 @@ public class IsGreaterThan extends BaseSpecification {
 					result = this.convertToString(value).compareTo(this.convertToString(this.value)) > 0;
 				} else if (this.isNumeric(value)) {
 					result = this.convertToNumber(value) > this.convertToNumber(this.value);
-				} else if (this.isDate(value)) {
+				} else if (this.isDate(value)) {	
 					result = (this.convertToDate(value)).compareTo(this.convertToDate(this.value)) > 0;
 				}
 			}
