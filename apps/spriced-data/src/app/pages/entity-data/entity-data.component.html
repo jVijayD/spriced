@@ -251,6 +251,18 @@
             [disabled]="this.headers.length === 0"
           ></sp-header-action>
 
+
+          <sp-header-action
+          icon="filter_list_off"
+          text="Clear Filter"
+          title="Clear Filter"
+          [disabled]="
+          this.currentCriteria?.filters?.length==0 ||
+          this.currentCriteria?.filters == undefined
+          "
+          (actionClick)="onClearFilter()"
+        ></sp-header-action>
+
           <sp-header-action
             icon="cloud_upload"
             text="Upload"
@@ -331,12 +343,14 @@
     <mat-accordion>
       <mat-expansion-panel
         [expanded]="this.currentSelectedEntity ? true : false"
+       
       >
         <mat-expansion-panel-header>
           <mat-panel-title>
             <b>{{ this.selectedItem ? "Edit " : "Add " }}</b>
           </mat-panel-title>
         </mat-expansion-panel-header>
+          <div style="max-height: calc(100vh - 4rem - 206px);overflow-y: scroll;">
         <sp-dynamic-form-container
           *ngIf="appForm.groups[0].formFieldControls.length"
           [appForm]="appForm"
@@ -345,7 +359,7 @@
           [disableSubmit]="disableSubmit"
           (submitEvent)="onSubmitEntityData($event)"
           (resetEvent)="onClear()"
-        ></sp-dynamic-form-container>
+        ></sp-dynamic-form-container></div>
       </mat-expansion-panel>
       <mat-expansion-panel>
         <mat-expansion-panel-header>

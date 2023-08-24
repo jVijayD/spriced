@@ -237,7 +237,15 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       }
     });
   }
-
+  onClearFilter()
+  {
+    this.query=null
+    this.currentCriteria.filters = [];
+    this.loadEntityData(
+      this.currentSelectedEntity as Entity,
+      this.currentCriteria
+    );
+  }
   onEdit() {
     if (this.selectedItem) {
       this.dialogService.openDialog(AddModelComponent, {
