@@ -30,7 +30,7 @@ export class AuthGuard extends KeycloakAuthGuard {
     state: RouterStateSnapshot
   ): Promise<boolean | UrlTree> {
     if (!this.authenticated) {
-      window.location.href = `${window.location.origin}`;
+      window.location.href = `${window.location.origin}?returnUrl=${window.location.pathname || window.location.origin}`;
       return true;
     }
     if (!this.hasRoles()) {
