@@ -193,7 +193,14 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.dataGrid.clearSelection();
     this.dynamicFormService.parentForm?.reset();
   }
-
+  onReset() { 
+    this.dynamicFormService.parentForm?.setValue(
+      this.entityFormService.extractFormFieldsOnly(
+        this.selectedItem,
+        this.dynamicFormService.parentForm?.value
+      )
+    );
+  }
   onDelete() {
     const dialog = this.dialogService.openConfirmDialoge({
       message: "Do you want to delete?",
