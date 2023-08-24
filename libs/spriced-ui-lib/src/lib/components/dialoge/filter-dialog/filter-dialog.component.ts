@@ -36,7 +36,7 @@ export class FilterDialogComponent {
 
   private convertToFilters(query: any) {
     let filters: Filter[] = [];
-    debugger;
+    //debugger;
     query.rules.forEach((item: any, index: number) => {
       const operatorType = this.getOperatorType(item.operator);
 
@@ -127,7 +127,7 @@ export class FilterDialogComponent {
       fields: {},
     };
     columns.forEach((col) => {
-      debugger;
+      //debugger;
       config.fields[col.name] = {
         name: col.displayName || col.name,
         type: col.dataType,
