@@ -154,7 +154,7 @@
     <div class="page-header pb-0">Entity Data Management</div>
     <sp-entity-select
       (entitySelectionEvent)="onEntitySelectionChange($event)"
-      (modelSelectionEvent)="onModelSelectionChange()"
+      (modelSelectionEvent)="onModelSelectionChange($event)"
     ></sp-entity-select>
     <div class="grid-container grid-height">
       <sp-data-grid

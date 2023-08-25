@@ -46,7 +46,8 @@ export class LandingPageComponent implements OnInit {
     {
       if(!!this.user && this.aroute.snapshot.queryParams['returnUrl'])
       {
-        this.router.navigate([this.aroute.snapshot.queryParams['returnUrl']]);
+        const returnUrl = this.aroute.snapshot.queryParams['returnUrl'];
+        this.router.navigateByUrl(returnUrl);
       }
     }
   }
