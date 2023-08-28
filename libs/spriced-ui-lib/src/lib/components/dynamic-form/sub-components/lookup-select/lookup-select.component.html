@@ -30,7 +30,11 @@
             *ngFor="let option of source"
             [value]="control.valueProp ? option[control.valueProp] : option"
           >
-            {{ control.displayProp ? option[control.displayProp] : option }}
+            {{
+              control.displayProp
+                ? getDisplayProp(option, control.displayProp)
+                : option
+            }}
           </mat-option>
         </mat-select>
 

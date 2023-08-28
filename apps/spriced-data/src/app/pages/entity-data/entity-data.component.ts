@@ -131,7 +131,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.setFormData("", []);
     this.subscribeToFormEvents();
   }
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   subscribeToFormEvents() {
     this.subscriptions.push(
@@ -144,12 +144,15 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   loadLookupPopup(data: any) {
-    const pathParams: any = { modelId: this.currentSelectedEntity?.groupId, entityId: data }
+    const pathParams: any = {
+      modelId: this.currentSelectedEntity?.groupId,
+      entityId: data,
+    };
     const pathSegments = Object.keys(pathParams)
-      .map(key => encodeURIComponent(pathParams[key]))
-      .join('/');
+      .map((key) => encodeURIComponent(pathParams[key]))
+      .join("/");
     const url = `${window.location.href}/${pathSegments}`; // Replace this with the desired URL
-    const newTab: any = window.open(url, '_blank');
+    const newTab: any = window.open(url, "_blank");
     newTab.focus();
 
     // const dialogReference = this.dialogService.openDialog(
@@ -166,7 +169,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   onPaginate(e: Paginate) {
-    this.pageNumber = e.offset
+    this.pageNumber = e.offset;
     const criteria: Criteria = {
       ...this.currentCriteria,
       pager: {
@@ -201,7 +204,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.dataGrid.clearSelection();
     this.dynamicFormService.parentForm?.reset();
   }
-  onReset() { 
+  onReset() {
     this.dynamicFormService.parentForm?.setValue(
       this.entityFormService.extractFormFieldsOnly(
         this.selectedItem,
@@ -252,9 +255,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       }
     });
   }
-  onClearFilter()
-  {
-    this.query=null
+  onClearFilter() {
+    this.query = null;
     this.currentCriteria.filters = [];
     this.loadEntityData(
       this.currentSelectedEntity as Entity,
@@ -301,7 +303,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   onStatus() {
     const dialogResult = this.dialog.open(StatusComponent, {});
 
-    dialogResult.afterClosed().subscribe((val) => { });
+    dialogResult.afterClosed().subscribe((val) => {});
   }
 
   onSettings() {
@@ -314,6 +316,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           this.currentSelectedEntity as Entity,
           this.currentCriteria
         );
+        this.globalSettings = this.settings.getGlobalSettings();
+        this.createDynamicUIMapping(this.currentSelectedEntity);
       }
     });
   }
@@ -347,12 +351,16 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);
     this.createDynamicGrid(this.currentSelectedEntity);
     this.createDynamicUIMapping(this.currentSelectedEntity);
-    this.loadRelatedEntity()
+    this.loadRelatedEntity();
   }
   loadRelatedEntity() {
-    this.entityDataService.getRelatedEntity(this.currentSelectedEntity?.groupId, this.currentSelectedEntity?.id)
+    this.entityDataService
+      .getRelatedEntity(
+        this.currentSelectedEntity?.groupId,
+        this.currentSelectedEntity?.id
+      )
       .subscribe((val) => {
-        this.relatedEntity = val
+        this.relatedEntity = val;
       });
   }
   onSubmitEntityData(data: any) {
@@ -414,7 +422,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   private createDynamicUIMapping(entity: Entity | undefined) {
     let formFields: FormFieldControls = [];
     if (entity) {
-      formFields = this.entityFormService.getFormFieldControls(entity);
+      formFields = this.entityFormService.getFormFieldControls(
+        entity,
+        this.globalSettings.displayFormat
+      );
       this.disableSubmit = !entity.attributes.reduce((prev, current) => {
         return prev || current.permission === "UPDATE";
       }, false);
@@ -462,7 +473,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     const entitySettings = this.settings.getCurrentSettings(entity.name);
     if (entitySettings) {
       this.limit = entitySettings.noOfRecords;
-      this.currentCriteria.pager = { pageNumber: this.pageNumber, pageSize: this.limit }
+      this.currentCriteria.pager = {
+        pageNumber: this.pageNumber,
+        pageSize: this.limit,
+      };
       this.headers.forEach((item, index) => {
         item.pinned = undefined;
         if (index + 1 === entitySettings.freeze) {

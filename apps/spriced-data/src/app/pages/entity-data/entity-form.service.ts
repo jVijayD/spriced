@@ -11,7 +11,10 @@ import * as moment from "moment";
 
 @Injectable()
 export class EntityFormService {
-  public getFormFieldControls(entity: Entity): FormFieldControls {
+  public getFormFieldControls(
+    entity: Entity,
+    codeSettings: string
+  ): FormFieldControls {
     return entity.attributes
       .filter((item) => {
         return (
@@ -20,7 +23,7 @@ export class EntityFormService {
         );
       })
       .map((attr: Attribute) => {
-        return this.getType(attr);
+        return this.getType(attr, codeSettings);
       });
   }
 
@@ -35,15 +38,20 @@ export class EntityFormService {
     return extractedFields;
   }
 
-  private getType(attr: Attribute): GenericControl {
+  private getType(attr: Attribute, codeSettings: string): GenericControl {
     if (attr.type === "LOOKUP") {
       return {
         type: "lookup-select",
         name: attr.name,
         label: attr.displayName || attr.name,
         readOnly: attr.permission === "READ" ? true : false,
-        displayProp: "name",
-        valueProp: "code",
+        displayProp:
+          codeSettings === "code"
+            ? "code"
+            : codeSettings === "codename"
+            ? "code|name"
+            : "name|code",
+        valueProp: "id",
         eventValue: attr.referencedTableId,
         eventType: "lookup",
         placeholder: {
