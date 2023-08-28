@@ -111,7 +111,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   globalSettings!: any;
 
   query?: any;
-  modelId?: number;
 
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
@@ -145,7 +144,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   loadLookupPopup(data: any) {
-    const pathParams: any = { modelId: this.modelId, entityId: data }
+    const pathParams: any = { modelId: this.currentSelectedEntity?.groupId, entityId: data }
     const pathSegments = Object.keys(pathParams)
       .map(key => encodeURIComponent(pathParams[key]))
       .join('/');
@@ -328,8 +327,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       },
     });
   }
-  onModelSelectionChange(model_id?: any) {
-    this.modelId = model_id;
+  onModelSelectionChange() {
     this.currentSelectedEntity = undefined;
     // this.headers = [{ name: "", column: "" }];
     this.dataGrid.table._internalColumns = [...[]];
@@ -347,7 +345,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.currentSelectedEntity = undefined;
     this.dataGrid.table._internalColumns = [...[]];
     this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);
-    this.modelId = this.currentSelectedEntity?.groupId;
     this.createDynamicGrid(this.currentSelectedEntity);
     this.createDynamicUIMapping(this.currentSelectedEntity);
     this.loadRelatedEntity()

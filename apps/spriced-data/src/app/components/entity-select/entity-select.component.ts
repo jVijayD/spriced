@@ -102,7 +102,7 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
 
   onModelSelectionChange(e: MatSelectChange) {
     this.entities = [];
-    this.modelSelectionEvent.emit(e.value);
+    this.modelSelectionEvent.emit();
     if (e.value != "") {
       this.loadEntity(Number(e.value));
     }
