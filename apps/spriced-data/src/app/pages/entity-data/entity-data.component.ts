@@ -50,7 +50,7 @@ import { EntityDataService } from "../../services/entity-data.service";
 import { Subscription } from "rxjs";
 import * as moment from "moment";
 import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
-import { RouterModule } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 
 import { AuditDataComponent } from "./audit-data/audit-data.component";
 import { LookupPopupComponent } from "../../components/lookup-Popup/lookup-popup.component";
@@ -114,7 +114,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
-  pageNumber: number=0;
+  pageNumber: number = 0;
   relatedEntity: any;
   constructor(
     private snackbarService: SnackBarService,
@@ -124,13 +124,14 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     private dialog: MatDialog,
     private settings: SettingsService,
     private entityGridService: EntityGridService,
-    private entityFormService: EntityFormService
+    private entityFormService: EntityFormService,
+    private router: Router
   ) {
     this.globalSettings = this.settings.getGlobalSettings();
     this.setFormData("", []);
     this.subscribeToFormEvents();
   }
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   subscribeToFormEvents() {
     this.subscriptions.push(
@@ -143,14 +144,21 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   loadLookupPopup(data: any) {
-    //this.entityService.load(value)
-    const dialogReference = this.dialogService.openDialog(
-      LookupPopupComponent,
-      {
-        data: data,
-      }
-    );
-    dialogReference.afterClosed().subscribe(() => {});
+    const pathParams: any = { modelId: this.currentSelectedEntity?.groupId, entityId: data }
+    const pathSegments = Object.keys(pathParams)
+      .map(key => encodeURIComponent(pathParams[key]))
+      .join('/');
+    const url = `${window.location.href}/${pathSegments}`; // Replace this with the desired URL
+    const newTab: any = window.open(url, '_blank');
+    newTab.focus();
+
+    // const dialogReference = this.dialogService.openDialog(
+    //   LookupPopupComponent,
+    //   {
+    //     data: data,
+    //   }
+    // );
+    // dialogReference.afterClosed().subscribe(() => { });
   }
 
   ngOnDestroy(): void {
@@ -158,7 +166,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   onPaginate(e: Paginate) {
-    this.pageNumber=e.offset
+    this.pageNumber = e.offset
     const criteria: Criteria = {
       ...this.currentCriteria,
       pager: {
@@ -293,7 +301,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   onStatus() {
     const dialogResult = this.dialog.open(StatusComponent, {});
 
-    dialogResult.afterClosed().subscribe((val) => {});
+    dialogResult.afterClosed().subscribe((val) => { });
   }
 
   onSettings() {
@@ -454,7 +462,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     const entitySettings = this.settings.getCurrentSettings(entity.name);
     if (entitySettings) {
       this.limit = entitySettings.noOfRecords;
-      this.currentCriteria.pager={pageNumber:this.pageNumber,pageSize:this.limit}
+      this.currentCriteria.pager = { pageNumber: this.pageNumber, pageSize: this.limit }
       this.headers.forEach((item, index) => {
         item.pinned = undefined;
         if (index + 1 === entitySettings.freeze) {

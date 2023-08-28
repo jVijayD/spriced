@@ -10,6 +10,7 @@ import {
   RouterStateSnapshot,
   UrlTree,
   Router,
+  ActivatedRoute,
 } from "@angular/router";
 import { KeycloakAuthGuard, KeycloakService } from "keycloak-angular";
 import { Observable } from "rxjs";
@@ -21,7 +22,8 @@ export class AuthGuard extends KeycloakAuthGuard {
   user: any;
   constructor(
     protected override readonly router: Router,
-    protected readonly keycloak: KeycloakService
+    protected readonly keycloak: KeycloakService,
+    private aroute: ActivatedRoute
   ) {
     super(router, keycloak);
   }
@@ -30,7 +32,10 @@ export class AuthGuard extends KeycloakAuthGuard {
     state: RouterStateSnapshot
   ): Promise<boolean | UrlTree> {
     if (!this.authenticated) {
-      window.location.href = `${window.location.origin}?returnUrl=${window.location.pathname || window.location.origin}`;
+      const returnUrl = this.aroute.snapshot.queryParams['returnUrl'];
+      const defaultReturnUrl = returnUrl || `${window.location.pathname}${window.location.search}`;
+      const encodedDefaultReturnUrl = encodeURIComponent(defaultReturnUrl);
+      window.location.href = `${window.location.origin}?returnUrl=${encodedDefaultReturnUrl}`;
       return true;
     }
     if (!this.hasRoles()) {
