@@ -202,7 +202,14 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.dataGrid.clearSelection();
     this.dynamicFormService.parentForm?.reset();
   }
-
+  onReset() { 
+    this.dynamicFormService.parentForm?.setValue(
+      this.entityFormService.extractFormFieldsOnly(
+        this.selectedItem,
+        this.dynamicFormService.parentForm?.value
+      )
+    );
+  }
   onDelete() {
     const dialog = this.dialogService.openConfirmDialoge({
       message: "Do you want to delete?",
@@ -246,7 +253,15 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       }
     });
   }
-
+  onClearFilter()
+  {
+    this.query=null
+    this.currentCriteria.filters = [];
+    this.loadEntityData(
+      this.currentSelectedEntity as Entity,
+      this.currentCriteria
+    );
+  }
   onEdit() {
     if (this.selectedItem) {
       this.dialogService.openDialog(AddModelComponent, {
