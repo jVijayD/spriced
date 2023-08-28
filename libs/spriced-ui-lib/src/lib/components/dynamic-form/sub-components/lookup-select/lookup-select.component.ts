@@ -81,4 +81,11 @@ export class LookupSelectComponent
     this.addRule(selectControl.rule);
     this.setControlAccess();
   }
+
+  public getDisplayProp(option: any, prop: string) {
+    let displayProp = "";
+    const props = prop.split("|");
+    displayProp = props.map((item) => option[item]).join(" | ");
+    return displayProp;
+  }
 }

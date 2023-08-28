@@ -114,7 +114,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
-  pageNumber: number=0;
+  pageNumber: number = 0;
   relatedEntity: any;
   constructor(
     private snackbarService: SnackBarService,
@@ -158,7 +158,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   onPaginate(e: Paginate) {
-    this.pageNumber=e.offset
+    this.pageNumber = e.offset;
     const criteria: Criteria = {
       ...this.currentCriteria,
       pager: {
@@ -291,6 +291,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           this.currentSelectedEntity as Entity,
           this.currentCriteria
         );
+        this.globalSettings = this.settings.getGlobalSettings();
+        this.createDynamicUIMapping(this.currentSelectedEntity);
       }
     });
   }
@@ -324,12 +326,16 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);
     this.createDynamicGrid(this.currentSelectedEntity);
     this.createDynamicUIMapping(this.currentSelectedEntity);
-    this.loadRelatedEntity()
+    this.loadRelatedEntity();
   }
   loadRelatedEntity() {
-    this.entityDataService.getRelatedEntity(this.currentSelectedEntity?.groupId, this.currentSelectedEntity?.id)
+    this.entityDataService
+      .getRelatedEntity(
+        this.currentSelectedEntity?.groupId,
+        this.currentSelectedEntity?.id
+      )
       .subscribe((val) => {
-        this.relatedEntity = val
+        this.relatedEntity = val;
       });
   }
   onSubmitEntityData(data: any) {
@@ -391,7 +397,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   private createDynamicUIMapping(entity: Entity | undefined) {
     let formFields: FormFieldControls = [];
     if (entity) {
-      formFields = this.entityFormService.getFormFieldControls(entity);
+      formFields = this.entityFormService.getFormFieldControls(
+        entity,
+        this.globalSettings.displayFormat
+      );
       this.disableSubmit = !entity.attributes.reduce((prev, current) => {
         return prev || current.permission === "UPDATE";
       }, false);
@@ -439,7 +448,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     const entitySettings = this.settings.getCurrentSettings(entity.name);
     if (entitySettings) {
       this.limit = entitySettings.noOfRecords;
-      this.currentCriteria.pager={pageNumber:this.pageNumber,pageSize:this.limit}
+      this.currentCriteria.pager = {
+        pageNumber: this.pageNumber,
+        pageSize: this.limit,
+      };
       this.headers.forEach((item, index) => {
         item.pinned = undefined;
         if (index + 1 === entitySettings.freeze) {
