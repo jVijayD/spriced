@@ -50,7 +50,7 @@ import { EntityDataService } from "../../services/entity-data.service";
 import { Subscription } from "rxjs";
 import * as moment from "moment";
 import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
-import { RouterModule } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 
 import { AuditDataComponent } from "./audit-data/audit-data.component";
 import { LookupPopupComponent } from "../../components/lookup-Popup/lookup-popup.component";
@@ -124,7 +124,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     private dialog: MatDialog,
     private settings: SettingsService,
     private entityGridService: EntityGridService,
-    private entityFormService: EntityFormService
+    private entityFormService: EntityFormService,
+    private router: Router
   ) {
     this.globalSettings = this.settings.getGlobalSettings();
     this.setFormData("", []);
@@ -143,14 +144,24 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   loadLookupPopup(data: any) {
-    //this.entityService.load(value)
-    const dialogReference = this.dialogService.openDialog(
-      LookupPopupComponent,
-      {
-        data: data,
-      }
-    );
-    dialogReference.afterClosed().subscribe(() => {});
+    const pathParams: any = {
+      modelId: this.currentSelectedEntity?.groupId,
+      entityId: data,
+    };
+    const pathSegments = Object.keys(pathParams)
+      .map((key) => encodeURIComponent(pathParams[key]))
+      .join("/");
+    const url = `${window.location.href}/${pathSegments}`; // Replace this with the desired URL
+    const newTab: any = window.open(url, "_blank");
+    newTab.focus();
+
+    // const dialogReference = this.dialogService.openDialog(
+    //   LookupPopupComponent,
+    //   {
+    //     data: data,
+    //   }
+    // );
+    // dialogReference.afterClosed().subscribe(() => { });
   }
 
   ngOnDestroy(): void {
@@ -193,7 +204,14 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.dataGrid.clearSelection();
     this.dynamicFormService.parentForm?.reset();
   }
-
+  onReset() {
+    this.dynamicFormService.parentForm?.setValue(
+      this.entityFormService.extractFormFieldsOnly(
+        this.selectedItem,
+        this.dynamicFormService.parentForm?.value
+      )
+    );
+  }
   onDelete() {
     const dialog = this.dialogService.openConfirmDialoge({
       message: "Do you want to delete?",
@@ -237,7 +255,14 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       }
     });
   }
-
+  onClearFilter() {
+    this.query = null;
+    this.currentCriteria.filters = [];
+    this.loadEntityData(
+      this.currentSelectedEntity as Entity,
+      this.currentCriteria
+    );
+  }
   onEdit() {
     if (this.selectedItem) {
       this.dialogService.openDialog(AddModelComponent, {
