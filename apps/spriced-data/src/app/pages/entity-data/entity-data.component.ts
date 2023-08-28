@@ -145,11 +145,11 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   loadLookupPopup(data: any) {
-    const queryParams: any = { modelId: this.modelId, entityId: data }
-    const queryString = Object.keys(queryParams)
-      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key])}`)
-      .join('&');
-      const url = `${window.location.href}?${queryString}`; // Replace this with the desired URL
+    const pathParams: any = { modelId: this.modelId, entityId: data }
+    const pathSegments = Object.keys(pathParams)
+      .map(key => encodeURIComponent(pathParams[key]))
+      .join('/');
+    const url = `${window.location.href}/${pathSegments}`; // Replace this with the desired URL
     const newTab: any = window.open(url, '_blank');
     newTab.focus();
 

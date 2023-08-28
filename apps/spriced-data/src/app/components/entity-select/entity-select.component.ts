@@ -58,8 +58,8 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const modelId = Number(this.route.snapshot.paramMap.get("modelId") || this.route.snapshot.queryParams['modelId']);
-    const entityId = Number(this.route.snapshot.paramMap.get("entityId") || this.route.snapshot.queryParams['entityId']);
+    const modelId = Number(this.route.snapshot.paramMap.get("modelId"));
+    const entityId = Number(this.route.snapshot.paramMap.get("entityId"));
 
     this.subscriptions.push(
       this.modelService.loadAllModels().subscribe({
