@@ -147,16 +147,51 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     let { conditions, operands, operators, datatypes, actionEnum, entity } = await this.getAllDataEnum(id);
     if (conditions && operands && operators && actionEnum && entity) {
       const action = actionEnum;
+      let mockAttribute: any = [];
+      const relatedRefreneceTableEntity = entity.attributes.filter((el: any) => !!el.referencedTableId);
+      mockAttribute = entity.attributes;
+
+      // Handle for nested attribute
+      if (relatedRefreneceTableEntity) {
+        mockAttribute.push(relatedRefreneceTableEntity[0]);
+        let { entityData } = await this.getEntityById(relatedRefreneceTableEntity[0].referencedTableId);
+        const nestedProcessedAttributes = this.processNestedAttributes(entityData.attributes, relatedRefreneceTableEntity[0].displayName);
+        mockAttribute.push(...nestedProcessedAttributes);
+
+      }
+
       this.conditionsData = {
         ...action,
-        attributes: entity.attributes,
+        attributes: mockAttribute,
         conditions: this.transformObjectToKeyValueArray(conditions),
         operators: this.transformObjectToKeyValueArray(operators),
         operands: this.transformObjectToKeyValueArray(operands)
       };
       this.conditionsData.ruleTypes = this.conditionsData?.ruleTypes.slice(0, 3)
-      this.conditionsData.operators = this.conditionsData?.operators.slice(0,7)
+      this.conditionsData.operators = this.conditionsData?.operators.slice(0, 7)
     }
+  }
+
+  /**
+  * HANDLE THIS FUNCTION FOR EDIT THE NESTEDATTRIBUTES
+  * @param nestedAttributes any
+  * @param parentAttribute string
+  * @returns 
+  */
+  public processNestedAttributes(nestedAttributes: any, parentAttribute: string) {
+    const processedAttributes: any = [];
+    if (nestedAttributes) {
+      nestedAttributes.forEach(async (el: any) => {
+        const processedAttribute = {
+          ...el,
+          displayName: `${parentAttribute}.${el.displayName}`,
+          name: `${parentAttribute}.${el.displayName}`
+        };
+        processedAttributes.push(processedAttribute);
+      });
+    }
+
+    return processedAttributes;
   }
 
   /**
@@ -211,6 +246,31 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
             datatypes: [],
             actionEnum: [],
             entity: []
+          });
+        }
+      );
+    });
+  }
+
+  /**
+   * HANDLE THIS FUNCTION FOR GET ENTITY BY IDS
+   * @param entityId number
+   * @returns 
+   */
+  public getEntityById(entityId: number): Promise<any> {
+    return new Promise((resolve, rejects) => {
+      forkJoin([
+        this.businessRuleService.getAllEntitesById(entityId)
+      ]).subscribe(
+        ([entityData]: any) => {
+          resolve({
+            entityData
+          });
+        },
+        (err) => {
+          this.loading = false;
+          rejects({
+            entityData: []
           });
         }
       );
@@ -274,7 +334,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     this.ruleId = res.id;
     this.myForm = this.formbuilder.group({
       name: [res.name, Validators.required],
-      priority: [res.priority, [Validators.required ,Validators.min(1),Validators.max(1000)]],
+      priority: [res.priority, [Validators.required, Validators.min(1), Validators.max(1000)]],
       description: [res.description, [Validators.required]],
       notification: [res.notification],
       group: [res.group],
@@ -770,7 +830,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       const message: any = this.ruleId ? 'Rule is updated successfully!' : 'Rule is created successfully!';
       this.messageservice.snackMessage.next(message);
       this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
-        queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId},
+        queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId },
       });
     },
       // Handle the api error as needed
@@ -778,16 +838,15 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         console.error('Error occurred during API request:', error);
         this.messageservice.snackMessage.next('Error occurred during API request:')
         this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
-          queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId},
+          queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId },
         });
         this.saveButton = false;
       });
   }
 
-  public backToListpage()
-  {
+  public backToListpage() {
     this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
-      queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId},
+      queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId },
     });
   }
 
