@@ -153,6 +153,14 @@ export class ModelListComponent {
     //this.rows = this.getData(e.limit, e.offset);
   }
 
+  /**
+   * HANDLE THIS FUNCTION FOR DOUBLE CLICK NAVIGATE ENTITY
+   */
+  onRowDoubleClick()
+  {
+    this.onView();
+  }
+
   onItemSelected(e: any) {
     this.selectedItem = e;
     console.log(e);
