@@ -13,8 +13,13 @@ import org.springframework.stereotype.Component;
 
 import com.sim.spriced.data.rule.action.DefaultsToAction;
 import com.sim.spriced.data.rule.action.EqualsAction;
+import com.sim.spriced.data.rule.action.GreaterThanAction;
+import com.sim.spriced.data.rule.action.GreaterThanOrEqualAction;
 import com.sim.spriced.data.rule.action.IsNotValid;
 import com.sim.spriced.data.rule.action.IsValid;
+import com.sim.spriced.data.rule.action.LessThanAction;
+import com.sim.spriced.data.rule.action.LessThanOrEqualAction;
+import com.sim.spriced.data.rule.action.MustBeEqualsAction;
 import com.sim.spriced.data.rule.action.NoneAction;
 import com.sim.spriced.data.rule.condition.specification.BaseSpecification;
 import com.sim.spriced.data.rule.condition.specification.SpecificationFactory;
@@ -156,11 +161,16 @@ public class RuleFactory {
 			case IS_REQUIRED:
 				return new IsValid(operand, colName, actionGroup);
 //					case MUST_BE_BETWEEN:
-//					case MUST_BE_EQUAL_TO:
-//					case MUST_BE_GREATER_THAN:
-//					case MUST_BE_GREATER_THAN_EQUAL:
-//					case MUST_BE_LESS_THAN:
-//					case MUST_BE_LESS_THAN_EQUAL:
+			case MUST_BE_EQUAL_TO:
+				return new MustBeEqualsAction(operand, colName, actionGroup);
+			case MUST_BE_GREATER_THAN:
+				return new GreaterThanAction(operand, colName, actionGroup);
+			case MUST_BE_GREATER_THAN_EQUAL:
+				return new GreaterThanOrEqualAction(operand, colName, actionGroup);
+			case MUST_BE_LESS_THAN:
+				return new LessThanAction(operand, colName, actionGroup);
+			case MUST_BE_LESS_THAN_EQUAL:
+				return new LessThanOrEqualAction(operand, colName, actionGroup);
 //					case MUST_BE_UNIQUE:
 //					case MUST_CONTAIN_PATTERN:
 //					case MUST_HAVE_MAXIMUM_LENGTH_OF:
