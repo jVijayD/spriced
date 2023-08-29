@@ -2,6 +2,7 @@ package com.sim.spriced.data.rule.condition.specification;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Stack;
 
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,9 @@ import com.sim.spriced.framework.specification.CompositeSpecification;
 
 @Component
 public class SpecificationFactory {
-
+	
+	public static Stack<String> errorStack = new Stack<>();
+	
 	private SpecificationFactory() {
 	}
 
@@ -20,7 +23,9 @@ public class SpecificationFactory {
 		Optional<Attribute> column = attributes.stream().filter(item -> item.getId().equals(condition.getAttributeId()))
 				.findFirst();
 		
-		Object operand = condition.getOperandType().equals(Condition.OperandType.ATTRIBUTE) ? this.getColumnName(condition.getOperand().toString(), attributes) : condition.getOperand(); 
+		Object operand = condition.getOperandType().equals(Condition.OperandType.ATTRIBUTE) ? this.getColumnName(condition.getOperand().toString(), attributes) : condition.getOperand();
+
+		populateErrorStackForExternalDisplay(condition, column.get().getDisplayName(), operand);
 		
 		if (column.isPresent()) {
 			String colName = column.get().getName();
@@ -66,6 +71,22 @@ public class SpecificationFactory {
 			throw new IllegalArgumentException("Matching column not present.");
 		}	
 
+	}
+
+	private void populateErrorStackForExternalDisplay(Condition condition,  String columnName, Object operand) {
+		String tempConditionString = columnName + " " + condition.getOperatorType() + " " + operand.toString() + " ";
+		if(!condition.getConditionType().equals(Condition.ConditionType.NONE)) {
+			tempConditionString =  condition.getConditionType() + " " + tempConditionString; 
+		}
+		if(condition.getSubConditionType().equals(Condition.ConditionType.NONE)) {
+			errorStack.add(tempConditionString);
+		} else {
+			errorStack.add(tempConditionString + condition.getSubConditionType() + "(");
+		}
+	}
+	
+	public static Stack<String> getErrorStack() {
+		return errorStack;
 	}
 	
 	private String getColumnName(String attributeId,List<Attribute> attributes) {
