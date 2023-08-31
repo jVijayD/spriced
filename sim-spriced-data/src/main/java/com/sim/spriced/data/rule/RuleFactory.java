@@ -42,7 +42,9 @@ public class RuleFactory {
 
 	@Autowired
 	SpecificationFactory specFactory;
-
+	
+	private static List<String> actionStringList = new ArrayList<>();
+	
 	public IRule<JSONObject> createInstance(Rule rule, List<Attribute> attributes) {
 		List<IAction<JSONObject>> ifActionList = this.getActionList(rule.getConditionalAction().getIfActions(),
 				attributes, rule.getGroup());
@@ -146,7 +148,8 @@ public class RuleFactory {
 			String actionGroup = action.getActionGroup().toString();
 			Object operand = action.getOperand();
 			String colName = column.get().getName();
-			
+			String displayName = column.get().getDisplayName();
+			generateActionStringForError(displayName, action, operand);
 			
 			switch (action.getActionType()) {
 			case DEFAULTS_TO:
@@ -155,7 +158,7 @@ public class RuleFactory {
 //					case DEFAULTS_TO_GENERATED_VALUE:
 			case EQUALS:
 				return new EqualsAction(operand, colName, actionGroup);
-//					case EQUALS_CONCATENATED_VALUE:
+//					case EQUALS_CONCATENATED_VALUE:	
 			case IS_NOT_VALID:
 				return new IsNotValid(operand, colName, actionGroup);
 			case IS_REQUIRED:
@@ -230,5 +233,14 @@ public class RuleFactory {
 		default:
 			throw new NotImplementedException("Condition type not implement.");
 		}
+	}
+	
+	public void generateActionStringForError(String displayName, Action action, Object operand) {
+		String tempActionString = displayName + " " + action.getActionType().toString() + operand.toString();
+		actionStringList.add(tempActionString);
+	}
+	
+	public static List<String> getActionStringList() {
+		return actionStringList;
 	}
 }

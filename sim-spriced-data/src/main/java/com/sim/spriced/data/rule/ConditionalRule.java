@@ -1,9 +1,14 @@
 package com.sim.spriced.data.rule;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.Stack;
 
 import org.json.JSONObject;
 
+import com.sim.spriced.data.rule.condition.specification.SpecificationFactory;
 import com.sim.spriced.framework.models.Attribute;
 import com.sim.spriced.framework.models.Rule;
 import com.sim.spriced.framework.rule.IRule;
@@ -19,7 +24,7 @@ public class ConditionalRule implements IRule<JSONObject> {
 	private final List<IAction<JSONObject>> ifActionList;
 	private final List<IAction<JSONObject>> elseActionList;
 	private final ISpecification<JSONObject> conditions;
-
+	
 	@Override
 	public String getName() {
 		return this.name;
@@ -109,10 +114,20 @@ public class ConditionalRule implements IRule<JSONObject> {
 	}
 
 	private String getMessage(boolean isSuccess) {
+		String conditionErrorString = "", actionErrorString = "";
 		if (isSuccess) {
 			return String.format("%s rule executed succesfully.", this.name);
 		} else {
-			return String.format("%s rule execution failed.", this.name);
+			if(SpecificationFactory.getErrorStack().size() > 0) {
+				conditionErrorString = unwrapStack(SpecificationFactory.getErrorStack());
+				SpecificationFactory.getErrorStack().clear();
+			}
+			if(RuleFactory.getActionStringList().size() > 0) {
+				actionErrorString = getFullActionString(RuleFactory.getActionStringList());
+				RuleFactory.getActionStringList().clear();
+			}
+			String message = "RULENAME: " + this.name + " CONDITION(s): " + conditionErrorString.trim() + " ACTION(s): " + actionErrorString.trim();
+			return message.trim();
 		}
 	}
 
@@ -121,5 +136,49 @@ public class ConditionalRule implements IRule<JSONObject> {
 			throw new EmptyActionsException("Actions cannot be empty.");
 		}
 	}
+	
+	private String unwrapStack(Stack<String> errorStack) {
+		String conditionString = "", finalConditionString = "";
+		Set<String> deduplicatedSet = new LinkedHashSet<String>();
+		deduplicatedSet.addAll(errorStack);
+		errorStack.clear();
+		errorStack.addAll(deduplicatedSet);
+		
+		if(errorStack.size() == 1) {
+			return errorStack.pop();
+		}
+		int count = 0;
+		while(!errorStack.isEmpty()) {
+			String temp = errorStack.pop();
+			if(!temp.endsWith("(")) {
+				conditionString += temp;
+				while(0 != count--) {
+					conditionString += ")";
+				}
+				count = 0;
+				conditionString += "||";
+			} else {
+				conditionString += temp;
+				++count;
+			}
+		}
+		String[] holder = conditionString.trim().split("\\|\\|");
+		Stack<String> cond = new Stack<>();
+		cond.addAll(Arrays.asList(holder));
+		while(!cond.isEmpty()) {
+			finalConditionString += cond.pop() + ", ";
+		}
+		return finalConditionString = finalConditionString.substring(0, finalConditionString.length() - ", ".length());
+	}
+	
+	private String getFullActionString(List<String> actionStringList) {
+		String actionString = "";
+		List<String> dedupedActionList = actionStringList.stream().distinct().toList();
 
+		for(var actionStr: dedupedActionList) {
+			actionString += actionStr + ", ";
+		}
+
+		return actionString.substring(0, actionString.length() - ", ".length());
+	}
 }
