@@ -50,6 +50,7 @@ export * from "./lib/components/dynamic-form/directives/dateformat-dd-MM-yy.dire
 export * from "./lib/components/dynamic-form/directives/dateformat-dd-MM-yyyy.directive";
 export * from "./lib/components/dynamic-form/directives/dateformat-yy-MM-dd.directive";
 export * from "./lib/components/dynamic-form/directives/dateformat-yyyy-MM-dd.directive";
+export * from "./lib/components/dynamic-form/directives/dateformat-yyyymmdd.directive";
 
 export * from "./lib/layouts/one-col/one-col.component";
 export * from "./lib/layouts/hbox/hbox.component";
