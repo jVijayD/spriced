@@ -24,6 +24,7 @@
     (select)="onSelect($event)"
     [externalSorting]="isExternalSorting"
     [sortType]="sortType"
+    [selected]="!!selected?.length ? selected : []"
     [externalPaging]="isExternalPaging"
     [limit]="limit"
     [count]="count"

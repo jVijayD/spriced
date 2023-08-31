@@ -178,6 +178,7 @@
         [sortType]="sortType"
         (paginate)="onPaginate($event)"
         (itemSelected)="onItemSelected($event)"
+        [selected]="defalutSelectedItem"
         (sort)="onSort($event)"
         *ngIf="!hide"
       >
@@ -206,12 +207,19 @@
             (actionClick)="onDelete()"
           ></sp-header-action>
 
-          <sp-header-action
+          <!-- <sp-header-action
             [disabled]="!selectedItem"
             icon="clear"
             text="Clear"
             title="Clear"
             (actionClick)="onClear()"
+          ></sp-header-action> -->
+
+          <sp-header-action
+            icon="add"
+            text="Add"
+            title="Add"
+            (click)="onClear()"
           ></sp-header-action>
 
           <sp-header-action
@@ -335,9 +343,9 @@
         <button mat-icon-button>
           <mat-icon>keyboard_arrow_right</mat-icon>
         </button> -->
-        <button mat-icon-button (click)="onClear()">
+        <!-- <button mat-icon-button (click)="onClear()">
           <mat-icon>add</mat-icon>
-        </button>
+        </button> -->
       </div>
     </div>
     <mat-accordion>
@@ -345,11 +353,11 @@
         [expanded]="this.currentSelectedEntity ? true : false"
        
       >
-        <mat-expansion-panel-header>
+        <!-- <mat-expansion-panel-header>
           <mat-panel-title>
             <b>{{ this.selectedItem ? "Edit " : "Add " }}</b>
           </mat-panel-title>
-        </mat-expansion-panel-header>
+        </mat-expansion-panel-header> -->
           <div style="max-height: calc(100vh - 4rem - 206px);overflow-y: scroll;">
         <sp-dynamic-form-container
           *ngIf="appForm.groups[0].formFieldControls.length"
