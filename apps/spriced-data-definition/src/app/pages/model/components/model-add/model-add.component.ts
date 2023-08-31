@@ -45,10 +45,8 @@ export class ModelAddComponent {
     private snackbarService: SnackBarService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.dialogRef.disableClose = true;
-    if(this.data.action == "Add" || this.data.action === "Edit"){
-      this.dialogRef.disableClose = false;
-    }
+    this.dialogRef.disableClose = false;
+  
     this.appForm = {
       title: this.data.action === "Edit" ? "Edit Model" : "Add Model",
       //columns: 4,
