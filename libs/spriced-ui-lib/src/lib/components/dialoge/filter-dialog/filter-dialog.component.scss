@@ -1,5 +1,5 @@
 .container {
-  width: 800px;
+  width: 870px;
   height: 600px;
   padding: 10px;
   @apply flex flex-col justify-start;
@@ -36,10 +36,14 @@
   justify-content: center;
   border: 1px solid #ccc; 
   cursor: pointer;
+  border-radius: 0;
 }
 
 .square-button.active {
   background-color: #c4312b;; 
   color: #fff; 
   border-color: #c4312b;; 
+}
+::ng-deep .q-connector{
+  margin-left:20px;
 }
