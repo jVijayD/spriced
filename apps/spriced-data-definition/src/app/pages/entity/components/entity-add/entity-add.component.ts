@@ -35,7 +35,7 @@ import {
   Paginate,
 } from "@spriced-frontend/spriced-ui-lib";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
-const DEFAULT_ATTRIBUTE_WIDTH = 200;
+const DEFAULT_ATTRIBUTE_WIDTH = 100;
 export interface PeriodicElement {
   name: string;
   id: number;
