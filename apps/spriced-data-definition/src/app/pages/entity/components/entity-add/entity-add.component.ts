@@ -273,6 +273,7 @@ export class EntityAddComponent implements OnInit {
     this.rows = this.rows.filter((value: any) => {
       return value.name != this.selectedItem.name;
     });
+    this.clear();
   }
   onPaginate(e: Paginate) {
     //this.rows = this.getData(e.limit, e.offset);

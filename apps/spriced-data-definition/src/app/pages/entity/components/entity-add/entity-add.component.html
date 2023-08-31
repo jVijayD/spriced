@@ -59,8 +59,8 @@
             [isArray]="false"
             [headers]="headers"
             [rows]="rows"
-            [rowHeight]="40"
-            [headerHeight]="40"
+            [rowHeight]="20"
+            [headerHeight]="30"
             [footerHeight]="0"
             [columnMode]="columnMode"
             [virtualScroll]="true"
@@ -142,7 +142,6 @@
               >
             </mat-select>
           </mat-form-field>
-          <div *ngIf="attDetails.type === 'LOOKUP'"></div>
           <mat-checkbox
             *ngIf="attDetails.type !== 'LOOKUP'"
             class="mb-2"

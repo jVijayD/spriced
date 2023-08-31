@@ -424,7 +424,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     if (entity) {
       formFields = this.entityFormService.getFormFieldControls(
         entity,
-        this.globalSettings.displayFormat
+        this.globalSettings?.displayFormat
       );
       this.disableSubmit = !entity.attributes.reduce((prev, current) => {
         return prev || current.permission === "UPDATE";

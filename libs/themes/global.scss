@@ -206,7 +206,7 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   .datatable-header-inner
   .datatable-header-cell {
   color: var(--white);
-  font-size: 14px;
+  font-size: 12px;
   background-color: var(--primary-dark);
   border-right-color: var(--primary-light);
   border-style: solid;
@@ -217,7 +217,7 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   .datatable-body
   .datatable-body-row
   .datatable-body-cell {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .ngx-datatable {
@@ -331,3 +331,9 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   text-rendering: auto;
   -webkit-font-smoothing: antialiased;
 }
+.mat-form-field-disabled
+{
+background:lightgray
+}
+
+
