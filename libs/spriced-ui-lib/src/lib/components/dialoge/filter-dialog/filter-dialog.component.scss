@@ -29,3 +29,17 @@
 :host ::ng-deep input[type="checkbox"] {
   margin-top: 12px;
 }
+
+.square-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc; 
+  cursor: pointer;
+}
+
+.square-button.active {
+  background-color: #c4312b;; 
+  color: #fff; 
+  border-color: #c4312b;; 
+}
