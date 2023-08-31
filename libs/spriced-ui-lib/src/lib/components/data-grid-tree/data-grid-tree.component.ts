@@ -93,6 +93,9 @@ export class DataGridTreeComponent implements AfterViewInit {
   @Output()
   onTreeExpand: EventEmitter<any> = new EventEmitter<any>();
 
+  @Output()
+  redirect: EventEmitter<any> = new EventEmitter<any>();
+
   onPaginate(e: Paginate) {
     this.paginate.emit(e);
   }
@@ -112,12 +115,15 @@ export class DataGridTreeComponent implements AfterViewInit {
   public clearSelection() {
     this.table.selected = [];
   }
-
   ngAfterViewInit(): void {
     this.table.virtualization = true;
   }
   onTreeAction(event: any) {
     this.onTreeExpand.emit(event);
+  }
+  viewEntity()
+  {
+   this.redirect.emit()
   }
   public renderData(data: any, itemHeader: Head) {
     if (itemHeader.pipe && itemHeader.pipe instanceof Function) {
