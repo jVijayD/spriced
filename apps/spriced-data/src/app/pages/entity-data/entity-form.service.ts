@@ -112,7 +112,7 @@ export class EntityFormService {
             name: attr.name,
             type: "date",
             format: attr.formatter || "MM/DD/yyyy",
-            label: attr.formatter || "MM/DD/yyyy",
+            label: attr.displayName || attr.name,
             placeholder: attr.displayName || attr.name,
             startDate: moment(new Date()).format("YYYY-MM-DD"),
             startView: "month",
