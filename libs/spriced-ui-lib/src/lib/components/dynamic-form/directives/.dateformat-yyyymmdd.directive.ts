@@ -1,4 +1,4 @@
-import { Directive } from "@angular/core";
+import { Directive } from '@angular/core';
 import { MAT_DATE_FORMATS } from "@angular/material/core";
 
 const FORMAT = {
@@ -13,7 +13,11 @@ const FORMAT = {
   },
 };
 @Directive({
-  selector: "[spDateFormatYYYYMMDD]",
+  selector: '[spDateformatYYYYMMdd]',
   providers: [{ provide: MAT_DATE_FORMATS, useValue: FORMAT }],
 })
-export class DateFormatDirectiveYYYYMMDD {}
+export class DateformatYYYYMMddDirective {
+
+  constructor() { }
+
+}
