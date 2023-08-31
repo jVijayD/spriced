@@ -2,7 +2,6 @@ import { Attribute, Component, Inject } from "@angular/core";
 
 import { QueryBuilderConfig } from "ngx-angular-query-builder";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { dataTypes } from "libs/spriced-common-lib/src/lib/models/buisnessrule";
 
 @Component({
   selector: "sp-filter",
