@@ -116,7 +116,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   dataGrid!: DataGridComponent;
   pageNumber: number = 0;
   relatedEntity: any;
-  public defalutSelectedItem: any;
   constructor(
     private snackbarService: SnackBarService,
     private dialogService: DialogService,
@@ -202,8 +201,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onClear() {
     this.selectedItem = null;
-    this.defalutSelectedItem = null;
     this.dataGrid.clearSelection();
+    this.dataGrid.selected = [];
     this.dynamicFormService.parentForm?.reset();
   }
   onReset() {
@@ -461,8 +460,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
             this.totalElements = page.totalElements;
             if(this.rows && this.rows?.length > 0)
             {
-              this.defalutSelectedItem = [this.rows[0]];
-              this.onItemSelected(this.rows[0])
+              this.onItemSelected(this.rows[0]);
             }
           },
           error: (err) => {

@@ -178,7 +178,7 @@
         [sortType]="sortType"
         (paginate)="onPaginate($event)"
         (itemSelected)="onItemSelected($event)"
-        [selected]="defalutSelectedItem"
+        [selected]="!!selectedItem ? [selectedItem] : []"
         (sort)="onSort($event)"
         *ngIf="!hide"
       >
