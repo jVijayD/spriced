@@ -152,7 +152,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       mockAttribute = entity.attributes;
 
       // Handle for nested attribute
-      if (relatedRefreneceTableEntity) {
+      if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
         mockAttribute.push(relatedRefreneceTableEntity[0]);
         let { entityData } = await this.getEntityById(relatedRefreneceTableEntity[0].referencedTableId);
         const nestedProcessedAttributes = this.processNestedAttributes(entityData.attributes, relatedRefreneceTableEntity[0].displayName);
