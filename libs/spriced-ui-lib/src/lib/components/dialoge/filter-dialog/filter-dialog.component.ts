@@ -36,10 +36,9 @@ export class FilterDialogComponent {
 
   private convertToFilters(query: any) {
     let filters: Filter[] = [];
-    //debugger;
+    debugger;
     query.rules.forEach((item: any, index: number) => {
-      const dataType = this.getDataType(this.data.columns, item.field);
-      const operatorType = this.getOperatorType(item.operator, dataType);
+      const operatorType = this.getOperatorType(item.operator);
 
       const groupFilters = item.rules
         ? this.convertToFilters({
@@ -86,11 +85,11 @@ export class FilterDialogComponent {
     return dataType;
   }
 
-  private getOperatorType(operator: string, dataType: String) {
+  private getOperatorType(operator: string) {
     let operatorType: OperatorType | undefined = undefined;
     switch (operator) {
       case "Is equal to":
-        return dataType == "string" ? OperatorType.ILIKE : OperatorType.EQUALS;
+        return OperatorType.EQUALS;
       case "Is not equal to":
         return OperatorType.IS_NOT_EQUAL;
       case "Is greater than":
@@ -128,7 +127,7 @@ export class FilterDialogComponent {
       fields: {},
     };
     columns.forEach((col) => {
-      //debugger;
+      debugger;
       config.fields[col.name] = {
         name: col.displayName || col.name,
         type: col.dataType,
@@ -238,7 +237,7 @@ enum OperatorType {
   STARTS_WITH = "STARTS_WITH",
   ENDS_WITH = "ENDS_WITH",
   IN = "IN",
-  ILIKE = "ILIKE",
+  //ILIKE = "ILIKE",
 }
 
 export interface QueryColumns {
