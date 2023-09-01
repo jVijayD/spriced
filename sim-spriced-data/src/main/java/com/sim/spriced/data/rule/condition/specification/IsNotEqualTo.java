@@ -27,9 +27,6 @@ public class IsNotEqualTo extends BaseSpecification {
 					result = (this.convertToDate(value)).compareTo(this.convertToDate(this.value)) != 0;
 				}
 			}
-		} else if (operandType.equals(Condition.OperandType.BLANK)) {
-			result = !(value == null || value.toString().equals(""));
-			return result;
 		} else if (operandType.equals(Condition.OperandType.ATTRIBUTE)) {
 			Object colValue = input.get(this.value.toString());
 			if (value != null && colValue != null) {

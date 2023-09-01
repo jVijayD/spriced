@@ -18,8 +18,6 @@ public class DoesNotStartWithPattern extends BaseSpecification {
 		Object value = null;
 		if(operandType.equals(Condition.OperandType.CONSTANT)) {
 			value = this.getValue(input);
-		} else if(operandType.equals(Condition.OperandType.BLANK)) {
-			result = this.value == null || this.value.toString().equals("");
 		} else if(operandType.equals(Condition.OperandType.ATTRIBUTE)) {
 			value = input.get(this.value.toString());
 		}

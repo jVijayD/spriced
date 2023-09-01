@@ -27,7 +27,7 @@ public class SpecificationFactory {
 
 		populateErrorStackForExternalDisplay(condition, column.get().getDisplayName(), operand);
 		
-		if (column.isPresent()) {
+		if (column.isPresent()) {	
 			String colName = column.get().getName();
 			switch (condition.getOperatorType()) {
 			case CONTAINS_PATTERN:
@@ -62,7 +62,10 @@ public class SpecificationFactory {
 				return new LessThanOrEqualTo(colName, operand, condition.getConditionType(), condition.getOperandType(), condition.getSubConditionType());
 			case STARTS_WITH:
 				return new StartsWithPattern(colName, operand, condition.getConditionType(), condition.getOperandType(), condition.getSubConditionType());
-			case NONE:
+			case IS_NULL:
+				return new IsNull(colName, operand, condition.getConditionType(), condition.getOperandType(), condition.getSubConditionType());
+			case IS_NOT_NULL:
+				return new IsNotNull(colName, operand, condition.getConditionType(), condition.getOperandType(), condition.getSubConditionType());
 			default:
 				return new None();
 			}

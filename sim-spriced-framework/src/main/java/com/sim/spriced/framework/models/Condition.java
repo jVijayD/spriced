@@ -20,7 +20,7 @@ public class Condition {
 	private String attributeId;
 	private OperatorType operatorType = OperatorType.NONE;
 	private Object operand = null;
-	private OperandType operandType = OperandType.BLANK;
+	private OperandType operandType = OperandType.ATTRIBUTE;
 	private ConditionType subConditionType = ConditionType.NONE;
 	private List<Condition> subConditions;
 
@@ -66,7 +66,9 @@ public class Condition {
 		HAS_CHANGED("has_changed", "Operator to check if a value has changed"),
 		HAS_NOT_CHANGED("has_not_changed", "Operator to check if a value has not changed"),
 		IS_BETWEEN("is_between", "Operator to check   if a value is between a range"),
-		IS_NOT_BETWEEN("is_not_between", "Operator to check if a value is not between a range");
+		IS_NOT_BETWEEN("is_not_between", "Operator to check if a value is not between a range"),
+		IS_NULL("is_null", "Operator to check if a value is null or empty"),
+		IS_NOT_NULL("is_not_null", "Operator to check if a value is not null or empty");
 		
 		private final String value;
 		private final String description;
@@ -87,8 +89,7 @@ public class Condition {
 	
 	public enum OperandType {
 		ATTRIBUTE("attribute","This type of operand is an attribute"),
-		CONSTANT("const","This type of operand is a literal"),
-		BLANK("blank","This type of operand is a blank");
+		CONSTANT("const","This type of operand is a literal");
 		
 		private final String value;
 		private final String description;

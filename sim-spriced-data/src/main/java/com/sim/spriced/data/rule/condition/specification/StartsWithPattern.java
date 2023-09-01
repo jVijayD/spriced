@@ -1,7 +1,5 @@
 package com.sim.spriced.data.rule.condition.specification;
 
-import java.util.regex.Pattern;
-
 import org.json.JSONObject;
 
 import com.sim.spriced.framework.models.Condition;
@@ -21,9 +19,6 @@ public class StartsWithPattern extends BaseSpecification {
 
 		if (operandType.equals(Condition.OperandType.CONSTANT)) {
 			value = this.getValue(input);
-		} else if (operandType.equals(Condition.OperandType.BLANK)) {
-			result = this.value == null || this.value.toString().equals("");
-			return result;
 		} else if (operandType.equals(Condition.OperandType.ATTRIBUTE)) {
 			value = input.get(this.value.toString());
 		}
