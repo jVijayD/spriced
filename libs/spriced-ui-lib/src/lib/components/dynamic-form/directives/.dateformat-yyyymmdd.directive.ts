@@ -13,10 +13,10 @@ const FORMAT = {
   },
 };
 @Directive({
-  selector: '[spDateformatYYYYMMdd]',
+  selector: '[spDateformatYYYYMMDD]',
   providers: [{ provide: MAT_DATE_FORMATS, useValue: FORMAT }],
 })
-export class DateformatYYYYMMddDirective {
+export class DateFormatDirectiveYYYYMMDD {
 
   constructor() { }
 
