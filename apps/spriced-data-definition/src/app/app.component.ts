@@ -26,18 +26,18 @@ export class AppComponent {
       active: false,
       path: "/spriced-data-definition/entity",
     },
-    {
-      name: "Explorer",
-      active: false,
-      path: "/spriced-data-definition/model-list",
-    },
+    // {
+    //   name: "Explorer",
+    //   active: false,
+    //   path: "/spriced-data-definition/model-list",
+    // },
     {
       name: "Rules",
       active: false,
       path: "/spriced-data-definition/rules/rule-management",
     },
     {
-      name: "Model Access Management",
+      name: "Model Permission",
       active: false,
       path: "/spriced-data-definition/model-access",
     },
