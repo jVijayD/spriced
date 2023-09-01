@@ -34,19 +34,19 @@ export class AppComponent implements OnDestroy, OnInit {
   subscriptions: Subscription[] = [];
   sidebarData = [
     {
-      name: "Data Definition",
-      icon: "/assets/images/definition.png",
-      path: "/spriced-data-definition/model",
-    },
-    {
-      name: "Data Access",
+      name: "Data Explorer",
       icon: "/assets/images/access.png",
       path: "/spriced-data",
     },
     {
-      name: "Reporting",
+      name: "Report",
       icon: "/assets/images/reporting.png",
       path: "/spriced-reports",
+    },
+    {
+      name: "Model Definition",
+      icon: "/assets/images/definition.png",
+      path: "/spriced-data-definition/model",
     },
   ];
   isSideNavCollapsed = false;
