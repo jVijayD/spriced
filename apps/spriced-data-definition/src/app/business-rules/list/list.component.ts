@@ -134,7 +134,10 @@ export class ListComponent implements OnInit, OnDestroy {
       name: "Updated Date",
       canAutoResize: true,
       isSortable: true,
-      width: 150
+      width: 150,
+      pipe: (data: any) => {
+        return moment(data).format("MM/DD/YYYY HH:mm:ss");
+      },
     }
   ];
   columnMode: ColumnMode = ColumnMode.force;
@@ -205,13 +208,6 @@ export class ListComponent implements OnInit, OnDestroy {
       rules.sort((a: any, b: any) => {
         return a.id - b.id;
       });
-      rules = rules.map((item: any) => ({
-        ...item,
-        updatedDate: this.datePipe.transform(
-          item.updatedDate,
-          'MM/dd/yyyy hh:mm:ss a'
-        ),
-      }));
       this.models = models;
       this.dataSource = rules;
       this.filterData = this.dataSource;
