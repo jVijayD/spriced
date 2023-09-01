@@ -43,32 +43,29 @@
        
           <button
           *ngIf="removeRuleSet"
-          mat-raised-button
-          color="primary"
           (click)="removeRuleSet()"
-          class="ml-2"
+          class="ml-2 h-full text-r-primary flex flex-row cursor-pointer p-2 border-r-primary-light border-solid"
         >
-          Remove Rule set
+        <mat-icon class="mt-auto" >delete</mat-icon>
         </button>
         </div>
       </ng-container>
+
       <ng-container *queryArrowIcon>
         <mat-icon ngClass="mat-arrow-icon">chevron_right</mat-icon>
       </ng-container>
+
       <ng-container *queryRemoveButton="let rule; let removeRule = removeRule">
-      
         <button
-            mat-raised-button
-            color="primary"
-            (click)="removeRule(rule)"
-            class="ml-2"
-          >
-            Remove Rule
-          </button>
+        (click)="removeRule(rule)"
+        class="ml-2 h-full text-r-primary flex flex-row cursor-pointer p-2 border-r-primary-light border-solid"
+      >
+      <mat-icon class="mt-auto" >delete</mat-icon>
+      </button>
       </ng-container>
 
       <ng-container *queryField="let rule; let fields=fields; let onChange=onChange">
-        <mat-form-field class="ml-2">
+        <mat-form-field class="ml-2" appearance="outline">
           <mat-select [(ngModel)]="rule.field" (ngModelChange)="onChange($event, rule)">
             <mat-option *ngFor="let field of fields" [value]="field.value">{{field.name}}</mat-option>
           </mat-select>
@@ -76,15 +73,13 @@
       </ng-container>
 
       <ng-container  *queryOperator="let rule; let operators=operators">
-        <mat-form-field class="mx-4">
+        <mat-form-field class="mx-4" appearance="outline">
           <mat-select [(ngModel)]="rule.operator">
             <mat-option *ngFor="let value of operators" [value]="value">{{value}}</mat-option>
           </mat-select>
         </mat-form-field>
       </ng-container>
-
-      
-      
+          
       <!-- <ng-container *querySwitchGroup="let ruleset; let onChange = onChange">
         <mat-radio-group
           *ngIf="ruleset"
