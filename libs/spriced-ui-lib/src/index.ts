@@ -59,3 +59,5 @@ export * from "./lib/components/dialogbox/dialogbox.component";
 //export * from "./lib/spriced-ui-lib/components/filter/filter.component";
 
 export * from "./lib/components/dynamic-form/sub-components/checkbox/checkbox.component";
+
+export * from "./lib/components/header-component-wrapper/header-component-wrapper.component";
