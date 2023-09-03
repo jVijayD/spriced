@@ -20,11 +20,11 @@ export class EntityGridService {
 
   public getGridHeaders(
     entity: Entity,
-    showSystemAttributes: boolean
+    showSystemAttributes: boolean,
+    lookupSettings: string
   ): Header[] {
     return entity.attributes
       .filter((item) => {
-        console.log(item);
         return (
           item.permission !== "DENY" &&
           item.constraintType !== "PRIMARY_KEY" &&
@@ -34,7 +34,14 @@ export class EntityGridService {
       })
       .map((attr: Attribute) => {
         return {
-          column: attr.name,
+          column:
+            attr.type === "LOOKUP"
+              ? lookupSettings === "code" || lookupSettings === undefined
+                ? `${attr.name}_code`
+                : lookupSettings === "codename"
+                ? `${attr.name}_code,${attr.name}_name`
+                : `${attr.name}_name,${attr.name}_code`
+              : attr.name,
           name: attr.displayName || attr.name,
           canAutoResize: true,
           isSortable: true,
@@ -63,7 +70,7 @@ export class EntityGridService {
         return "boolean";
       case "INTEGER":
       case "SERIAL":
-      case "DECIMAL": 
+      case "DECIMAL":
       case "AUTO":
         return "number";
       default:
@@ -94,7 +101,7 @@ export class EntityGridService {
         }
       }
       return data;
-    } else if (attr.dataType === "TIME_STAMP" && data!==null ) {
+    } else if (attr.dataType === "TIME_STAMP" && data !== null) {
       let formattedData = data;
       try {
         formattedData = moment(data).format(attr.formatter || "MM/DD/YYYY");

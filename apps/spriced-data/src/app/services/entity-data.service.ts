@@ -5,7 +5,7 @@ import {
   PageData,
   RequestUtilityService,
 } from "@spriced-frontend/spriced-common-lib";
-import { Observable } from "rxjs";
+import { Observable, map } from "rxjs";
 
 @Injectable({ providedIn: "root" })
 export class EntityDataService {
@@ -34,11 +34,40 @@ export class EntityDataService {
     return this.http.get<PageData>(url);
   }
 
-
-  loadAuditData(
-    entityName: string ,
+  loadEntityDataArray(
+    id: string | number,
     criteria: Criteria
   ): Observable<PageData> {
+    const url = this.requestUtility.addCriteria(
+      `${this.api_url}/entity/${id}/data/json/items`,
+      criteria
+    );
+    return this.http.get<PageData>(url).pipe(
+      map((page) => {
+        const content =
+          page.content && page.content.length
+            ? JSON.parse(page.content[0])
+            : [];
+        return { ...page, content: this.createRows(content) };
+      })
+    );
+  }
+
+  private createRows(content: any) {
+    const records = content.records || [];
+    const fields = content.fields || [];
+
+    return records.map((row: any[]) => {
+      let obj: any = {};
+      row.forEach((col, index) => {
+        const propName = fields[index].name;
+        obj[propName] = col;
+      });
+      return obj;
+    });
+  }
+
+  loadAuditData(entityName: string, criteria: Criteria): Observable<PageData> {
     const url = this.requestUtility.addCriteria(
       `${this.api_url}/audit-trial`,
       criteria
@@ -49,15 +78,20 @@ export class EntityDataService {
   loadLookupData(id: string | number): Observable<PageData> {
     const criteria: Criteria = {
       pager: {
-        pageSize: 100,
+        pageSize: 50,
         pageNumber: 0,
       },
     };
+    const headers = new HttpHeaders().set("no-loader", "true");
+
     const url = this.requestUtility.addCriteria(
-      `${this.api_url}/entity/${id}/data`,
-      criteria
+      `${this.api_url}/entity/${id}/data?lookup=true`,
+      criteria,
+      false
     );
-    return this.http.get<PageData>(url);
+    return this.http.get<PageData>(url, {
+      headers: headers,
+    });
   }
 
   createEntityData(id: string | number, data: any): Observable<any> {
@@ -74,7 +108,9 @@ export class EntityDataService {
     );
   }
   getRelatedEntity(groupId: any, entityId: any) {
-    return this.http.get(`${this.def_url}/models/${groupId}/entities/${entityId}/related`);
+    return this.http.get(
+      `${this.def_url}/models/${groupId}/entities/${entityId}/related`
+    );
   }
   getStatus() {
     return this.http.get(`${this.api_url}/bulk/getAll`);
