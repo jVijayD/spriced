@@ -172,41 +172,26 @@
 
   <!--Right Section with Form-->
   <div class="h-full flex flex-col" right>
-    <div
+    <!-- <div
       class="header bg-primary-default flex flex-row justify-between rounded-t-xl"
     >
       <div class="component-header-with-background">
         {{ this.currentSelectedEntity?.displayName }}
       </div>
       <div class="flex flex-row justify-end text-white">
-        <!-- <button
-          [disabled]="this.isFullScreen"
-          mat-icon-button
-          (click)="onFullScreen()"
-        >
-          <mat-icon>fullscreen</mat-icon>
-        </button> -->
-        <!-- <button mat-icon-button>
-          <mat-icon>keyboard_arrow_left</mat-icon>
-        </button>
-        <button mat-icon-button>
-          <mat-icon>keyboard_arrow_right</mat-icon>
-        </button> -->
-        <!-- <button mat-icon-button (click)="onClear()">
-          <mat-icon>add</mat-icon>
-        </button> -->
+
       </div>
-    </div>
+    </div> -->
     <mat-accordion>
       <mat-expansion-panel
         [expanded]="this.currentSelectedEntity ? true : false"
       >
-        <!-- <mat-expansion-panel-header>
+        <mat-expansion-panel-header>
           <mat-panel-title>
-            <b>{{ this.selectedItem ? "Edit " : "Add " }}</b>
+            <b> {{ this.currentSelectedEntity?.displayName }}</b>
           </mat-panel-title>
-        </mat-expansion-panel-header> -->
-        <div style="max-height: calc(100vh - 4rem - 206px); overflow-y: scroll">
+        </mat-expansion-panel-header>
+        <div style="max-height: calc(100vh - 4rem - 206px); overflow-y: auto">
           <sp-dynamic-form-container
             *ngIf="appForm.groups[0].formFieldControls.length"
             [appForm]="appForm"
@@ -225,17 +210,19 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
         <div
-          class="w-full flex flex-col space-y-1 text-sm pl-4 pr-4 pb-2 text-secondary-light"
+          class="w-full flex flex-col space-y-1 text-sm pl-2 pr-2"
           *ngIf="relatedEntity?.length != 0"
         >
-          <b class="mb-2"
+          <span class="mb-2 text-black"
             >These entities use the {{ currentSelectedEntity?.displayName }} as
-            a domain-based attribute:</b
+            a domain-based attribute:</span
           >
           <ng-container *ngFor="let item of relatedEntity">
-            <a class="cursor-pointer" (click)="loadLookupPopup(item.id)">{{
-              item.displayName
-            }}</a>
+            <a
+              class="cursor-pointer text-primary-dark"
+              (click)="loadLookupPopup(item.id)"
+              >{{ item.displayName }}</a
+            >
           </ng-container>
         </div>
       </mat-expansion-panel>

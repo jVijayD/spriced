@@ -1,16 +1,16 @@
 .col-height {
-  @apply flex flex-row flex-grow w-full space-x-4;
+  @apply flex flex-row flex-grow w-full space-x-2;
   height: 100%;
 }
 
 .col-left {
-  @apply h-full rounded-t-xl shadow-lg shadow-black p-0;
+  @apply h-full rounded-t-xl shadow-md shadow-black p-0;
   height: 100%;
   //overflow-y: auto;
 }
 
 .col-right {
-  @apply w-1/4 h-full rounded-t-xl shadow-lg shadow-black p-0;
+  @apply w-1/4 h-full rounded-t-xl shadow-md shadow-black p-0;
   height: 100%;
   overflow-y: hidden;
 }
