@@ -53,7 +53,7 @@ export class AppComponent implements OnDestroy, OnInit {
   screenWidth = 0;
   menuData: MenuItem[] = [];
   onToggleSideNav(data: any): void {
-    this.screenWidth = data.screenWidth;
+    this.screenWidth = data.screenWidth - 100;
     this.isSideNavCollapsed = data.collapsed;
   }
   changeOfRoutes() {
