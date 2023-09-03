@@ -202,6 +202,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   onClear() {
     this.selectedItem = null;
     this.dataGrid.clearSelection();
+    this.dataGrid.selected = [];
     this.dynamicFormService.parentForm?.reset();
   }
   onReset() {
@@ -433,7 +434,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     if (entity) {
       formFields = this.entityFormService.getFormFieldControls(
         entity,
-        this.globalSettings.displayFormat
+        this.globalSettings?.displayFormat
       );
       this.disableSubmit = !entity.attributes.reduce((prev, current) => {
         return prev || current.permission === "UPDATE";
@@ -469,6 +470,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           next: (page) => {
             this.rows = page.content;
             this.totalElements = page.totalElements;
+            if(this.rows && this.rows?.length > 0)
+            {
+              this.onItemSelected(this.rows[0]);
+            }
           },
           error: (err) => {
             this.rows = [];

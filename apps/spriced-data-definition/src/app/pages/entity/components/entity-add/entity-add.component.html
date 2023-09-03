@@ -46,7 +46,7 @@
     </div>
 
     <mat-card
-      style="padding: 10px; height: 450px; overflow-y: auto"
+      style="padding: 7px; height: 450px; overflow-y: auto"
       class="drop-shadow"
     >
       <div class="box">
@@ -59,8 +59,8 @@
             [isArray]="false"
             [headers]="headers"
             [rows]="rows"
-            [rowHeight]="40"
-            [headerHeight]="40"
+            [rowHeight]="20"
+            [headerHeight]="30"
             [footerHeight]="0"
             [columnMode]="columnMode"
             [virtualScroll]="true"
@@ -111,6 +111,12 @@
             <mat-label>Display Name</mat-label>
             <input matInput [(ngModel)]="attDetails.displayName" />
           </mat-form-field>
+
+          <mat-form-field appearance="outline" class="mb-2">
+            <mat-label>Description</mat-label>
+            <textarea matInput maxlength="100" [(ngModel)]="attDetails.description"></textarea>
+          </mat-form-field>
+
           <div class="flex flex-row mb-2">
             <!-- <mat-label>Type</mat-label> -->
             <mat-radio-group
@@ -142,7 +148,6 @@
               >
             </mat-select>
           </mat-form-field>
-          <div *ngIf="attDetails.type === 'LOOKUP'"></div>
           <mat-checkbox
             *ngIf="attDetails.type !== 'LOOKUP'"
             class="mb-2"
@@ -234,45 +239,48 @@
               <mat-option value="(####)">(####)</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" class="mb-2">
+          <mat-form-field appearance="outline" class="pb-2">
             <mat-label>Width</mat-label
             ><input
               matInput
               type="number"
               min="0"
               [(ngModel)]="attDetails.width"
-          /></mat-form-field>
-
-          <mat-divider></mat-divider>
-          <div class="flex justify-end p-5">
-            <button
-              mat-raised-button
-              class="savebtn"
-              color="accent"
-              type="button"
-              (click)="clear()"
-            >
-              Clear
-            </button>
-            <button
-              mat-raised-button
-              type="button"
-              color="primary"
-              class="savebtn"
-              style="width: 9rem"
-              (click)="updateRowData(attDetails)"
-              [disabled]="
-                attDetails.name === '' ||
-                attDetails.name === undefined ||
-                attDetails.editable === false
-              "
-            >
-              {{ attAction }} Attribute
-            </button>
-          </div>
+          /></mat-form-field>  
+          
+          <div></div>
         </div>
       </div>
+     
     </mat-card>
+
+    <div class="flex justify-end pt-2">
+      <button
+        mat-raised-button
+        class="savebtn"
+        color="accent"
+        type="button"
+        (click)="clear()"
+      >
+        Clear
+      </button>
+      <button
+        mat-raised-button
+        type="button"
+        color="primary"
+        class="savebtn"
+        style="width: 9rem"
+        (click)="updateRowData(attDetails)"
+        [disabled]="
+          attDetails.name === '' ||
+          attDetails.name === undefined ||
+          attDetails.editable === false
+        "
+      >
+        {{ attAction }} Attribute
+      </button>
+    </div>
+
   </div>
   <div mat-dialog-actions class="actions">
     <button

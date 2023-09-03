@@ -1,6 +1,6 @@
 <!-- BUSINESS RULE MANAGEMENT COMPONENT -->
 <sp-one-col>
-<div class="ml-sm-2 pb-6 px-4 businessmanagement">
+<div class="ml-sm-2 pb-6 px-4 businessmanagement h-full">
   <!-- <h2 class="font-medium">Business Rule Management</h2> -->
 
   <!-- DROPDOWN FIELDS IN GRID LIST -->
@@ -39,15 +39,15 @@
   </mat-grid-list>
 
 <sp-data-grid
-      class="w-full mt-8 block"
+      class="w-full h-full mt-4 block"
       #dataGrid
       [title]="'Rule List'"
       [enableRowIndex]="false"
       [isArray]="false"
       [headers]="headers"
       [rows]="rows"
-      [rowHeight]="40"
-      [headerHeight]="40"
+      [rowHeight]="32"
+      [headerHeight]="30"
       [footerHeight]="0"
       [columnMode]="columnMode"
       [virtualScroll]="false"

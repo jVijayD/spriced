@@ -144,13 +144,23 @@ export class ModelListComponent {
   }
 
   onView() {
+   setTimeout(() => {
     const data = { ...this.selectedItem };
     data.id = data.id.replace(data.name, "");
     this.router.navigate(["/spriced-data/" + data.groupId + "/", data.id]);
+  }, 100);
   }
   onAdd() {}
   onPaginate(e: Paginate) {
     //this.rows = this.getData(e.limit, e.offset);
+  }
+
+  /**
+   * HANDLE THIS FUNCTION FOR DOUBLE CLICK NAVIGATE ENTITY
+   */
+  onRowDoubleClick()
+  {
+    this.onView();
   }
 
   onItemSelected(e: any) {

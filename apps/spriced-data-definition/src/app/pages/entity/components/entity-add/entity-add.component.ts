@@ -35,7 +35,7 @@ import {
   Paginate,
 } from "@spriced-frontend/spriced-ui-lib";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
-const DEFAULT_ATTRIBUTE_WIDTH = 200;
+const DEFAULT_ATTRIBUTE_WIDTH = 100;
 export interface PeriodicElement {
   name: string;
   id: number;
@@ -85,7 +85,6 @@ export class EntityAddComponent implements OnInit {
   rows: any = {};
   attDetails: any = {};
   entityForm!: FormGroup;
-  displayedColumns: string[] = ["name", "displayName", "action"];
   type = "FREE_FORM";
   dataType = "STRING_VAR";
   entityList: any;
@@ -103,6 +102,13 @@ export class EntityAddComponent implements OnInit {
     {
       column: "displayName",
       name: "Display Name",
+      canAutoResize: true,
+      isSortable: true,
+      width: 100,
+    },
+    {
+      column: "description",
+      name: "Description",
       canAutoResize: true,
       isSortable: true,
       width: 100,
@@ -219,6 +225,7 @@ export class EntityAddComponent implements OnInit {
           id: row_obj.id,
           name: row_obj.name,
           displayName: row_obj.displayName || row_obj.name,
+          description:row_obj.description,
           type: row_obj.type,
           dataType: row_obj.dataType,
           formatter: row_obj.formatter,
@@ -233,6 +240,7 @@ export class EntityAddComponent implements OnInit {
           id: row_obj.id,
           name: row_obj.name,
           displayName: row_obj.displayName || row_obj.name,
+          description:row_obj.description,
           type: row_obj.type,
           referencedTableId: row_obj.referencedTableId,
           referencedTable: this.referencedTable,
@@ -273,6 +281,7 @@ export class EntityAddComponent implements OnInit {
     this.rows = this.rows.filter((value: any) => {
       return value.name != this.selectedItem.name;
     });
+    this.clear();
   }
   onPaginate(e: Paginate) {
     //this.rows = this.getData(e.limit, e.offset);

@@ -1,3 +1,4 @@
+
 <div class="container">
   <div class="header">Filter</div>
   <div class="body">
@@ -20,51 +21,66 @@
       >
         <div class="flex flex-row">
           <button
-            color="primary"
-            mat-icon-button
-            (click)="addRule()"
-            title="Rule"
-            class="center"
-          >
-            <div>
-              <mat-icon>add</mat-icon>
-            </div>
-          </button>
-          <button
+            mat-raised-button
             *ngIf="addRuleSet"
-            color="secondary"
-            mat-icon-button
-            (click)="addRuleSet()"
-            title="Rule set"
-            class="center"
+            title="Rule"
+            color="primary"
+            (click)="addRule()"
+            class="ml-2"
           >
-            <mat-icon>add_circle_outline</mat-icon>
+            Rule
           </button>
           <button
-            *ngIf="removeRuleSet"
-            mat-icon-button
-            (click)="removeRuleSet()"
-            class="center"
-            title="Remove Rule set"
+            mat-raised-button
+            *ngIf="addRuleSet"
+            title="Rule set"
+            color="primary"
+            (click)="addRuleSet()"
+            class="ml-2"
           >
-            <mat-icon>remove_circle_outline</mat-icon>
+            Rule set
           </button>
+       
+          <button
+          *ngIf="removeRuleSet"
+          (click)="removeRuleSet()"
+          class="ml-2 h-full text-r-primary flex flex-row cursor-pointer p-2 border-r-primary-light border-solid"
+        >
+        <mat-icon class="mt-auto" >delete</mat-icon>
+        </button>
         </div>
       </ng-container>
+
       <ng-container *queryArrowIcon>
         <mat-icon ngClass="mat-arrow-icon">chevron_right</mat-icon>
       </ng-container>
+
       <ng-container *queryRemoveButton="let rule; let removeRule = removeRule">
         <button
-          type="button"
-          mat-icon-button
-          color="accent"
-          (click)="removeRule(rule)"
-        >
-          <mat-icon>remove</mat-icon>
-        </button>
+        (click)="removeRule(rule)"
+        class="ml-2 h-full text-r-primary flex flex-row cursor-pointer p-2 border-r-primary-light border-solid"
+      >
+      <mat-icon class="mt-auto" >delete</mat-icon>
+      </button>
       </ng-container>
-      <ng-container *querySwitchGroup="let ruleset; let onChange = onChange">
+
+      <ng-container *queryField="let rule; let fields=fields; let onChange=onChange">
+        <mat-form-field class="ml-2" appearance="outline">
+          <mat-select [(ngModel)]="rule.field" (ngModelChange)="onChange($event, rule)">
+            <mat-option *ngFor="let field of fields" [value]="field.value">{{field.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
+
+      <ng-container  *queryOperator="let rule; let operators=operators">
+        <mat-form-field class="mx-4" appearance="outline">
+          <mat-select [(ngModel)]="rule.operator">
+            <mat-option *ngFor="let value of operators" [value]="value">{{value}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
+          
+      <!-- <ng-container *querySwitchGroup="let ruleset; let onChange = onChange">
         <mat-radio-group
           *ngIf="ruleset"
           [(ngModel)]="ruleset.condition"
@@ -77,7 +93,29 @@
             >Or</mat-radio-button
           >
         </mat-radio-group>
+      </ng-container> -->
+      <ng-container *querySwitchGroup="let ruleset; let onChange = onChange">
+        <div *ngIf="ruleset" class="switch-container">
+          <button
+            mat-button
+            class="square-button"
+            [ngClass]="{ active: ruleset.condition === 'and' }"
+            (click)="onChange('and')"
+          >
+            And
+          </button>
+          <button
+            mat-button
+            class="square-button"
+            [ngClass]="{ active: ruleset.condition === 'or' }"
+            (click)="onChange('or')"
+          >
+            Or
+          </button>
+        </div>
       </ng-container>
+      
+      
       <!-- <ng-container
         *queryInput="let rule; type: 'boolean'; let onChange = onChange"
       >

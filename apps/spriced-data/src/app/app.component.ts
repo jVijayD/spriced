@@ -18,7 +18,7 @@ import { RequestUtilityService } from "@spriced-frontend/spriced-common-lib";
 export class AppComponent {
   menuItems: MenuItem[] = [
     {
-      name: "Entity Data",
+      name: "Explorer",
       path: "/spriced-data",
       active: true,
     },

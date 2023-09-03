@@ -134,7 +134,10 @@ export class ListComponent implements OnInit, OnDestroy {
       name: "Updated Date",
       canAutoResize: true,
       isSortable: true,
-      width: 150
+      width: 150,
+      pipe: (data: any) => {
+        return moment(data).format("MM/DD/YYYY HH:mm:ss");
+      },
     }
   ];
   columnMode: ColumnMode = ColumnMode.force;
@@ -144,6 +147,7 @@ export class ListComponent implements OnInit, OnDestroy {
   rows: any[] = [];
   selectedItem: any = null;
   public attributeId: any;
+  public mockAttribute: any = [];
 
   constructor(
     private businessRuleService: BusinessruleService,
@@ -182,6 +186,15 @@ export class ListComponent implements OnInit, OnDestroy {
 
     // HANDLE THIS FOR GET RULES AND MODELS APIS
     this.getRulesAndModelsData();
+    // this.businessRuleService.getConditionsData().subscribe((res: any) => {
+    //   if (res.attribute) {
+    //     res.attribute.forEach((item: any) => {
+    //       this.mockAttribute.push(item);
+    //       const nestedProcessedAttributes = this.processNestedAttributes(item.attributes, item.displayName);
+    //       this.mockAttribute.push(...nestedProcessedAttributes);
+    //     });
+    //   }
+    // })
   }
 
   // HANDLE FOR GETTING RULES AND MODEL DATA
@@ -195,13 +208,6 @@ export class ListComponent implements OnInit, OnDestroy {
       rules.sort((a: any, b: any) => {
         return a.id - b.id;
       });
-      rules = rules.map((item: any) => ({
-        ...item,
-        updatedDate: this.datePipe.transform(
-          item.updatedDate,
-          'MM/dd/yyyy hh:mm:ss a'
-        ),
-      }));
       this.models = models;
       this.dataSource = rules;
       this.filterData = this.dataSource;
@@ -478,17 +484,27 @@ export class ListComponent implements OnInit, OnDestroy {
    * HANDLE FOR ATTRIBUTES BY ENTITY ID
    * @param id number
    */
-  public handleAttributeByEntity(id: any) {
+  public async handleAttributeByEntity(id: any) {
     this.entityId = id;
     this.loading = true;
     const entity = this.entities.find((item: any) => item.id == id);
     this.attributes = [];
+    this.mockAttribute = entity.attributes;
+    const relatedRefreneceTableEntity = entity.attributes.filter((el: any) => !!el.referencedTableId);
+    if(relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0)
+    {
+        this.mockAttribute.push(relatedRefreneceTableEntity[0]);
+        let { entityData } = await this.getEntityById(relatedRefreneceTableEntity[0].referencedTableId);
+        const nestedProcessedAttributes = this.processNestedAttributes(entityData.attributes, relatedRefreneceTableEntity[0].displayName);
+        this.mockAttribute.push(...nestedProcessedAttributes);
+    }
     this.attributes = [
       {
+        displayName: 'All',
         name: 'All',
         id: 'ALL',
       },
-      ...entity.attributes,
+      ...this.mockAttribute,
     ];
     this.defaultAttribute = this.attributeId ? this.attributeId : 'ALL';
     // this.attributes = entity.attributes;
@@ -501,6 +517,58 @@ export class ListComponent implements OnInit, OnDestroy {
     this.paginator?.firstPage();
     this.loading = false;
   }
+
+  /**
+   * HANDLE THIS FUNCTION FOR GET ENTITY BY IDS
+   * @param entityId number
+   * @returns 
+   */
+  public getEntityById(entityId: number): Promise<any> {
+    return new Promise((resolve, rejects) => {
+      forkJoin([
+        this.businessRuleService.getAllEntitesById(entityId)
+      ]).subscribe(
+        ([entityData]: any) => {
+          resolve({
+            entityData
+          });
+        },
+        (err) => {
+          this.loading = false;
+          rejects({
+            entityData: []
+          });
+        }
+      );
+    });
+  }
+
+  /**
+  * HANDLE THIS FUNCTION FOR EDIT THE NESTEDATTRIBUTES
+  * @param nestedAttributes any
+  * @param parentAttribute string
+  * @returns 
+  */
+      public processNestedAttributes(nestedAttributes: any, parentAttribute: string) {
+        const processedAttributes: any = [];
+        if (nestedAttributes) {
+          nestedAttributes.forEach((el: any) => {
+            const processedAttribute = {
+              ...el,
+              displayName: `${parentAttribute}.${el.displayName}`,
+              name: `${parentAttribute}.${el.displayName}`
+            };
+            processedAttributes.push(processedAttribute);
+    
+            // if (el.attributes && el.attributes.length > 0) {
+            //   const nestedProcessedAttributes = this.processNestedAttributes(el.attributes, el.displayName);
+            //   processedAttributes.push(...nestedProcessedAttributes);
+            // }
+          });
+        }
+    
+        return processedAttributes;
+      }
 
   /**
    * HANDLING FOR CHANGE PAGE
@@ -576,8 +644,7 @@ export class ListComponent implements OnInit, OnDestroy {
               ? condition?.operand
               : condition?.operandType.toLowerCase();
         }
-        tooltipConditionText += `${conditionType} ${attribute.name
-          }  
+        tooltipConditionText += `${conditionType} ${attribute?.name.toLowerCase()}  
       ${condition?.operatorType.toLowerCase()} to ${operand}`;
 
         if (condition.subConditions && condition.subConditions.length > 0) {

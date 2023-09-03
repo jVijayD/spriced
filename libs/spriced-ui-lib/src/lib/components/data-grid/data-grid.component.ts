@@ -97,6 +97,9 @@ export class DataGridComponent implements AfterViewInit {
   limit!: number;
 
   @Input()
+  selected: any[] = [];
+
+  @Input()
   count!: number;
 
   @Input()

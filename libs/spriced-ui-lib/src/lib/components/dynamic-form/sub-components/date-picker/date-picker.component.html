@@ -134,7 +134,7 @@
     appearance="outline"
     [ngClass]="frmControl.errors ? 'error' : ''"
     class="full-width"
-    spDateFormatDD__MM_YY
+    spDateFormatDD__MM__YY
   >
     <mat-label>{{ control.label }}</mat-label>
     <input
@@ -160,7 +160,7 @@
     appearance="outline"
     [ngClass]="frmControl.errors ? 'error' : ''"
     class="full-width"
-    spDateFormatDD__MM_YYYY
+    spDateFormatDD__MM__YYYY
   >
     <mat-label>{{ control.label }}</mat-label>
     <input
@@ -180,6 +180,32 @@
     <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
     <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
   </mat-form-field>
+
+  <mat-form-field
+  *ngIf="control.format == 'YYYY/MM/DD'"
+  appearance="outline"
+  [ngClass]="frmControl.errors ? 'error' : ''"
+  class="full-width"
+  spDateformatYYYYMMDD
+>
+  <mat-label>{{ control.label }}</mat-label>
+  <input
+    matInput
+    [matDatepicker]="picker"
+    [placeholder]="control.placeholder || ''"
+    [disabled]="control.readOnly || disabled"
+    [(ngModel)]="value"
+    (blur)="onTouched()"
+  />
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker
+    #picker
+    [startView]="control.startView"
+    [startAt]="control.startDate"
+  ></mat-datepicker>
+  <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+  <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
+</mat-form-field>
 
   <mat-form-field
     *ngIf="control.format == 'YY-MM-DD'"
