@@ -11,18 +11,9 @@ export class SettingsService {
 
   getGlobalSettings() {
     let ent: any = localStorage.getItem("all_entity");
-    return JSON.parse(ent);
-    // return this.dbService.getAll("all_entity").pipe(
-    //   map((result: any) => {
-    //     console.log(result);
-    //     let res = {
-    //       displayFormat: "code",
-    //       showSystem: true,
-    //     };
-    //     res = result.length ? result[0] : res;
-    //     return res;
-    //   })
-    // );
+    return ent
+      ? JSON.parse(ent)
+      : { displayFormat: "namecode", showSystem: false };
   }
 
   getCurrentSettings(entity: string) {
