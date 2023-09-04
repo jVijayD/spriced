@@ -291,7 +291,10 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
 .ngx-datatable .datatable-footer-inner {
   overflow-y: hidden;
 }
-.ngx-datatable .datatable-header .datatable-header-cell .datatable-header-cell-template-wrap {
+.ngx-datatable
+  .datatable-header
+  .datatable-header-cell
+  .datatable-header-cell-template-wrap {
   display: flex;
   justify-content: space-between;
 }
@@ -330,9 +333,8 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   text-rendering: auto;
   -webkit-font-smoothing: antialiased;
 }
-.mat-form-field-disabled
-{
-background:lightgray
+.mat-form-field-disabled {
+  background-color: lightgray;
+  border: 1px solid black;
+  border-radius: 4px;
 }
-
-
