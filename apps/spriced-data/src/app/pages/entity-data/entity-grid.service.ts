@@ -24,6 +24,7 @@ export class EntityGridService {
     lookupSettings: string
   ): Header[] {
     return entity.attributes
+      .filter((item) => item.showInForm)
       .filter((item) => {
         return (
           item.permission !== "DENY" &&
