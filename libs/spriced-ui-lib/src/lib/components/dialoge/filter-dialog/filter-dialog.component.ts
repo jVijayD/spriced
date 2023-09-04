@@ -34,11 +34,28 @@ export class FilterDialogComponent {
     this.dialogRef.close(filterGroup);
   }
 
+  getDefaultValue(
+    dataType: "string" | "number" | "date" | "boolean" | "category" = "string"
+  ): string | number | Date | boolean {
+    switch (dataType) {
+      case "string":
+        return "";
+      case "number":
+        return 0;
+      case "date":
+        return new Date();
+      case "boolean":
+        return false;
+      default:
+        return "";
+    }
+  }
   private convertToFilters(query: any) {
     let filters: Filter[] = [];
     //debugger;
     query.rules.forEach((item: any, index: number) => {
       const operatorType = this.getOperatorType(item.operator);
+      const dataTypeType = this.getDataType(this.data.columns, item.field);
 
       const groupFilters = item.rules
         ? this.convertToFilters({
@@ -53,9 +70,9 @@ export class FilterDialogComponent {
         joinType: index == 0 ? JoinType.NONE : this.getJoinType(item.condition),
         operatorType: operatorType,
         key: item.field,
-        value: item.value,
+        value: item.value ? item.value : this.getDefaultValue(dataTypeType),
         filters: groupFilters,
-        dataType: this.getDataType(this.data.columns, item.field),
+        dataType: dataTypeType,
       };
       filters.push(filter);
     });
