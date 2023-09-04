@@ -116,7 +116,9 @@ public class EntityIngestionService implements IEntityIngestionService, IObserve
             List<String> dateFields = new ArrayList<>();
             List<String> primaryKey = new ArrayList<>();
             defnition.getAttributes().forEach(attribute -> {
-                attributeNames.add(attribute.getName());
+            	if (!attribute.getDataType().equals(AttributeConstants.DataType.AUTO)) {
+                    attributeNames.add(attribute.getName());
+                }
                 if (attribute.getDataType().equals(AttributeConstants.DataType.TIME_STAMP)) {
                     dateFields.add(attribute.getName());
                 }
@@ -210,7 +212,7 @@ public class EntityIngestionService implements IEntityIngestionService, IObserve
         sourceConfig.put("transforms", "castTypes");
         sourceConfig.put("transforms.castTypes.type", "org.apache.kafka.connect.transforms.Cast$Value");
         sourceConfig.put("transforms.castTypes.spec", dataTypes);
-        sourceConfig.put("csv.null.field.indicator", "EMPTY_SEPARATORS");
+        sourceConfig.put("csv.null.field.indicator", "BOTH");
         sourceConfig.put("nullable.fields", nonNullableFields);
         sourceConfig.put("halt.on.error", false);
         sourceConfig.put("errors.tolerance","all");
@@ -242,9 +244,10 @@ public class EntityIngestionService implements IEntityIngestionService, IObserve
         sinkConfig.put("topics", topic);
         sinkConfig.put("auto.create",true);
         sinkConfig.put("auto.evolve", true);
-        sinkConfig.put("insert.mode","upsert");
-        sinkConfig.put("pk.mode", "record_value");
-        sinkConfig.put("pk.fields","name");
+        sinkConfig.put("insert.mode","insert");
+        //sinkConfig.put("insert.mode","upsert");
+        //.put("pk.mode", "record_value");
+        //sinkConfig.put("pk.fields","name");
         sinkConfig.put("table.name.format", table.toLowerCase());
         sinkConfig.put("fields.whitelist",String.join(",", attributeNames));
         sinkConfig.put("errors.tolerance","all");
