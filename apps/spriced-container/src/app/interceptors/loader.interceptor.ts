@@ -5,9 +5,9 @@ import { finalize } from "rxjs";
 export function loaderInterceptor(loaderService: LoaderService) {
   return (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
     try {
-      if (req.headers && req.headers.get("no-loader") == "true")
+      if (req.headers && req.headers.get("no-loader") === "true") {
         return next(req);
-      else {
+      } else {
         loaderService.show();
         return next(req).pipe(
           finalize(() => {

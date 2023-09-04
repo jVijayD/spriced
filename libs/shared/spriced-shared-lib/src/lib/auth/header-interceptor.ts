@@ -20,13 +20,12 @@ export class headerInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     this.user = this.keycloak.getKeycloakInstance();
     const authReq = req.clone({
-      headers: new HttpHeaders({
-        tenant: "meritor",
-        user: this.user.profile.email || "",
-        transactionId: this.user.profile.id || "",
-        roles: this.user.tokenParsed?.realm_access?.roles?.join(","),
-        applications: this.user.profile.attributes.application || "",
-      }),
+      headers: req.headers
+        .set("tenant", "meritor")
+        .set("user", this.user.profile.email || "")
+        .set("transactionId", this.user.profile.id || "")
+        .set("roles", this.user.tokenParsed?.realm_access?.roles?.join(","))
+        .set("applications", this.user.profile.attributes.application || ""),
     });
     return next.handle(authReq);
   }

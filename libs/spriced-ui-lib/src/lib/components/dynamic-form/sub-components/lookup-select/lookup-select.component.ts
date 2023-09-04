@@ -83,9 +83,13 @@ export class LookupSelectComponent
   }
 
   public getDisplayProp(option: any, prop: string) {
-    let displayProp = "";
+    //let displayProp = "";
     const props = prop.split("|");
-    displayProp = props.map((item) => option[item]).join(" | ");
-    return displayProp;
+    //displayProp = props.map((item) => option[item]).join(" | ");
+
+    return props.reduce((prev, cur) => {
+      return prev === "-##" ? option[cur] : `${prev} {${option[cur]}}`;
+    }, "-##");
+    //return displayProp;
   }
 }

@@ -1,8 +1,9 @@
 .body {
   transition: all 0.5s ease;
   background: #f4f7fa;
-  padding: 1rem;
-  height: calc(100vh - 4rem - 50px);
-  width:100%;
-  overflow: auto;
+  padding: 0.5rem;
+  height: calc(100vh - 4rem - 33px);
+  width: calc(100vw - 5rem);
+  //width: 100%;
+  overflow: hidden;
 }

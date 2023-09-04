@@ -311,13 +311,16 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     const dialogResult = this.dialog.open(SettingsPopUpComponent, {
       data: this.currentSelectedEntity,
     });
+
     dialogResult.afterClosed().subscribe((val) => {
       if (val === "ok") {
-        this.loadEntityData(
-          this.currentSelectedEntity as Entity,
-          this.currentCriteria
-        );
         this.globalSettings = this.settings.getGlobalSettings();
+        this.createDynamicGrid(
+          this.currentSelectedEntity as Entity,
+          this.currentCriteria,
+          this.globalSettings
+        );
+
         this.createDynamicUIMapping(this.currentSelectedEntity);
       }
     });
@@ -350,7 +353,13 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.currentSelectedEntity = undefined;
     this.dataGrid.table._internalColumns = [...[]];
     this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);
-    this.createDynamicGrid(this.currentSelectedEntity);
+    this.createDynamicGrid(
+      this.currentSelectedEntity,
+      {
+        pager: { pageNumber: 0, pageSize: this.limit },
+      },
+      this.settings.getGlobalSettings()
+    );
     this.createDynamicUIMapping(this.currentSelectedEntity);
     this.loadRelatedEntity();
   }
@@ -434,18 +443,21 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.setFormData("", formFields);
   }
 
-  private createDynamicGrid(entity: Entity | undefined) {
+  private createDynamicGrid(
+    entity: Entity | undefined,
+    criteria: Criteria,
+    globalSettings: any
+  ) {
     if (entity) {
-      const showSystemAttributes = this.globalSettings
-        ? this.globalSettings.showSystem
+      const showSystemAttributes = globalSettings
+        ? globalSettings.showSystem
         : false;
       this.headers = this.entityGridService.getGridHeaders(
         entity,
-        showSystemAttributes
+        showSystemAttributes,
+        globalSettings.displayFormat
       );
-      this.loadEntityData(entity, {
-        pager: { pageNumber: 0, pageSize: this.limit },
-      });
+      this.loadEntityData(entity, criteria);
     }
   }
 

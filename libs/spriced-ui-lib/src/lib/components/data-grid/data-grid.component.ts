@@ -188,6 +188,14 @@ export class DataGridComponent implements AfterViewInit {
     }
     return data;
   }
+
+  public getData(row: any, itemHeader: Header) {
+    const headers = itemHeader.column.split(",");
+
+    return headers.reduce((prev, cur) => {
+      return prev === "-##" ? row[cur] : `${prev} {${row[cur]}}`;
+    }, "-##");
+  }
 }
 
 export interface Header {
@@ -202,7 +210,7 @@ export interface Header {
   sortDirection?: "asc" | "desc";
   canAutoResize?: boolean;
   pipe?: unknown;
-  contentProjection?: boolean;
+  //contentProjection?: boolean;
   checkbox?: boolean;
   tooltip?: boolean;
   tooltipTemplate?: any;
