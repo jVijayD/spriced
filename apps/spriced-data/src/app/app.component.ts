@@ -18,8 +18,13 @@ import { RequestUtilityService } from "@spriced-frontend/spriced-common-lib";
 export class AppComponent {
   menuItems: MenuItem[] = [
     {
+      name: "Model View",
+      path: "/spriced-data/model-view",
+      active: true,
+    },
+    {
       name: "Explorer",
-      path: "/spriced-data",
+      path: "/spriced-data/",
       active: true,
     },
     // {
