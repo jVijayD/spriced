@@ -21,9 +21,7 @@ import {
   HeaderActionComponent,
   Paginate,
   TwoColThreeForthComponent,
-  GenericControl,
-  IValidator,
-  QueryColumns,
+  HeaderComponentWrapperComponent,
   GridConstants,
 } from "@spriced-frontend/spriced-ui-lib";
 import { MatButtonModule } from "@angular/material/button";
@@ -75,6 +73,7 @@ import { EntityFormService } from "./entity-form.service";
     MatExpansionModule,
     RouterModule,
     LookupPopupComponent,
+    HeaderComponentWrapperComponent,
   ],
   viewProviders: [MatExpansionPanel],
   providers: [
@@ -116,6 +115,9 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   dataGrid!: DataGridComponent;
   pageNumber: number = 0;
   relatedEntity: any;
+
+  defaultCodeSetting = "namecode";
+
   constructor(
     private snackbarService: SnackBarService,
     private dialogService: DialogService,
@@ -434,7 +436,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     if (entity) {
       formFields = this.entityFormService.getFormFieldControls(
         entity,
-        this.globalSettings?.displayFormat
+        this.globalSettings?.displayFormat || this.defaultCodeSetting
       );
       this.disableSubmit = !entity.attributes.reduce((prev, current) => {
         return prev || current.permission === "UPDATE";
@@ -455,7 +457,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.headers = this.entityGridService.getGridHeaders(
         entity,
         showSystemAttributes,
-        globalSettings.displayFormat
+        globalSettings?.displayFormat || this.defaultCodeSetting
       );
       this.loadEntityData(entity, criteria);
     }
@@ -470,8 +472,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           next: (page) => {
             this.rows = page.content;
             this.totalElements = page.totalElements;
-            if(this.rows && this.rows?.length > 0)
-            {
+            if (this.rows && this.rows?.length > 0) {
               this.onItemSelected(this.rows[0]);
             }
           },

@@ -3,7 +3,7 @@
 }
 
 .grid-container {
-  @apply h-full w-full pl-2 pr-2;
+  @apply h-full w-full;
   //overflow-y: hidden;
   overflow: auto;
 }
@@ -11,7 +11,8 @@
 .grid-height {
   display: block;
   //height: calc(100% - 6rem);
-  height: calc(100% - 3rem);
+  //height: calc(100% - 3rem);
+  @apply h-full;
 }
 
 mat-accordion.mat-accordion {

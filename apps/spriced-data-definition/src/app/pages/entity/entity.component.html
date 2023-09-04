@@ -1,11 +1,11 @@
-<mat-form-field appearance="outline" class="mb-2">
+<!-- <mat-form-field appearance="outline" class="mb-2">
   <mat-label>Model</mat-label>
   <mat-select (selectionChange)="load($event)" [(value)]="groupId">
     <mat-option *ngFor="let item of modelList" [value]="item.id">{{
       item.displayName
     }}</mat-option>
   </mat-select>
-</mat-form-field>
+</mat-form-field> -->
 <sp-one-col>
   <sp-data-grid
     class="w-full h-full"
@@ -31,6 +31,18 @@
     (sort)="onSort($event)"
   >
     <ng-container>
+      <sp-header-component-wrapper title="Model">
+        <mat-form-field>
+          <mat-select (selectionChange)="load($event)" [(value)]="groupId">
+            <mat-option
+              class="option"
+              *ngFor="let item of modelList"
+              [value]="item.id"
+              >{{ item.displayName }}</mat-option
+            >
+          </mat-select>
+        </mat-form-field>
+      </sp-header-component-wrapper>
       <sp-header-action
         icon="add_box"
         text="Add"

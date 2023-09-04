@@ -1,11 +1,11 @@
 <sp-two-col-three-forth [singleColumn]="isFullScreen">
   <!--Left Section with Grid-->
   <div class="flex flex-col w-full h-full" left>
-    <div class="page-header pb-0">Entity Data Management</div>
-    <sp-entity-select
+    <!-- <div class="page-header pb-0">Entity Data Management</div> -->
+    <!-- <sp-entity-select
       (entitySelectionEvent)="onEntitySelectionChange($event)"
       (modelSelectionEvent)="onModelSelectionChange()"
-    ></sp-entity-select>
+    ></sp-entity-select> -->
     <div class="grid-container grid-height">
       <sp-data-grid
         class="w-full h-full"
@@ -48,7 +48,12 @@
             [disabled]="!selectedItem && !isFullScreen"
             (actionClick)="onEdit()"
           ></sp-header-action> -->
-
+          <sp-header-component-wrapper>
+            <sp-entity-select
+              (entitySelectionEvent)="onEntitySelectionChange($event)"
+              (modelSelectionEvent)="onModelSelectionChange()"
+            ></sp-entity-select>
+          </sp-header-component-wrapper>
           <sp-header-action
             icon="delete"
             text="Delete"
