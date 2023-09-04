@@ -168,7 +168,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         operands: this.transformObjectToKeyValueArray(operands)
       };
       this.conditionsData.ruleTypes = this.conditionsData?.ruleTypes.slice(0, 3)
-      this.conditionsData.operators = this.conditionsData?.operators.slice(0, 7)
+      this.conditionsData.operators = this.conditionsData?.operators.slice(0, 21)
     }
   }
 

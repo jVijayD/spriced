@@ -190,7 +190,7 @@ export class BusinessRuleListComponent {
       valueControl?.disable();
 
     }
-    else if (['NONE'].includes(value)) {
+    else if (['IS_NULL'].includes(value)) {
       this.value = this.maxValue = this.minValue = false;
       valueControl?.disable();
       minValueControl?.disable();
