@@ -42,7 +42,10 @@
       </mat-form-field>
 
       <div class="autoCheck">
-        <mat-checkbox [disabled]="action=='Edit'" [(ngModel)]="local_data.autoNumberCode" color="primary"
+        <mat-checkbox
+          [disabled]="action == 'Edit'"
+          [(ngModel)]="local_data.autoNumberCode"
+          color="primary"
           >Auto generate Code</mat-checkbox
         >
         <mat-checkbox [(ngModel)]="local_data.enableAuditTrial" color="primary"
@@ -120,7 +123,14 @@
 
           <mat-form-field appearance="outline" class="mb-2">
             <mat-label>Description</mat-label>
-            <textarea matInput maxlength="100" [(ngModel)]="attDetails.description"></textarea>
+            <textarea
+              matInput
+              maxlength="100"
+              [disabled]="
+                attDetails?.onlyDisplayNameEditable && attAction === 'Update'
+              "
+              [(ngModel)]="attDetails.description"
+            ></textarea>
           </mat-form-field>
 
           <div class="flex flex-row mb-2">
@@ -130,6 +140,9 @@
               [(ngModel)]="attDetails.type"
               [value]="type"
               (change)="radioButtonChanged($event)"
+              [disabled]="
+                attDetails?.onlyDisplayNameEditable && attAction === 'Update'
+              "
             >
               <mat-radio-button value="FREE_FORM">Free Form</mat-radio-button>
               <mat-radio-button value="LOOKUP">Domain Based</mat-radio-button>
@@ -145,6 +158,9 @@
             <mat-select
               [(ngModel)]="attDetails.referencedTableId"
               (selectionChange)="selectedEntity($event)"
+              [disabled]="
+                attDetails?.onlyDisplayNameEditable && attAction === 'Update'
+              "
             >
               <mat-option
                 *ngFor="let item of entityList"
@@ -159,6 +175,9 @@
             class="mb-2"
             style="margin-top: 12px; margin-bottom: 21px"
             [(ngModel)]="constraintType"
+            [disabled]="
+              attDetails?.onlyDisplayNameEditable && attAction === 'Update'
+            "
             >Is Unique</mat-checkbox
           >
           <mat-form-field
@@ -167,7 +186,12 @@
             *ngIf="attDetails.type === 'FREE_FORM'"
           >
             <mat-label>Data Type</mat-label>
-            <mat-select [(ngModel)]="attDetails.dataType">
+            <mat-select
+              [(ngModel)]="attDetails.dataType"
+              [disabled]="
+                attDetails?.onlyDisplayNameEditable && attAction === 'Update'
+              "
+            >
               <mat-option value="STRING_VAR">Fixed Length String</mat-option>
               <mat-option value="TEXT">Text</mat-option>
               <mat-option value="INTEGER">Number</mat-option>
@@ -191,6 +215,9 @@
               type="number"
               min="0"
               [(ngModel)]="attDetails.size"
+              [disabled]="
+                attDetails?.onlyDisplayNameEditable && attAction === 'Update'
+              "
           /></mat-form-field>
 
           <div
@@ -207,6 +234,9 @@
                 type="number"
                 min="0"
                 [(ngModel)]="attDetails.size"
+                [disabled]="
+                  attDetails?.onlyDisplayNameEditable && attAction === 'Update'
+                "
             /></mat-form-field>
           </div>
           <div
@@ -218,7 +248,12 @@
           >
             <mat-form-field appearance="outline" class="mb-2"
               ><mat-label>Input Mask</mat-label>
-              <mat-select [(ngModel)]="attDetails.formatter">
+              <mat-select
+                [(ngModel)]="attDetails.formatter"
+                [disabled]="
+                  attDetails?.onlyDisplayNameEditable && attAction === 'Update'
+                "
+              >
                 <mat-option value="MM/DD/YY">MM/DD/YY</mat-option>
                 <mat-option value="MM/DD/YYYY">MM/DD/YYYY</mat-option>
                 <mat-option value="DD/MM/YY">DD/MM/YY</mat-option>
@@ -240,7 +275,12 @@
               attDetails.type === 'FREE_FORM'
             "
             ><mat-label>Input Mask</mat-label>
-            <mat-select [(ngModel)]="attDetails.formatter">
+            <mat-select
+              [(ngModel)]="attDetails.formatter"
+              [disabled]="
+                attDetails?.onlyDisplayNameEditable && attAction === 'Update'
+              "
+            >
               <mat-option value="-####">-####</mat-option>
               <mat-option value="(####)">(####)</mat-option>
             </mat-select>
@@ -252,12 +292,14 @@
               type="number"
               min="0"
               [(ngModel)]="attDetails.width"
-          /></mat-form-field>  
-          
+              [disabled]="
+                attDetails?.onlyDisplayNameEditable && attAction === 'Update'
+              "
+          /></mat-form-field>
+
           <div></div>
         </div>
       </div>
-     
     </mat-card>
 
     <div class="flex justify-end pt-2">
@@ -286,7 +328,6 @@
         {{ attAction }} Attribute
       </button>
     </div>
-
   </div>
   <div mat-dialog-actions class="actions">
     <button

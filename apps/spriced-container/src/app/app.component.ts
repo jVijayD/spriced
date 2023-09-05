@@ -39,7 +39,7 @@ export class AppComponent implements OnDestroy, OnInit {
       path: "/spriced-data",
     },
     {
-      name: "Report",
+      name: "Reports",
       icon: "/assets/images/reporting.png",
       path: "/spriced-reports",
     },

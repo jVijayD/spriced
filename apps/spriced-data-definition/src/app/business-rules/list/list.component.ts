@@ -131,7 +131,7 @@ export class ListComponent implements OnInit, OnDestroy {
     // },
     {
       column: "updatedDate",
-      name: "Updated Date",
+      name: "Last Updated On",
       canAutoResize: true,
       isSortable: true,
       width: 150,
