@@ -193,6 +193,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   onItemSelected(e: any) {
     this.selectedItem = e;
     //this.dynamicFormService.parentForm?.setValue(this.selectedItem);
+
     this.dynamicFormService.parentForm?.setValue(
       this.entityFormService.extractFormFieldsOnly(
         this.selectedItem,
@@ -352,6 +353,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   onEntitySelectionChange(entity: Entity | string) {
+    this.selectedItem = null;
     this.currentSelectedEntity = undefined;
     this.dataGrid.table._internalColumns = [...[]];
     this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);
