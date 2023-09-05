@@ -35,6 +35,12 @@
           <input matInput [(ngModel)]="local_data.displayName" />
         </mat-form-field>
       </div>
+
+      <mat-form-field appearance="outline" class="mb-2">
+        <mat-label>Description</mat-label>
+        <textarea matInput maxlength="100" [(ngModel)]="local_data.description"></textarea>
+      </mat-form-field>
+
       <div class="autoCheck">
         <mat-checkbox [disabled]="action=='Edit'" [(ngModel)]="local_data.autoNumberCode" color="primary"
           >Auto generate Code</mat-checkbox

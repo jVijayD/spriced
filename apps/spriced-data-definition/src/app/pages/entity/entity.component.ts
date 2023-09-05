@@ -51,38 +51,45 @@ export class EntityComponent {
       canAutoResize: true,
       isSortable: true,
       hidden: true,
-      // width: 100,
+     width: 100,
     },
     {
       column: "name",
       name: "Name",
       canAutoResize: true,
       isSortable: true,
-      // width: 100,
+     width: 100,
     },
     {
       column: "displayName",
       name: "Display Name",
       canAutoResize: true,
       isSortable: true,
-      // width: 100,
+     width: 100,
     },
     {
       column: "updatedBy",
       name: "Updated By",
       canAutoResize: true,
       isSortable: true,
-      // width: 100,
+     width: 100,
     },
     {
       column: "updatedDate",
       name: "Updated Date",
       canAutoResize: true,
       isSortable: true,
-      // width: 100,
+     width: 100,
       pipe: (data: any) => {
         return moment(data).format("MM/DD/YYYY HH:mm:ss");
       },
+    },
+    {
+      column: "description",
+      name: "Description",
+      canAutoResize: true,
+      isSortable: true,
+     width: 100,
     },
   ];
   columnMode: ColumnMode = ColumnMode.force;
@@ -142,6 +149,7 @@ export class EntityComponent {
         attributes: result.attributes,
         enableAuditTrial: result.enableAuditTrial,
         width: result.width,
+        description:result.description
       };
       this.entityService.add(entity).subscribe({
         next: (results: any) => {
@@ -186,6 +194,7 @@ export class EntityComponent {
         enableAuditTrial: result.enableAuditTrial,
         attributes: result.attributes,
         width: result.width,
+        description:result.description
       };
       this.entityService.edit(entity).subscribe({
         next: (results: any) => {

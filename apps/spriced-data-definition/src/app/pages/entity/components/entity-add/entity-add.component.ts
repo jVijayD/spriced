@@ -44,13 +44,7 @@ export interface PeriodicElement {
   dataType: string;
   attribute: any[];
 }
-// export interface UsersData {
-//   name: string;
-//   id: number;
-//   displayName: string;
-//   updatedon: any;
-//   updatedby: string;
-// }
+
 
 @Component({
   selector: "sp-entity-add",
