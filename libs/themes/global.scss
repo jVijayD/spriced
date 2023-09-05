@@ -342,3 +342,6 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
 {
   background: white;
 }
+.mdc-text-field--outlined.mdc-text-field--disabled .mdc-text-field__input {
+  color: black !important;
+}
