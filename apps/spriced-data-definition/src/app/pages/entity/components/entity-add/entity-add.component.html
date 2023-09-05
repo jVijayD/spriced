@@ -83,7 +83,7 @@
                 text="Edit"
                 title="Edit Attribute"
                 [disabled]="
-                  selectedItem == null || (selectedItem.editable == false && selectedItem.onlyDisplayNameEditable == false)
+                  selectedItem == null || selectedItem.editable == false
                 "
                 (actionClick)="onEdit()"
               ></sp-header-action>
@@ -93,7 +93,7 @@
                 text="Delete"
                 title="Delete Attribute"
                 [disabled]="
-                  selectedItem == null || selectedItem.editable == false || selectedItem.onlyDisplayNameEditable == true
+                  selectedItem == null || selectedItem.editable == false
                 "
                 (actionClick)="onDelete()"
               ></sp-header-action>
