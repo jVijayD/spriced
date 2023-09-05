@@ -37,8 +37,12 @@
       [value]="selectedModelValue"
       (selectionChange)="onModelSelectionChange($event)"
     >
-      <mat-option value="">--Select--</mat-option>
-      <mat-option *ngFor="let item of this.models" [value]="item.id">
+      <mat-option value="" class="option">--Select--</mat-option>
+      <mat-option
+        *ngFor="let item of this.models"
+        [value]="item.id"
+        class="option"
+      >
         {{ item.displayName }}
       </mat-option>
     </mat-select>
@@ -50,8 +54,12 @@
       [value]="selectedEntity"
       (selectionChange)="onEntitySelectionChange($event)"
     >
-      <mat-option value="">--Select--</mat-option>
-      <mat-option *ngFor="let item of this.entities" [value]="item">
+      <mat-option value="" class="option">--Select--</mat-option>
+      <mat-option
+        *ngFor="let item of this.entities"
+        [value]="item"
+        class="option"
+      >
         {{ item.displayName }}
       </mat-option>
     </mat-select>
