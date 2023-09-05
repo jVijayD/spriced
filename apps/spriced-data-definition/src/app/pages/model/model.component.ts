@@ -80,7 +80,7 @@ export class ModelComponent implements OnInit, OnDestroy {
     },
     {
       column: "updatedDate",
-      name: "Updated Date",
+      name: "Last Updated On",
       canAutoResize: true,
       isSortable: true,
       // width: 100,
@@ -229,7 +229,7 @@ export class ModelComponent implements OnInit, OnDestroy {
       },
       {
         name: "updatedDate",
-        displayName: "Updated Date",
+        displayName: "Last Updated On",
         dataType: "string",
       },
     ];

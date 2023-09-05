@@ -54,7 +54,7 @@ export class ModelListComponent {
     },
     {
       column: "updatedDate",
-      name: "Updated Date",
+      name: "Last Updated On",
       canAutoResize: true,
       isSortable: true,
       isTreeColumn: false,
