@@ -10,7 +10,7 @@ export function initializeKeycloak(keycloak: KeycloakService) {
       },
       initOptions: {
         onLoad: "login-required", // redirects to the login page
-        checkLoginIframe: true,
+        checkLoginIframe: false,
         checkLoginIframeInterval: 1000,
       },
       loadUserProfileAtStartUp: true,
