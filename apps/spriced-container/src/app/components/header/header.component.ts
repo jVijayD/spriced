@@ -53,7 +53,9 @@ export class HeaderComponent {
   goToLink() {
     const url_help_access = process.env["NX_API_USER-ACCESS_URL"] as string;
     this.httpClient
-      .post(`${url_help_access}/help-access`, { token: "" })
+      .post(`${url_help_access}/help-access`,{ token: "" },{observe: 'response' as 'response',
+      withCredentials:true
+    })
       .subscribe((data) => {
         if (data) {
           window.open(process.env["NX_HELP"] as string, "_blank");
