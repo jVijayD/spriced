@@ -79,7 +79,7 @@ export class ModelAddComponent {
         {
           name: "pattern",
           message: "Special character not allowed",
-          validator: Validators.pattern('^([a-zA-Z_0-9,:\s/-]*)$'),
+          validator: Validators.pattern('^([a-zA-Z_0-9#:\s/-]*)$'),
         },
         // {
         //   name: "minlength",
@@ -105,7 +105,7 @@ export class ModelAddComponent {
         {
           name: "pattern",
           message: "Special character not allowed",
-          validator: Validators.pattern('^([a-zA-Z_0-9,:\s/-]*)$'),
+          validator: Validators.pattern('^([a-zA-Z_0-9#:\s/]*)$'),
         },
         // {
         //   name: "minlength",

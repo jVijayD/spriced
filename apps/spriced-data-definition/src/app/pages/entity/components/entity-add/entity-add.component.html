@@ -13,7 +13,7 @@
           <div>
             <mat-form-field appearance="outline">
               <mat-label>Entity Name</mat-label>
-              <input formControlName="name" matInput pattern='^([a-zA-Z_0-9,:\s/-]*)$'  />
+              <input formControlName="name" matInput pattern='^([a-zA-Z_0-9#:\s/]*)$'  />
             </mat-form-field>
             <div class="error">
               <mat-error
@@ -42,7 +42,7 @@
       <div class="ml-2">
         <mat-form-field appearance="outline">
           <mat-label>Display Name</mat-label>
-          <input matInput [(ngModel)]="local_data.displayName" pattern='^([a-zA-Z_0-9,:\s/-]*)$' #uname="ngModel"/>
+          <input matInput [(ngModel)]="local_data.displayName" pattern='^([a-zA-Z_0-9#:\s/]*)$' #uname="ngModel"/>
         </mat-form-field>
 
         <div class="error">
@@ -135,7 +135,7 @@
               [disabled]="attAction === 'Update'"
               matInput
               [(ngModel)]="attDetails.name"
-              pattern='^([a-zA-Z_0-9,:\s/-]*)$' #aname="ngModel"
+              pattern='^([a-zA-Z_0-9#:\s/]*)$' #aname="ngModel"
             />
           </mat-form-field>
           <mat-error
@@ -153,7 +153,7 @@
       >
           <mat-form-field appearance="outline" class="mb-2">
             <mat-label>Display Name</mat-label>
-            <input matInput [(ngModel)]="attDetails.displayName" pattern='^([a-zA-Z_0-9,:\s/-]*)$' #dname="ngModel"/>
+            <input matInput [(ngModel)]="attDetails.displayName" pattern='^([a-zA-Z_0-9:\s/-]*)$' #dname="ngModel"/>
             
           </mat-form-field>
           <mat-error
