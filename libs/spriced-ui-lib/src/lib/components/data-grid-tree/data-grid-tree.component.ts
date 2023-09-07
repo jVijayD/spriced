@@ -145,4 +145,5 @@ export interface Head {
   sortDirection?: "asc" | "desc";
   canAutoResize?: boolean;
   pipe?: unknown;
+  action?:boolean;
 }
