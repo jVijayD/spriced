@@ -159,7 +159,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         mockAttribute.push(...nestedProcessedAttributes);
 
       }
-
+      mockAttribute = mockAttribute.filter((el: any) => el.systemAttribute == false);
       this.conditionsData = {
         ...action,
         attributes: mockAttribute,
