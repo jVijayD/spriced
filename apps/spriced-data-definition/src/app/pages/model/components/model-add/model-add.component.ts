@@ -76,6 +76,11 @@ export class ModelAddComponent {
           message: "Name is required.",
           validator: Validators.required,
         },
+        {
+          name: "pattern",
+          message: "Special character not allowed",
+          validator: Validators.pattern('^([a-zA-Z_0-9#:\s/-]*)$'),
+        },
         // {
         //   name: "minlength",
         //   message: "Min length should be 5.",
@@ -96,6 +101,11 @@ export class ModelAddComponent {
           name: "required",
           message: "DisplayName is required.",
           validator: Validators.required,
+        },
+        {
+          name: "pattern",
+          message: "Special character not allowed",
+          validator: Validators.pattern('^([a-zA-Z_0-9#:\s/]*)$'),
         },
         // {
         //   name: "minlength",

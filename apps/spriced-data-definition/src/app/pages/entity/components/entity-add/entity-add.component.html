@@ -13,7 +13,7 @@
           <div>
             <mat-form-field appearance="outline">
               <mat-label>Entity Name</mat-label>
-              <input formControlName="name" matInput />
+              <input formControlName="name" matInput pattern='^([a-zA-Z_0-9#:\s/]*)$'  />
             </mat-form-field>
             <div class="error">
               <mat-error
@@ -25,6 +25,16 @@
                 "
                 >Name is required</mat-error
               >
+
+              <mat-error
+                class="text-sm italic text-red-500"
+                *ngIf="
+                  entityForm.controls['name'].hasError('pattern')
+                "
+                >Special character not allowed</mat-error
+              >
+           
+
             </div>
           </div>
         </form>
@@ -32,8 +42,26 @@
       <div class="ml-2">
         <mat-form-field appearance="outline">
           <mat-label>Display Name</mat-label>
-          <input matInput [(ngModel)]="local_data.displayName" />
+          <input matInput [(ngModel)]="local_data.displayName" pattern='^([a-zA-Z_0-9#:\s/]*)$' #uname="ngModel"/>
         </mat-form-field>
+
+        <div class="error">
+          <mat-error
+            class="text-sm italic text-red-500"
+            *ngIf="uname.hasError('pattern')"
+           
+            >Special character not allowed</mat-error
+          >
+       
+ <mat-error
+                class="text-sm italic text-red-500"
+                *ngIf="
+                  local_data.displayName=='' || local_data.displayName==undefined
+                "
+                >Display Name is required</mat-error
+              >
+        </div>
+
       </div>
       <div class="autoCheck">
         <mat-checkbox
@@ -107,14 +135,40 @@
               [disabled]="attAction === 'Update'"
               matInput
               [(ngModel)]="attDetails.name"
+              pattern='^([a-zA-Z_0-9#:\s/]*)$' #aname="ngModel"
             />
           </mat-form-field>
-
+          <mat-error
+          class="text-sm italic text-red-500"
+          *ngIf="aname.hasError('pattern')"
+         
+          >Special character not allowed</mat-error
+        >
+        <mat-error
+        class="text-sm italic text-red-500"
+        *ngIf="
+         attDetails.name=='' ||  attDetails.name==undefined
+        "
+        >Name is required</mat-error
+      >
           <mat-form-field appearance="outline" class="mb-2">
             <mat-label>Display Name</mat-label>
-            <input matInput [(ngModel)]="attDetails.displayName" />
+            <input matInput [(ngModel)]="attDetails.displayName" pattern='^([a-zA-Z_0-9:\s/-]*)$' #dname="ngModel"/>
+            
           </mat-form-field>
-
+          <mat-error
+          class="text-sm italic text-red-500"
+          *ngIf="dname.hasError('pattern')"
+         
+          >Special character not allowed</mat-error
+        >
+        <mat-error
+        class="text-sm italic text-red-500"
+        *ngIf="
+         attDetails.displayName=='' ||  attDetails.displayName==undefined
+        "
+        >Display Name is required</mat-error
+      >
           <mat-form-field appearance="outline" class="mb-2">
             <mat-label>Description</mat-label>
             <textarea
@@ -316,7 +370,11 @@
         [disabled]="
           attDetails.name === '' ||
           attDetails.name === undefined ||
-          attDetails.editable === false
+          attDetails.editable === false ||
+          aname.hasError('pattern')||
+          dname.hasError('pattern')||
+          attDetails.displayName==='' ||
+          attDetails.name === undefined 
         "
       >
         {{ attAction }} Attribute
@@ -338,7 +396,7 @@
       color="primary"
       type="submit"
       (click)="doAction()"
-      [disabled]="entityForm.invalid && action !== 'Edit'"
+      [disabled]="entityForm.invalid && action !== 'Edit' || local_data.displayName=='' || local_data.displayName==undefined"
     >
       Save
     </button>
