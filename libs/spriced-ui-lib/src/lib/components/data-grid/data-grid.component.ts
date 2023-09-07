@@ -21,6 +21,7 @@ import * as moment from "moment";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ExportFileService } from "./export-file";
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
   selector: "sp-data-grid",
@@ -33,6 +34,7 @@ import { ExportFileService } from "./export-file";
     MatCheckboxModule,
     FormsModule,
     ReactiveFormsModule,
+    MatIconModule,
   ],
   providers: [ExportFileService],
   templateUrl: "./data-grid.component.html",
@@ -216,6 +218,7 @@ export interface Header {
   tooltipTemplate?: any;
   imgsrc?: any;
   disableCheckbox?: any;
+  isLink?: boolean;
 }
 
 export interface Paginate {
