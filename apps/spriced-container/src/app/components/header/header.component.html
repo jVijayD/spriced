@@ -1,7 +1,8 @@
 <!-- Main navigation container -->
 <nav
-  class="top-header relative flex py-2 z-[1000] shadow-md shadow-black/5 dark:bg-neutral-600 dark:shadow-black/10 lg:flex-wrap lg:justify-start lg:py-[1rem]"
-  data-te-navbar-ref>
+  class="top-header relative flex py-2 z-[1000] shadow-md shadow-black/5 dark:bg-neutral-600 dark:shadow-black/10 lg:flex-wrap lg:justify-start"
+  data-te-navbar-ref
+>
   <sp-top-menu [menuData]="menuData"></sp-top-menu>
 
   <!-- Right elements -->
@@ -12,14 +13,16 @@
       <mat-icon class="icon-size_home">home</mat-icon>
     </button>
 
-
     <button mat-icon-button class="btn" aria-label="" (click)="goToLink()">
       <mat-icon class="icon-size_home">help_outline</mat-icon>
     </button>
 
-
-
-    <button mat-icon-button [matMenuTriggerFor]="menu" class="btn" aria-label="">
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="menu"
+      class="btn"
+      aria-label=""
+    >
       <mat-icon class="icon-size_home">account_circle</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
