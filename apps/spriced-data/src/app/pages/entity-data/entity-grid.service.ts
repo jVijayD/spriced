@@ -53,6 +53,7 @@ export class EntityGridService {
           pipe: (data: any) => {
             return this.getTransform(data, attr);
           },
+          isLink: attr.dataType === "LINK",
         };
       });
   }

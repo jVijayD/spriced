@@ -7,7 +7,7 @@
 /* Grp css */
 
 .items-container {
-  @apply flex flex-row flex-wrap justify-start;
+  @apply flex flex-row flex-wrap justify-start space-y-2;
 }
 
 .item {
@@ -23,3 +23,21 @@
   width: 0px;
 }
 /* Flex Container Css */
+
+:host ::ng-deep .mdc-text-field {
+  padding: 0 10px !important;
+  border-radius: 2px !important;
+}
+
+:host ::ng-deep .mat-mdc-form-field-infix {
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+}
+
+:host ::ng-deep .mat-mdc-form-field-infix {
+  min-height: 30px !important;
+}
+
+:host ::ng-deep .mat-mdc-floating-label[ng-reflect-floating="false"] {
+  top: 16px !important;
+}
