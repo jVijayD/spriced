@@ -196,7 +196,13 @@
             <b> {{ this.currentSelectedEntity?.displayName }}</b>
           </mat-panel-title>
         </mat-expansion-panel-header>
-        <div style="max-height: calc(100vh - 4rem - 206px); overflow-y: auto">
+        <div
+          style="
+            min-height: calc(100vh - 35px - 2rem - 35px - 70px);
+            overflow-y: auto;
+          "
+        >
+          <!--100vh-2rem(padding)-35px(footer)-35px(header)-70px(expanded/panel) -->
           <sp-dynamic-form-container
             *ngIf="appForm.groups[0].formFieldControls.length"
             [appForm]="appForm"
