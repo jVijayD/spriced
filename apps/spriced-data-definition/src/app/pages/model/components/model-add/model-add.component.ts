@@ -83,7 +83,7 @@ export class ModelAddComponent {
         },
         {
           name: "maxlength",
-          message: "Min length should be 5.",
+          message: "Max length should be 100.",
           validator: Validators.maxLength(100),
         },
       ],
@@ -109,7 +109,7 @@ export class ModelAddComponent {
         },
         {
           name: "maxlength",
-          message: "Min length should be 5.",
+          message: "Max length should be 100.",
           validator: Validators.maxLength(100),
         },
       ],
