@@ -6,20 +6,11 @@
     <div class="logoText">
       <div class="flex">
         <button style="margin: 5px" class="ng-tns-c816216012-1">
-          <img
-            src="../../../../assets/images/logo.png"
-            style="width: 30px; height: 30px; max-width: initial"
-            alt=""
-          />
+          <img src="../../../../assets/images/logo.png" style="width: 30px; height: 30px; max-width: initial" alt="" />
         </button>
         <h1 class="user">Welcome {{ user }}</h1>
       </div>
-      <button
-        mat-icon-button
-        [matMenuTriggerFor]="menu"
-        class="btn"
-        aria-label="Example icon-button with a menu"
-      >
+      <button mat-icon-button [matMenuTriggerFor]="menu" class="btn" aria-label="Example icon-button with a menu">
         <mat-icon class="icon-size">account_circle</mat-icon>
       </button>
       <mat-menu #menu="matMenu">
@@ -38,21 +29,14 @@
 
   <div class="card">
     <div class="content">
-      <sp-app-card
-        header="Data Explorer" 
-        path="/spriced-data"
-        image="/assets/images/access.png"
-      ></sp-app-card>
-      <sp-app-card
-        header="Reports"
-        path="/spriced-reports"
-        image="/assets/images/reporting.png"
-      ></sp-app-card>
-      <sp-app-card
-        header="Model Definition"
-        path="/spriced-data-definition/model"
-        image="/assets/images/definition.png"
-      ></sp-app-card>
+      <sp-app-card 
+      *ngFor="let app of apps" 
+      [header]="app.name"
+      [path]="'/'+app.path" 
+      [image]="app.icon">
+    </sp-app-card>
     </div>
   </div>
 </div>
+
+<!-- [matTooltip]="app.description" -->

@@ -8,9 +8,11 @@ import { FooterComponent } from "./components/footer/footer.component";
 import { CommonModule } from "@angular/common";
 import {
   AppDataService,
+  Application,
   MenuItem,
 } from "@spriced-frontend/shared/spriced-shared-lib";
 import { Subscription } from "rxjs";
+import { UserAccessService } from "@spriced-frontend/spriced-common-lib";
 
 @Component({
   standalone: true,
@@ -32,23 +34,7 @@ export class AppComponent implements OnDestroy, OnInit {
   currentAppName: any = "Spriced";
   path = location.pathname;
   subscriptions: Subscription[] = [];
-  sidebarData = [
-    {
-      name: "Data Explorer",
-      icon: "/assets/images/access.png",
-      path: "/spriced-data",
-    },
-    {
-      name: "Reports",
-      icon: "/assets/images/reporting.png",
-      path: "/spriced-reports",
-    },
-    {
-      name: "Model Definition",
-      icon: "/assets/images/definition.png",
-      path: "/spriced-data-definition/model",
-    },
-  ];
+  sidebarData: Application[] = [];
   isSideNavCollapsed = false;
   screenWidth = 0;
   menuData: MenuItem[] = [];
@@ -60,7 +46,11 @@ export class AppComponent implements OnDestroy, OnInit {
     this.path = location.pathname;
   }
 
-  constructor(public appDataService: AppDataService, private router: Router) {
+  constructor(
+    public appDataService: AppDataService,
+    private userAccessService: UserAccessService,
+    private router: Router
+  ) {
     this.subscriptions.push(
       this.appDataService.menuData$.subscribe((menuItems) => {
         this.menuData = [...menuItems];
@@ -72,6 +62,13 @@ export class AppComponent implements OnDestroy, OnInit {
         if (event instanceof NavigationStart) {
           this.appDataService.setErrors([]);
         }
+      })
+    );
+    this.subscriptions.push(
+      this.userAccessService.loadAllApps().subscribe((appsList) => {
+        let appsAry = appsList.map((a) => a as Application);
+        appDataService.setApps(appsAry);
+        this.sidebarData = appsAry;
       })
     );
   }

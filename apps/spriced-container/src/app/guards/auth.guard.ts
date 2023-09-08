@@ -61,7 +61,7 @@ export class AuthGuard extends KeycloakAuthGuard {
         tenant: "meritor",
         user: this.user.profile.email || "",
         transactionId: this.user.profile.id || "",
-        roles: this.user.tokenParsed?.realm_access?.roles?.join(","),
+        roles: this.user.tokenParsed?.realm_access?.roles?.filter((r:String)=>!r.startsWith("default-roles")).join(","),
         applications: this.user.profile.attributes.application || "",
       }),
     });

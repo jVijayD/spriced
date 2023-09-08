@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { MatMenuModule } from "@angular/material/menu";
 import { AppCardComponent } from "@spriced-frontend/spriced-ui-lib";
 import { KeycloakService } from "keycloak-angular";
-
+import { AppDataService, Application } from "@spriced-frontend/shared/spriced-shared-lib";
 @Component({
   selector: "sp-landing-page",
   standalone: true,
@@ -18,14 +18,18 @@ import { KeycloakService } from "keycloak-angular";
     MatMenuModule,
     AppCardComponent,
   ],
+  providers:[AppDataService]
 })
 export class LandingPageComponent implements OnInit {
+  
   labels: any;
+  apps:Application[]=[];
   user = "";
   constructor(
     private keycloakService: KeycloakService,
     private aroute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    public appDataService: AppDataService
     ) {}
 
   ngOnInit(): void {
@@ -50,6 +54,7 @@ export class LandingPageComponent implements OnInit {
         this.router.navigateByUrl(returnUrl);
       }
     }
+    this.appDataService.getApps().subscribe(e=>this.apps=e);
   }
   capitalizeFirstLetter(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);

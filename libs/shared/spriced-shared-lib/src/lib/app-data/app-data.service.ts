@@ -8,6 +8,7 @@ import { BehaviorSubject, Observable, fromEvent, map, merge, of } from "rxjs";
 export class AppDataService {
   private userData = new BehaviorSubject<UserData | null>(null);
   private menuData = new BehaviorSubject<MenuItem[]>([]);
+  private appData = new BehaviorSubject<Application[]>([]);
   ERROR_LIST: BehaviorSubject<errorElement[]> = new BehaviorSubject<errorElement[]>([]);
   networkStatus$ = new Observable<boolean>();
   public subConditionForm = new BehaviorSubject<any>(null);
@@ -15,11 +16,17 @@ export class AppDataService {
   userData$ = this.userData.asObservable();
   menuData$ = this.menuData.asObservable();
   $ERROR_LIST = this.ERROR_LIST.asObservable();
-  
+  apps$ =this.appData.asObservable()
   constructor() {}
 
   setUserData(user: UserData) {
     this.userData.next(user);
+  }
+  setApps(apps: Application[]) {
+    this.appData.next(apps);
+  }
+  getApps(){
+    return this.apps$;
   }
 
   setMenuData(menuItems: MenuItem[]) {
@@ -65,6 +72,15 @@ export interface UserData {
   username: string;
   displayName: string;
   token: string;
+}
+export interface Application {
+  code: string;
+  description: string;
+  icon: string;
+  id: number;
+  name: string;
+  path: string;
+  status: boolean;
 }
 
 export interface MenuItem {
