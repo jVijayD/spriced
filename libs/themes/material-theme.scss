@@ -150,7 +150,7 @@ $my-app-dark-theme: mat.define-dark-theme(
 .mat-mdc-form-field-error {
   font-size: 12px;
   font-style: italic;
-  padding-bottom: 10px;
+  //padding-bottom: 10px;
   color: var(--error-dark);
 }
 
