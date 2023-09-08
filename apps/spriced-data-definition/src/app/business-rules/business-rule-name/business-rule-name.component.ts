@@ -62,6 +62,8 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
   public idsBr: any;
   public modelId: any;
   public attributeId: any;
+  public entityName: any;
+  public modelName: any;
 
   // DEMO LIST CODE
   public get connectedBRDropListsIds(): string[] {
@@ -144,8 +146,13 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
    * HANDLE THIS FUNCTION FOR GET ALL ENUMS TYPES
    */
   public async patchEnumTypes(id?: any) {
-    let { conditions, operands, operators, datatypes, actionEnum, entity } = await this.getAllDataEnum(id);
+    let { conditions, operands, operators, datatypes, actionEnum, entity, model } = await this.getAllDataEnum(id);
+    if (model?.length > 0) {
+      const modelData = model.find((el: any) => el.id == this.modelId);
+      this.modelName = modelData.displayName;
+    }
     if (conditions && operands && operators && actionEnum && entity) {
+      this.entityName = entity.displayName;
       const action = actionEnum;
       let mockAttribute: any = [];
       const relatedRefreneceTableEntity = entity.attributes.filter((el: any) => !!el.referencedTableId);
@@ -153,13 +160,14 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
 
       // Handle for nested attribute
       if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
-        mockAttribute.push(relatedRefreneceTableEntity[0]);
+        // mockAttribute.push(relatedRefreneceTableEntity[0]); 
         let { entityData } = await this.getEntityById(relatedRefreneceTableEntity[0].referencedTableId);
-        const nestedProcessedAttributes = this.processNestedAttributes(entityData.attributes, relatedRefreneceTableEntity[0].displayName);
-        mockAttribute.push(...nestedProcessedAttributes);
-
+        const nestedProcessedAttributes = this.processNestedAttributes(entityData.attributes, relatedRefreneceTableEntity[0]);
+        // mockAttribute.push(...nestedProcessedAttributes);
       }
       mockAttribute = mockAttribute.filter((el: any) => el.systemAttribute == false);
+      // await this.handleAttributeNames(actionEnum.attributes);
+
       this.conditionsData = {
         ...action,
         attributes: mockAttribute,
@@ -172,23 +180,28 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     }
   }
 
+  public handleAttributeNames(attributes: any, parentName?: any) {
+    attributes.forEach((attribute: any) => {
+      const nestedName = parentName ? `${parentName}.${attribute.name}` : attribute.name;
+      attribute.displayName = nestedName;
+
+      if (attribute.attributes) {
+        this.handleAttributeNames(attribute.attributes, nestedName);
+      }
+    });
+
+  }
+
   /**
   * HANDLE THIS FUNCTION FOR EDIT THE NESTEDATTRIBUTES
   * @param nestedAttributes any
   * @param parentAttribute string
   * @returns 
   */
-  public processNestedAttributes(nestedAttributes: any, parentAttribute: string) {
+  public processNestedAttributes(nestedAttributes: any, parentEntity: any) {
     const processedAttributes: any = [];
     if (nestedAttributes) {
-      nestedAttributes.forEach(async (el: any) => {
-        const processedAttribute = {
-          ...el,
-          displayName: `${parentAttribute}.${el.displayName}`,
-          name: `${parentAttribute}.${el.displayName}`
-        };
-        processedAttributes.push(processedAttribute);
-      });
+      parentEntity.attributes = nestedAttributes;
     }
 
     return processedAttributes;
@@ -225,16 +238,18 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         this.businessRuleService.getAllOperatorsTypes(),
         this.businessRuleService.getAllDataTypes(),
         this.businessRuleService.getConditionsData(),
-        this.businessRuleService.getAllEntitesById(entityId)
+        this.businessRuleService.getAllEntitesById(entityId),
+        this.businessRuleService.getAllModles(),
       ]).subscribe(
-        ([conditions, operands, operators, datatypes, actionEnum, entity]: any) => {
+        ([conditions, operands, operators, datatypes, actionEnum, entity, model]: any) => {
           resolve({
             conditions,
             operands,
             operators,
             datatypes,
             actionEnum,
-            entity
+            entity,
+            model,
           });
         },
         (err) => {
@@ -245,7 +260,8 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
             operators: [],
             datatypes: [],
             actionEnum: [],
-            entity: []
+            entity: [],
+            model: []
           });
         }
       );
@@ -398,6 +414,8 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       min_value: value && value[0] ? [value[0], Validators.required] : ['', Validators.required],
       operandType: item?.operandType ? [item.operandType, Validators.required] : ['ATTRIBUTE', Validators.required],
       subConditionType: item?.subConditionType ? [item.subConditionType] : ['NONE', Validators.required],
+      parentAttributeId: item?.parentAttributeId ? [item.parentAttributeId] : [''],
+      parentOperandId: item?.parentOperandId ? [item.parentOperandId] : [''],
       subConditions: this.formbuilder.array([])
     });
 
@@ -445,6 +463,8 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       max_value: value && value[1] ? [value[1], Validators.required] : ['', Validators.required],
       min_value: value && value[0] ? [value[0], Validators.required] : ['', Validators.required],
       operandType: item?.operandType ? [item.operandType, Validators.required] : ['ATTRIBUTE', Validators.required],
+      parentAttributeId: item?.parentAttributeId ? [item.parentAttributeId] : [''],
+      parentOperandId: item?.parentOperandId ? [item.parentOperandId] : [''],
       subConditionType: item?.subConditionType ? [item.subConditionType] : ['NONE', Validators.required],
       subConditions: this.formbuilder.array([])
     });
@@ -477,6 +497,8 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       conditionType: ['', Validators.required],
       operatorType: ['', Validators.required],
       actionType: ['', Validators.required],
+      parentAttributeId: [''],
+      parentOperandId: [''],
       operandType: ['ATTRIBUTE', Validators.required],
       subConditionType: ['NONE', Validators.required],
       subConditions: this.formbuilder.array([])
@@ -494,9 +516,17 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       case 'condition':
         formGroup.removeControl('actionType');
         this.conditions.push(formGroup);
-        if (index === 0) {
-          this.conditions.controls[index].get('conditionType')?.patchValue('NONE');
-        }
+        // if (index === 0) {
+        //   this.conditions.controls[index].get('conditionType')?.patchValue('NONE');
+        // }
+        this.conditions.controls.forEach((item: any, i: number) => {
+          if (index !== i) {
+            item.get('conditionType')?.patchValue('');
+          }
+          else {
+            this.conditions.controls[index].get('conditionType')?.patchValue('NONE');
+          }
+        })
         break;
       case 'action':
         this.removeControls(formGroup);
@@ -508,7 +538,9 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         break;
       default:
     }
-    // this.cdRef.detectChanges();
+    this.cdRef.detectChanges();
+    this.appStore.chageDetection.next(true);
+
   }
 
   // Common method to remove controls
@@ -610,14 +642,16 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
    * @param conditions any
    */
   public conditionsPatchValue(conditions: any) {
+    let lastIndex = conditions.length - 1;
     conditions.controls.forEach((element: any, index: number) => {
-      if (index === 0) {
-        element.get('conditionType').patchValue('NONE');
+      // if (index === 0) {
+      //   element.get('conditionType').patchValue('NONE');
+      // }
+      if (lastIndex !== index) {
+        element.get('conditionType')?.patchValue('');
       }
       else {
-        if (element.get('conditionType').value === 'NONE' && index !== 0) {
-          element.get('conditionType').patchValue('');
-        }
+        conditions.controls[lastIndex].get('conditionType')?.patchValue('NONE');
       }
       if (!!element.value.subConditions.length) {
         this.conditionsPatchValue(element.get('subConditions'));
@@ -820,7 +854,6 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
 
     // EDIT FOR CONDITIONS VALUES
     await this.conditionAndSubcondition(dataItem.condition);
-
     // PARAM FOR UPDATE AND INSERT THE BUSINESS RULE
     const param = dataItem;
     const updateParam = { ...param, id: this.ruleId };

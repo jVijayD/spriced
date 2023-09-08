@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output, forwardRef } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, forwardRef } from '@angular/core';
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
-import { FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormGroup, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
@@ -10,13 +10,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import {  AppDataService,ServiceTokens, FormDataFetchService } from '@spriced-frontend/shared/spriced-shared-lib';
+import { AppDataService, ServiceTokens, FormDataFetchService } from '@spriced-frontend/shared/spriced-shared-lib';
 import { DateAdapterService } from '@spriced-frontend/spriced-common-lib';
 import { DynamicFormService, FORM_DATA_SERVICE, SnackBarService } from '@spriced-frontend/spriced-ui-lib';
 import { CommonModule } from '@angular/common';
 import { NGX_MAT_DATE_FORMATS, NgxMatDateAdapter, NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 import { MatRadioModule } from '@angular/material/radio';
 import { RouterModule } from '@angular/router';
+import { MatMenuModule } from '@angular/material/menu';
 
 const MY_DATE_FORMAT = {
   parse: {
@@ -68,6 +69,7 @@ const sToken = new ServiceTokens();
     NgxMatDatetimePickerModule,
     NgxMatTimepickerModule,
     MatMomentDateModule,
+    MatMenuModule
   ],
   providers: [
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMAT },
@@ -99,6 +101,7 @@ export class BusinessRuleListComponent {
   @Input() preview?: boolean = false;
   @Input() dataRules?: any;
   @Input() index: any;
+  @Input() length: any;
   public conditionForm?: any;
   @Input() public set connectedDropListsIds(ids: string[]) {
     this.allDropListsIds = ids;
@@ -126,29 +129,80 @@ export class BusinessRuleListComponent {
     }
   ]
 
+  public selectedAttribute: any = '';
+  public selectedOperand: any = '';
 
   @Output() itemDrop: EventEmitter<CdkDragDrop<any>>
 
   constructor(
-    private appStore: AppDataService
+    private appStore: AppDataService,
+    public cdRef: ChangeDetectorRef
   ) {
     this.allDropListsIds = [];
     this.itemDrop = new EventEmitter();
+    this.appStore.chageDetection.subscribe((el: any) => {
+      if(el === true)
+      {
+        this.disable = this.isConditionTypeNone();
+        this.cdRef.detectChanges();
+      }
+    })
   }
 
   /**
    * Initialization tasks or data fetching can be done here
    */
   ngOnInit() {
+    // CURRENTLY HARD CODE FOR CHANGE THE NAME OF CONST TO VALUE
+    this.dataRules?.operands.map((el: any) => {
+      el.name === 'const' ? el.name = 'value' : '';
+      return
+    });
+
     this.conditionForm = this.item?.controls?.id === 'parent' ? this.item.controls.subConditions.controls[0] : this.item;
 
-    this.disable = this.conditionForm?.get('conditionType')?.value && this.conditionForm.get('conditionType')?.value === 'NONE';
-    const value = this.conditionForm?.get('operatorType')?.value;
-    const operandType = this.conditionForm?.get('operandType')?.value;
-    const attributeId = this.conditionForm?.get('attributeId')?.value;
+    this.disable = this.isConditionTypeNone();
+    
+    const value = this.getValue('operatorType');
+    const operandType = this.getValue('operandType');
+    const attributeId = this.getValue('attributeId');
+    const operand = this.getValue('operand');
+    const parentAttributeId = this.getValue('parentAttributeId');
+    const parentOperandId = this.getValue('parentOperandId');
+    
     this.handleValueChange(value);
     this.handleValue(operandType);
-    this.handleAttributes(attributeId);
+    this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
+  }
+
+  // Helper function to get values from conditionForm
+  private getValue(controlName: string) {
+    return this.conditionForm?.get(controlName)?.value;
+  }
+
+  // Helper function to check if conditionType is 'NONE'
+  private isConditionTypeNone() {
+    return this.conditionForm?.get('conditionType')?.value === 'NONE';
+  }
+
+  public selectAttribute(item: any, parent?: any, type?: string) {
+    if (type === 'operand') {
+      const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
+      this.selectedOperand = value;
+      this.conditionForm?.get('operand')?.setValue(item.id);
+      const parentAttId = parent && parent?.id !== '' ? parent.id : item.id;
+      this.conditionForm?.get('parentOperandId')?.setValue(parentAttId);
+    }
+    else {
+      const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
+      this.selectedAttribute = value;
+      this.selectedOperand = '';
+      this.conditionForm?.get('parentOperandId')?.setValue('');
+      this.conditionForm?.get('attributeId')?.setValue(item.id);
+      const parentAttId = parent && parent?.id !== '' ? parent.id : item.id;
+      this.conditionForm?.get('parentAttributeId')?.setValue(parentAttId);
+      this.handleAttributes(item.id, 'changeAttribute');
+    }
   }
 
   /**
@@ -160,6 +214,7 @@ export class BusinessRuleListComponent {
     this.valueConstant = ['CONSTANT', 'BLANK'].includes(event);
     this.conditionForm?.get('operand')?.enable();
     this.isFieldDisabled = event === 'BLANK';
+    this.selectedOperand = '';
     if (text === 'editValue') {
       this.conditionForm?.get('operand')?.setValue('');
     }
@@ -177,6 +232,7 @@ export class BusinessRuleListComponent {
     const valueControl = this.conditionForm?.get('operand');
     const minValueControl = this.conditionForm?.get('min_value');
     const maxValueControl = this.conditionForm?.get('max_value');
+    this.selectedOperand = '';
     // HANDLE FOR EDIT BY CHANGE VALUE
     if (text === 'changeValue') {
       this.conditionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
@@ -211,7 +267,14 @@ export class BusinessRuleListComponent {
    * @param value any
    */
   public handleAttributes(id: any, text?: string) {
-    const attribute = this.dataRules?.attributes.find((el: any) => el.id === id);
+    let attribute = this.findAttributeInArray(id, this.dataRules?.attributes);
+    // If not found, search within nested attributes
+    if (!attribute) {
+      this.dataRules?.attributes.some((el: any) => {
+        attribute = this.findAttributeInArray(id, el?.attributes);
+        return !!attribute;
+      });
+    }
     this.dataType = attribute?.dataType ? attribute?.dataType : 'AUTO';
     this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
     if (text === 'changeAttribute') {
@@ -222,6 +285,112 @@ export class BusinessRuleListComponent {
       this.conditionForm?.get('operand')!.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
   }
+
+  /**
+   * HANDLE THIS FUNCTION FOR PARENT AND CHILD ATTRIBUTE
+   * @param attributeId string
+   * @param parentAttributeId string 
+   * @param parentOperandId string
+   * @param operand string
+   */
+  public handleParentAttributes(attributeId: string, parentAttributeId?: string, parentOperandId?: string, operand?: string) {
+    const attribute = this.findAttributeById(attributeId);
+    const parentAttribute = this.findAttributeById(parentAttributeId);
+    const operend = this.findAttributeById(operand);
+    const parentOperand = this.findAttributeById(parentOperandId);
+
+    if ([attributeId, parentAttributeId, parentOperandId, operand].includes('')) {
+      this.selectedAttribute = '';
+      this.selectedOperand = '';
+    } else {
+      this.selectedAttribute = this.buildSelectedAttribute(attribute, parentAttribute);
+      this.selectedOperand = this.buildSelectedOperand(operend, parentOperand);
+    }
+
+    this.dataType = attribute?.dataType || 'AUTO';
+    this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
+
+    if (['DECIMAL', 'FLOAT', 'LINK'].includes(this.dataType)) {
+      const pattern = this.getValidationPatternForDataType(this.dataType);
+      this.conditionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
+    }
+  }
+
+  /**
+   * HANDLE THIS FUNCTION FOR FIND THE ATTRIBUTE BY ID
+   * @param id string
+   * @returns 
+   */
+  private findAttributeById(id: any): any {
+    if (id === '') {
+      return null;
+    }
+
+    let attributeItem: any = null;
+
+    // Look for the attribute directly in the attributes array
+    attributeItem = this.findAttributeInArray(id, this.dataRules?.attributes);
+
+    // If not found, search within nested attributes
+    if (!attributeItem) {
+      this.dataRules?.attributes.some((el: any) => {
+        attributeItem = this.findAttributeInArray(id, el?.attributes);
+        return !!attributeItem;
+      });
+    }
+
+    return attributeItem;
+  }
+
+  /**
+   * HANDLE THIS FUNCTION FOR FIND THE ATTRIBUTE ARRAY
+   * @param id string
+   * @param array any
+   * @returns 
+   */
+  private findAttributeInArray(id: any, array: any[]): any {
+    return array ? array.find((elm: any) => elm.id === id) : null;
+  }
+
+  /**
+   * HANDLE THIS FUNCTION FOR RETURN THE DISPLAYNAME OF PARENT AND CHILD ATTRIBUTE
+   * @param attribute any
+   * @param parentAttribute any
+   * @returns 
+   */
+  private buildSelectedAttribute(attribute: any, parentAttribute: any): string {
+    if (attribute?.id === parentAttribute?.id) {
+      return attribute?.displayName.trim();
+    }
+    return `${parentAttribute?.displayName.trim()}.${attribute.displayName}`;
+  }
+
+  /**
+   * HANDLE THIS FUNCTION FOR RETURN THE DISPLAYNAME OF PARENT AND CHILD OPERAND
+   * @param attribute any
+   * @param parentAttribute any
+   * @returns 
+   */
+  private buildSelectedOperand(operand: any, parentOperand: any): string {
+    if (operand?.id === parentOperand?.id) {
+      return operand?.displayName.trim();
+    }
+    return `${parentOperand?.displayName.trim()}.${operand.displayName}`;
+  }
+
+  private getValidationPatternForDataType(dataType: string): RegExp {
+    switch (dataType) {
+      case 'DECIMAL':
+        return /^(\d{1,9}\.\d{1,})$/;
+      case 'FLOAT':
+        return /^(\d{1,5}\.\d{1,})$/;
+      case 'LINK':
+        return /^(ftp|http|https):\/\/[^ "]+$/i;
+      default:
+        return /./; // Default pattern for other data types
+    }
+  }
+
 
   /**
    * HANDLE THIS FOR EMIT THE DROP ITEM
@@ -235,11 +404,10 @@ export class BusinessRuleListComponent {
    * HANDLE THIS FUNCTION FOR EMIT THE FORMGROUP
    * @param item any
    */
-  public removeRow(item: any)
-  {
+  public removeRow(item: any) {
     this.appStore.subConditionForm.next(item);
   }
-  
+
   /**
    * HANDLE FOR DROP LIST IDS
    */
@@ -260,6 +428,6 @@ export class BusinessRuleListComponent {
   public capitalizeOperatorType(value: any): string {
     return value.replace(/_/g, ' ').replace(/\w\S*/g, (word: string) => {
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-  });
-}
+    });
+  }
 }
