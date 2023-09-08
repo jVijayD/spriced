@@ -13,7 +13,7 @@
           <div>
             <mat-form-field appearance="outline">
               <mat-label>Entity Name</mat-label>
-              <input formControlName="name" matInput pattern='^([a-zA-Z0-9])([a-zA-Z0-9 #-_]*)$' max="100" />
+              <input formControlName="name" matInput pattern='^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$' max="100" />
             </mat-form-field>
             <div class="error">
               <mat-error
@@ -42,7 +42,7 @@
       <div class="ml-2">
         <mat-form-field appearance="outline">
           <mat-label>Display Name</mat-label>
-          <input matInput [(ngModel)]="local_data.displayName" max="100" pattern='^([a-zA-Z0-9])([a-zA-Z0-9 #-_]*)$' #uname="ngModel"/>
+          <input matInput [(ngModel)]="local_data.displayName" max="100" pattern='^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$' #uname="ngModel"/>
         </mat-form-field>
 
         <div class="error">
@@ -136,7 +136,7 @@
               matInput
               [(ngModel)]="attDetails.name"
               max="100"
-              pattern='^([a-zA-Z0-9])([a-zA-Z0-9 #-_]*)$' #aname="ngModel"
+              pattern='^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$' #aname="ngModel"
             />
           </mat-form-field>
           <mat-error
@@ -154,7 +154,7 @@
       >
           <mat-form-field appearance="outline" class="mb-2">
             <mat-label>Display Name</mat-label>
-            <input matInput [(ngModel)]="attDetails.displayName" pattern='^([a-zA-Z0-9])([a-zA-Z0-9 #-_]*)$' #dname="ngModel" max="100"/>
+            <input matInput [(ngModel)]="attDetails.displayName" pattern='^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$' #dname="ngModel" max="100"/>
             
           </mat-form-field>
           <mat-error
