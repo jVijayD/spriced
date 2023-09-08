@@ -12,7 +12,6 @@ import {
   MenuItem,
 } from "@spriced-frontend/shared/spriced-shared-lib";
 import { Subscription } from "rxjs";
-import { UserAccessService } from "@spriced-frontend/spriced-common-lib";
 
 @Component({
   standalone: true,
@@ -48,7 +47,6 @@ export class AppComponent implements OnDestroy, OnInit {
 
   constructor(
     public appDataService: AppDataService,
-    private userAccessService: UserAccessService,
     private router: Router
   ) {
     this.subscriptions.push(
@@ -65,9 +63,8 @@ export class AppComponent implements OnDestroy, OnInit {
       })
     );
     this.subscriptions.push(
-      this.userAccessService.loadAllApps().subscribe((appsList) => {
+      this.appDataService.getApps().subscribe((appsList) => {
         let appsAry = appsList.map((a) => a as Application);
-        appDataService.setApps(appsAry);
         this.sidebarData = appsAry;
       })
     );

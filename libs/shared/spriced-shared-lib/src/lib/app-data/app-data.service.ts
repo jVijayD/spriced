@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
+import { UserAccessService } from "@spriced-frontend/spriced-common-lib";
 import { BehaviorSubject, Observable, fromEvent, map, merge, of } from "rxjs";
-
 
 @Injectable({
   providedIn: "root",
@@ -9,6 +9,7 @@ export class AppDataService {
   private userData = new BehaviorSubject<UserData | null>(null);
   private menuData = new BehaviorSubject<MenuItem[]>([]);
   private appData = new BehaviorSubject<Application[]>([]);
+  private apps$ = this.appData.asObservable();
   ERROR_LIST: BehaviorSubject<errorElement[]> = new BehaviorSubject<errorElement[]>([]);
   networkStatus$ = new Observable<boolean>();
   public subConditionForm = new BehaviorSubject<any>(null);
@@ -16,8 +17,10 @@ export class AppDataService {
   userData$ = this.userData.asObservable();
   menuData$ = this.menuData.asObservable();
   $ERROR_LIST = this.ERROR_LIST.asObservable();
-  apps$ =this.appData.asObservable()
-  constructor() {}
+  hasAppsLoaded = false;
+  constructor(private userAccessService: UserAccessService) {
+    console.log("a");
+  }
 
   setUserData(user: UserData) {
     this.userData.next(user);
@@ -25,7 +28,14 @@ export class AppDataService {
   setApps(apps: Application[]) {
     this.appData.next(apps);
   }
-  getApps(){
+  getApps() {
+    if (!this.hasAppsLoaded) {
+      this.userAccessService.loadAllApps().subscribe((appsList) => {
+        let appsAry = appsList.map((a) => a as Application);
+        this.setApps(appsAry);
+        this.hasAppsLoaded = true;
+      });
+    }
     return this.apps$;
   }
 
@@ -49,12 +59,10 @@ export class AppDataService {
     return this.$ERROR_LIST;
   }
 
-  init(){
+  init() {
     this.setErrors([]);
   }
 }
-
-
 
 export interface errorElement {
   type: ErrorTypes;
@@ -63,8 +71,8 @@ export interface errorElement {
 }
 
 export enum ErrorTypes {
-  ERROR = 'Error',
-  WARNING = 'Warning',
+  ERROR = "Error",
+  WARNING = "Warning",
 }
 
 export interface UserData {

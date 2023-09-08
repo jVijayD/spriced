@@ -12,6 +12,7 @@ import {
   Router,
   ActivatedRoute,
 } from "@angular/router";
+import { AppDataService, Application } from "@spriced-frontend/shared/spriced-shared-lib";
 import { KeycloakAuthGuard, KeycloakService } from "keycloak-angular";
 import { Observable } from "rxjs";
 
@@ -20,12 +21,15 @@ import { Observable } from "rxjs";
 })
 export class AuthGuard extends KeycloakAuthGuard {
   user: any;
+  apps$ :Observable<Application[]>;
   constructor(
     protected override readonly router: Router,
     protected readonly keycloak: KeycloakService,
+    public appDataService: AppDataService,
     private aroute: ActivatedRoute
   ) {
     super(router, keycloak);
+    this.apps$ = this.appDataService.getApps();
   }
   async isAccessAllowed(
     route: ActivatedRouteSnapshot,
@@ -38,11 +42,23 @@ export class AuthGuard extends KeycloakAuthGuard {
       window.location.href = `${window.location.origin}?returnUrl=${encodedDefaultReturnUrl}`;
       return true;
     }
-    if (!this.hasRoles()) {
+    if (!this.hasRoles() || !this.hasAppPermission(route.url.toString())) {
       console.log(window.location.origin + state.url);
       window.location.href = `${window.location.origin}/unauthorized`;
     }
     return true;
+  }
+
+  hasAppPermission(url : string){
+    let retObj = false;
+    this.apps$.forEach(a=>{
+      if(a.map(app=>app.path)
+      .filter(p=>url.indexOf(p)!=-1)
+      .length > 0){
+        retObj = true;
+      }
+    });
+    return retObj;
   }
 
   hasRoles() {

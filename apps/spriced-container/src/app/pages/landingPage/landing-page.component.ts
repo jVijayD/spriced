@@ -18,19 +18,22 @@ import { AppDataService, Application } from "@spriced-frontend/shared/spriced-sh
     MatMenuModule,
     AppCardComponent,
   ],
-  providers:[AppDataService]
+  providers: [AppDataService],
 })
 export class LandingPageComponent implements OnInit {
-  
   labels: any;
-  apps:Application[]=[];
+  apps:Application[] = [];
   user = "";
   constructor(
     private keycloakService: KeycloakService,
     private aroute: ActivatedRoute,
     private router: Router,
     public appDataService: AppDataService
-    ) {}
+  ) {
+    this.appDataService.getApps().subscribe(e=>{
+    this.apps=e;
+  });
+}
 
   ngOnInit(): void {
     this.initializeUserOptions();
@@ -54,7 +57,6 @@ export class LandingPageComponent implements OnInit {
         this.router.navigateByUrl(returnUrl);
       }
     }
-    this.appDataService.getApps().subscribe(e=>this.apps=e);
   }
   capitalizeFirstLetter(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);
