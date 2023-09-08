@@ -13,7 +13,7 @@
           <div>
             <mat-form-field appearance="outline">
               <mat-label>Entity Name</mat-label>
-              <input formControlName="name" matInput pattern='^([a-zA-Z_0-9#:\s/]*)$'  />
+              <input formControlName="name" matInput pattern='^([a-zA-Z0-9])([a-zA-Z0-9 #-_]*)$' max="100" />
             </mat-form-field>
             <div class="error">
               <mat-error
@@ -31,7 +31,7 @@
                 *ngIf="
                   entityForm.controls['name'].hasError('pattern')
                 "
-                >Special character not allowed</mat-error
+                >Invalid Name</mat-error
               >
            
 
@@ -42,7 +42,7 @@
       <div class="ml-2">
         <mat-form-field appearance="outline">
           <mat-label>Display Name</mat-label>
-          <input matInput [(ngModel)]="local_data.displayName" pattern='^([a-zA-Z_0-9#:\s/]*)$' #uname="ngModel"/>
+          <input matInput [(ngModel)]="local_data.displayName" max="100" pattern='^([a-zA-Z0-9])([a-zA-Z0-9 #-_]*)$' #uname="ngModel"/>
         </mat-form-field>
 
         <div class="error">
@@ -50,7 +50,7 @@
             class="text-sm italic text-red-500"
             *ngIf="uname.hasError('pattern')"
            
-            >Special character not allowed</mat-error
+            >Invalid Display Name</mat-error
           >
        
  <mat-error
@@ -135,14 +135,15 @@
               [disabled]="attAction === 'Update'"
               matInput
               [(ngModel)]="attDetails.name"
-              pattern='^([a-zA-Z_0-9#:\s/]*)$' #aname="ngModel"
+              max="100"
+              pattern='^([a-zA-Z0-9])([a-zA-Z0-9 #-_]*)$' #aname="ngModel"
             />
           </mat-form-field>
           <mat-error
           class="text-sm italic text-red-500"
           *ngIf="aname.hasError('pattern')"
          
-          >Special character not allowed</mat-error
+          >Invalid Name</mat-error
         >
         <mat-error
         class="text-sm italic text-red-500"
@@ -153,14 +154,14 @@
       >
           <mat-form-field appearance="outline" class="mb-2">
             <mat-label>Display Name</mat-label>
-            <input matInput [(ngModel)]="attDetails.displayName" pattern='^([a-zA-Z_0-9:\s/-]*)$' #dname="ngModel"/>
+            <input matInput [(ngModel)]="attDetails.displayName" pattern='^([a-zA-Z0-9])([a-zA-Z0-9 #-_]*)$' #dname="ngModel" max="100"/>
             
           </mat-form-field>
           <mat-error
           class="text-sm italic text-red-500"
           *ngIf="dname.hasError('pattern')"
          
-          >Special character not allowed</mat-error
+          >Invalid Display Name</mat-error
         >
         <mat-error
         class="text-sm italic text-red-500"

@@ -78,14 +78,14 @@ export class ModelAddComponent {
         },
         {
           name: "pattern",
-          message: "Special character not allowed",
-          validator: Validators.pattern('^([a-zA-Z_0-9#:\s/-]*)$'),
+          message: "Invalid Name",
+          validator: Validators.pattern('^([a-zA-Z0-9])([a-zA-Z0-9 #-_]*)$'),
         },
-        // {
-        //   name: "minlength",
-        //   message: "Min length should be 5.",
-        //   validator: Validators.minLength(5),
-        // },
+        {
+          name: "maxlength",
+          message: "Min length should be 5.",
+          validator: Validators.maxLength(100),
+        },
       ],
     },
     {
@@ -104,14 +104,14 @@ export class ModelAddComponent {
         },
         {
           name: "pattern",
-          message: "Special character not allowed",
-          validator: Validators.pattern('^([a-zA-Z_0-9#:\s/]*)$'),
+          message: "Invalid Display Name",
+          validator: Validators.pattern('^([a-zA-Z0-9])([a-zA-Z0-9 #-_]*)$'),
         },
-        // {
-        //   name: "minlength",
-        //   message: "Min length should be 5.",
-        //   validator: Validators.minLength(5),
-        // },
+        {
+          name: "maxlength",
+          message: "Min length should be 5.",
+          validator: Validators.maxLength(100),
+        },
       ],
     },
   ];
