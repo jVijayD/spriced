@@ -76,11 +76,16 @@ export class ModelAddComponent {
           message: "Name is required.",
           validator: Validators.required,
         },
-        // {
-        //   name: "minlength",
-        //   message: "Min length should be 5.",
-        //   validator: Validators.minLength(5),
-        // },
+        {
+          name: "pattern",
+          message: "Invalid Name",
+          validator: Validators.pattern('^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$'),
+        },
+        {
+          name: "maxlength",
+          message: "Max length should be 100.",
+          validator: Validators.maxLength(100),
+        },
       ],
     },
     {
@@ -97,11 +102,16 @@ export class ModelAddComponent {
           message: "DisplayName is required.",
           validator: Validators.required,
         },
-        // {
-        //   name: "minlength",
-        //   message: "Min length should be 5.",
-        //   validator: Validators.minLength(5),
-        // },
+        {
+          name: "pattern",
+          message: "Invalid Display Name",
+          validator: Validators.pattern('^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$'),
+        },
+        {
+          name: "maxlength",
+          message: "Max length should be 100.",
+          validator: Validators.maxLength(100),
+        },
       ],
     },
 
