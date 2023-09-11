@@ -13,7 +13,7 @@
           <div>
             <mat-form-field appearance="outline">
               <mat-label>Entity Name</mat-label>
-              <input formControlName="name" matInput />
+              <input formControlName="name" matInput pattern='^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$' max="100" />
             </mat-form-field>
             <div class="error">
               <mat-error
@@ -25,6 +25,16 @@
                 "
                 >Name is required</mat-error
               >
+
+              <mat-error
+                class="text-sm italic text-red-500"
+                *ngIf="
+                  entityForm.controls['name'].hasError('pattern')
+                "
+                >Invalid Name</mat-error
+              >
+           
+
             </div>
           </div>
         </form>
@@ -32,9 +42,33 @@
       <div class="ml-2">
         <mat-form-field appearance="outline">
           <mat-label>Display Name</mat-label>
-          <input matInput [(ngModel)]="local_data.displayName" />
+          <input matInput [(ngModel)]="local_data.displayName" max="100" pattern='^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$' #uname="ngModel"/>
         </mat-form-field>
+
+        <div class="error">
+          <mat-error
+            class="text-sm italic text-red-500"
+            *ngIf="uname.hasError('pattern')"
+           
+            >Invalid Display Name</mat-error
+          >
+       
+ <mat-error
+                class="text-sm italic text-red-500"
+                *ngIf="
+                  local_data.displayName=='' || local_data.displayName==undefined
+                "
+                >Display Name is required</mat-error
+              >
+        </div>
+
       </div>
+
+      <mat-form-field appearance="outline" class="mb-2">
+        <mat-label>Description</mat-label>
+        <textarea matInput maxlength="100" [(ngModel)]="local_data.description"></textarea>
+      </mat-form-field>
+
       <div class="autoCheck">
         <mat-checkbox
           [disabled]="action == 'Edit'"
@@ -107,14 +141,45 @@
               [disabled]="attAction === 'Update'"
               matInput
               [(ngModel)]="attDetails.name"
+              max="100"
+              pattern='^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$' #aname="ngModel"
             />
           </mat-form-field>
-
+          <div class="error">
+          <mat-error
+          class="text-sm italic text-red-500"
+          *ngIf="aname.hasError('pattern')"
+         
+          >Invalid Name</mat-error
+        >
+        <mat-error
+        class="text-sm italic text-red-500"
+        *ngIf="
+         attDetails.name=='' ||  attDetails.name==undefined
+        "
+        >Name is required</mat-error
+      >
+      </div>
           <mat-form-field appearance="outline" class="mb-2">
             <mat-label>Display Name</mat-label>
-            <input matInput [(ngModel)]="attDetails.displayName" />
+            <input matInput [(ngModel)]="attDetails.displayName" pattern='^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$' #dname="ngModel" max="100"/>
+            
           </mat-form-field>
-
+          <div class="error">
+          <mat-error
+          class="text-sm italic text-red-500"
+          *ngIf="dname.hasError('pattern')"
+         
+          >Invalid Display Name</mat-error
+        >
+        <mat-error
+        class="text-sm italic text-red-500"
+        *ngIf="
+         attDetails.displayName=='' ||  attDetails.displayName==undefined
+        "
+        >Display Name is required</mat-error
+      >
+      </div>
           <mat-form-field appearance="outline" class="mb-2">
             <mat-label>Description</mat-label>
             <textarea
@@ -316,7 +381,11 @@
         [disabled]="
           attDetails.name === '' ||
           attDetails.name === undefined ||
-          attDetails.editable === false
+          attDetails.editable === false ||
+          aname.hasError('pattern')||
+          dname.hasError('pattern')||
+          attDetails.displayName==='' ||
+          attDetails.name === undefined 
         "
       >
         {{ attAction }} Attribute
@@ -338,7 +407,7 @@
       color="primary"
       type="submit"
       (click)="doAction()"
-      [disabled]="entityForm.invalid && action !== 'Edit'"
+      [disabled]="entityForm.invalid && action !== 'Edit' || local_data.displayName=='' || local_data.displayName==undefined"
     >
       Save
     </button>

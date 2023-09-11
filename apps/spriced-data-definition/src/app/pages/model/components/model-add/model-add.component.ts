@@ -67,7 +67,7 @@ export class ModelAddComponent {
       name: "name",
       value: this.data.value?.name || "",
       placeholder: "Name",
-      icon: "schema",
+      // icon: "schema",
       label: "Name",
       readOnly: this.data.action == "Edit" ? true : false,
       validations: [
@@ -76,11 +76,16 @@ export class ModelAddComponent {
           message: "Name is required.",
           validator: Validators.required,
         },
-        // {
-        //   name: "minlength",
-        //   message: "Min length should be 5.",
-        //   validator: Validators.minLength(5),
-        // },
+        {
+          name: "pattern",
+          message: "Invalid Name",
+          validator: Validators.pattern('^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$'),
+        },
+        {
+          name: "maxlength",
+          message: "Max length should be 100.",
+          validator: Validators.maxLength(100),
+        },
       ],
     },
     {
@@ -89,7 +94,7 @@ export class ModelAddComponent {
       name: "displayName",
       value: this.data.value?.displayName || "",
       placeholder: "DisplayName",
-      icon: "schema",
+      // icon: "schema",
       label: "DisplayName",
       validations: [
         {
@@ -97,13 +102,29 @@ export class ModelAddComponent {
           message: "DisplayName is required.",
           validator: Validators.required,
         },
-        // {
-        //   name: "minlength",
-        //   message: "Min length should be 5.",
-        //   validator: Validators.minLength(5),
-        // },
+        {
+          name: "pattern",
+          message: "Invalid Display Name",
+          validator: Validators.pattern('^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$'),
+        },
+        {
+          name: "maxlength",
+          message: "Max length should be 100.",
+          validator: Validators.maxLength(100),
+        },
       ],
     },
+
+    {
+      type: "input",
+      subType: "text",
+      name: "description",
+      value: this.data.value?.description || "",
+      placeholder: "Description",
+      label: "Description",
+      maxLength:100
+    },
+
   ];
 
   appForm!: AppForm;
@@ -132,6 +153,7 @@ export class ModelAddComponent {
           },
         });
       } else if (this.data.action == "Edit") {
+        console.log(data.value)
         this.modelService.edit(data.value, this.data.value).subscribe({
           next: (results: any) => {
             this.snackbarService.success("Model Successfully Updated.");

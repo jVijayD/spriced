@@ -106,6 +106,7 @@ export class BusinessactionsComponent implements OnInit {
   @Input() public dataRules: any;
   public dataType: any = 'AUTO';
   public dynamicInputType: any;
+  public filteredAttributes: any;
 
   public onChange: any = () => { }
   public onTouch: any = () => { }
@@ -118,6 +119,7 @@ export class BusinessactionsComponent implements OnInit {
    *  Initialization tasks or data fetching can be done here
    */
   ngOnInit(): void {
+    this.filteredAttributes = this.dataRules?.attributes.filter((el: any) => el.type !== 'LOOKUP');
     const value = this.actionForm.get('actionType')?.value;
     const attributeId = this.actionForm.get('attributeId')?.value;
     this.handleValueChange(value);
@@ -169,7 +171,7 @@ export class BusinessactionsComponent implements OnInit {
    * @param value any
    */
     public handleAttributes(id: any, text?: string) {
-      const attribute = this.dataRules?.attributes.find((el: any) => el.id === id);
+      const attribute = this.filteredAttributes.find((el: any) => el.id === id);
       this.dataType = attribute?.dataType ? attribute?.dataType : 'AUTO';
       this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
       if (text === 'changeAttribute') {

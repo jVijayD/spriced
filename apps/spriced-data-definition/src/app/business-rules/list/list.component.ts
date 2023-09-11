@@ -487,35 +487,42 @@ export class ListComponent implements OnInit, OnDestroy {
   public async handleAttributeByEntity(id: any) {
     this.entityId = id;
     this.loading = true;
-    const entity = this.entities.find((item: any) => item.id == id);
-    this.attributes = [];
-    this.mockAttribute = entity.attributes;
-    const relatedRefreneceTableEntity = entity.attributes.filter((el: any) => !!el.referencedTableId);
-    if(relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0)
-    {
+    if (id) {
+      const entity = this.entities.find((item: any) => item.id == id);
+      this.attributes = [];
+      this.mockAttribute = entity.attributes;
+      const relatedRefreneceTableEntity = entity.attributes.filter((el: any) => !!el.referencedTableId);
+      if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
         this.mockAttribute.push(relatedRefreneceTableEntity[0]);
         let { entityData } = await this.getEntityById(relatedRefreneceTableEntity[0].referencedTableId);
         const nestedProcessedAttributes = this.processNestedAttributes(entityData.attributes, relatedRefreneceTableEntity[0].displayName);
         this.mockAttribute.push(...nestedProcessedAttributes);
+      }
+      this.attributes = [
+        {
+          displayName: 'All',
+          name: 'All',
+          id: 'ALL',
+        },
+        ...this.mockAttribute,
+      ];
+      this.defaultAttribute = this.attributeId ? this.attributeId : 'ALL';
+      // this.attributes = entity.attributes;
+      this.filterData = this.dataSource.filter((res: any) => res.entityId === id);
+      this.rows = this.filterData;
+      this.currentDataSource = this.filterData.slice(
+        this.pageIndex,
+        this.pageIndex + this.pageSize
+      );
+      this.paginator?.firstPage();
+      this.loading = false;
     }
-    this.attributes = [
-      {
-        displayName: 'All',
-        name: 'All',
-        id: 'ALL',
-      },
-      ...this.mockAttribute,
-    ];
-    this.defaultAttribute = this.attributeId ? this.attributeId : 'ALL';
-    // this.attributes = entity.attributes;
-    this.filterData = this.dataSource.filter((res: any) => res.entityId === id);
-    this.rows = this.filterData;
-    this.currentDataSource = this.filterData.slice(
-      this.pageIndex,
-      this.pageIndex + this.pageSize
-    );
-    this.paginator?.firstPage();
-    this.loading = false;
+    else {
+      this.rows = [];
+      this.filterData = [];
+      this.attributes = [];
+      this.loading = false;
+    }
   }
 
   /**
@@ -549,26 +556,26 @@ export class ListComponent implements OnInit, OnDestroy {
   * @param parentAttribute string
   * @returns 
   */
-      public processNestedAttributes(nestedAttributes: any, parentAttribute: string) {
-        const processedAttributes: any = [];
-        if (nestedAttributes) {
-          nestedAttributes.forEach((el: any) => {
-            const processedAttribute = {
-              ...el,
-              displayName: `${parentAttribute}.${el.displayName}`,
-              name: `${parentAttribute}.${el.displayName}`
-            };
-            processedAttributes.push(processedAttribute);
-    
-            // if (el.attributes && el.attributes.length > 0) {
-            //   const nestedProcessedAttributes = this.processNestedAttributes(el.attributes, el.displayName);
-            //   processedAttributes.push(...nestedProcessedAttributes);
-            // }
-          });
-        }
-    
-        return processedAttributes;
-      }
+  public processNestedAttributes(nestedAttributes: any, parentAttribute: string) {
+    const processedAttributes: any = [];
+    if (nestedAttributes) {
+      nestedAttributes.forEach((el: any) => {
+        const processedAttribute = {
+          ...el,
+          displayName: `${parentAttribute}.${el.displayName}`,
+          name: `${parentAttribute}.${el.displayName}`
+        };
+        processedAttributes.push(processedAttribute);
+
+        // if (el.attributes && el.attributes.length > 0) {
+        //   const nestedProcessedAttributes = this.processNestedAttributes(el.attributes, el.displayName);
+        //   processedAttributes.push(...nestedProcessedAttributes);
+        // }
+      });
+    }
+
+    return processedAttributes;
+  }
 
   /**
    * HANDLING FOR CHANGE PAGE
@@ -792,13 +799,12 @@ export class ListComponent implements OnInit, OnDestroy {
           const finalArray = [`${joinedString}`];
           operand = finalArray;
         }
-        if (action.actionType.toLowerCase().trim().endsWith('to'))
-        {
+        if (action.actionType.toLowerCase().trim().endsWith('to')) {
           const lastindex = action.actionType.toLowerCase().lastIndexOf('to');
           if (
             (lastindex > -1) && (lastindex === 0 || action.actionType[lastindex - 1] === ' ')
-          ){
-            action.actionType = action.actionType.substring(0,lastindex)
+          ) {
+            action.actionType = action.actionType.substring(0, lastindex)
           }
         };
         tooltipActionConditionsText += `${attribute.name

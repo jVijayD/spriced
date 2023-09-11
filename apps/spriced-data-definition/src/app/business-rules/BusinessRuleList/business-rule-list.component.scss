@@ -53,3 +53,58 @@ li {
   opacity: 0;
   height: 0;
 }
+
+::ng-deep .mat-mdc-menu-panel {
+  max-height: 300px;
+  overflow-y: auto;
+  width: 160px;
+}
+
+.radio-groups {
+  mat-radio-button:first-child {
+    margin-left: 0 !important;
+  }
+
+  mat-radio-button {
+    margin-left: 4px;
+
+    .mdc-form-field .mdc-label {
+      font-size: 12px;
+    }
+  }
+}
+
+.down-arrow-icon {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.close-button {
+  width: 23px;
+  min-width: 23px;
+}
+
+.items-center {
+  margin-top: 20px;
+}
+
+.close-button[_ngcontent-ng-c2625581465] {
+  width: 23px;
+  min-width: 23px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.delete-icon {
+  display: inline-table;
+  font-size: 22px;
+  margin: 0;
+}
+
+.example-container {
+  text-align: center;
+}
+
+.disableMenu{
+  pointer-events: none;
+}

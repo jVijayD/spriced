@@ -47,6 +47,14 @@ export class ModelListComponent {
       isTreeColumn: true,
     },
     {
+      column: "action",
+      name: "Action",
+      canAutoResize: true,
+      isSortable: true,
+      isTreeColumn:false,
+      action:true,
+    },
+    {
       column: "updatedBy",
       name: "Updated By",
       canAutoResize: true,
