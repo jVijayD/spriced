@@ -145,6 +145,7 @@
               pattern='^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$' #aname="ngModel"
             />
           </mat-form-field>
+          <div class="error">
           <mat-error
           class="text-sm italic text-red-500"
           *ngIf="aname.hasError('pattern')"
@@ -158,11 +159,13 @@
         "
         >Name is required</mat-error
       >
+      </div>
           <mat-form-field appearance="outline" class="mb-2">
             <mat-label>Display Name</mat-label>
             <input matInput [(ngModel)]="attDetails.displayName" pattern='^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$' #dname="ngModel" max="100"/>
             
           </mat-form-field>
+          <div class="error">
           <mat-error
           class="text-sm italic text-red-500"
           *ngIf="dname.hasError('pattern')"
@@ -176,6 +179,7 @@
         "
         >Display Name is required</mat-error
       >
+      </div>
           <mat-form-field appearance="outline" class="mb-2">
             <mat-label>Description</mat-label>
             <textarea

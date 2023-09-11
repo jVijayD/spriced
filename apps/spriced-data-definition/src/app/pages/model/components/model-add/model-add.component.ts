@@ -115,15 +115,15 @@ export class ModelAddComponent {
       ],
     },
 
-    {
-      type: "input",
-      subType: "text",
-      name: "description",
-      value: this.data.value?.description || "",
-      placeholder: "Description",
-      label: "Description",
-      maxLength:100
-    },
+    // {
+    //   type: "input",
+    //   subType: "text",
+    //   name: "description",
+    //   value: this.data.value?.description || "",
+    //   placeholder: "Description",
+    //   label: "Description",
+    //   maxLength:100
+    // },
 
   ];
 
