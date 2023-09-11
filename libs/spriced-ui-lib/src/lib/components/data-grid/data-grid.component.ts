@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   EventEmitter,
+  HostListener,
   Input,
   OnDestroy,
   Output,
@@ -22,6 +23,7 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ExportFileService } from "./export-file";
 import { MatIconModule } from "@angular/material/icon";
+import { Subject, debounceTime } from "rxjs";
 
 @Component({
   selector: "sp-data-grid",
@@ -46,7 +48,7 @@ export class DataGridComponent implements AfterViewInit {
   table!: DatatableComponent;
   loading: boolean = false;
   hidden: boolean = false;
-
+  resizeTable = new Subject<any>();
   @Input()
   title = "";
 
@@ -122,7 +124,11 @@ export class DataGridComponent implements AfterViewInit {
   @Output()
   sort: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private exportService: ExportFileService) {}
+  constructor(private exportService: ExportFileService) {
+    this.resizeTable.pipe(debounceTime(400)).subscribe(() => {
+      this.table.recalculate();
+    });
+  }
 
   onPaginate(e: Paginate) {
     this.paginate.emit(e);
@@ -198,6 +204,10 @@ export class DataGridComponent implements AfterViewInit {
       return prev === "-##" ? row[cur] : `${prev} {${row[cur]}}`;
     }, "-##");
   }
+  @HostListener('window:resize',['$event'])
+  resize(event:any){
+    this.resizeTable.next(true);
+  } 
 }
 
 export interface Header {
