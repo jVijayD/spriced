@@ -11,7 +11,6 @@ export class AppDataService {
   ERROR_LIST: BehaviorSubject<errorElement[]> = new BehaviorSubject<errorElement[]>([]);
   networkStatus$ = new Observable<boolean>();
   public subConditionForm = new BehaviorSubject<any>(null);
-  public chageDetection = new Subject();
 
   userData$ = this.userData.asObservable();
   menuData$ = this.menuData.asObservable();

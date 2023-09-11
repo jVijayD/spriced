@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { AppDataService, ServiceTokens, FormDataFetchService } from '@spriced-frontend/shared/spriced-shared-lib';
-import { DateAdapterService } from '@spriced-frontend/spriced-common-lib';
+import { BusinessruleService, DateAdapterService } from '@spriced-frontend/spriced-common-lib';
 import { DynamicFormService, FORM_DATA_SERVICE, SnackBarService } from '@spriced-frontend/spriced-ui-lib';
 import { CommonModule } from '@angular/common';
 import { NGX_MAT_DATE_FORMATS, NgxMatDateAdapter, NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
@@ -136,11 +136,12 @@ export class BusinessRuleListComponent {
 
   constructor(
     private appStore: AppDataService,
-    public cdRef: ChangeDetectorRef
+    private businessruleservice: BusinessruleService,
+    private cdRef: ChangeDetectorRef
   ) {
     this.allDropListsIds = [];
     this.itemDrop = new EventEmitter();
-    this.appStore.chageDetection.subscribe((el: any) => {
+    this.businessruleservice.ruleChageDetection.subscribe((el: any) => {
       if(el === true)
       {
         this.disable = this.isConditionTypeNone();
@@ -299,7 +300,9 @@ export class BusinessRuleListComponent {
     const operend = this.findAttributeById(operand);
     const parentOperand = this.findAttributeById(parentOperandId);
 
-    if ([attributeId, parentAttributeId, parentOperandId, operand].includes('')) {
+    const checkValue = [attributeId, parentAttributeId, parentOperandId, operand].every(element => element === '');
+
+    if (checkValue) {
       this.selectedAttribute = '';
       this.selectedOperand = '';
     } else {

@@ -157,7 +157,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       let attributeList: any = [];
       const relatedRefreneceTableEntity = entity.attributes.filter((el: any) => !!el.referencedTableId);
       attributeList = entity.attributes;
-
+      
       // Handle for nested attribute
       if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
         let { entityData } = await this.getEntityById(relatedRefreneceTableEntity[0].referencedTableId);
@@ -536,7 +536,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       default:
     }
     this.cdRef.detectChanges();
-    this.appStore.chageDetection.next(true);
+    this.businessRuleService.ruleChageDetection.next(true);
 
   }
 
