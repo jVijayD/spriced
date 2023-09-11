@@ -1,18 +1,18 @@
 <!-- MANAGE BUSINESS CONDITION RULES -->
-<div
-    cdkDropList
-    class="item-dropzone parent"
-    [id]="parentItemId"
-    [cdkDropListData]="parentItem"
-    [cdkDropListConnectedTo]="allDropListsIds"
-    (cdkDropListDropped)="onDragDrop($event)"
-  >
+<div 
+   cdkDropList 
+   class="item-dropzone parent" 
+   [id]="parentItemId" 
+   [cdkDropListData]="parentItem"
+   [cdkDropListConnectedTo]="allDropListsIds" 
+   (cdkDropListDropped)="onDragDrop($event)"
+   >
   <div 
-      cdkDrag
-      [id]="item?.value?.id"
-      *ngIf="item?.value?.id !== 'parent'"
-      [cdkDragData]="item"
-      [cdkDragDisabled]="dragDisabled || preview"
+     cdkDrag 
+     [id]="item?.value?.id" 
+     *ngIf="item?.value?.id !== 'parent'" 
+     [cdkDragData]="item"
+     [cdkDragDisabled]="dragDisabled || preview"
      >
     <form *ngIf="!!conditionForm" [formGroup]="conditionForm">
       <div title="Drag this item with children" class="item-drag-handle" cdkDragHandle>
@@ -23,30 +23,14 @@
           <div class="rule-drop-down flex condition-conatiner">
             <div class="example-container  mt-8 mr-5 flex flex-col">
               <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
-                <mat-label>Condition</mat-label>
-                <mat-select [panelClass]="preview ? 'hideOption' : ''" [(value)]="defValue"
-                  formControlName="conditionType">
-                  <mat-option *ngFor="let condition of dataRules?.conditions"
-                    [disabled]="disable || condition.value === 'NONE'" [value]="condition?.value">
-                    {{condition.name}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-              <mat-error class="text-sm italic text-red-500"
-                *ngIf="conditionForm.get('conditionType')!.invalid && conditionForm.get('conditionType')!.touched && conditionForm.get('conditionType')!.hasError('required')">
-                Condition value is required
-              </mat-error>
-            </div>
-
-            <div class="example-container  mt-8 mr-5 flex flex-col">
-              <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
                 <mat-label>Attribute</mat-label>
-                <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="attributeId"
-                  (valueChange)="handleAttributes($event, 'changeAttribute')">
-                  <mat-option *ngFor="let attribute of dataRules?.attributes" [value]="attribute?.id">
-                    {{attribute.displayName}}
-                  </mat-option>
-                </mat-select>
+                <div class="flex attribute-input" [ngClass]="preview ? 'disableMenu' : ''" [matMenuTriggerFor]="attributeMenu">
+                  <input style="display: none;" [readonly]="true" [readonly]="preview" matInput placeholder="Add Value"
+                    formControlName="attributeId" [disabled]="isFieldDisabled">
+                  <input [readonly]="true" [readonly]="preview" matInput placeholder="Add Value" required
+                    [value]="selectedAttribute" [disabled]="isFieldDisabled">
+                  <mat-icon class="down-arrow-icon">arrow_drop_down</mat-icon>
+                </div>
               </mat-form-field>
               <mat-error class="text-sm italic text-red-500"
                 *ngIf="conditionForm.get('attributeId')!.invalid && conditionForm.get('attributeId')!.touched && conditionForm.get('attributeId')!.hasError('required')">
@@ -54,11 +38,32 @@
               </mat-error>
             </div>
 
+            <!-- MAT MENU FOR NESTED ATTRIBUTE -->
+            <mat-menu class="attribute-menu" #attributeMenu="matMenu" yPosition="below">
+              <ng-container *ngFor="let attribute of dataRules?.attributes">
+                <button [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
+                  (click)="selectAttribute(attribute)">
+                  {{ attribute.displayName }}
+                </button>
+                <mat-menu #nestedMenu="matMenu">
+                  <button mat-menu-item *ngFor="let nestedAttribute of attribute.attributes"
+                    (click)="selectAttribute(nestedAttribute, attribute)">
+                    {{ nestedAttribute.displayName }}
+                  </button>
+                </mat-menu>
+
+              </ng-container>
+            </mat-menu>
+
             <div class="example-container  mt-8 mr-5 flex flex-col">
               <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
                 <mat-label>Operator</mat-label>
-                <mat-select [panelClass]="preview ? 'hideOption' : ''" class="break-all"
-                  (valueChange)="handleValueChange($event, 'changeValue')" formControlName="operatorType">
+                <mat-select 
+                     [panelClass]="preview ? 'hideOption' : ''" 
+                     class="break-all"
+                     (valueChange)="handleValueChange($event, 'changeValue')" 
+                     formControlName="operatorType"
+                >
                   <mat-option *ngFor="let Operator of dataRules?.operators" [value]="Operator?.value">
                     <p>{{this.capitalizeOperatorType(Operator.value)}}</p>
                   </mat-option>
@@ -83,14 +88,13 @@
                 <!-- WHEN DATATYPE IS EQUAL TO STRING -->
                 <mat-form-field
                   *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER'].includes(dataType)"
-                  [ngClass]="preview ? 'not-allow' : ''" class="w-52" appearance="outline">
+                  [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
                   <mat-label>Value</mat-label>
                   <input [readonly]="preview" [type]="dynamicInputType" [readonly]="preview" matInput
                     placeholder="Add Value" formControlName="operand" [disabled]="isFieldDisabled">
                 </mat-form-field>
-
                 <!-- WHEN DATATYPE IS EQUAL TO BOOLEAN -->
-                <mat-form-field *ngIf="dataType === 'BOOLEAN'" [ngClass]="preview ? 'not-allow' : ''" class="w-52"
+                <mat-form-field *ngIf="dataType === 'BOOLEAN'" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
                   appearance="outline">
                   <mat-label>Value</mat-label>
                   <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="operand">
@@ -100,7 +104,7 @@
                 </mat-form-field>
 
                 <!-- WHEN DATATYPE IS EQUAL TO TEXT -->
-                <mat-form-field *ngIf="['TEXT'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-52"
+                <mat-form-field *ngIf="['TEXT'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
                   appearance="outline">
                   <mat-label>Textarea</mat-label>
                   <textarea class="text-box" [readonly]="preview" matInput placeholder="Add Value"
@@ -108,7 +112,7 @@
                 </mat-form-field>
 
                 <!-- WHEN DATATYPE IS EQUAL TO DATE -->
-                <mat-form-field *ngIf="['DATE'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-52"
+                <mat-form-field *ngIf="['DATE'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
                   appearance="outline">
                   <mat-label>Date</mat-label>
                   <input matInput [readonly]="preview" [matDatepicker]="datepicker" formControlName="operand">
@@ -118,23 +122,25 @@
 
                 <!-- WHEN DATATYPE IS EQUAL TO TIME STAMP -->
                 <mat-form-field *ngIf="['TIME_STAMP', 'DATE_TIME'].includes(dataType)"
-                  [ngClass]="preview ? 'not-allow' : ''" class="w-52" appearance="outline">
+                  [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
                   <mat-label>DateTime</mat-label>
                   <input matInput [readonly]="preview" [ngxMatDatetimePicker]="picker1" formControlName="operand">
                   <mat-datepicker-toggle [disabled]="preview" matSuffix [for]="$any(picker1)"></mat-datepicker-toggle>
-                  <ngx-mat-datetime-picker [hideTime]="true" [panelClass]="'matDatePopup'" #picker1></ngx-mat-datetime-picker>
+                  <ngx-mat-datetime-picker [hideTime]="true" [panelClass]="'matDatePopup'"
+                    #picker1></ngx-mat-datetime-picker>
                 </mat-form-field>
               </ng-container>
 
               <!-- WHEN OPERANDS TYPE IS ATTRIBUTE -->
-              <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-52" appearance="outline"
-                *ngIf="!valueConstant">
+              <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline" *ngIf="!valueConstant">
                 <mat-label>Attribute</mat-label>
-                <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="operand">
-                  <mat-option *ngFor="let attribute of dataRules?.attributes" [value]="attribute?.id">
-                    {{attribute.displayName}}
-                  </mat-option>
-                </mat-select>
+                <div class="flex attribute-input" [ngClass]="preview ? 'disableMenu' : ''" [matMenuTriggerFor]="operandMenu">
+                  <input style="display: none;" [readonly]="true" [readonly]="preview" matInput placeholder="Add Value"
+                    formControlName="operand" [disabled]="isFieldDisabled">
+                  <input [readonly]="true" [readonly]="preview" matInput placeholder="Add Value" required
+                    [value]="selectedOperand" [disabled]="isFieldDisabled">
+                  <mat-icon class="down-arrow-icon">arrow_drop_down</mat-icon>
+                </div>
               </mat-form-field>
 
               <mat-error class="text-sm italic text-red-500"
@@ -146,6 +152,23 @@
                 enter a valid pattern</mat-error>
             </div>
 
+            <!-- MAT MENU FOR NESTED ATTRIBUTE -->
+            <mat-menu class="attribute-menu" #operandMenu="matMenu" yPosition="below">
+              <ng-container *ngFor="let attribute of dataRules?.attributes">
+                <button [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
+                  (click)="selectAttribute(attribute, '', 'operand')">
+                  {{ attribute.displayName }}
+                </button>
+                <mat-menu #nestedMenu="matMenu">
+                  <button mat-menu-item *ngFor="let nestedAttribute of attribute.attributes"
+                    (click)="selectAttribute(nestedAttribute, attribute, 'operand')">
+                    {{ nestedAttribute.displayName }}
+                  </button>
+                </mat-menu>
+
+              </ng-container>
+            </mat-menu>
+
             <div class="example-container mt-8 mr-5 flex flex-col" *ngIf="minValue">
               <mat-form-field
                 *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER'].includes(dataType)"
@@ -155,7 +178,7 @@
               </mat-form-field>
 
               <!-- WHEN DATATYPE IS EQUAL TO BOOLEAN -->
-              <mat-form-field *ngIf="dataType === 'BOOLEAN'" [ngClass]="preview ? 'not-allow' : ''" class="w-52"
+              <mat-form-field *ngIf="dataType === 'BOOLEAN'" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
                 appearance="outline">
                 <mat-label>Value</mat-label>
                 <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="min_value">
@@ -165,7 +188,7 @@
               </mat-form-field>
 
               <!-- WHEN DATATYPE IS EQUAL TO TEXT -->
-              <mat-form-field *ngIf="['TEXT'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-52"
+              <mat-form-field *ngIf="['TEXT'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
                 appearance="outline">
                 <mat-label>Textarea</mat-label>
                 <textarea class="text-box" [readonly]="preview" matInput placeholder="Add Value"
@@ -173,7 +196,7 @@
               </mat-form-field>
 
               <!-- WHEN DATATYPE IS EQUAL TO DATE -->
-              <mat-form-field *ngIf="['DATE'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-52"
+              <mat-form-field *ngIf="['DATE'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
                 appearance="outline">
                 <mat-label>Date</mat-label>
                 <input matInput [readonly]="preview" [matDatepicker]="datepicker1" formControlName="min_value"
@@ -184,13 +207,14 @@
 
               <!-- WHEN DATATPE IS EQUAL TO TIME STAMP -->
               <mat-form-field *ngIf="['TIME_STAMP', 'DATE_TIME'].includes(dataType)"
-                [ngClass]="preview ? 'not-allow' : ''" class="w-52" appearance="outline">
+                [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
                 <mat-label>DateTime</mat-label>
                 <input matInput [readonly]="preview" [ngxMatDatetimePicker]="mindatetimepicker1"
                   formControlName="min_value">
                 <mat-datepicker-toggle [disabled]="preview" matSuffix
                   [for]="$any(mindatetimepicker1)"></mat-datepicker-toggle>
-                <ngx-mat-datetime-picker [hideTime]="true" #mindatetimepicker1 [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
+                <ngx-mat-datetime-picker [hideTime]="true" #mindatetimepicker1
+                  [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
               </mat-form-field>
 
               <mat-error class="text-sm italic text-red-500"
@@ -208,7 +232,7 @@
               </mat-form-field>
 
               <!-- WHEN DATATYPE IS EQUAL TO BOOLEAN -->
-              <mat-form-field *ngIf="dataType === 'BOOLEAN'" [ngClass]="preview ? 'not-allow' : ''" class="w-52"
+              <mat-form-field *ngIf="dataType === 'BOOLEAN'" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
                 appearance="outline">
                 <mat-label>Value</mat-label>
                 <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="max_value">
@@ -218,7 +242,7 @@
               </mat-form-field>
 
               <!-- WHEN DATATYPE IS EQUAL TO TEXT -->
-              <mat-form-field *ngIf="['TEXT'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-52"
+              <mat-form-field *ngIf="['TEXT'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
                 appearance="outline">
                 <mat-label>Textarea</mat-label>
                 <textarea class="text-box" [readonly]="preview" matInput placeholder="Add Value"
@@ -226,7 +250,7 @@
               </mat-form-field>
 
               <!-- WHEN DATATYPE IS EQUAL TO DATE -->
-              <mat-form-field *ngIf="['DATE'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-52"
+              <mat-form-field *ngIf="['DATE'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
                 appearance="outline">
                 <mat-label>Date</mat-label>
                 <input matInput [readonly]="preview" [matDatepicker]="datepicker2" formControlName="max_value"
@@ -237,13 +261,14 @@
 
               <!-- WHEN DATATPE IS EQUAL TO TIME STAMP -->
               <mat-form-field *ngIf="['TIME_STAMP', 'DATE_TIME'].includes(dataType)"
-                [ngClass]="preview ? 'not-allow' : ''" class="w-52" appearance="outline">
+                [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
                 <mat-label>DateTime</mat-label>
                 <input matInput [readonly]="preview" [ngxMatDatetimePicker]="maxdatetimepicker1"
                   formControlName="max_value">
                 <mat-datepicker-toggle [disabled]="preview" matSuffix
                   [for]="$any(maxdatetimepicker1)"></mat-datepicker-toggle>
-                <ngx-mat-datetime-picker [hideTime]="true" #maxdatetimepicker1 [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
+                <ngx-mat-datetime-picker [hideTime]="true" #maxdatetimepicker1
+                  [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
               </mat-form-field>
 
               <mat-error class="text-sm italic text-red-500"
@@ -252,9 +277,27 @@
               </mat-error>
             </div>
 
-            <div class="close-btn flex justify-center items-center" *ngIf="!preview">
-              <button type="button" mat-icon-button class="close-button" (click)="removeRow(conditionForm)">
-                <mat-icon class="close-icon flex justify-center items-center" color="warn">close</mat-icon>
+            <div class="example-container  mt-8 mr-5 flex flex-col">
+              <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
+                <mat-label>Condition</mat-label>
+                <mat-select [panelClass]="preview ? 'hideOption' : ''" [(value)]="defValue"
+                  formControlName="conditionType">
+                  <mat-option *ngFor="let condition of dataRules?.conditions"
+                    [disabled]="disable || condition.value === 'NONE'" [value]="condition?.value">
+                    {{condition.name}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-error class="text-sm italic text-red-500"
+                *ngIf="conditionForm.get('conditionType')!.invalid && conditionForm.get('conditionType')!.touched && conditionForm.get('conditionType')!.hasError('required')">
+                Condition value is required
+              </mat-error>
+            </div>
+
+            <div class="example-container mt-8 mr-5 flex flex-col" *ngIf="!preview">
+              <button type="button" mat-raised-button color="primary" class="close-button"
+                (click)="removeRow(conditionForm)">
+                <mat-icon class="delete-icon">delete</mat-icon>
               </button>
             </div>
 
@@ -270,37 +313,40 @@
 
   <!-- SUBCONDITIONS CONTAINER -->
   <ul 
-     cdkDropList
-     class="item-dropzone"
-     [id]="item?.value.id"
-     [cdkDropListConnectedTo]="connectedDropListsIds"
-     [cdkDropListData]="item"
-     (cdkDropListDropped)="onDragDrop($event)"
+    cdkDropList 
+    class="item-dropzone" 
+    [id]="item?.value.id" 
+    [cdkDropListConnectedTo]="connectedDropListsIds"
+    [cdkDropListData]="item" 
+    (cdkDropListDropped)="onDragDrop($event)"
     >
 
     <div *ngIf="!!conditionForm && item?.value.id !== 'parent'" [formGroup]="conditionForm">
-     <div class="example-container mr-5">
-      <mat-radio-group class="flex mb-2 radio-groups" aria-label="Select an option"
-      formControlName="subConditionType" *ngIf="!!conditionForm.value.subConditions.length">
-      <ng-container *ngFor="let item of subConditionType; let i = index">
-        <mat-radio-button [disabled]="preview" color="primary" [value]="item.value" class="[&:not(:first-child)]:ml-4 capitalize">
-          {{item.name}} </mat-radio-button>
-      </ng-container>
-     </mat-radio-group>
-     </div>
+      <div class="example-container mr-5">
+        <mat-radio-group class="flex mb-2 radio-groups" aria-label="Select an option" formControlName="subConditionType"
+          *ngIf="!!conditionForm.value.subConditions.length">
+          <ng-container *ngFor="let item of subConditionType; let i = index">
+            <mat-radio-button [disabled]="preview" color="primary" [value]="item.value" class="ml-1 capitalize">
+              {{item.name}} </mat-radio-button>
+          </ng-container>
+        </mat-radio-group>
+      </div>
     </div>
 
-    <li class="border-gray-400 border border-gray border-solid"
-      *ngFor="let subItem of item?.controls?.subConditions?.controls; let i = index">
+    <li 
+      class="border-gray-400 border border-gray border-solid"
+      *ngFor="let subItem of item?.controls?.subConditions?.controls; 
+      let i = index"
+    >
 
-      <sp-business-rule-list
-            [item]="subItem"
-            [parentItem]="item"
-            [index]="i"
-            [preview]="preview"
-            [dataRules]="dataRules"
-            [connectedDropListsIds]="allDropListsIds"
-            (itemDrop)="onDragDrop($event)"
+      <sp-business-rule-list 
+          [item]="subItem" 
+          [parentItem]="item" 
+          [index]="i" 
+          [preview]="preview"
+          [dataRules]="dataRules" 
+          [connectedDropListsIds]="allDropListsIds" 
+          (itemDrop)="onDragDrop($event)"
           >
       </sp-business-rule-list>
 
