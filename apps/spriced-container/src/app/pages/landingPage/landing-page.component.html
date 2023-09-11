@@ -34,6 +34,7 @@
       <sp-app-card 
       *ngFor="let app of apps" 
       [header]="app.name"
+      [paragraph]="app.description"
       [path]="'/'+app.path" 
       [image]="app.icon">
     </sp-app-card>
