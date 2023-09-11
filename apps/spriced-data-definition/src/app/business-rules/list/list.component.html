@@ -1,108 +1,124 @@
 <!-- BUSINESS RULE MANAGEMENT COMPONENT -->
 <sp-one-col>
-<div class="ml-sm-2 pb-6 px-4 businessmanagement h-full">
-  <!-- <h2 class="font-medium">Business Rule Management</h2> -->
+  <div class="ml-sm-2 pb-6 px-4 businessmanagement h-full">
+    <!-- <h2 class="font-medium">Business Rule Management</h2> -->
 
-  <!-- DROPDOWN FIELDS IN GRID LIST -->
-  <mat-grid-list cols="4" rowHeight="2:1">
-    <form [formGroup]="listForm">
-      <div class="mat_dropdown mt-4">
-        <mat-form-field appearance="outline">
-          <mat-label>Model:</mat-label>
-          <mat-select (valueChange)="handleEntityByModels($event, 'modelChange')" [(value)]="defaultModel" formControlName="model">
-            <mat-option *ngFor="let model of models" [value]="model.id">
-              {{model.displayName}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+    <!-- DROPDOWN FIELDS IN GRID LIST -->
+    <mat-grid-list cols="4" rowHeight="2:1">
+      <form [formGroup]="listForm">
+        <div class="mat_dropdown mt-4">
+          <mat-form-field appearance="outline">
+            <mat-label>Model:</mat-label>
+            <mat-select (valueChange)="handleEntityByModels($event, 'modelChange')" [(value)]="defaultModel"
+              formControlName="model">
+              <mat-option *ngFor="let model of models" [value]="model.id">
+                {{model.displayName}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
 
-        <mat-form-field class="ml-4" appearance="outline">
-          <mat-label>Entity:</mat-label>
-          <mat-select (valueChange)="handleAttributeByEntity($event)" [(value)]="defaultEntity" formControlName="entity">
-            <mat-option *ngFor="let entity of entities" [value]="entity.id">
-              {{entity.displayName}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+          <mat-form-field class="ml-4" appearance="outline">
+            <mat-label>Entity:</mat-label>
+            <mat-select (valueChange)="handleAttributeByEntity($event)" [(value)]="defaultEntity"
+              formControlName="entity">
+              <ng-container *ngIf="entities.length === 0; else entityOptions">
+                <mat-option disabled> No record found </mat-option>
+              </ng-container>
 
-        <mat-form-field class="ml-4" appearance="outline">
-          <mat-label>Attribute:</mat-label>
-          <mat-select [(value)]="defaultAttribute" formControlName="attrubute" (valueChange)="handleFilterRuleByAttribute($event)">
-            <mat-option *ngFor="let attribute of attributes" [value]="attribute.id">
-              {{attribute.name}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+              <ng-template #entityOptions>
+                <mat-option *ngFor="let entity of entities" [value]="entity.id">
+                  {{entity.displayName}}
+                </mat-option>
+              </ng-template>
 
-      </div>
-    </form>
-  </mat-grid-list>
+            </mat-select>
+          </mat-form-field>
 
-<sp-data-grid
-      class="w-full h-full mt-4 block"
-      #dataGrid
-      [title]="'Rule List'"
-      [enableRowIndex]="false"
-      [isArray]="false"
-      [headers]="headers"
-      [rows]="rows"
-      [rowHeight]="32"
-      [headerHeight]="30"
-      [footerHeight]="0"
-      [columnMode]="columnMode"
-      [virtualScroll]="false"
-      [selectionType]="selectionType"
-      [limit]="10"
-      [isExternalPaging]="true"
-      [isExternalSorting]="false"
-      [sortType]="sortType"
-      [count]="rows.length"
-      [attributes]="attributes"
-      (paginate)="onPaginate($event)"
-      (itemSelected)="onItemSelected($event)"
-      (checkbox)="updateExcluded($event)"
-    >
+          <mat-form-field class="ml-4" appearance="outline">
+            <mat-label>Attribute:</mat-label>
+            <mat-select [(value)]="defaultAttribute" formControlName="attrubute"
+              (valueChange)="handleFilterRuleByAttribute($event)">
+              <ng-container *ngIf="attributes.length === 0; else attributeOptions">
+                <mat-option disabled> No record found </mat-option>
+              </ng-container>
+
+              <ng-template #attributeOptions>
+                <mat-option *ngFor="let attribute of attributes" [value]="attribute.id">
+                  {{attribute.name}}
+                </mat-option>
+              </ng-template>
+
+            </mat-select>
+          </mat-form-field>
+
+        </div>
+      </form>
+    </mat-grid-list>
+
+    <sp-data-grid 
+        class="w-full h-full mt-4 block" 
+        #dataGrid [title]="'Rule List'" 
+        [enableRowIndex]="false"
+        [isArray]="false" 
+        [headers]="headers" 
+        [rows]="rows" 
+        [rowHeight]="32" 
+        [headerHeight]="30" 
+        [footerHeight]="0"
+        [columnMode]="columnMode" 
+        [virtualScroll]="false" 
+        [selectionType]="selectionType" 
+        [limit]="10"
+        [isExternalPaging]="true" 
+        [isExternalSorting]="false" 
+        [sortType]="sortType" 
+        [count]="rows.length"
+        [attributes]="attributes" 
+        (paginate)="onPaginate($event)" 
+        (itemSelected)="onItemSelected($event)"
+        (checkbox)="updateExcluded($event)"
+        >
       <ng-container>
-        <sp-header-action
-          icon="add_box"
-          text="Add"
-          title="Add Rule"
-          [disabled]="!listForm.valid"
-          (actionClick)="addNewRule()"
-        ></sp-header-action>
-  
-        <sp-header-action
-          icon="sync"
-          text="Refresh"
-          title="Refresh"
-          (actionClick)="onRefresh()"
-        ></sp-header-action>
-  
-        <sp-header-action
-          icon="edit"
-          text="Edit"
-          title="Edit Rule"
-          [disabled]="selectedItem == null"
-          (actionClick)="editBusinessRule(selectedItem)"
-        ></sp-header-action>
-  
-        <sp-header-action
-          icon="delete"
-          text="Delete"
-          title="Delete Rule"
-          [disabled]="selectedItem == null"
-          (actionClick)="deleteRule(selectedItem)"
-        ></sp-header-action>
+        <sp-header-action 
+            icon="add_box" 
+            text="Add" 
+            title="Add Rule" 
+            [disabled]="!listForm.valid"
+            (actionClick)="addNewRule()"
+            ></sp-header-action>
 
-        <sp-header-action
-        icon="visibility"
-        text="View"
-        title="View Rule"
-        [disabled]="selectedItem == null"
-        (actionClick)="editBusinessRule(selectedItem, 'preview')"
-      ></sp-header-action>
+        <sp-header-action 
+            icon="sync" 
+            text="Refresh"  
+            title="Refresh" 
+            (actionClick)="onRefresh()"
+            ></sp-header-action>
+
+        <sp-header-action  
+            icon="edit" 
+            text="Edit" 
+            title="Edit Rule" 
+            [disabled]="selectedItem == null"
+            (actionClick)="editBusinessRule(selectedItem)"
+            ></sp-header-action>
+
+        <sp-header-action 
+            icon="delete" 
+            text="Delete" 
+            title="Delete Rule" 
+            [disabled]="selectedItem == null"
+            (actionClick)="deleteRule(selectedItem)"
+            ></sp-header-action>
+
+        <sp-header-action 
+            icon="visibility" 
+            text="View" 
+            title="View Rule" 
+            [disabled]="selectedItem == null"
+            (actionClick)="editBusinessRule(selectedItem, 'preview')"
+            ></sp-header-action>
 
       </ng-container>
     </sp-data-grid>
-    </div>
-  </sp-one-col>
+  </div>
+</sp-one-col>
