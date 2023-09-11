@@ -1,6 +1,4 @@
-<div id="bg">
-  <img src="/assets/images//login-background.png" alt="" />
-</div>
+
 <div class="content-container">
   <div class="logo">
     <div class="logoText">
@@ -8,11 +6,11 @@
         <button style="margin: 5px" class="ng-tns-c816216012-1">
           <img
             src="../../../../assets/images/logo.png"
-            style="width: 30px; height: 30px; max-width: initial"
+            style="width: 60px; height: 60px; max-width: initial"
             alt=""
           />
         </button>
-        <h1 class="user">Welcome {{ user }}</h1>
+        <h1 class="user">SPRICED <span>(NRP Pricing Application)</span></h1>
       </div>
       <button
         mat-icon-button
@@ -41,17 +39,20 @@
       <sp-app-card
         header="Data Explorer" 
         path="/spriced-data"
-        image="/assets/images/access.png"
+        image="/assets/images/dataExplorer.png"
+        paragraph="Work with master data and with hierarchy relationships"
       ></sp-app-card>
       <sp-app-card
         header="Reports"
         path="/spriced-reports"
-        image="/assets/images/reporting.png"
+        image="/assets/images/reports.png"
+        paragraph="Work with analytical reports for diagnosis and to determine the best course of action"
       ></sp-app-card>
       <sp-app-card
-        header="Model Definition"
+        header="System Administration"
         path="/spriced-data-definition/model"
-        image="/assets/images/definition.png"
+        image="/assets/images/systemAdministration.png"
+        paragraph="Build the model structure, and business rules, manage user permission, etc"
       ></sp-app-card>
     </div>
   </div>
