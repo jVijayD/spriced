@@ -154,23 +154,20 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     if (conditions && operands && operators && actionEnum && entity) {
       this.entityName = entity.displayName;
       const action = actionEnum;
-      let mockAttribute: any = [];
+      let attributeList: any = [];
       const relatedRefreneceTableEntity = entity.attributes.filter((el: any) => !!el.referencedTableId);
-      mockAttribute = entity.attributes;
+      attributeList = entity.attributes;
 
       // Handle for nested attribute
       if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
-        // mockAttribute.push(relatedRefreneceTableEntity[0]); 
         let { entityData } = await this.getEntityById(relatedRefreneceTableEntity[0].referencedTableId);
-        const nestedProcessedAttributes = this.processNestedAttributes(entityData.attributes, relatedRefreneceTableEntity[0]);
-        // mockAttribute.push(...nestedProcessedAttributes);
+        await this.processNestedAttributes(entityData.attributes, relatedRefreneceTableEntity[0]);
       }
-      mockAttribute = mockAttribute.filter((el: any) => el.systemAttribute == false);
-      // await this.handleAttributeNames(actionEnum.attributes);
+      attributeList = attributeList.filter((el: any) => el.systemAttribute == false);
 
       this.conditionsData = {
         ...action,
-        attributes: mockAttribute,
+        attributes: attributeList,
         conditions: this.transformObjectToKeyValueArray(conditions),
         operators: this.transformObjectToKeyValueArray(operators),
         operands: this.transformObjectToKeyValueArray(operands)
