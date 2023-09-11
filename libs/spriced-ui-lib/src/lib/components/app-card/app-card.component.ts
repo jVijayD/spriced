@@ -14,4 +14,5 @@ export class AppCardComponent {
 @Input() path:any;
 @Input() image:any;
 @Input() header:any;
+@Input() paragraph:any;
 }

@@ -6,7 +6,7 @@
             <mat-label>Attribute</mat-label>
             <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="attributeId"
                 (valueChange)="handleAttributes($event, 'changeAttribute')">
-                <mat-option *ngFor="let attribute of dataRules?.attributes" [value]="attribute?.id">
+                <mat-option *ngFor="let attribute of filteredAttributes" [value]="attribute?.id">
                     {{attribute.displayName}}
                 </mat-option>
             </mat-select>
@@ -182,9 +182,9 @@
         </mat-error>
     </div>
 
-    <div class="close-btn flex justify-center items-center" *ngIf="!preview">
-        <button mat-icon-button class="close-button" (click)="remove.emit()">
-            <mat-icon class="close-icon flex justify-center items-center" color="warn">close</mat-icon>
+    <div class="example-container mr-5 flex flex-col" *ngIf="!preview">
+        <button type="button" mat-raised-button color="primary" class="close-button"  (click)="remove.emit()">
+            <mat-icon class="delete-icon flex justify-center">delete</mat-icon>
         </button>
     </div>
 </div>

@@ -1,0 +1,22 @@
+.close-button {
+    width: 23px;
+    min-width: 23px;
+}
+
+.close-button {
+    width: 23px;
+    min-width: 23px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.delete-icon {
+    display: inline-table;
+    font-size: 22px;
+    margin: 0;
+}
+
+.mat-mdc-raised-button:not(:disabled) {
+    margin-top: 20px;
+}

@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { UserAccessService } from "@spriced-frontend/spriced-common-lib";
-import { BehaviorSubject, Observable, fromEvent, map, merge, of } from "rxjs";
+import { BehaviorSubject, Observable,Subject, fromEvent, map, merge, of } from "rxjs";
 
 @Injectable({
   providedIn: "root",
