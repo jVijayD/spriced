@@ -48,6 +48,11 @@ export class AppComponent implements OnDestroy, OnInit {
       icon: "/assets/images/definition.png",
       path: "/spriced-data-definition/model",
     },
+    {
+      name: "User Management",
+      icon: "/assets/images/definition.png",
+      path: "/spriced-user-management",
+    },
   ];
   isSideNavCollapsed = false;
   screenWidth = 0;
