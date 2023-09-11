@@ -19,6 +19,7 @@ export class ModelService {
     return this.http.patch(`${this.api_url}/models/${value.id}`, {
       displayName: model.displayName,
       name: model.name,
+      description:model.description,
       id: value.id,
     });
   }
