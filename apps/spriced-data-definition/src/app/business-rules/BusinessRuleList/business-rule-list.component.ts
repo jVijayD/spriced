@@ -171,8 +171,8 @@ export class BusinessRuleListComponent {
     const parentAttributeId = this.getValue('parentAttributeId');
     const parentOperandId = this.getValue('parentOperandId');
     
-    this.handleValueChange(value);
     this.handleValue(operandType);
+    this.handleValueChange(value);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
   }
 
