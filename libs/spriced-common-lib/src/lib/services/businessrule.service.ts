@@ -1,13 +1,13 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subject, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
 import { Entity, Rule, conditionTypes, dataTypes, modelData, operandType, operatorType } from '../models/buisnessrule';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BusinessruleService {
-  public ruleChageDetection = new Subject();
+  public ruleChageDetection = new BehaviorSubject<any>(null);
   public apiUrl: any = '';
 
   constructor(

@@ -4,6 +4,7 @@ import { ActivatedRoute } from "@angular/router";
 import { EmbeddedIframeComponent } from "../../components/embeddedIframe/embedded-iframe.component";
 import { LoaderService } from "@spriced-frontend/spriced-ui-lib";
 
+
 @Component({
   selector: "sp-home",
   standalone: true,
@@ -12,6 +13,7 @@ import { LoaderService } from "@spriced-frontend/spriced-ui-lib";
   styleUrls: ["./home.component.scss"],
 })
 export class HomeComponent implements OnInit {
+
   dashboardId: string = "abc";
   constructor(private route: ActivatedRoute, private loader: LoaderService) {}
   ngOnInit(): void {

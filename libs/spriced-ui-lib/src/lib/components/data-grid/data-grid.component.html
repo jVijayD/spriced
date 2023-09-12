@@ -42,6 +42,7 @@
     <ng-container *ngFor="let header of headers; let i = index">
       <ngx-datatable-column
         [name]="header.name"
+        [prop]="header.column"
         [flexGrow]="header.flexGrow || 1"
         [frozenLeft]="header.pinned === 'left' ? true : false"
         [frozenRight]="header.pinned === 'right' ? true : false"
