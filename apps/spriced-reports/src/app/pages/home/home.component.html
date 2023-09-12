@@ -1,12 +1,1 @@
-<div id="superset-container" class="w-full h-full"></div>
-<!-- <sp-one-col *ngIf="error">
-  <div
-    class="flex flex-col items-center justify-center space-y-5 w-full h-full"
-  >
-    <mat-icon class="icon">dashboard</mat-icon>
-    <label class="text-2xl text-secondary-dark">Report not found.</label>
-  </div>
-</sp-one-col> -->
-<iframe
-  src="https://reports.spriced.dev.simadvisory.com/embedded/1944859e-82d4-4b8d-995a-8aecb3a2cdaa?uiConfig=1&expand_filters=true"
-></iframe>
+<sp-embedded-iframe [dashboardId]="dashboardId"></sp-embedded-iframe>
