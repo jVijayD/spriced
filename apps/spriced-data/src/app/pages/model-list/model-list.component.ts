@@ -71,6 +71,14 @@ export class ModelListComponent {
         return moment(data).format("MM/DD/YYYY HH:mm:ss ");
       },
     },
+    {
+      column: "description",
+      name: "Description",
+      canAutoResize: true,
+      isSortable: true,
+      isTreeColumn: false,
+    },
+
   ];
   columnMode: ColumnMode = ColumnMode.force;
   selectionType: SelectionType = SelectionType.single;
