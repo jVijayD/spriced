@@ -57,9 +57,10 @@ export class AuthGuard extends KeycloakAuthGuard {
         resolve(false);
       } else {
         this.apps$.subscribe({
-          next:(appList) => {
+          next: (appList) => {
             if (appList !== null) {
-              let retVal = appList
+              let retVal =
+                appList
                   .map((app) => app.path)
                   .filter((path) => route.url.toString().indexOf(path) > -1)
                   .length > 0;
@@ -71,7 +72,7 @@ export class AuthGuard extends KeycloakAuthGuard {
               }
             }
           },
-          error:reject
+          error: reject,
         });
       }
     });
@@ -85,22 +86,22 @@ export class AuthGuard extends KeycloakAuthGuard {
       roles != undefined && !roles.includes("External") && roles.length > 1
     );
   }
-  async intercept(
-    req: HttpRequest<any>,
-    next: HttpHandler
-  ): Promise<Observable<HttpEvent<any>>> {
-    this.user = this.keycloak.getKeycloakInstance();
-    const authReq = req.clone({
-      headers: new HttpHeaders({
-        tenant: "meritor",
-        user: this.user.profile.email || "",
-        transactionId: this.user.profile.id || "",
-        roles: this.user.tokenParsed?.realm_access?.roles
-          ?.filter((r: String) => !r.startsWith("default-roles"))
-          .join(","),
-        applications: this.user.profile.attributes.application || "",
-      }),
-    });
-    return next.handle(authReq);
-  }
+  // async intercept(
+  //   req: HttpRequest<any>,
+  //   next: HttpHandler
+  // ): Promise<Observable<HttpEvent<any>>> {
+  //   this.user = this.keycloak.getKeycloakInstance();
+  //   const authReq = req.clone({
+  //     headers: new HttpHeaders({
+  //       tenant: "meritor",
+  //       user: this.user.profile.email || "",
+  //       transactionId: this.user.profile.id || "",
+  //       roles: this.user.tokenParsed?.realm_access?.roles
+  //         ?.filter((r: String) => !r.startsWith("default-roles"))
+  //         .join(","),
+  //       applications: this.user.profile.attributes.application || "",
+  //     }),
+  //   });
+  //   return next.handle(authReq);
+  // }
 }
