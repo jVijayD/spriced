@@ -29,6 +29,9 @@ export class UserAccessService {
   loadAllRoles() {
     return this.http.get<string[]>(`${this.api_url}/roles`);
   }
+  loadAllApps() {
+    return this.http.get<any[]>(`${this.api_url}/applicaitons`);
+  }
 
   // loadPageModels(pageNo: number, pageSize: number) {
   //   return this.http.get(
