@@ -7,8 +7,11 @@ export const remoteRoutes: Route[] = [
     path: "",
     component: AppComponent,
     children: [
-      { path: "", component: HomeComponent },
-      { path: ":dashboardId", component: HomeComponent },
+      //{ path: "", component: HomeComponent },
+      {
+        path: ":dashboardId",
+        component: HomeComponent,
+      },
     ],
   },
 ];
