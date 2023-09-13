@@ -171,8 +171,8 @@ export class BusinessRuleListComponent {
     const parentAttributeId = this.getValue('parentAttributeId');
     const parentOperandId = this.getValue('parentOperandId');
     
-    this.handleValue(operandType);
     this.handleValueChange(value);
+    this.handleValue(operandType);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
   }
 
@@ -191,16 +191,16 @@ export class BusinessRuleListComponent {
       const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
       this.selectedOperand = value;
       this.conditionForm?.get('operand')?.setValue(item.id);
-      const parentAttId = parent && parent?.id !== '' ? parent.id : item.id;
+      const parentAttId = parent && parent?.id !== '' ? parent.id : null;
       this.conditionForm?.get('parentOperandId')?.setValue(parentAttId);
     }
     else {
       const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
       this.selectedAttribute = value;
       this.selectedOperand = '';
-      this.conditionForm?.get('parentOperandId')?.setValue('');
+      this.conditionForm?.get('parentOperandId')?.setValue(null);
       this.conditionForm?.get('attributeId')?.setValue(item.id);
-      const parentAttId = parent && parent?.id !== '' ? parent.id : item.id;
+      const parentAttId = parent && parent?.id !== '' ? parent.id : null;
       this.conditionForm?.get('parentAttributeId')?.setValue(parentAttId);
       this.handleAttributes(item.id, 'changeAttribute');
     }
@@ -362,10 +362,7 @@ export class BusinessRuleListComponent {
    * @returns 
    */
   private buildSelectedAttribute(attribute: any, parentAttribute: any): string {
-    if (attribute?.id === parentAttribute?.id) {
-      return attribute?.displayName.trim();
-    }
-    return `${parentAttribute?.displayName.trim()}.${attribute.displayName}`;
+    return !parentAttribute ? attribute?.displayName.trim() :`${parentAttribute?.displayName.trim()}.${attribute.displayName}`;
   }
 
   /**
@@ -375,10 +372,7 @@ export class BusinessRuleListComponent {
    * @returns 
    */
   private buildSelectedOperand(operand: any, parentOperand: any): string {
-    if (operand?.id === parentOperand?.id) {
-      return operand?.displayName.trim();
-    }
-    return `${parentOperand?.displayName.trim()}.${operand.displayName}`;
+    return !parentOperand ? operand?.displayName.trim() :`${parentOperand?.displayName.trim()}.${operand.displayName}`;
   }
 
   private getValidationPatternForDataType(dataType: string): RegExp {
