@@ -37,7 +37,7 @@ export class AppDataService {
   }
   getApps() {
     if (!this.hasAppsLoaded) {
-      this.userAccessService.loadAllApps().subscribe((appsList) => {
+      this.userAccessService.loadAllApps().subscribe((appsList:any[]) => {
         this.setApps(appsList.map((a) => a as Application));
       });
     }

@@ -64,8 +64,8 @@ export class AppComponent implements OnDestroy, OnInit {
     );
     this.subscriptions.push(
       this.appDataService.getApps().subscribe((appsList) => {
-        let appsAry = appsList.map((a) => a as Application);
-        this.sidebarData = appsAry;
+        let appsAry = appsList?.map((a) => a as Application);
+        this.sidebarData = appsAry?appsAry:[];
       })
     );
   }
