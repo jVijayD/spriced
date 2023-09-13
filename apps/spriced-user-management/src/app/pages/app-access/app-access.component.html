@@ -2,59 +2,58 @@
   <sp-hbox>
     <mat-form-field appearance="outline">
       <mat-label>User Role</mat-label>
-      <mat-select (selectionChange)="onSelectRole($event)" [(value)]="selectedRole">
+      <mat-select (selectionChange)="onSelectRole($event)" [(value)]="selectedRoleCmp">
         <mat-option *ngFor="let item of roleList" [value]="item">{{item.name}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline">
+    <!-- <mat-form-field appearance="outline">
       <mat-label>Apps</mat-label>
       <mat-select (selectionChange)="onSelectApp($event)" [(value)]="selectedApp">
         <mat-option *ngFor="let item of AppList" [value]="item">{{item.name}}</mat-option>
       </mat-select>
-    </mat-form-field>
-    <button mat-raised-button color="accent" (click)="onClearClick()">
+    </mat-form-field> -->
+    <!-- <button mat-raised-button color="accent" (click)="onClearClick()">
       Clear
     </button>
-    <button mat-raised-button color="primary" (click)="onSaveClick()">w
+    <button mat-raised-button color="primary" (click)="onSaveClick()">
       Save
-    </button>
+    </button> -->
   </sp-hbox>
   <sp-vbox [noGap]="true" [marginX]="true">
-    <div class="w-full bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
-      <span class="float-left text-white font-medium">App View</span>
-      <div class="flex flex-row"><ng-content></ng-content></div>
-    </div>
-    <ngx-datatable class="material striped tableScroll" style="height: calc(100vh - 16rem);" [columnMode]="ColumnMode.flex"
-      [headerHeight]="50" [footerHeight]="0" [rowHeight]="60" [rows]="AppList" [scrollbarV]="true"
-      [scrollbarH]="true" (treeAction)="onTreeAction($event)"
-      >
-      <!-- <ngx-datatable-column name="Id" [width]="80"></ngx-datatable-column> -->
-      <ngx-datatable-column name="Display Name" prop="displayName" [canAutoResize]="true" [flexGrow]="3"
-        [treeLevelIndent]="20">
-        <ng-template let-row="row" let-value="value" let-rowIndex="rowIndex" ngx-datatable-cell-template>
-          <span style="display: inline-flex" class="ml-5">
-            <mat-icon>{{ row.icon }}</mat-icon>
-            <span class="ml-2" *ngIf="row.level < 2">
-              {{ row.displayName }}</span>
-            <span class="ml-2" *ngIf="row.level === 2"> {{ row.name }}</span>
-          </span>
-        </ng-template>
-      </ngx-datatable-column>
-      <ngx-datatable-column name="Permission" prop="permission" [canAutoResize]="true" [flexGrow]="1">
-        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-row="row" let-value="value">
-          <!-- <span (dblclick)="editing[rowIndex] = true" style="width: 300px;" *ngIf="!editing[rowIndex]">
-              {{ value }}
-            </span>   *ngIf="editing[rowIndex]"   (blur)="editing[rowIndex] = false"-->
+    <div style="width:850px"
+      class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
+      <span class="float-left text-white font-medium">Manage Roles</span>
+      <div class="flex flex-row">
+        <ng-container>
+          <sp-header-action icon="clear" text="Clear" title="Clear" (actionClick)="onClearClick()"></sp-header-action>
+          <sp-header-action icon="save" text="Save" title="Save" (actionClick)="onSaveClick()"></sp-header-action>
+        </ng-container>
 
-          <!-- <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-min"> -->
-            <!-- <mat-select (selectionChange)="updateValue($event, rowIndex,row)" [value]="row.permission">
-              <ng-container *ngFor="let item of getPermissions() ">
-                <mat-option value="{{item}}" style="display: none;" *ngIf="(item === 'PARTIAL')"
-                  disabled>{{item}}</mat-option>
-                <mat-option value="{{item}}" *ngIf="item !== 'PARTIAL'">{{item}}</mat-option>
-              </ng-container>
-            </mat-select> -->
-          <!-- </mat-form-field> -->
+
+
+      </div>
+    </div>
+    <ngx-datatable class="material striped tableScroll" style="height: calc(100vh - 16rem); width: 850px;"
+      [columnMode]="ColumnMode.flex" [headerHeight]="50" [footerHeight]="0" [rowHeight]="30" [rows]="AppList"
+      [scrollbarV]="true" [scrollbarH]="true">
+      <!-- <ngx-datatable-column name="Code" prop="code" [canAutoResize]="true" [flexGrow]="3"></ngx-datatable-column> -->
+      <ngx-datatable-column name="Available Functions" prop="name" [canAutoResize]="true"
+        [flexGrow]="3"></ngx-datatable-column>
+      <ngx-datatable-column name="Description" prop="description" [canAutoResize]="true"
+        [flexGrow]="5"></ngx-datatable-column>
+      <!-- <ngx-datatable-column name="Icon" prop="icon" [canAutoResize]="true" [flexGrow]="3"></ngx-datatable-column> -->
+      <!-- <ngx-datatable-column name="Path" prop="path" [canAutoResize]="true" [flexGrow]="3"></ngx-datatable-column> -->
+      <!-- <ngx-datatable-column name="Status" prop="status" [canAutoResize]="true" [flexGrow]="2">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-row="row" let-value="value">
+          <mat-checkbox color="primary" [disabled]="true" [checked]="row.status"></mat-checkbox>
+        </ng-template>
+      </ngx-datatable-column> -->
+      <ngx-datatable-column name="Assigned Functions" prop="permission" [canAutoResize]="true" [flexGrow]="3">
+        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-row="row" let-value="value">
+          <div class="flex justify-center">
+            <mat-checkbox color="primary" [checked]="row.permission"
+              (change)="checkChange($event, rowIndex,row)"></mat-checkbox>
+          </div>
         </ng-template>
       </ngx-datatable-column>
     </ngx-datatable>

@@ -21,6 +21,7 @@ import { AppDataService, Application } from "@spriced-frontend/shared/spriced-sh
   providers: [AppDataService],
 })
 export class LandingPageComponent implements OnInit {
+  
   labels: any;
   apps:Application[] = [];
   user = "";
@@ -31,7 +32,7 @@ export class LandingPageComponent implements OnInit {
     public appDataService: AppDataService
   ) {
     this.appDataService.getApps().subscribe(e=>{
-    this.apps=e;
+    this.apps=e?e:[];
   });
 }
 

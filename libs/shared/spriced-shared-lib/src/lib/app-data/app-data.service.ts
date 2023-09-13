@@ -1,6 +1,13 @@
 import { Injectable } from "@angular/core";
 import { UserAccessService } from "@spriced-frontend/spriced-common-lib";
-import { BehaviorSubject, Observable,Subject, fromEvent, map, merge, of } from "rxjs";
+import {
+  BehaviorSubject,
+  Observable,
+  fromEvent,
+  map,
+  merge,
+  of,
+} from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -8,8 +15,7 @@ import { BehaviorSubject, Observable,Subject, fromEvent, map, merge, of } from "
 export class AppDataService {
   private userData = new BehaviorSubject<UserData | null>(null);
   private menuData = new BehaviorSubject<MenuItem[]>([]);
-  private appData = new BehaviorSubject<Application[]>([]);
-  private apps$ = this.appData.asObservable();
+  private appDataSubject = new BehaviorSubject<Application[] | null>([]);
   ERROR_LIST: BehaviorSubject<errorElement[]> = new BehaviorSubject<errorElement[]>([]);
   networkStatus$ = new Observable<boolean>();
   public subConditionForm = new BehaviorSubject<any>(null);
@@ -26,17 +32,16 @@ export class AppDataService {
     this.userData.next(user);
   }
   setApps(apps: Application[]) {
-    this.appData.next(apps);
+    this.appDataSubject.next(apps);
+    this.hasAppsLoaded = true;
   }
   getApps() {
     if (!this.hasAppsLoaded) {
       this.userAccessService.loadAllApps().subscribe((appsList) => {
-        let appsAry = appsList.map((a) => a as Application);
-        this.setApps(appsAry);
-        this.hasAppsLoaded = true;
+        this.setApps(appsList.map((a) => a as Application));
       });
     }
-    return this.apps$;
+    return this.appDataSubject.asObservable();
   }
 
   setMenuData(menuItems: MenuItem[]) {

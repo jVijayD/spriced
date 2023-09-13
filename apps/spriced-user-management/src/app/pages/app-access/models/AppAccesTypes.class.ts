@@ -6,25 +6,20 @@ export interface AppDTO {
   displayName: string;
   icon: string;
   id: number;
+  permissionId: number;
   name: string;
   path: string;
   status: boolean;
+  permission: boolean;
+  originalPermission: boolean;
 }
 export interface AppPermissionsDTO {
   id: number;
   role: string;
   appid: number;
   permission: string;
-  permissionList: AppPermissionsDTO[];
+  permissionList:AppPermissionsDTO[]
 }
 export interface RoleDTO {
   name: string;
 }
-
-export enum PERMISSIONS {
-  READ = "READ",
-  UPDATE = "UPDATE",
-  DENY = "DENY",
-  PARTIAL = "PARTIAL",
-}
-

@@ -1,13 +1,14 @@
 import { Route } from "@angular/router";
-import { AppAccessComponent } from "../pages/app-access/app-access.component";
 import { AppComponent } from "../app.component";
-
+import { HomeComponent } from "../pages/home/home.component";
+import { AppAccessComponent } from "../pages/app-access/app-access.component";
 export const remoteRoutes: Route[] = [
   {
     path: "",
     component: AppComponent,
     children: [
-      { path: "app-access", component: AppAccessComponent }
+      { path: "app-access", component: AppAccessComponent },
+      { path: "", redirectTo:"app-access",pathMatch: 'full' }
     ],
   },
 ];
