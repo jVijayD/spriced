@@ -11,7 +11,6 @@ import {
   UrlTree,
   Router,
   ActivatedRoute,
-  UrlSegment,
 } from "@angular/router";
 import {
   AppDataService,
@@ -64,7 +63,7 @@ export class AuthGuard extends KeycloakAuthGuard {
         a
           .map((app) => app.path)
           .filter((p) => route.url.toString().indexOf(p) > -1).length > 0;
-      this.router.navigate(retVal ? [(route.routeConfig?.path?route.routeConfig?.path:"")] : [`/unauthorized`]);
+          !retVal?this.router.navigate([`/unauthorized`]):"";
     });
     return retVal;
   }
