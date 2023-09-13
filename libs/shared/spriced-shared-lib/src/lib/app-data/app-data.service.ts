@@ -15,7 +15,7 @@ import {
 export class AppDataService {
   private userData = new BehaviorSubject<UserData | null>(null);
   private menuData = new BehaviorSubject<MenuItem[]>([]);
-  private appDataSubject = new BehaviorSubject<Application[] | null>([]);
+  private appDataSubject = new BehaviorSubject<Application[] | null>(null);
   ERROR_LIST: BehaviorSubject<errorElement[]> = new BehaviorSubject<errorElement[]>([]);
   networkStatus$ = new Observable<boolean>();
   public subConditionForm = new BehaviorSubject<any>(null);

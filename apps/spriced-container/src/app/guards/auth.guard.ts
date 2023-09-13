@@ -47,25 +47,34 @@ export class AuthGuard extends KeycloakAuthGuard {
       return true;
     }
 
-    return await this.hasAppPermission(route);
+    return this.hasAppPermission(route);
   }
 
   async hasAppPermission(route: ActivatedRouteSnapshot) {
-    if (!this.hasRoles()) {
-      this.router.navigate([`/unauthorized`]);
-      return false;
-    }
-    let retVal = false;
-    this.apps$.subscribe((a) => {
-      retVal =
-        a != null &&
-        a.length > 0 &&
-        a
-          .map((app) => app.path)
-          .filter((p) => route.url.toString().indexOf(p) > -1).length > 0;
-          !retVal?this.router.navigate([`/unauthorized`]):"";
+    return new Promise<boolean>((resolve, reject) => {
+      if (!this.hasRoles()) {
+        this.router.navigate([`/unauthorized`]);
+        resolve(false);
+      } else {
+        this.apps$.subscribe({
+          next:(appList) => {
+            if (appList !== null) {
+              let retVal = appList
+                  .map((app) => app.path)
+                  .filter((path) => route.url.toString().indexOf(path) > -1)
+                  .length > 0;
+              if (!retVal) {
+                this.router.navigate([`/unauthorized`]);
+                resolve(false);
+              } else {
+                resolve(true);
+              }
+            }
+          },
+          error:reject
+        });
+      }
     });
-    return retVal;
   }
 
   hasRoles() {
