@@ -8,7 +8,7 @@ export const remoteRoutes: Route[] = [
     component: AppComponent,
     children: [
       { path: "app-access", component: AppAccessComponent },
-      { path: "", redirectTo:"app-access",pathMatch: 'full' }
+      { path: "", component: AppAccessComponent },
     ],
   },
 ];

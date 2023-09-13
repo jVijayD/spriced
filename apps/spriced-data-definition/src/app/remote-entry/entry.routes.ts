@@ -10,6 +10,7 @@ export const remoteRoutes: Route[] = [
     path: "",
     component: AppComponent,
     children: [
+      { path: "", component: ModelComponent  },
       { path: "model", component: ModelComponent },
       { path: "entity", component: EntityComponent },
       { path: "model-list", component: ModelListComponent },
