@@ -13,7 +13,7 @@
           <div>
             <mat-form-field appearance="outline">
               <mat-label>Entity Name</mat-label>
-              <input formControlName="name" matInput pattern='^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$' max="100" />
+              <input formControlName="name" matInput [pattern]="pattern" max="100" />
             </mat-form-field>
             <div class="error">
               <mat-error
@@ -42,7 +42,7 @@
       <div class="ml-2">
         <mat-form-field appearance="outline">
           <mat-label>Display Name</mat-label>
-          <input matInput [(ngModel)]="local_data.displayName" max="100" pattern='^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$' #uname="ngModel"/>
+          <input matInput [(ngModel)]="local_data.displayName" max="100" [pattern]="pattern" #uname="ngModel"/>
         </mat-form-field>
 
         <div class="error">
@@ -117,7 +117,7 @@
                 text="Edit"
                 title="Edit Attribute"
                 [disabled]="
-                  selectedItem == null || selectedItem.editable == false
+                  selectedItem == null 
                 "
                 (actionClick)="onEdit()"
               ></sp-header-action>
@@ -127,7 +127,7 @@
                 text="Delete"
                 title="Delete Attribute"
                 [disabled]="
-                  selectedItem == null || selectedItem.editable == false
+                  selectedItem == null || selectedItem.onlyDisplayNameEditable
                 "
                 (actionClick)="onDelete()"
               ></sp-header-action>
@@ -142,7 +142,7 @@
               matInput
               [(ngModel)]="attDetails.name"
               max="100"
-              pattern='^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$' #aname="ngModel"
+              [pattern]="pattern"  #aname="ngModel"
             />
           </mat-form-field>
           <div class="error">
@@ -162,7 +162,7 @@
       </div>
           <mat-form-field appearance="outline" class="mb-2">
             <mat-label>Display Name</mat-label>
-            <input matInput [(ngModel)]="attDetails.displayName" pattern='^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$' #dname="ngModel" max="100"/>
+            <input matInput [(ngModel)]="attDetails.displayName" [pattern]="pattern" #dname="ngModel" max="100"/>
             
           </mat-form-field>
           <div class="error">

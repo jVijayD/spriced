@@ -29,6 +29,7 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatInputModule } from "@angular/material/input";
 import {
   DataGridComponent,
+  DialogService,
   Header,
   HeaderActionComponent,
   OneColComponent,
@@ -117,13 +118,15 @@ export class EntityAddComponent implements OnInit {
   systemAtt: any;
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
-  referencedTableDisplayName: any;
+  referencedTableDisplayName: any
+  pattern="^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#\\-]+$"
   constructor(
     public dialogRef: MatDialogRef<EntityAddComponent>,
     //@Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialogService: DialogService,
   ) {
     this.attDetails.dataType = "STRING_VAR";
     this.attDetails.type = "FREE_FORM";
@@ -297,10 +300,20 @@ export class EntityAddComponent implements OnInit {
     this.attDetails = { ...this.selectedItem };
   }
   onDelete() {
-    this.rows = this.rows.filter((value: any) => {
-      return value.name != this.selectedItem.name;
+
+    const dialogRef = this.dialogService.openConfirmDialoge({
+      message: "Do you want to delete?",
+      title: "Delete Attribute",
+      icon: "delete",
     });
-    this.clear();
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result == true) {
+        this.rows = this.rows.filter((value: any) => {
+          return value.name != this.selectedItem.name;
+        });
+        this.clear();
+      }
+    })
   }
   onPaginate(e: Paginate) {
     //this.rows = this.getData(e.limit, e.offset);

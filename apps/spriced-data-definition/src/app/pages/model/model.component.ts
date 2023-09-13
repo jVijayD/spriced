@@ -90,13 +90,13 @@ export class ModelComponent implements OnInit, OnDestroy {
       },
     },
 
-    // {
-    //   column: "description",
-    //   name: "Description",
-    //   canAutoResize: true,
-    //   isSortable: true,
-    //   width: 100,
-    // },
+    {
+      column: "description",
+      name: "Description",
+      canAutoResize: true,
+      isSortable: true,
+      width: 100,
+    },
   ];
   columnMode: ColumnMode = ColumnMode.force;
   selectionType: SelectionType = SelectionType.single;

@@ -1,10 +1,18 @@
-import { Component } from "@angular/core";
+import {
+  AfterContentChecked,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   AppDataService,
   MenuItem,
 } from "@spriced-frontend/shared/spriced-shared-lib";
-import { RouterOutlet } from "@angular/router";
+import { Router, RouterOutlet } from "@angular/router";
+import { Subscription, of } from "rxjs";
+import { LoaderService } from "@spriced-frontend/spriced-ui-lib";
 
 @Component({
   selector: "sp-app",
@@ -13,25 +21,59 @@ import { RouterOutlet } from "@angular/router";
   template: `<router-outlet></router-outlet>`,
   styles: [],
 })
-export class AppComponent {
-  menuItems: MenuItem[] = [
-    {
-      name: "Dn-Pricing Entity Audit",
-      path: "/spriced-reports/f4adaabb-7e11-470a-b9e8-0f65964f80ee",
-      active: true,
-    },
-    {
-      name: "EBU CTT Part Price Comparison",
-      path: "/spriced-reports/9f9f13bb-44ae-4dee-adbf-ca7bd87d15cd",
-      active: false,
-    },
-    {
-      name: "Price History",
-      path: "/spriced-reports/fc48374f-b618-4b9f-9bc3-ba8e88f6e3c8",
-      active: false,
-    },
-  ];
-  constructor(private appDataService: AppDataService) {
-    this.appDataService.setMenuData(this.menuItems);
+export class AppComponent implements OnInit, OnDestroy, AfterContentChecked {
+  //menuItems: MenuItem[] = [];
+  subscriptions: Subscription[] = [];
+  constructor(
+    private appDataService: AppDataService,
+    private loaderService: LoaderService,
+    private router: Router,
+    private ref: ChangeDetectorRef
+  ) {}
+
+  ngAfterContentChecked() {
+    this.ref.detectChanges();
+  }
+
+  ngOnInit(): void {
+    this.appDataService.setMenuData([]);
+    this.loaderService.show();
+    this.subscriptions.push(
+      of([
+        {
+          name: "Dn-Pricing Entity Audit",
+          path: "/spriced-reports/ebe77ed2-3309-4fd4-b59b-6c08070faa02",
+          active: true,
+        },
+        {
+          name: "EBU CTT Part Price Comparison",
+          path: "/spriced-reports/631dcfd9-9f0b-4fdb-ad5b-8a2b6c71fbe5",
+          //path: "/spriced-user-management",
+          active: false,
+        },
+        {
+          name: "Price History",
+          path: "/spriced-reports/4dad7019-aa49-4784-ac60-73aea5f2a9dc",
+          active: false,
+        },
+      ]).subscribe({
+        next: (menuItems) => {
+          this.appDataService.setMenuData(menuItems);
+          this.loaderService.hide();
+          this.router.navigate([
+            "/spriced-reports/ebe77ed2-3309-4fd4-b59b-6c08070faa02",
+          ]);
+        },
+        error: (err) => {
+          this.loaderService.hide();
+        },
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((subscription) => {
+      subscription.unsubscribe();
+    });
   }
 }

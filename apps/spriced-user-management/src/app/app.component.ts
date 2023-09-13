@@ -11,7 +11,6 @@ import { RequestUtilityService } from "@spriced-frontend/spriced-common-lib";
   selector: "sp-app",
   standalone: true,
   imports: [CommonModule, RouterOutlet],
-  providers: [AppDataService,RequestUtilityService],
   template: `<router-outlet></router-outlet>`,
   styles: [],
 })

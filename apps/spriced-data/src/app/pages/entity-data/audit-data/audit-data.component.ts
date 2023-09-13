@@ -17,6 +17,7 @@ import { FormGroup } from "@angular/forms";
 import { Criteria, Entity } from "@spriced-frontend/spriced-common-lib";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import { EntityDataService } from "../../../services/entity-data.service";
+import * as moment from "moment";
 // import { SettingsService } from "../../../components/settingsPopUp/service/settings.service";
 
 @Component({
@@ -56,7 +57,10 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       isSortable: true,
       isFilterable: true,
       column: "updated_date",
-      name: "Date",
+      name: "Last Updated On",
+      pipe: (data: any) => {
+        return moment(data).format("MM/DD/YYYY HH:mm:ss");
+      },
     },
     {
       canAutoResize: true,

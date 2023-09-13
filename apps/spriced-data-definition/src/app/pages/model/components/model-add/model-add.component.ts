@@ -67,7 +67,7 @@ export class ModelAddComponent {
       name: "name",
       value: this.data.value?.name || "",
       placeholder: "Name",
-      icon: "schema",
+      // icon: "schema",
       label: "Name",
       readOnly: this.data.action == "Edit" ? true : false,
       validations: [
@@ -94,7 +94,7 @@ export class ModelAddComponent {
       name: "displayName",
       value: this.data.value?.displayName || "",
       placeholder: "DisplayName",
-      icon: "schema",
+      // icon: "schema",
       label: "DisplayName",
       validations: [
         {
@@ -115,15 +115,15 @@ export class ModelAddComponent {
       ],
     },
 
-    // {
-    //   type: "input",
-    //   subType: "text",
-    //   name: "description",
-    //   value: this.data.value?.description || "",
-    //   placeholder: "Description",
-    //   label: "Description",
-    //   maxLength:100
-    // },
+    {
+      type: "input",
+      subType: "text",
+      name: "description",
+      value: this.data.value?.description || "",
+      placeholder: "Description",
+      label: "Description",
+      maxLength:100
+    },
 
   ];
 
@@ -153,6 +153,7 @@ export class ModelAddComponent {
           },
         });
       } else if (this.data.action == "Edit") {
+        console.log(data.value)
         this.modelService.edit(data.value, this.data.value).subscribe({
           next: (results: any) => {
             this.snackbarService.success("Model Successfully Updated.");
