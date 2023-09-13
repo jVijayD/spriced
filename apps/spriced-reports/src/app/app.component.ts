@@ -41,28 +41,26 @@ export class AppComponent implements OnInit, OnDestroy, AfterContentChecked {
     this.subscriptions.push(
       of([
         {
-          name: "Dn-Pricing Entity Audit",
-          path: "/spriced-reports/ebe77ed2-3309-4fd4-b59b-6c08070faa02",
+          name: "Group 1",
+          path: "/spriced-reports/1",
           active: true,
         },
         {
-          name: "EBU CTT Part Price Comparison",
-          path: "/spriced-reports/631dcfd9-9f0b-4fdb-ad5b-8a2b6c71fbe5",
+          name: "Group 2",
+          path: "/spriced-reports/2",
           //path: "/spriced-user-management",
           active: false,
         },
         {
-          name: "Price History",
-          path: "/spriced-reports/4dad7019-aa49-4784-ac60-73aea5f2a9dc",
+          name: "Group 3",
+          path: "/spriced-reports/3",
           active: false,
         },
       ]).subscribe({
         next: (menuItems) => {
           this.appDataService.setMenuData(menuItems);
           this.loaderService.hide();
-          this.router.navigate([
-            "/spriced-reports/ebe77ed2-3309-4fd4-b59b-6c08070faa02",
-          ]);
+          this.router.navigate(["/spriced-reports/1"]);
         },
         error: (err) => {
           this.loaderService.hide();

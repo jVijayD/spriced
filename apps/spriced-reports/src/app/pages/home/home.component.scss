@@ -2,5 +2,9 @@
   font-size: 5rem;
   width: 5rem;
   height: 5rem;
-  @apply text-warn-default;
+  @apply text-primary-dark;
+}
+
+.name {
+  @apply text-secondary-light text-base font-bold text-ellipsis;
 }
