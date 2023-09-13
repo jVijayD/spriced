@@ -22,10 +22,10 @@ export class headerInterceptor implements HttpInterceptor {
     const authReq = req.clone({
       headers: req.headers
         .set("tenant", "meritor")
-        .set("user", this.user.profile.email || "")
-        .set("transactionId", this.user.profile.id || "")
+        .set("user", this.user?.profile?.email || "")
+        .set("transactionId", this.user?.profile?.id || "")
         .set("roles", this.user.tokenParsed?.realm_access?.roles?.filter((r:String)=>!r.startsWith("default-roles")).join(","))
-        .set("applications", this.user.profile.attributes.application || ""),
+        .set("applications", this.user?.profile?.attributes?.application || ""),
     });
     return next.handle(authReq);
   }
