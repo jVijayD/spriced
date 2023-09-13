@@ -632,6 +632,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         event.currentIndex
       );
     }
+    this.businessRuleService.ruleChageDetection.next(true);
   }
 
   /**
