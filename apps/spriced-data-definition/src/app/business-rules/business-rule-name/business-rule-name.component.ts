@@ -129,8 +129,6 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         this.rulesData = res;
         const ruleType = res.group;
         this.handleRuleType(ruleType);
-        this.patchForm(this.rulesData);
-        this.loading = false;
       });
     }
 
@@ -180,9 +178,11 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
               };
               const ruleType = this.myForm.get('group')?.value;
               this.handleRuleType(ruleType);
+               this.patchForm(this.rulesData);
               this.conditionsData.ruleTypes = this.conditionsData?.ruleTypes.slice(0, 3);
               this.conditionsData?.operators.splice(7,12);
               this.conditionsData.operators = this.conditionsData?.operators.filter((el:any)=>el.name!=='none')
+              this.loading = false;
             })
             .catch((error) => {
               // Handle errors if needed
