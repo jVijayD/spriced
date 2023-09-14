@@ -4,11 +4,17 @@
   <div mat-dialog-content>
     <div class="grid grid-flow-row">
       <mat-icon
-        style="height: 40px; width: 40px; font-size: 40px; margin-bottom: 1rem"
+        style="height: 40px; width: 40px; font-size: 40px; margin-bottom: 1rem;"
         class="text-primary-dark justify-self-center"
         >upload</mat-icon
       >
-      <input type="file" multiple="true" #file (change)="uploadFile($event)" accept=".csv"/>
+      <input
+        type="file"
+        multiple="true"
+        #file
+        (change)="uploadFile($event)"
+        accept=".xls,.xlsx"
+      />
     </div>
   </div>
 
