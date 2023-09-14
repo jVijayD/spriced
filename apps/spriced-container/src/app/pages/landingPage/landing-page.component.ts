@@ -6,6 +6,7 @@ import { MatMenuModule } from "@angular/material/menu";
 import { AppCardComponent } from "@spriced-frontend/spriced-ui-lib";
 import { KeycloakService } from "keycloak-angular";
 import { AppDataService, Application } from "@spriced-frontend/shared/spriced-shared-lib";
+import { HttpClient } from "@angular/common/http";
 @Component({
   selector: "sp-landing-page",
   standalone: true,
@@ -21,20 +22,21 @@ import { AppDataService, Application } from "@spriced-frontend/shared/spriced-sh
   providers: [AppDataService],
 })
 export class LandingPageComponent implements OnInit {
-  
+
   labels: any;
-  apps:Application[] = [];
+  apps: Application[] = [];
   user = "";
   constructor(
     private keycloakService: KeycloakService,
     private aroute: ActivatedRoute,
     private router: Router,
-    public appDataService: AppDataService
+    public appDataService: AppDataService,
+    private httpClient: HttpClient
   ) {
-    this.appDataService.getApps().subscribe(e=>{
-    this.apps=e?e:[];
-  });
-}
+    this.appDataService.getApps().subscribe(e => {
+      this.apps = e ? e : [];
+    });
+  }
 
   ngOnInit(): void {
     this.initializeUserOptions();
@@ -49,11 +51,8 @@ export class LandingPageComponent implements OnInit {
   }
   private initializeUserOptions(): void {
     this.user = this.keycloakService.getUsername();
-    console.log(this.keycloakService.getKeycloakInstance());
-    if(!!this.user)
-    {
-      if(!!this.user && this.aroute.snapshot.queryParams['returnUrl'])
-      {
+    if (!!this.user) {
+      if (!!this.user && this.aroute.snapshot.queryParams['returnUrl']) {
         const returnUrl = this.aroute.snapshot.queryParams['returnUrl'];
         this.router.navigateByUrl(returnUrl);
       }
@@ -61,5 +60,19 @@ export class LandingPageComponent implements OnInit {
   }
   capitalizeFirstLetter(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+  goToLink() {
+    const url_help_access = process.env["NX_API_USER-ACCESS_URL"] as string;
+    this.httpClient
+      .post(`${url_help_access}/help-access`, { token: "" }, {
+        observe: 'response' as 'response',
+        withCredentials: true
+      })
+      .subscribe((data) => {
+        if (data) {
+          window.open(process.env["NX_HELP"] as string, "_blank");
+        }
+      });
+    //window.open(process.env["NX_HELP"] as string, "_blank");
   }
 }
