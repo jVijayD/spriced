@@ -4,7 +4,7 @@ import { AppDataService } from '@spriced-frontend/shared/spriced-shared-lib';
 import { BusinessruleService } from '@spriced-frontend/spriced-common-lib';
 import { FormGroup, FormControl, Validators, FormArray, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, forkJoin, takeUntil } from 'rxjs';
+import { Subject, filter, forkJoin, takeUntil } from 'rxjs';
 import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import * as moment from 'moment';
 import { MessageService } from "./../services/message.service";
@@ -164,7 +164,8 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
           Promise.all(
             relatedRefreneceTableEntity.map(async (el: any) => {
               const { entityData } = await this.getEntityById(el.referencedTableId);
-              entityData.attributes = entityData.attributes.filter((attr: any) => !attr.systemAttribute);
+              const filteredAttributes = entityData?.attributes.filter((el: any) => el.type !== 'LOOKUP'); 
+              entityData.attributes = filteredAttributes.filter((attr: any) => !attr.systemAttribute);
               await this.processNestedAttributes(entityData.attributes, el);
             })
           )
@@ -177,8 +178,11 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
                 operators: this.transformObjectToKeyValueArray(operators),
                 operands: this.transformObjectToKeyValueArray(operands),
               };
+              const ruleType = this.myForm.get('group')?.value;
+              this.handleRuleType(ruleType);
               this.conditionsData.ruleTypes = this.conditionsData?.ruleTypes.slice(0, 3);
-              this.conditionsData.operators = this.conditionsData?.operators.slice(0, 21);
+              this.conditionsData?.operators.splice(7,12);
+              this.conditionsData.operators = this.conditionsData?.operators.filter((el:any)=>el.name!=='none')
             })
             .catch((error) => {
               // Handle errors if needed
@@ -640,6 +644,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         event.currentIndex
       );
     }
+    this.cdRef.detectChanges();
     this.businessRuleService.ruleChageDetection.next(true);
   }
 

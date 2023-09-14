@@ -145,7 +145,7 @@ export class BusinessRuleListComponent {
       if(el === true)
       {
         this.disable = this.isConditionTypeNone();
-        this.cdRef.detectChanges();
+        // this.cdRef.detectChanges();
       }
     })
   }
@@ -171,8 +171,8 @@ export class BusinessRuleListComponent {
     const parentAttributeId = this.getValue('parentAttributeId');
     const parentOperandId = this.getValue('parentOperandId');
     
-    this.handleValueChange(value);
     this.handleValue(operandType);
+    this.handleValueChange(value);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
   }
 
@@ -247,7 +247,8 @@ export class BusinessRuleListComponent {
       valueControl?.disable();
 
     }
-    else if (['IS_NULL'].includes(value)) {
+    else if (['IS_NULL','IS_NOT_NULL'].includes(value)) {
+      this.conditionForm?.get('operandType').setValue('CONSTANT');
       this.value = this.maxValue = this.minValue = false;
       valueControl?.disable();
       minValueControl?.disable();
