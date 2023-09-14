@@ -41,21 +41,21 @@ export class AppComponent implements OnInit, OnDestroy, AfterContentChecked {
     this.subscriptions.push(
       of([
         {
-          name: "Group 1",
+          name: "NRP Reports",
           path: "/spriced-reports/1",
           active: true,
         },
-        {
-          name: "Group 2",
-          path: "/spriced-reports/2",
-          //path: "/spriced-user-management",
-          active: false,
-        },
-        {
-          name: "Group 3",
-          path: "/spriced-reports/3",
-          active: false,
-        },
+        // {
+        //   name: "Group 2",
+        //   path: "/spriced-reports/2",
+        //   //path: "/spriced-user-management",
+        //   active: false,
+        // },
+        // {
+        //   name: "Group 3",
+        //   path: "/spriced-reports/3",
+        //   active: false,
+        // },
       ]).subscribe({
         next: (menuItems) => {
           this.appDataService.setMenuData(menuItems);
