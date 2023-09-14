@@ -147,7 +147,7 @@ export class ListComponent implements OnInit, OnDestroy {
   rows: any[] = [];
   selectedItem: any = null;
   public attributeId: any;
-  public mockAttribute: any = [];
+  public domainAttributes: any = [];
 
   constructor(
     private businessRuleService: BusinessruleService,
@@ -490,32 +490,41 @@ export class ListComponent implements OnInit, OnDestroy {
     if (id) {
       const entity = this.entities.find((item: any) => item.id == id);
       this.attributes = [];
-      this.mockAttribute = entity.attributes;
+      this.domainAttributes = entity.attributes;
       const relatedRefreneceTableEntity = entity.attributes.filter((el: any) => !!el.referencedTableId);
+      // Handle for nested attribute
       if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
-        this.mockAttribute.push(relatedRefreneceTableEntity[0]);
-        let { entityData } = await this.getEntityById(relatedRefreneceTableEntity[0].referencedTableId);
-        const nestedProcessedAttributes = this.processNestedAttributes(entityData.attributes, relatedRefreneceTableEntity[0].displayName);
-        this.mockAttribute.push(...nestedProcessedAttributes);
+        if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
+          // Use Promise.all to wait for all promises to resolve
+          Promise.all(
+            relatedRefreneceTableEntity.map(async (el: any) => {
+              const { entityData } = await this.getEntityById(el.referencedTableId);
+              const nestedProcessedAttributes = this.processNestedAttributes(entityData.attributes, el);
+              this.domainAttributes.push(...nestedProcessedAttributes);
+            })
+          )
+            .then(() => {
+              this.attributes = [
+                {
+                  displayName: 'All',
+                  name: 'All',
+                  id: 'ALL',
+                },
+                ...this.domainAttributes,
+              ];
+              this.defaultAttribute = this.attributeId ? this.attributeId : 'ALL';
+              // this.attributes = entity.attributes;
+              this.filterData = this.dataSource.filter((res: any) => res.entityId === id);
+              this.rows = this.filterData;
+              this.currentDataSource = this.filterData.slice(
+                this.pageIndex,
+                this.pageIndex + this.pageSize
+              );
+              this.paginator?.firstPage();
+              this.loading = false;
+            });
+        }
       }
-      this.attributes = [
-        {
-          displayName: 'All',
-          name: 'All',
-          id: 'ALL',
-        },
-        ...this.mockAttribute,
-      ];
-      this.defaultAttribute = this.attributeId ? this.attributeId : 'ALL';
-      // this.attributes = entity.attributes;
-      this.filterData = this.dataSource.filter((res: any) => res.entityId === id);
-      this.rows = this.filterData;
-      this.currentDataSource = this.filterData.slice(
-        this.pageIndex,
-        this.pageIndex + this.pageSize
-      );
-      this.paginator?.firstPage();
-      this.loading = false;
     }
     else {
       this.rows = [];
@@ -556,21 +565,16 @@ export class ListComponent implements OnInit, OnDestroy {
   * @param parentAttribute string
   * @returns 
   */
-  public processNestedAttributes(nestedAttributes: any, parentAttribute: string) {
+  public processNestedAttributes(nestedAttributes: any, parentAttribute: any) {
     const processedAttributes: any = [];
     if (nestedAttributes) {
       nestedAttributes.forEach((el: any) => {
         const processedAttribute = {
           ...el,
-          displayName: `${parentAttribute}.${el.displayName}`,
-          name: `${parentAttribute}.${el.displayName}`
+          displayName: `${parentAttribute?.displayName}.${el.displayName}`,
+          name: `${parentAttribute?.displayName}.${el.displayName}`
         };
         processedAttributes.push(processedAttribute);
-
-        // if (el.attributes && el.attributes.length > 0) {
-        //   const nestedProcessedAttributes = this.processNestedAttributes(el.attributes, el.displayName);
-        //   processedAttributes.push(...nestedProcessedAttributes);
-        // }
       });
     }
 
