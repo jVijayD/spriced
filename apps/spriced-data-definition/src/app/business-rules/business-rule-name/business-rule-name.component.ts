@@ -4,7 +4,7 @@ import { AppDataService } from '@spriced-frontend/shared/spriced-shared-lib';
 import { BusinessruleService } from '@spriced-frontend/spriced-common-lib';
 import { FormGroup, FormControl, Validators, FormArray, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, forkJoin, takeUntil } from 'rxjs';
+import { Subject, filter, forkJoin, takeUntil } from 'rxjs';
 import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import * as moment from 'moment';
 import { MessageService } from "./../services/message.service";
@@ -157,23 +157,39 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       let attributeList: any = [];
       const relatedRefreneceTableEntity = entity.attributes.filter((el: any) => !!el.referencedTableId);
       attributeList = entity.attributes;
-      
       // Handle for nested attribute
       if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
-        let { entityData } = await this.getEntityById(relatedRefreneceTableEntity[0].referencedTableId);
-        await this.processNestedAttributes(entityData.attributes, relatedRefreneceTableEntity[0]);
-      }
-      attributeList = attributeList.filter((el: any) => el.systemAttribute == false);
-
-      this.conditionsData = {
-        ...action,
-        attributes: attributeList,
-        conditions: this.transformObjectToKeyValueArray(conditions),
-        operators: this.transformObjectToKeyValueArray(operators),
-        operands: this.transformObjectToKeyValueArray(operands)
-      };
-      this.conditionsData.ruleTypes = this.conditionsData?.ruleTypes.slice(0, 3)
-      this.conditionsData.operators = this.conditionsData?.operators.slice(0, 21)
+        if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
+          // Use Promise.all to wait for all promises to resolve
+          Promise.all(
+            relatedRefreneceTableEntity.map(async (el: any) => {
+              const { entityData } = await this.getEntityById(el.referencedTableId);
+              const filteredAttributes = entityData?.attributes.filter((el: any) => el.type !== 'LOOKUP'); 
+              entityData.attributes = filteredAttributes.filter((attr: any) => !attr.systemAttribute);
+              await this.processNestedAttributes(entityData.attributes, el);
+            })
+          )
+            .then(() => {
+              attributeList = attributeList.filter((el: any) => !el.systemAttribute);
+              this.conditionsData = {
+                ...action,
+                attributes: attributeList,
+                conditions: this.transformObjectToKeyValueArray(conditions),
+                operators: this.transformObjectToKeyValueArray(operators),
+                operands: this.transformObjectToKeyValueArray(operands),
+              };
+              const ruleType = this.myForm.get('group')?.value;
+              this.handleRuleType(ruleType);
+              this.conditionsData.ruleTypes = this.conditionsData?.ruleTypes.slice(0, 3);
+              this.conditionsData?.operators.splice(7,12);
+              this.conditionsData.operators = this.conditionsData?.operators.filter((el:any)=>el.name!=='none')
+            })
+            .catch((error) => {
+              // Handle errors if needed
+            });
+          }
+        }
+      
     }
   }
 
@@ -196,12 +212,11 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
   * @returns 
   */
   public processNestedAttributes(nestedAttributes: any, parentEntity: any) {
-    const processedAttributes: any = [];
-    if (nestedAttributes) {
-      parentEntity.attributes = nestedAttributes;
-    }
-
-    return processedAttributes;
+      const processedAttributes: any = [];
+      if (nestedAttributes) {
+        parentEntity.attributes = nestedAttributes;
+      }
+      return processedAttributes;
   }
 
   /**
@@ -513,12 +528,9 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       case 'condition':
         formGroup.removeControl('actionType');
         this.conditions.push(formGroup);
-        // if (index === 0) {
-        //   this.conditions.controls[index].get('conditionType')?.patchValue('NONE');
-        // }
         this.conditions.controls.forEach((item: any, i: number) => {
           if (index !== i) {
-            item.get('conditionType')?.patchValue('');
+            item.get('conditionType')?.value !== 'NONE' ? item.get('conditionType')?.value : item.get('conditionType')?.patchValue('');
           }
           else {
             this.conditions.controls[index].get('conditionType')?.patchValue('NONE');
@@ -632,6 +644,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         event.currentIndex
       );
     }
+    this.cdRef.detectChanges();
     this.businessRuleService.ruleChageDetection.next(true);
   }
 
@@ -642,11 +655,8 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
   public conditionsPatchValue(conditions: any) {
     let lastIndex = conditions.length - 1;
     conditions.controls.forEach((element: any, index: number) => {
-      // if (index === 0) {
-      //   element.get('conditionType').patchValue('NONE');
-      // }
       if (lastIndex !== index) {
-        element.get('conditionType')?.patchValue('');
+        element.get('conditionType')?.value !== 'NONE' ? element.get('conditionType')?.value : element.get('conditionType')?.patchValue('');
       }
       else {
         conditions.controls[lastIndex].get('conditionType')?.patchValue('NONE');
