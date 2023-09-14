@@ -24,7 +24,8 @@ export class headerInterceptor implements HttpInterceptor {
         .set("tenant", "meritor")
         .set("user", this.user?.profile?.email || "")
         .set("transactionId", this.user?.profile?.id || "")
-        .set("roles", this.user.tokenParsed?.realm_access?.roles?.filter((r:String)=>!r.startsWith("default-roles")).join(","))
+        .set("roles", this.user.tokenParsed?.realm_access?.roles?.join(","))
+        //.set("roles", this.user.tokenParsed?.realm_access?.roles?.filter((r:String)=>!r.startsWith("default-roles")).join(","))
         .set("applications", this.user?.profile?.attributes?.application || ""),
     });
     return next.handle(authReq);
