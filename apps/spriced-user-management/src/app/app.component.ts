@@ -5,6 +5,7 @@ import {
   MenuItem,
 } from "@spriced-frontend/shared/spriced-shared-lib";
 import { RouterOutlet } from "@angular/router";
+import { RequestUtilityService } from "@spriced-frontend/spriced-common-lib";
 
 @Component({
   selector: "sp-app",
@@ -14,24 +15,15 @@ import { RouterOutlet } from "@angular/router";
   styles: [],
 })
 export class AppComponent {
-  menuItems: MenuItem[] = [
+  menuDItems: MenuItem[] = [
     {
-      name: "Menu Item1",
-      path: "/spriced-user-management",
+      name: "App Access Management",
       active: true,
-    },
-    {
-      name: "Menu Item2",
-      path: "/spriced-user-management/item2",
-      active: false,
-    },
-    {
-      name: "Menu Item3",
-      path: "/spriced-user-management/item3",
-      active: false,
+      path: "/spriced-user-management/app-access",
     },
   ];
   constructor(private appDataService: AppDataService) {
-    this.appDataService.setMenuData(this.menuItems);
+    this.appDataService.setMenuData(this.menuDItems);
   }
 }
+

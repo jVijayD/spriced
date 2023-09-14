@@ -54,6 +54,7 @@ import { AuditDataComponent } from "./audit-data/audit-data.component";
 import { LookupPopupComponent } from "../../components/lookup-Popup/lookup-popup.component";
 import { EntityGridService } from "./entity-grid.service";
 import { EntityFormService } from "./entity-form.service";
+import { AppDataService, ErrorTypes } from "@spriced-frontend/shared/spriced-shared-lib";
 
 @Component({
   selector: "sp-entity-data",
@@ -127,7 +128,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     private settings: SettingsService,
     private entityGridService: EntityGridService,
     private entityFormService: EntityFormService,
-    private router: Router
+    private router: Router,
+    private statusPannelService: AppDataService
   ) {
     this.globalSettings = this.settings.getGlobalSettings();
     this.setFormData("", []);
@@ -531,6 +533,12 @@ export class EntityDataComponent implements OnDestroy, OnInit {
             });
           });
           this.snackbarService.error(errorMessage);
+          this.statusPannelService.setErrors([
+            {
+              type: ErrorTypes.ERROR,
+              msg: errorMessage,
+            },
+          ]);
         } else {
           this.dynamicFormService.parentForm?.reset();
           this.snackbarService.success("Record created successfully.");
@@ -564,6 +572,12 @@ export class EntityDataComponent implements OnDestroy, OnInit {
             });
           });
           this.snackbarService.error(errorMessage);
+          this.statusPannelService.setErrors([
+            {
+              type: ErrorTypes.ERROR,
+              msg: errorMessage,
+            },
+          ]);
         } else {
           this.onClear();
           this.snackbarService.success("Record updated successfully.");

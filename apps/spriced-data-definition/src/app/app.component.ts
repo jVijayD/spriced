@@ -40,7 +40,7 @@ export class AppComponent {
       name: "Model Permission",
       active: false,
       path: "/spriced-data-definition/model-access",
-    },
+    }
   ];
   constructor(private appDataService: AppDataService) {
     this.appDataService.setMenuData(this.menuDItems);

@@ -1,6 +1,13 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable, Subject, fromEvent, map, merge, of } from "rxjs";
-
+import { UserAccessService } from "@spriced-frontend/spriced-common-lib";
+import {
+  BehaviorSubject,
+  Observable,
+  fromEvent,
+  map,
+  merge,
+  of,
+} from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -8,6 +15,7 @@ import { BehaviorSubject, Observable, Subject, fromEvent, map, merge, of } from 
 export class AppDataService {
   private userData = new BehaviorSubject<UserData | null>(null);
   private menuData = new BehaviorSubject<MenuItem[]>([]);
+  private appDataSubject = new BehaviorSubject<Application[] | null>(null);
   ERROR_LIST: BehaviorSubject<errorElement[]> = new BehaviorSubject<errorElement[]>([]);
   networkStatus$ = new Observable<boolean>();
   public subConditionForm = new BehaviorSubject<any>(null);
@@ -15,11 +23,25 @@ export class AppDataService {
   userData$ = this.userData.asObservable();
   menuData$ = this.menuData.asObservable();
   $ERROR_LIST = this.ERROR_LIST.asObservable();
-  
-  constructor() {}
+  hasAppsLoaded = false;
+  constructor(private userAccessService: UserAccessService) {
+    console.log("a");
+  }
 
   setUserData(user: UserData) {
     this.userData.next(user);
+  }
+  setApps(apps: Application[]) {
+    this.appDataSubject.next(apps);
+    this.hasAppsLoaded = true;
+  }
+  getApps() {
+    if (!this.hasAppsLoaded) {
+      this.userAccessService.loadAllApps().subscribe((appsList:any[]) => {
+        this.setApps(appsList.map((a) => a as Application));
+      });
+    }
+    return this.appDataSubject.asObservable();
   }
 
   setMenuData(menuItems: MenuItem[]) {
@@ -42,12 +64,10 @@ export class AppDataService {
     return this.$ERROR_LIST;
   }
 
-  init(){
+  init() {
     this.setErrors([]);
   }
 }
-
-
 
 export interface errorElement {
   type: ErrorTypes;
@@ -56,8 +76,8 @@ export interface errorElement {
 }
 
 export enum ErrorTypes {
-  ERROR = 'Error',
-  WARNING = 'Warning',
+  ERROR = "Error",
+  WARNING = "Warning",
 }
 
 export interface UserData {
@@ -65,6 +85,15 @@ export interface UserData {
   username: string;
   displayName: string;
   token: string;
+}
+export interface Application {
+  code: string;
+  description: string;
+  icon: string;
+  id: number;
+  name: string;
+  path: string;
+  status: boolean;
 }
 
 export interface MenuItem {

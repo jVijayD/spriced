@@ -12,44 +12,78 @@ import {
   Router,
   ActivatedRoute,
 } from "@angular/router";
+import {
+  AppDataService,
+  Application,
+} from "@spriced-frontend/shared/spriced-shared-lib";
 import { KeycloakAuthGuard, KeycloakService } from "keycloak-angular";
-import { Observable } from "rxjs";
+import { Observable, first, map, toArray } from "rxjs";
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthGuard extends KeycloakAuthGuard {
   user: any;
+  apps$: Observable<Application[] | null>;
   constructor(
     protected override readonly router: Router,
     protected readonly keycloak: KeycloakService,
+    public appDataService: AppDataService,
     private aroute: ActivatedRoute
   ) {
     super(router, keycloak);
+    this.apps$ = this.appDataService.getApps();
   }
   async isAccessAllowed(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Promise<boolean | UrlTree> {
     if (!this.authenticated) {
-      const returnUrl = this.aroute.snapshot.queryParams['returnUrl'];
-      const defaultReturnUrl = returnUrl || `${window.location.pathname}${window.location.search}`;
+      const returnUrl = this.aroute.snapshot.queryParams["returnUrl"];
+      const defaultReturnUrl =
+        returnUrl || `${window.location.pathname}${window.location.search}`;
       const encodedDefaultReturnUrl = encodeURIComponent(defaultReturnUrl);
       window.location.href = `${window.location.origin}?returnUrl=${encodedDefaultReturnUrl}`;
       return true;
     }
-    if (!this.hasRoles()) {
-      console.log(window.location.origin + state.url);
-      window.location.href = `${window.location.origin}/unauthorized`;
-    }
-    return true;
+
+    return this.hasAppPermission(route);
+  }
+
+  async hasAppPermission(route: ActivatedRouteSnapshot) {
+    return new Promise<boolean>((resolve, reject) => {
+      if (!this.hasRoles()) {
+        this.router.navigate([`/unauthorized`]);
+        resolve(false);
+      } else {
+        this.apps$.subscribe({
+          next:(appList) => {
+            if (appList !== null) {
+              let retVal = appList
+                  .map((app) => app.path)
+                  .filter((path) => route.url.toString().indexOf(path) > -1)
+                  .length > 0;
+              if (!retVal) {
+                this.router.navigate([`/unauthorized`]);
+                resolve(false);
+              } else {
+                resolve(true);
+              }
+            }
+          },
+          error:reject
+        });
+      }
+    });
   }
 
   hasRoles() {
     let roles =
       this.keycloak.getKeycloakInstance().tokenParsed?.realm_access?.roles;
     console.log(roles);
-    return roles != undefined && !roles.includes("External") && roles.length > 1 ;
+    return (
+      roles != undefined && !roles.includes("External") && roles.length > 1
+    );
   }
   async intercept(
     req: HttpRequest<any>,
@@ -61,7 +95,9 @@ export class AuthGuard extends KeycloakAuthGuard {
         tenant: "meritor",
         user: this.user.profile.email || "",
         transactionId: this.user.profile.id || "",
-        roles: this.user.tokenParsed?.realm_access?.roles?.join(","),
+        roles: this.user.tokenParsed?.realm_access?.roles
+          ?.filter((r: String) => !r.startsWith("default-roles"))
+          .join(","),
         applications: this.user.profile.attributes.application || "",
       }),
     });
