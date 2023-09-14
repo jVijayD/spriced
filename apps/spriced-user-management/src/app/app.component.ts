@@ -17,7 +17,7 @@ import { RequestUtilityService } from "@spriced-frontend/spriced-common-lib";
 export class AppComponent {
   menuDItems: MenuItem[] = [
     {
-      name: "App Access Management",
+      name: "Functional Permission",
       active: true,
       path: "/spriced-user-management/app-access",
     },
