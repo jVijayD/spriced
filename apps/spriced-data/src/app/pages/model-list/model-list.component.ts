@@ -154,9 +154,7 @@ export class ModelListComponent {
             d.parentId = row.id;
             d.icon = "view_column";
             d.displayName = d.displayName || d.name;
-            if (!d.systemAttribute || d.name == 'updated_date') {
-              return d
-            }
+            return d
           });
           row.treeStatus = "expanded";
           this.rows = [...this.rows, ...this.entities];
