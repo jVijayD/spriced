@@ -427,7 +427,13 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       operandType: item?.operandType ? [item.operandType, Validators.required] : ['ATTRIBUTE', Validators.required],
       subConditionType: item?.subConditionType ? [item.subConditionType] : ['NONE', Validators.required],
       parentAttributeId: item?.parentAttributeId ? [item.parentAttributeId] : [''],
+      attributeName: item?.attributeName ? [item.attributeName] : [''],
+      parentAttributeName: item?.parentAttributeName ? [item.parentAttributeName] : [''],
+      attributeTableName: item?.attributeTableName ? [item.attributeTableName] : [''],
       parentOperandId: item?.parentOperandId ? [item.parentOperandId] : [''],
+      operandName: item?.operandName ? [item.operandName] : [''],
+      parentOperandName: item?.parentOperandName ? [item.parentOperandName] : [''],
+      operandTableName: item?.operandTableName ? [item.operandTableName] : [''],
       subConditions: this.formbuilder.array([])
     });
 
@@ -475,8 +481,14 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       max_value: value && value[1] ? [value[1], Validators.required] : ['', Validators.required],
       min_value: value && value[0] ? [value[0], Validators.required] : ['', Validators.required],
       operandType: item?.operandType ? [item.operandType, Validators.required] : ['ATTRIBUTE', Validators.required],
+      attributeName: item?.attributeName ? [item.attributeName] : [''],
       parentAttributeId: item?.parentAttributeId ? [item.parentAttributeId] : [''],
+      parentAttributeName: item?.parentAttributeName ? [item.parentAttributeName] : [''],
+      attributeTableName: item?.attributeTableName ? [item.attributeTableName] : [''],
       parentOperandId: item?.parentOperandId ? [item.parentOperandId] : [''],
+      operandName: item?.operandName ? [item.operandName] : [''],
+      parentOperandName: item?.parentOperandName ? [item.parentOperandName] : [''],
+      operandTableName: item?.operandTableName ? [item.operandTableName] : [''],
       subConditionType: item?.subConditionType ? [item.subConditionType] : ['NONE', Validators.required],
       subConditions: this.formbuilder.array([])
     });
@@ -503,14 +515,20 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     let formGroup: FormGroup = this.formbuilder.group({
       id: [this.generateRandomIds()],
       attributeId: ['', Validators.required],
+      attributeName: [''],
+      parentAttributeId: [''],
+      parentAttributeName: [''],
+      attributeTableName: [''],
       operand: ['', Validators.required],
+      operandName: [''],
+      parentOperandId: [''],
+      parentOperandName: [''],
+      operandTableName: [''],
       max_value: ['', Validators.required],
       min_value: ['', Validators.required],
       conditionType: ['', Validators.required],
       operatorType: ['', Validators.required],
       actionType: ['', Validators.required],
-      parentAttributeId: [''],
-      parentOperandId: [''],
       operandType: ['ATTRIBUTE', Validators.required],
       subConditionType: ['NONE', Validators.required],
       subConditions: this.formbuilder.array([])

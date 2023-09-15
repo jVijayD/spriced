@@ -191,17 +191,25 @@ export class BusinessRuleListComponent {
       const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
       this.selectedOperand = value;
       this.conditionForm?.get('operand')?.setValue(item.id);
-      const parentAttId = parent && parent?.id !== '' ? parent.id : null;
-      this.conditionForm?.get('parentOperandId')?.setValue(parentAttId);
+      this.conditionForm?.get('operandName')?.setValue(item.displayName);
+      const parentAtt = parent ?? '';
+      this.conditionForm?.get('parentOperandId')?.setValue(parentAtt.id ?? '');
+      this.conditionForm?.get('parentOperandName')?.setValue(parentAtt.displayName ?? '');
+      this.conditionForm?.get('operandTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
     }
     else {
       const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
       this.selectedAttribute = value;
       this.selectedOperand = '';
-      this.conditionForm?.get('parentOperandId')?.setValue(null);
+      this.disableFormControl();
+
       this.conditionForm?.get('attributeId')?.setValue(item.id);
-      const parentAttId = parent && parent?.id !== '' ? parent.id : null;
-      this.conditionForm?.get('parentAttributeId')?.setValue(parentAttId);
+      this.conditionForm?.get('attributeName')?.setValue(item.displayName);
+      
+      const parentAtt = parent ?? '';
+      this.conditionForm?.get('parentAttributeId')?.setValue(parentAtt.id ?? '');
+      this.conditionForm?.get('parentAttributeName')?.setValue(parentAtt.displayName ?? '');
+      this.conditionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
       this.handleAttributes(item.id, 'changeAttribute');
     }
   }
@@ -217,11 +225,20 @@ export class BusinessRuleListComponent {
     this.isFieldDisabled = event === 'BLANK';
     this.selectedOperand = '';
     if (text === 'editValue') {
-      this.conditionForm?.get('operand')?.setValue('');
+      this.disableFormControl();
     }
     if (this.isFieldDisabled) {
       this.conditionForm?.get('operand')?.disable();
     }
+  }
+
+  public disableFormControl()
+  {
+    this.conditionForm?.get('operand')?.setValue('');
+    this.conditionForm?.get('operandName')?.setValue('');
+    this.conditionForm?.get('parentOperandId')?.setValue('');
+    this.conditionForm?.get('parentOperandName')?.setValue('');
+    this.conditionForm?.get('operandTableName')?.setValue('');
   }
 
   /**
