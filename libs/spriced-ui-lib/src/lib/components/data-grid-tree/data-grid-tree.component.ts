@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  HostListener,
   Input,
   Output,
   PipeTransform,
@@ -18,6 +19,7 @@ import {
 } from "@swimlane/ngx-datatable";
 import { Paginate } from "../data-grid/data-grid.component";
 import { MatIconModule } from "@angular/material/icon";
+import { Subject, debounceTime } from "rxjs";
 
 @Component({
   selector: "sp-data-grid-tree",
@@ -29,7 +31,7 @@ import { MatIconModule } from "@angular/material/icon";
 export class DataGridTreeComponent implements AfterViewInit {
   @ViewChild(DatatableComponent)
   table!: DatatableComponent;
-
+  resizeTable = new Subject<any>();
   @Input()
   title = "";
 
@@ -96,6 +98,11 @@ export class DataGridTreeComponent implements AfterViewInit {
   @Output()
   redirect: EventEmitter<any> = new EventEmitter<any>();
 
+  constructor(){
+    this.resizeTable.pipe(debounceTime(400)).subscribe(() => {
+      this.table.recalculate();
+    });
+  }
   onPaginate(e: Paginate) {
     this.paginate.emit(e);
   }
@@ -131,6 +138,10 @@ export class DataGridTreeComponent implements AfterViewInit {
     }
     return data;
   }
+  @HostListener('window:resize',['$event'])
+  resize(event:any){
+    this.resizeTable.next(true);
+  } 
 }
 export interface Head {
   name: string;
