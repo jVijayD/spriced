@@ -14,3 +14,13 @@
     width: 30px;
   }
 }
+
+::ng-deep .cdk-overlay-pane .custom-tooltip .mdc-tooltip__surface{
+  background-color: #fff;
+  color: #000;
+  border: 1px solid;
+  border-radius: 0px;
+  width: auto;
+  max-width: 230px;
+  min-width: 20px !important;
+}
