@@ -19,6 +19,7 @@ export class ToolTipRendererDirective {
   
     //If this is specified then specified template will be rendered in the tooltip
     @Input() contentTemplate!: TemplateRef<any>;
+    @Input() customPosition!: boolean;
   
     private _overlayRef!: OverlayRef;
     
@@ -33,16 +34,30 @@ export class ToolTipRendererDirective {
       if (!this.showToolTip) {
         return;
       }
+
+      const position = 
+      {
+        originX: 'start',
+        originY: 'top',
+        overlayX: 'end',
+        overlayY: 'bottom',
+        offsetY: -4
+      }
+
+      const customPosition = 
+      {
+        originX: 'center',
+        originY: 'bottom',
+        overlayX: 'center',
+        overlayY: 'top',
+        offsetY: 5
+      }
+
+      const tooltipPosition: any = !!this.customPosition ? customPosition : position;
   
       const positionStrategy = this._overlayPositionBuilder
                                   .flexibleConnectedTo(this._elementRef)
-                                  .withPositions([{
-                                                    originX: 'start',
-                                                    originY: 'top',
-                                                    overlayX: 'end',
-                                                    overlayY: 'bottom',
-                                                    offsetY: -4,
-                                                 }]);
+                                  .withPositions([tooltipPosition]);
                                                   
   
       this._overlayRef = this._overlay.create({ positionStrategy});

@@ -112,8 +112,20 @@
             title="Filter"
             (actionClick)="onFilter()"
             [disabled]="this.headers.length === 0"
+            spToolTipRenderer
+            [contentTemplate]="template"
+            [customPosition]="true"
           ></sp-header-action>
 
+          <ng-template #template>
+            <div [innerHTML]="getToolTipTemplate(query)"></div>
+          </ng-template>
+          <!-- <ng-template #template>
+            <div *ngIf="query"> 
+              <div [innerHTML]="getToolTipTemplate(query)"></div>
+            </div>
+          </ng-template> -->
+           
           <sp-header-action
             icon="filter_list_off"
             text="Clear Filter"
