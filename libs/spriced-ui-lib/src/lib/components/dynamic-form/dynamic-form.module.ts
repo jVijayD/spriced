@@ -23,6 +23,7 @@ import { NumericComponent } from "./sub-components/numeric/numeric.component";
 import { LookupSelectComponent } from "./sub-components/lookup-select/lookup-select.component";
 import { LookupGridPickerComponent } from "./sub-components/lookup-grid-picker/lookup-grid-picker.component";
 import { MatNativeDateModule, MatOptionModule } from "@angular/material/core";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { DatePickerComponent } from "./sub-components/date-picker/date-picker.component";
 import { DateTimePickerComponent } from "./sub-components/date-time-picker/date-time-picker.component";
 import { DateRangeComponent } from "./sub-components/date-range/date-range.component";
@@ -89,6 +90,7 @@ import { DateFormatDirectiveYYYYMMDD } from './directives/.dateformat-yyyymmdd.d
     MatCheckboxModule,
     MatRadioModule,
     MatSelectModule,
+    MatTooltipModule
   ],
   exports: [
     InputComponent,
