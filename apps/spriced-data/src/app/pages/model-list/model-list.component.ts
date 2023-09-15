@@ -51,8 +51,9 @@ export class ModelListComponent {
       name: "Action",
       canAutoResize: true,
       isSortable: true,
-      isTreeColumn:false,
-      action:true,
+      isTreeColumn: false,
+      action: true,
+      width: 100
     },
     {
       column: "updatedBy",
@@ -60,6 +61,7 @@ export class ModelListComponent {
       canAutoResize: true,
       isSortable: true,
       isTreeColumn: false,
+      width: 200
     },
     {
       column: "updatedDate",
@@ -70,6 +72,7 @@ export class ModelListComponent {
       pipe: (data: any) => {
         return moment(data).format("MM/DD/YYYY HH:mm:ss ");
       },
+      width: 200
     },
     {
       column: "description",
@@ -99,7 +102,7 @@ export class ModelListComponent {
     private modelService: ModelService,
     private entityService: EntityService,
     private router: Router
-  ) {}
+  ) { }
   ngOnInit(): void {
     this.load();
   }
@@ -135,13 +138,25 @@ export class ModelListComponent {
               this.rows = [...this.rows, ...this.entities];
             });
         } else {
-          this.entities = row.attributes.map((d: any) => {
+          let attributes = row.attributes?.filter(
+            (value: any) => {
+              if (value.name != 'updated_date') {
+                return !value.systemAttribute;
+              }
+              else {
+                return true
+              }
+            }
+          );
+          this.entities = attributes.map((d: any) => {
             row.expandedOnce = true;
             d.treeStatus = "disabled";
             d.parentId = row.id;
             d.icon = "view_column";
             d.displayName = d.displayName || d.name;
-            return d;
+            if (!d.systemAttribute || d.name == 'updated_date') {
+              return d
+            }
           });
           row.treeStatus = "expanded";
           this.rows = [...this.rows, ...this.entities];
@@ -161,13 +176,13 @@ export class ModelListComponent {
   }
 
   onView() {
-   setTimeout(() => {
-    const data = { ...this.selectedItem };
-    data.id = data.id.replace(data.name, "");
-    this.router.navigate(["/spriced-data/" + data.groupId + "/", data.id]);
-  }, 100);
+    setTimeout(() => {
+      const data = { ...this.selectedItem };
+      data.id = data.id.replace(data.name, "");
+      this.router.navigate(["/spriced-data/" + data.groupId + "/", data.id]);
+    }, 100);
   }
-  onAdd() {}
+  onAdd() { }
   onPaginate(e: Paginate) {
     //this.rows = this.getData(e.limit, e.offset);
   }
@@ -175,8 +190,7 @@ export class ModelListComponent {
   /**
    * HANDLE THIS FUNCTION FOR DOUBLE CLICK NAVIGATE ENTITY
    */
-  onRowDoubleClick()
-  {
+  onRowDoubleClick() {
     this.onView();
   }
 
