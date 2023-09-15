@@ -70,7 +70,7 @@ export class ModelListComponent {
       isSortable: true,
       isTreeColumn: false,
       pipe: (data: any) => {
-        return moment(data).format("MM/DD/YYYY HH:mm:ss ");
+        return moment(data).isValid() ? moment(data).format("MM/DD/YYYY HH:mm:ss ") : ''
       },
       width: 200
     },
@@ -154,6 +154,7 @@ export class ModelListComponent {
             d.parentId = row.id;
             d.icon = "view_column";
             d.displayName = d.displayName || d.name;
+            d.updatedDate = null
             return d
           });
           row.treeStatus = "expanded";
