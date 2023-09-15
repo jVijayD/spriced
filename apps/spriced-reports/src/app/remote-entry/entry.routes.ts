@@ -1,6 +1,7 @@
 import { Route } from "@angular/router";
 import { HomeComponent } from "../pages/home/home.component";
 import { AppComponent } from "../app.component";
+import { ReportComponent } from "../pages/report/report.component";
 
 export const remoteRoutes: Route[] = [
   {
@@ -9,8 +10,12 @@ export const remoteRoutes: Route[] = [
     children: [
       //{ path: "", component: HomeComponent },
       {
-        path: ":dashboardId",
+        path: ":groupId",
         component: HomeComponent,
+      },
+      {
+        path: "report/:dashboardId",
+        component: ReportComponent,
       },
     ],
   },

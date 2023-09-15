@@ -69,7 +69,7 @@
                 <mat-form-field [ngClass]="previewField ? 'not-allow' : ''" appearance="outline">
                     <mat-label>Type</mat-label>
                     <mat-select [panelClass]="previewField ? 'hideOption' : ''" formControlName="group"
-                        (valueChange)="handleRuleType($event)">
+                        (valueChange)="handleRuleType($event)"  class="capitalize">
                         <mat-option *ngFor="let item of conditionsData?.ruleTypes" [value]="item.value"><span
                                 class="capitalize">{{item.name}}</span></mat-option>
                     </mat-select>
