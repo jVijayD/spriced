@@ -24,7 +24,8 @@
         routerLinkActive="active"
         routerLink="{{ item.path }}"
       >
-        <img class="sidenav-link-icon" src="{{ item.icon }}" />
+      <mat-icon class="sidenav-link-icon" >{{ item.icon }}</mat-icon>
+        <!-- <img class="sidenav-link-icon" src="{{ item.icon }}" /> -->
         <!-- <i class="sidenav-link-icon" [class]="item.icon"></i> -->
         <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
           {{ item.name }}
