@@ -53,6 +53,14 @@ export class EntityDataService {
     );
   }
 
+  exportToExcel(id: string | number, criteria: Criteria) {
+    const url = this.requestUtility.addCriteria(
+      `${this.api_url}/entity/${id}/export/excel`,
+      criteria
+    );
+    return this.http.get(url);
+  }
+
   private createRows(content: any) {
     const records = content.records || [];
     const fields = content.fields || [];

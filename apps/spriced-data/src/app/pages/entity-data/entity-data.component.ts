@@ -54,7 +54,10 @@ import { AuditDataComponent } from "./audit-data/audit-data.component";
 import { LookupPopupComponent } from "../../components/lookup-Popup/lookup-popup.component";
 import { EntityGridService } from "./entity-grid.service";
 import { EntityFormService } from "./entity-form.service";
-import { AppDataService, ErrorTypes } from "@spriced-frontend/shared/spriced-shared-lib";
+import {
+  AppDataService,
+  ErrorTypes,
+} from "@spriced-frontend/shared/spriced-shared-lib";
 import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components/directive/tool-tip-renderer.directive";
 import { CustomToolTipComponent } from "libs/spriced-ui-lib/src/lib/components/custom-tool-tip/custom-tool-tip.component";
 
@@ -140,7 +143,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.setFormData("", []);
     this.subscribeToFormEvents();
   }
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   subscribeToFormEvents() {
     this.subscriptions.push(
@@ -254,7 +257,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       config: null,
       query: this.query,
     });
-   
+
     dialogResult.afterClosed().subscribe((val) => {
       if (val) {
         this.query = dialogResult.componentInstance.data.query;
@@ -270,30 +273,29 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   public getToolTipTemplate(conditions: any): string {
     this.showTooltip = !!conditions;
     if (!conditions || conditions.length === 0) {
-      return '';
+      return "";
     }
     const text: any = this.getTooltipText(conditions);
     return text;
   }
 
   public getTooltipText(items: any): string {
-    let tooltipText = '';
+    let tooltipText = "";
     if (items.condition && items.rules && items.rules.length > 0) {
       const lastItem = items.rules.length - 1;
       items.rules.forEach((rule: any, index: number) => {
         if (!rule.condition && !rule.rules) {
-          const field = rule?.field.replace(/_/g, ' ');
-          const value = !!rule?.value ? rule?.value : '';
-          const condition = lastItem !== index ? items.condition : '';
+          const field = rule?.field.replace(/_/g, " ");
+          const value = !!rule?.value ? rule?.value : "";
+          const condition = lastItem !== index ? items.condition : "";
           tooltipText += `<strong>${field}</strong> ${rule.operator} ${value} <strong>${condition}</strong> <br>`;
         }
         if (!!rule.condition && !!rule.rules) {
           tooltipText += `(`;
           tooltipText += this.getNestedTooltipText(rule);
-          tooltipText += '<br>';
+          tooltipText += "<br>";
         }
       });
-      
     } else if (items.field && items.operator && items.value) {
       tooltipText += `${items.condition} <strong>${items.field}</strong> ${items.operator} ${items.value}`;
     }
@@ -301,14 +303,14 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   public getNestedTooltipText(items: any): string {
-    let tooltipText = '';
+    let tooltipText = "";
     if (items.condition && items.rules && items.rules.length > 0) {
       const lastItem = items.rules.length - 1;
       items.rules.forEach((rule: any, index: number) => {
         if (!rule.condition && !rule.rules) {
-          const field = rule?.field.replace(/_/g, ' ');
-          const value = !!rule?.value ? rule?.value : '';
-          const condition = lastItem !== index ? items.condition : '';
+          const field = rule?.field.replace(/_/g, " ");
+          const value = !!rule?.value ? rule?.value : "";
+          const condition = lastItem !== index ? items.condition : "";
           tooltipText += `<strong>${field}</strong> ${rule.operator} ${value} <strong>${condition}</strong><br>`;
         }
         if (!!rule.condition && !!rule.rules) {
@@ -317,10 +319,9 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         }
       });
     }
-    tooltipText += ')';
+    tooltipText += ")";
     return tooltipText;
   }
-
 
   onClearFilter() {
     this.query = null;
@@ -370,7 +371,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   onStatus() {
     const dialogResult = this.dialog.open(StatusComponent, {});
 
-    dialogResult.afterClosed().subscribe((val) => { });
+    dialogResult.afterClosed().subscribe((val) => {});
   }
 
   onSettings() {
@@ -461,6 +462,12 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onExport(format: "csv" | "xlsx" | "pdf") {
     this.dataGrid.export(format);
+    // this.entityDataService
+    //   .exportToExcel(
+    //     this.currentSelectedEntity?.id as number,
+    //     this.currentCriteria
+    //   )
+    //   .subscribe(() => {});
   }
 
   // private getFilterColumns(): QueryColumns[] {
