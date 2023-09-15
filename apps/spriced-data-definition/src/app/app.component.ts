@@ -26,11 +26,6 @@ export class AppComponent {
       active: false,
       path: "/spriced-data-definition/entity",
     },
-    // {
-    //   name: "Explorer",
-    //   active: false,
-    //   path: "/spriced-data-definition/model-list",
-    // },
     {
       name: "Rules",
       active: false,
@@ -40,7 +35,12 @@ export class AppComponent {
       name: "Model Permission",
       active: false,
       path: "/spriced-data-definition/model-access",
-    }
+    },
+    {
+      name: "Functional Permission",
+      active: false,
+      path: "/spriced-data-definition/app-access",
+    },
   ];
   constructor(private appDataService: AppDataService) {
     this.appDataService.setMenuData(this.menuDItems);

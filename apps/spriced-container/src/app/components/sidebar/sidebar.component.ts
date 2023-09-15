@@ -21,13 +21,14 @@ interface SideNavToggle {
   collapsed: boolean;
 }
 import {MatDividerModule} from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'sp-sidebar',
   standalone:true,
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
   imports: [
-    CommonModule,
+    CommonModule,MatIconModule,
   RouterModule,MatDividerModule
   ],
   animations: [
