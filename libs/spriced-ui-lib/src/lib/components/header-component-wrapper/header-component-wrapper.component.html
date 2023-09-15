@@ -1,7 +1,7 @@
-<div
-  style="border-right-width: 1px"
-  class="text-white h-full flex flex-row cursor-pointer pl-2 pr-1 border-r-primary-light border-solid items-center"
->
-  <span class="title">{{ title }}</span>
+<div style="border-right-width: 1px"
+  class="text-white h-full flex flex-row cursor-pointer pr-1 border-r-primary-light border-solid items-center">
+  <ng-container *ngIf="!!title">
+    <span class="title">{{ title }}</span>
+  </ng-container>
   <ng-content></ng-content>
 </div>

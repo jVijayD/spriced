@@ -3,8 +3,10 @@
     style="width: 100%"
     class="w-full bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5"
   >
-    <span class="float-left text-white font-medium elipsis">{{ title }}</span>
-    <div class="flex flex-row"><ng-content></ng-content></div>
+    <ng-container *ngIf="!!title">
+      <span class="float-left text-white font-medium elipsis flex-auto">{{ title }}</span>
+    </ng-container>
+    <div class="flex flex-row flex-auto justify-end"><ng-content></ng-content></div>
   </div>
   <ngx-datatable
     style="height: calc(100% - 40px); width: 100%; overflow-y: hidden"
