@@ -10,7 +10,6 @@
       <sp-data-grid
         class="w-full h-full"
         #dataGrid
-        [title]="this.currentSelectedEntity?.displayName || ''"
         [enableRowIndex]="false"
         [isArray]="false"
         [headers]="headers"
@@ -54,6 +53,12 @@
               (modelSelectionEvent)="onModelSelectionChange()"
             ></sp-entity-select>
           </sp-header-component-wrapper>
+
+          <div class="text-white items-center font-medium flex justify-center w-full">
+           <span class="elipsis"> {{this.currentSelectedEntity?.displayName || ''}} </span>
+          </div>
+
+          <div class="flex">
           <sp-header-action
             icon="delete"
             text="Delete"
@@ -112,8 +117,20 @@
             title="Filter"
             (actionClick)="onFilter()"
             [disabled]="this.headers.length === 0"
+            spToolTipRenderer
+            [contentTemplate]="template"
+            [customPosition]="true"
           ></sp-header-action>
 
+          <ng-template #template>
+            <div [innerHTML]="getToolTipTemplate(query)"></div>
+          </ng-template>
+          <!-- <ng-template #template>
+            <div *ngIf="query"> 
+              <div [innerHTML]="getToolTipTemplate(query)"></div>
+            </div>
+          </ng-template> -->
+           
           <sp-header-action
             icon="filter_list_off"
             text="Clear Filter"
@@ -170,6 +187,7 @@
             "
             (actionClick)="onSettings()"
           ></sp-header-action>
+        </div>
         </ng-container>
       </sp-data-grid>
     </div>

@@ -24,3 +24,13 @@ mat-accordion.mat-accordion {
 //   color: var(--white);
 //   content: " \f1c3";
 // }
+
+.elipsis
+{
+        display: inline-block;
+        width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: center;
+}
