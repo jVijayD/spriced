@@ -7,8 +7,7 @@
     />
     <div class="flex flex-col flex-grow h-screen overflow-hidden">
       <sp-header [appname]="currentAppName" [menuData]="menuData" />
-
-      <sp-body [collapsed]="isSideNavCollapsed" [screenWidth]="screenWidth">
+      <sp-body class="overflow-x-auto overflow-y-hidden" [collapsed]="isSideNavCollapsed" [screenWidth]="screenWidth">
         <router-outlet (activate)="changeOfRoutes()"></router-outlet>
       </sp-body>
       <sp-footer></sp-footer>
