@@ -54,20 +54,24 @@
             ></sp-entity-select>
           </sp-header-component-wrapper>
 
-          <div class="text-white items-center font-medium flex justify-center w-full">
-           <span class="elipsis"> {{this.currentSelectedEntity?.displayName || ''}} </span>
+          <div
+            class="text-white items-center font-medium flex justify-center w-full"
+          >
+            <span class="elipsis">
+              {{ this.currentSelectedEntity?.displayName || "" }}
+            </span>
           </div>
 
           <div class="flex">
-          <sp-header-action
-            icon="delete"
-            text="Delete"
-            title="Delete Member"
-            [disabled]="selectedItem == null || selectedItem == undefined"
-            (actionClick)="onDelete()"
-          ></sp-header-action>
+            <sp-header-action
+              icon="delete"
+              text="Delete"
+              title="Delete Member"
+              [disabled]="selectedItem == null || selectedItem == undefined"
+              (actionClick)="onDelete()"
+            ></sp-header-action>
 
-          <!-- <sp-header-action
+            <!-- <sp-header-action
             [disabled]="!selectedItem"
             icon="clear"
             text="Clear"
@@ -75,26 +79,26 @@
             (actionClick)="onClear()"
           ></sp-header-action> -->
 
-          <sp-header-action
-            icon="add"
-            text="Add"
-            title="Add"
-            (click)="onClear()"
-          ></sp-header-action>
+            <sp-header-action
+              icon="add"
+              text="Add"
+              title="Add"
+              (click)="onClear()"
+            ></sp-header-action>
 
-          <sp-header-action
-            icon="history"
-            text="Change Tracker"
-            title="Change Tracker"
-            [disabled]="
-              this.currentSelectedEntity === null ||
-              this.currentSelectedEntity === undefined ||
-              this.headers.length === 0
-            "
-            (actionClick)="onAudit()"
-          ></sp-header-action>
+            <sp-header-action
+              icon="history"
+              text="Change Tracker"
+              title="Change Tracker"
+              [disabled]="
+                this.currentSelectedEntity === null ||
+                this.currentSelectedEntity === undefined ||
+                this.headers.length === 0
+              "
+              (actionClick)="onAudit()"
+            ></sp-header-action>
 
-          <!-- <sp-header-action
+            <!-- <sp-header-action
             [disabled]="this.isFullScreen"
             icon="fullscreen"
             text="Full Screen"
@@ -103,7 +107,7 @@
             [disabled]="this.headers.length === 0"
           ></sp-header-action> -->
 
-          <!-- <sp-header-action
+            <!-- <sp-header-action
             [disabled]="!this.isFullScreen"
             icon="fullscreen_exit"
             text="Exit"
@@ -111,83 +115,83 @@
             (actionClick)="onFullScreen()"
           ></sp-header-action> -->
 
-          <sp-header-action
-            icon="filter_list"
-            text="Filter"
-            title="Filter"
-            (actionClick)="onFilter()"
-            [disabled]="this.headers.length === 0"
-            spToolTipRenderer
-            [contentTemplate]="template"
-            [customPosition]="true"
-          ></sp-header-action>
+            <sp-header-action
+              icon="filter_list"
+              text="Filter"
+              title="Filter"
+              (actionClick)="onFilter()"
+              [disabled]="this.headers.length === 0"
+              spToolTipRenderer
+              [contentTemplate]="template"
+              [customPosition]="true"
+            ></sp-header-action>
 
-          <ng-template #template>
-            <div [innerHTML]="getToolTipTemplate(query)"></div>
-          </ng-template>
-          <!-- <ng-template #template>
+            <ng-template #template>
+              <div [innerHTML]="getToolTipTemplate(query)"></div>
+            </ng-template>
+            <!-- <ng-template #template>
             <div *ngIf="query"> 
               <div [innerHTML]="getToolTipTemplate(query)"></div>
             </div>
           </ng-template> -->
-           
-          <sp-header-action
-            icon="filter_list_off"
-            text="Clear Filter"
-            title="Clear Filter"
-            [disabled]="
-              this.currentCriteria?.filters?.length == 0 ||
-              this.currentCriteria?.filters == undefined
-            "
-            (actionClick)="onClearFilter()"
-          ></sp-header-action>
 
-          <sp-header-action
-            icon="cloud_upload"
-            text="Upload"
-            title="Bulk Upload"
-            (actionClick)="onUpload()"
-            [disabled]="this.headers.length === 0"
-          ></sp-header-action>
+            <sp-header-action
+              icon="filter_list_off"
+              text="Clear Filter"
+              title="Clear Filter"
+              [disabled]="
+                this.currentCriteria?.filters?.length == 0 ||
+                this.currentCriteria?.filters == undefined
+              "
+              (actionClick)="onClearFilter()"
+            ></sp-header-action>
 
-          <!-- <sp-header-action
-            [context]="true"
-            icon="insert_drive_file"
-            text="Export"
-            title="Export"
-            [disabled]="this.headers.length === 0"
-          >
-            <button mat-menu-item (click)="onExport('csv')">
-              <mat-icon class="mt-auto">insert_drive_file</mat-icon>
-              <span class="text-xs self-end">csv</span>
-            </button>
-            <button mat-menu-item (click)="onExport('xlsx')">
-              <mat-icon class="mt-auto">insert_drive_file</mat-icon>
-              <span class="text-xs self-end file-excel fontawesomeicon"
-                >xslx</span
-              >
-            </button>
-          </sp-header-action> -->
+            <sp-header-action
+              icon="cloud_upload"
+              text="Upload"
+              title="Bulk Upload"
+              (actionClick)="onUpload()"
+              [disabled]="this.headers.length === 0"
+            ></sp-header-action>
 
-          <sp-header-action
-            icon="view_list"
-            text="Status"
-            title="Status"
-            (actionClick)="onStatus()"
-            [disabled]="this.headers.length === 0"
-          ></sp-header-action>
+            <sp-header-action
+              [context]="true"
+              icon="insert_drive_file"
+              text="Export"
+              title="Export"
+              [disabled]="this.headers.length === 0"
+            >
+              <!-- <button mat-menu-item (click)="onExport('csv')">
+                <mat-icon class="mt-auto">insert_drive_file</mat-icon>
+                <span class="text-xs self-end">csv</span>
+              </button> -->
+              <button mat-menu-item (click)="onExport('xlsx')">
+                <mat-icon class="mt-auto">insert_drive_file</mat-icon>
+                <span class="text-xs self-end file-excel fontawesomeicon"
+                  >xslx</span
+                >
+              </button>
+            </sp-header-action>
 
-          <sp-header-action
-            icon="settings"
-            text="Settings"
-            title="Settings"
-            [disabled]="
-              this.currentSelectedEntity == null ||
-              this.currentSelectedEntity == undefined
-            "
-            (actionClick)="onSettings()"
-          ></sp-header-action>
-        </div>
+            <sp-header-action
+              icon="view_list"
+              text="Status"
+              title="Status"
+              (actionClick)="onStatus()"
+              [disabled]="this.headers.length === 0"
+            ></sp-header-action>
+
+            <sp-header-action
+              icon="settings"
+              text="Settings"
+              title="Settings"
+              [disabled]="
+                this.currentSelectedEntity == null ||
+                this.currentSelectedEntity == undefined
+              "
+              (actionClick)="onSettings()"
+            ></sp-header-action>
+          </div>
         </ng-container>
       </sp-data-grid>
     </div>
