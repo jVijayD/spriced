@@ -13,7 +13,12 @@
           <div>
             <mat-form-field appearance="outline">
               <mat-label>Entity Name</mat-label>
-              <input formControlName="name" matInput [pattern]="pattern" max="100" />
+              <input
+                formControlName="name"
+                matInput
+                [pattern]="pattern"
+                max="100"
+              />
             </mat-form-field>
             <div class="error">
               <mat-error
@@ -33,8 +38,6 @@
                 "
                 >Invalid Name</mat-error
               >
-           
-
             </div>
           </div>
         </form>
@@ -42,31 +45,39 @@
       <div class="ml-2">
         <mat-form-field appearance="outline">
           <mat-label>Display Name</mat-label>
-          <input matInput [(ngModel)]="local_data.displayName" max="100" [pattern]="pattern" #uname="ngModel"/>
+          <input
+            matInput
+            [(ngModel)]="local_data.displayName"
+            max="100"
+            [pattern]="pattern"
+            #uname="ngModel"
+          />
         </mat-form-field>
 
         <div class="error">
           <mat-error
             class="text-sm italic text-red-500"
             *ngIf="uname.hasError('pattern')"
-           
             >Invalid Display Name</mat-error
           >
-       
- <mat-error
-                class="text-sm italic text-red-500"
-                *ngIf="
+
+          <mat-error
+            class="text-sm italic text-red-500"
+            *ngIf="
                   local_data.displayName=='' || local_data.displayName==undefined
                 "
-                >Display Name is required</mat-error
-              >
+            >Display Name is required</mat-error
+          >
         </div>
-
       </div>
 
       <mat-form-field appearance="outline" class="mb-2">
         <mat-label>Description</mat-label>
-        <textarea matInput maxlength="100" [(ngModel)]="local_data.description"></textarea>
+        <textarea
+          matInput
+          maxlength="100"
+          [(ngModel)]="local_data.description"
+        ></textarea>
       </mat-form-field>
 
       <div class="autoCheck">
@@ -83,7 +94,7 @@
     </div>
 
     <mat-card
-      style="padding: 7px; height: 450px; overflow-y: auto"
+      style="padding: 7px; height: 450px; overflow-y: auto;"
       class="drop-shadow"
     >
       <div class="box">
@@ -142,44 +153,48 @@
               matInput
               [(ngModel)]="attDetails.name"
               max="100"
-              [pattern]="pattern"  #aname="ngModel"
+              [pattern]="pattern"
+              #aname="ngModel"
             />
           </mat-form-field>
           <div class="error">
-          <mat-error
-          class="text-sm italic text-red-500"
-          *ngIf="aname.hasError('pattern')"
-         
-          >Invalid Name</mat-error
-        >
-        <mat-error
-        class="text-sm italic text-red-500"
-        *ngIf="
+            <mat-error
+              class="text-sm italic text-red-500"
+              *ngIf="aname.hasError('pattern')"
+              >Invalid Name</mat-error
+            >
+            <mat-error
+              class="text-sm italic text-red-500"
+              *ngIf="
          attDetails.name=='' ||  attDetails.name==undefined
         "
-        >Name is required</mat-error
-      >
-      </div>
+              >Name is required</mat-error
+            >
+          </div>
           <mat-form-field appearance="outline" class="mb-2">
             <mat-label>Display Name</mat-label>
-            <input matInput [(ngModel)]="attDetails.displayName" [pattern]="pattern" #dname="ngModel" max="100"/>
-            
+            <input
+              matInput
+              [(ngModel)]="attDetails.displayName"
+              [pattern]="pattern"
+              #dname="ngModel"
+              max="100"
+            />
           </mat-form-field>
           <div class="error">
-          <mat-error
-          class="text-sm italic text-red-500"
-          *ngIf="dname.hasError('pattern')"
-         
-          >Invalid Display Name</mat-error
-        >
-        <mat-error
-        class="text-sm italic text-red-500"
-        *ngIf="
+            <mat-error
+              class="text-sm italic text-red-500"
+              *ngIf="dname.hasError('pattern')"
+              >Invalid Display Name</mat-error
+            >
+            <mat-error
+              class="text-sm italic text-red-500"
+              *ngIf="
          attDetails.displayName=='' ||  attDetails.displayName==undefined
         "
-        >Display Name is required</mat-error
-      >
-      </div>
+              >Display Name is required</mat-error
+            >
+          </div>
           <mat-form-field appearance="outline" class="mb-2">
             <mat-label>Description</mat-label>
             <textarea
@@ -232,7 +247,7 @@
           <mat-checkbox
             *ngIf="attDetails.type !== 'LOOKUP'"
             class="mb-2"
-            style="margin-top: 12px; margin-bottom: 21px"
+            style="margin-top: 12px; margin-bottom: 21px;"
             [(ngModel)]="constraintType"
             [disabled]="
               attDetails?.onlyDisplayNameEditable && attAction === 'Update'
@@ -284,7 +299,7 @@
               attDetails.dataType === 'INTEGER' &&
               attDetails.type === 'FREE_FORM'
             "
-            style="display: contents"
+            style="display: contents;"
           >
             <mat-form-field appearance="outline" class="mb-2">
               <mat-label>Decimals</mat-label
@@ -303,7 +318,7 @@
               attDetails.dataType === 'TIME_STAMP' &&
               attDetails.type === 'FREE_FORM'
             "
-            style="display: contents"
+            style="display: contents;"
           >
             <mat-form-field appearance="outline" class="mb-2"
               ><mat-label>Input Mask</mat-label>
@@ -376,7 +391,7 @@
         type="button"
         color="primary"
         class="savebtn"
-        style="width: 9rem"
+        style="width: 9rem;"
         (click)="updateRowData(attDetails)"
         [disabled]="
           attDetails.name === '' ||
@@ -385,7 +400,7 @@
           aname.hasError('pattern')||
           dname.hasError('pattern')||
           attDetails.displayName==='' ||
-          attDetails.name === undefined 
+          attDetails.displayName === undefined 
         "
       >
         {{ attAction }} Attribute

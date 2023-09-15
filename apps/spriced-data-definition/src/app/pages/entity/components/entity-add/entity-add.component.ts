@@ -119,7 +119,7 @@ export class EntityAddComponent implements OnInit {
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
   referencedTableDisplayName: any
-  pattern="^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#\\-]+$"
+  pattern = "^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#\\-]+$"
   constructor(
     public dialogRef: MatDialogRef<EntityAddComponent>,
     //@Optional() is used to prevent error if no data is passed
@@ -153,16 +153,16 @@ export class EntityAddComponent implements OnInit {
       this.local_data.enableAuditTrial = true;
       this.local_data.autoNumberCode = false;
     }
-   console.log(this.local_data.attributes)
+    console.log(this.local_data.attributes)
     // const showInFormAttributes: any = this.local_data?.attributes?.filter((item: any) => item.showInForm === true);
-// this.local_data?.attributes?.forEach((value: any) => {
-//       if(value.name=='id')
-//       {
-//         this.systemAtt=value
-//       }
-//     });
+    // this.local_data?.attributes?.forEach((value: any) => {
+    //       if(value.name=='id')
+    //       {
+    //         this.systemAtt=value
+    //       }
+    //     });
 
- this.systemAtt = this.local_data?.attributes?.filter(
+    this.systemAtt = this.local_data?.attributes?.filter(
       (value: any) => {
         return value.systemAttribute;
       }
@@ -173,7 +173,7 @@ export class EntityAddComponent implements OnInit {
         return !value.systemAttribute;
       }
     );
-       
+
 
     // if (this.local_data?.attributes) {
     //   this.local_data?.attributes.forEach((attribute: any) => {
@@ -228,7 +228,6 @@ export class EntityAddComponent implements OnInit {
     });
   }
   updateRowData(row_obj: any) {
-    console.log(1)
     if (row_obj.dataType == "INTEGER" && row_obj.size > 0) {
       row_obj.dataType = "DECIMAL";
     }
@@ -323,5 +322,5 @@ export class EntityAddComponent implements OnInit {
     this.selectedItem = e;
   }
 
-  onSort(e: any) {}
+  onSort(e: any) { }
 }
