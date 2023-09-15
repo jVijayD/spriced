@@ -55,6 +55,8 @@ import { LookupPopupComponent } from "../../components/lookup-Popup/lookup-popup
 import { EntityGridService } from "./entity-grid.service";
 import { EntityFormService } from "./entity-form.service";
 import { AppDataService, ErrorTypes } from "@spriced-frontend/shared/spriced-shared-lib";
+import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components/directive/tool-tip-renderer.directive";
+import { CustomToolTipComponent } from "libs/spriced-ui-lib/src/lib/components/custom-tool-tip/custom-tool-tip.component";
 
 @Component({
   selector: "sp-entity-data",
@@ -75,6 +77,8 @@ import { AppDataService, ErrorTypes } from "@spriced-frontend/shared/spriced-sha
     RouterModule,
     LookupPopupComponent,
     HeaderComponentWrapperComponent,
+    CustomToolTipComponent,
+    ToolTipRendererDirective,
   ],
   viewProviders: [MatExpansionPanel],
   providers: [
@@ -116,6 +120,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   dataGrid!: DataGridComponent;
   pageNumber: number = 0;
   relatedEntity: any;
+  public showTooltip: boolean = false;
 
   defaultCodeSetting = "namecode";
 
@@ -135,7 +140,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.setFormData("", []);
     this.subscribeToFormEvents();
   }
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   subscribeToFormEvents() {
     this.subscriptions.push(
@@ -249,7 +254,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       config: null,
       query: this.query,
     });
-
+   
     dialogResult.afterClosed().subscribe((val) => {
       if (val) {
         this.query = dialogResult.componentInstance.data.query;
@@ -261,6 +266,62 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       }
     });
   }
+
+  public getToolTipTemplate(conditions: any): string {
+    this.showTooltip = !!conditions;
+    if (!conditions || conditions.length === 0) {
+      return '';
+    }
+    const text: any = this.getTooltipText(conditions);
+    return text;
+  }
+
+  public getTooltipText(items: any): string {
+    let tooltipText = '';
+    if (items.condition && items.rules && items.rules.length > 0) {
+      const lastItem = items.rules.length - 1;
+      items.rules.forEach((rule: any, index: number) => {
+        if (!rule.condition && !rule.rules) {
+          const field = rule?.field.replace(/_/g, ' ');
+          const value = !!rule?.value ? rule?.value : '';
+          const condition = lastItem !== index ? items.condition : '';
+          tooltipText += `<strong>${field}</strong> ${rule.operator} ${value} <strong>${condition}</strong> <br>`;
+        }
+        if (!!rule.condition && !!rule.rules) {
+          tooltipText += `(`;
+          tooltipText += this.getNestedTooltipText(rule);
+          tooltipText += '<br>';
+        }
+      });
+      
+    } else if (items.field && items.operator && items.value) {
+      tooltipText += `${items.condition} <strong>${items.field}</strong> ${items.operator} ${items.value}`;
+    }
+    return tooltipText;
+  }
+
+  public getNestedTooltipText(items: any): string {
+    let tooltipText = '';
+    if (items.condition && items.rules && items.rules.length > 0) {
+      const lastItem = items.rules.length - 1;
+      items.rules.forEach((rule: any, index: number) => {
+        if (!rule.condition && !rule.rules) {
+          const field = rule?.field.replace(/_/g, ' ');
+          const value = !!rule?.value ? rule?.value : '';
+          const condition = lastItem !== index ? items.condition : '';
+          tooltipText += `<strong>${field}</strong> ${rule.operator} ${value} <strong>${condition}</strong><br>`;
+        }
+        if (!!rule.condition && !!rule.rules) {
+          tooltipText += `(`;
+          tooltipText += this.getNestedTooltipText(rule);
+        }
+      });
+    }
+    tooltipText += ')';
+    return tooltipText;
+  }
+
+
   onClearFilter() {
     this.query = null;
     this.currentCriteria.filters = [];
@@ -309,7 +370,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   onStatus() {
     const dialogResult = this.dialog.open(StatusComponent, {});
 
-    dialogResult.afterClosed().subscribe((val) => {});
+    dialogResult.afterClosed().subscribe((val) => { });
   }
 
   onSettings() {

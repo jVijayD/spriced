@@ -25,4 +25,6 @@ export class CustomToolTipComponent {
    * </ng-template>
    */
   @Input() contentTemplate!: TemplateRef<any>;
+  
+  @Input() customPosition!: boolean;
 }
