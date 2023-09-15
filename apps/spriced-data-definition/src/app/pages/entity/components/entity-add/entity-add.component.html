@@ -20,8 +20,7 @@
                 max="100"
               />
             </mat-form-field>
-            <div class="error">
-              <mat-error
+              <mat-error class="error"
                 class="text-sm italic text-red-500"
                 *ngIf="
                   entityForm.controls['name'].hasError('required') &&
@@ -31,14 +30,13 @@
                 >Name is required</mat-error
               >
 
-              <mat-error
+              <mat-error class="error"
                 class="text-sm italic text-red-500"
                 *ngIf="
                   entityForm.controls['name'].hasError('pattern')
                 "
                 >Invalid Name</mat-error
               >
-            </div>
           </div>
         </form>
       </div>
@@ -54,21 +52,19 @@
           />
         </mat-form-field>
 
-        <div class="error">
-          <mat-error
+          <mat-error class="error"
             class="text-sm italic text-red-500"
             *ngIf="uname.hasError('pattern')"
             >Invalid Display Name</mat-error
           >
 
-          <mat-error
+          <mat-error class="error"
             class="text-sm italic text-red-500"
             *ngIf="
                   local_data.displayName=='' || local_data.displayName==undefined
                 "
             >Display Name is required</mat-error
           >
-        </div>
       </div>
 
       <mat-form-field appearance="outline" class="mb-2">
@@ -94,7 +90,7 @@
     </div>
 
     <mat-card
-      style="padding: 7px; height: 450px; overflow-y: auto;"
+      style="padding: 7px; height: 453px; overflow-y: auto;"
       class="drop-shadow"
     >
       <div class="box">
@@ -146,7 +142,7 @@
           </sp-data-grid>
         </div>
         <div class="box2">
-          <mat-form-field appearance="outline" class="mb-2">
+          <mat-form-field appearance="outline">
             <mat-label>Attribute Name</mat-label>
             <input
               [disabled]="attAction === 'Update'"
@@ -157,21 +153,19 @@
               #aname="ngModel"
             />
           </mat-form-field>
-          <div class="error">
-            <mat-error
+            <mat-error class="error"
               class="text-sm italic text-red-500"
               *ngIf="aname.hasError('pattern')"
               >Invalid Name</mat-error
             >
-            <mat-error
+            <mat-error class="error"
               class="text-sm italic text-red-500"
               *ngIf="
          attDetails.name=='' ||  attDetails.name==undefined
         "
               >Name is required</mat-error
             >
-          </div>
-          <mat-form-field appearance="outline" class="mb-2">
+          <mat-form-field appearance="outline" class="mt-2">
             <mat-label>Display Name</mat-label>
             <input
               matInput
@@ -181,21 +175,19 @@
               max="100"
             />
           </mat-form-field>
-          <div class="error">
-            <mat-error
+            <mat-error class="error"
               class="text-sm italic text-red-500"
               *ngIf="dname.hasError('pattern')"
               >Invalid Display Name</mat-error
             >
-            <mat-error
+            <mat-error class="error"
               class="text-sm italic text-red-500"
               *ngIf="
          attDetails.displayName=='' ||  attDetails.displayName==undefined
         "
               >Display Name is required</mat-error
             >
-          </div>
-          <mat-form-field appearance="outline" class="mb-2">
+          <mat-form-field appearance="outline" class="mt-2">
             <mat-label>Description</mat-label>
             <textarea
               matInput
@@ -207,7 +199,7 @@
             ></textarea>
           </mat-form-field>
 
-          <div class="flex flex-row mb-2">
+          <div class="flex flex-row mt-2">
             <!-- <mat-label>Type</mat-label> -->
             <mat-radio-group
               aria-label="Select an option"
@@ -215,7 +207,7 @@
               [value]="type"
               (change)="radioButtonChanged($event)"
               [disabled]="
-                attDetails?.onlyDisplayNameEditable && attAction === 'Update'
+                attDetails?.onlyDisplayNameEditable || attAction === 'Update'
               "
             >
               <mat-radio-button value="FREE_FORM">Free Form</mat-radio-button>
@@ -224,7 +216,7 @@
           </div>
           <mat-form-field
             appearance="outline"
-            class="mb-2"
+            class="mt-2"
             *ngIf="attDetails.type === 'LOOKUP'"
           >
             <mat-label>Entity</mat-label>
@@ -233,7 +225,7 @@
               [(ngModel)]="attDetails.referencedTableId"
               (selectionChange)="selectedEntity($event)"
               [disabled]="
-                attDetails?.onlyDisplayNameEditable && attAction === 'Update'
+                attDetails?.onlyDisplayNameEditable || attAction === 'Update'
               "
             >
               <mat-option
@@ -246,8 +238,7 @@
           </mat-form-field>
           <mat-checkbox
             *ngIf="attDetails.type !== 'LOOKUP'"
-            class="mb-2"
-            style="margin-top: 12px; margin-bottom: 21px;"
+            class="mt-2"
             [(ngModel)]="constraintType"
             [disabled]="
               attDetails?.onlyDisplayNameEditable && attAction === 'Update'
@@ -256,14 +247,14 @@
           >
           <mat-form-field
             appearance="outline"
-            class="mb-2"
+            class="mt-2"
             *ngIf="attDetails.type === 'FREE_FORM'"
           >
             <mat-label>Data Type</mat-label>
             <mat-select
               [(ngModel)]="attDetails.dataType"
               [disabled]="
-                attDetails?.onlyDisplayNameEditable && attAction === 'Update'
+                attDetails?.onlyDisplayNameEditable || attAction === 'Update'
               "
             >
               <mat-option value="STRING_VAR">Fixed Length String</mat-option>
@@ -277,7 +268,7 @@
 
           <mat-form-field
             appearance="outline"
-            class="mb-2"
+            class="mt-2"
             *ngIf="
               attDetails.dataType === 'STRING_VAR' &&
               attDetails.type !== 'LOOKUP'
@@ -301,7 +292,7 @@
             "
             style="display: contents;"
           >
-            <mat-form-field appearance="outline" class="mb-2">
+            <mat-form-field appearance="outline" class="mt-2">
               <mat-label>Decimals</mat-label
               ><input
                 matInput
@@ -320,7 +311,7 @@
             "
             style="display: contents;"
           >
-            <mat-form-field appearance="outline" class="mb-2"
+            <mat-form-field appearance="outline" class="mt-2"
               ><mat-label>Input Mask</mat-label>
               <mat-select
                 [(ngModel)]="attDetails.formatter"
@@ -343,7 +334,7 @@
           </div>
           <mat-form-field
             appearance="outline"
-            class="mb-2"
+            class="mt-2"
             *ngIf="
               attDetails.dataType === 'INTEGER' &&
               attDetails.type === 'FREE_FORM'
@@ -359,7 +350,7 @@
               <mat-option value="(####)">(####)</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" class="pb-2">
+          <mat-form-field appearance="outline" class="mt-2 pb-1">
             <mat-label>Width</mat-label
             ><input
               matInput
@@ -370,8 +361,6 @@
                 attDetails?.onlyDisplayNameEditable && attAction === 'Update'
               "
           /></mat-form-field>
-
-          <div></div>
         </div>
       </div>
     </mat-card>
