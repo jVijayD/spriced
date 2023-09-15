@@ -37,7 +37,7 @@ export class AppComponent {
       path: "/spriced-data-definition/model-access",
     },
     {
-      name: "Functional Permission",
+      name: "Functions Permission",
       active: false,
       path: "/spriced-data-definition/app-access",
     },
