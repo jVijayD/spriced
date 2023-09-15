@@ -162,7 +162,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
           Promise.all(
             relatedRefreneceTableEntity.map(async (el: any) => {
               const { entityData } = await this.getEntityById(el.referencedTableId);
-              const filteredAttributes = entityData?.attributes.filter((el: any) => el.type !== 'LOOKUP'); 
+              const filteredAttributes = entityData?.attributes.filter((el: any) => el.type !== 'LOOKUP');
               entityData.attributes = filteredAttributes.filter((attr: any) => !attr.systemAttribute);
               await this.processNestedAttributes(entityData.attributes, el);
             })
@@ -178,18 +178,18 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
               };
               const ruleType = this.myForm.get('group')?.value;
               this.handleRuleType(ruleType);
-               this.patchForm(this.rulesData);
+              this.patchForm(this.rulesData);
               this.conditionsData.ruleTypes = this.conditionsData?.ruleTypes.slice(0, 3);
-              this.conditionsData?.operators.splice(7,12);
-              this.conditionsData.operators = this.conditionsData?.operators.filter((el:any)=>el.name!=='none')
+              this.conditionsData?.operators.splice(7, 12);
+              this.conditionsData.operators = this.conditionsData?.operators.filter((el: any) => el.name !== 'none')
               this.loading = false;
             })
             .catch((error) => {
               // Handle errors if needed
             });
-          }
         }
-      
+      }
+
     }
   }
 
@@ -212,11 +212,11 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
   * @returns 
   */
   public processNestedAttributes(nestedAttributes: any, parentEntity: any) {
-      const processedAttributes: any = [];
-      if (nestedAttributes) {
-        parentEntity.attributes = nestedAttributes;
-      }
-      return processedAttributes;
+    const processedAttributes: any = [];
+    if (nestedAttributes) {
+      parentEntity.attributes = nestedAttributes;
+    }
+    return processedAttributes;
   }
 
   /**
@@ -428,11 +428,15 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       subConditionType: item?.subConditionType ? [item.subConditionType] : ['NONE', Validators.required],
       parentAttributeId: item?.parentAttributeId ? [item.parentAttributeId] : [''],
       attributeName: item?.attributeName ? [item.attributeName] : [''],
+      attributeDisplayName: item?.attributeDisplayName ? [item.attributeDisplayName] : [''],
       parentAttributeName: item?.parentAttributeName ? [item.parentAttributeName] : [''],
+      parentAttributeDisplayName: item?.parentAttributeDisplayName ? [item.parentAttributeDisplayName] : [''],
       attributeTableName: item?.attributeTableName ? [item.attributeTableName] : [''],
       parentOperandId: item?.parentOperandId ? [item.parentOperandId] : [''],
       operandName: item?.operandName ? [item.operandName] : [''],
+      operandDisplayName: item?.operandDisplayName ? [item.operandDisplayName] : [''],
       parentOperandName: item?.parentOperandName ? [item.parentOperandName] : [''],
+      parentOperandDisplayName: item?.parentOperandDisplayName ? [item.parentOperandDisplayName] : [''],
       operandTableName: item?.operandTableName ? [item.operandTableName] : [''],
       subConditions: this.formbuilder.array([])
     });
@@ -482,12 +486,16 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       min_value: value && value[0] ? [value[0], Validators.required] : ['', Validators.required],
       operandType: item?.operandType ? [item.operandType, Validators.required] : ['ATTRIBUTE', Validators.required],
       attributeName: item?.attributeName ? [item.attributeName] : [''],
+      attributeDisplayName: item?.attributeDisplayName ? [item.attributeDisplayName] : [''],
       parentAttributeId: item?.parentAttributeId ? [item.parentAttributeId] : [''],
       parentAttributeName: item?.parentAttributeName ? [item.parentAttributeName] : [''],
+      parentAttributeDisplayName: item?.parentAttributeDisplayName ? [item.parentAttributeDisplayName] : [''],
       attributeTableName: item?.attributeTableName ? [item.attributeTableName] : [''],
       parentOperandId: item?.parentOperandId ? [item.parentOperandId] : [''],
       operandName: item?.operandName ? [item.operandName] : [''],
+      operandDisplayName: item?.operandDisplayName ? [item.operandDisplayName] : [''],
       parentOperandName: item?.parentOperandName ? [item.parentOperandName] : [''],
+      parentOperandDisplayName: item?.parentOperandDisplayName ? [item.parentOperandDisplayName] : [''],
       operandTableName: item?.operandTableName ? [item.operandTableName] : [''],
       subConditionType: item?.subConditionType ? [item.subConditionType] : ['NONE', Validators.required],
       subConditions: this.formbuilder.array([])
@@ -516,13 +524,17 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       id: [this.generateRandomIds()],
       attributeId: ['', Validators.required],
       attributeName: [''],
+      attributeDisplayName: [''],
       parentAttributeId: [''],
       parentAttributeName: [''],
+      parentAttributeDisplayName: [''],
       attributeTableName: [''],
       operand: ['', Validators.required],
       operandName: [''],
+      operandDisplayName: [''],
       parentOperandId: [''],
       parentOperandName: [''],
+      parentOperandDisplayName: [''],
       operandTableName: [''],
       max_value: ['', Validators.required],
       min_value: ['', Validators.required],
@@ -572,11 +584,29 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
 
   // Common method to remove controls
   public removeControls(formGroup: FormGroup): void {
-    formGroup.removeControl('conditionType');
-    formGroup.removeControl('operatorType');
-    formGroup.removeControl('operandType');
-    formGroup.removeControl('subConditions');
-    formGroup.removeControl('subConditionType');
+    const controlNames = [
+      'operandName',
+      'operandDisplayName',
+      'parentOperandId',
+      'parentOperandName',
+      'parentOperandDisplayName',
+      'operandTableName',
+      'attributeName',
+      'attributeDisplayName',
+      'parentAttributeId',
+      'parentAttributeName',
+      'parentAttributeDisplayName',
+      'attributeTableName',
+      'conditionType',
+      'operatorType',
+      'operandType',
+      'subConditions',
+      'subConditionType',
+    ];
+
+    controlNames.forEach((controlName) => {
+      formGroup?.removeControl(controlName); // Call removeControl with the controlName
+    });
   }
 
   /**

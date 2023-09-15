@@ -191,10 +191,12 @@ export class BusinessRuleListComponent {
       const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
       this.selectedOperand = value;
       this.conditionForm?.get('operand')?.setValue(item.id);
-      this.conditionForm?.get('operandName')?.setValue(item.displayName);
+      this.conditionForm?.get('operandName')?.setValue(item.name);
+      this.conditionForm?.get('operandDisplayName')?.setValue(item.displayName);
       const parentAtt = parent ?? '';
       this.conditionForm?.get('parentOperandId')?.setValue(parentAtt.id ?? '');
-      this.conditionForm?.get('parentOperandName')?.setValue(parentAtt.displayName ?? '');
+      this.conditionForm?.get('parentOperandDisplayName')?.setValue(parentAtt.displayName ?? '');
+      this.conditionForm?.get('parentOperandName')?.setValue(parentAtt.name ?? '');
       this.conditionForm?.get('operandTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
     }
     else {
@@ -204,11 +206,13 @@ export class BusinessRuleListComponent {
       this.disableFormControl();
 
       this.conditionForm?.get('attributeId')?.setValue(item.id);
-      this.conditionForm?.get('attributeName')?.setValue(item.displayName);
+      this.conditionForm?.get('attributeDisplayName')?.setValue(item.displayName);
+      this.conditionForm?.get('attributeName')?.setValue(item.name);
       
       const parentAtt = parent ?? '';
       this.conditionForm?.get('parentAttributeId')?.setValue(parentAtt.id ?? '');
-      this.conditionForm?.get('parentAttributeName')?.setValue(parentAtt.displayName ?? '');
+      this.conditionForm?.get('parentAttributeName')?.setValue(parentAtt.name ?? '');
+      this.conditionForm?.get('parentAttributeDisplayName')?.setValue(parentAtt.displayName ?? '');
       this.conditionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
       this.handleAttributes(item.id, 'changeAttribute');
     }
@@ -234,11 +238,19 @@ export class BusinessRuleListComponent {
 
   public disableFormControl()
   {
-    this.conditionForm?.get('operand')?.setValue('');
-    this.conditionForm?.get('operandName')?.setValue('');
-    this.conditionForm?.get('parentOperandId')?.setValue('');
-    this.conditionForm?.get('parentOperandName')?.setValue('');
-    this.conditionForm?.get('operandTableName')?.setValue('');
+    const controlNames = [
+      'operand',
+      'operandName',
+      'operandDisplayName',
+      'parentOperandId',
+      'parentOperandName',
+      'parentOperandDisplayName',
+      'operandTableName',
+    ];
+  
+    controlNames.forEach((controlName) => {
+      this.conditionForm?.get(controlName)?.setValue('');
+    });
   }
 
   /**
@@ -380,7 +392,7 @@ export class BusinessRuleListComponent {
    * @returns 
    */
   private buildSelectedAttribute(attribute: any, parentAttribute: any): string {
-    return !parentAttribute ? attribute?.displayName.trim() :`${parentAttribute?.displayName.trim()}.${attribute.displayName}`;
+    return !parentAttribute && !attribute ? '' : !parentAttribute ? attribute?.displayName.trim() : `${parentAttribute?.displayName.trim()}.${attribute.displayName}`;
   }
 
   /**
@@ -390,7 +402,7 @@ export class BusinessRuleListComponent {
    * @returns 
    */
   private buildSelectedOperand(operand: any, parentOperand: any): string {
-    return !parentOperand ? operand?.displayName.trim() :`${parentOperand?.displayName.trim()}.${operand.displayName}`;
+    return !parentOperand && !operand ? '' : !parentOperand ? operand?.displayName.trim() : `${parentOperand?.displayName.trim()}.${operand.displayName}`;
   }
 
   private getValidationPatternForDataType(dataType: string): RegExp {
