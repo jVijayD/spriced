@@ -218,6 +218,8 @@ export class EntityAddComponent implements OnInit {
     this.attDetails.type = "FREE_FORM";
     this.attDetails.width = DEFAULT_ATTRIBUTE_WIDTH;
     this.cdr.detectChanges();
+    this.selectedItem=null
+    this.dataGrid.clearSelection();
   }
   selectedEntity(event: any) {
     this.referencedTableDisplayName = event.source.triggerValue;
