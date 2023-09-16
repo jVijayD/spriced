@@ -60,10 +60,4 @@ export class ExportFileService {
     });
     doc.save(title + ".pdf");
   }
-
-  public exportServerDataToCsv() {}
-
-  public exportServerDataToExcel() {}
-
-  public exportServerDataToPdf() {}
 }
