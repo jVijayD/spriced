@@ -494,39 +494,34 @@ export class ListComponent implements OnInit, OnDestroy {
       const relatedRefreneceTableEntity = entity.attributes.filter((el: any) => !!el.referencedTableId);
       // Handle for nested attribute
       if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
-        if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
-          // Use Promise.all to wait for all promises to resolve
-          Promise.all(
-            relatedRefreneceTableEntity.map(async (el: any) => {
-              const { entityData } = await this.getEntityById(el.referencedTableId);
-              const nestedProcessedAttributes = this.processNestedAttributes(entityData.attributes, el);
-              this.domainAttributes.push(...nestedProcessedAttributes);
-            })
-          )
-            .then(() => {
-              this.attributes = [
-                {
-                  displayName: 'All',
-                  name: 'All',
-                  id: 'ALL',
-                },
-                ...this.domainAttributes,
-              ];
-              this.defaultAttribute = this.attributeId ? this.attributeId : 'ALL';
-              // this.attributes = entity.attributes;
-              this.filterData = this.dataSource.filter((res: any) => res.entityId === id);
-              this.rows = this.filterData;
-              this.currentDataSource = this.filterData.slice(
-                this.pageIndex,
-                this.pageIndex + this.pageSize
-              );
-              this.paginator?.firstPage();
-              this.loading = false;
-            });
-        }
+        // Use Promise.all to wait for all promises to resolve
+        await Promise.all(
+          relatedRefreneceTableEntity.map(async (el: any) => {
+            const { entityData } = await this.getEntityById(el.referencedTableId);
+            const nestedProcessedAttributes = this.processNestedAttributes(entityData.attributes, el);
+            this.domainAttributes.push(...nestedProcessedAttributes);
+          })
+        )
       }
-    }
-    else {
+      this.attributes = [
+        {
+          displayName: 'All',
+          name: 'All',
+          id: 'ALL',
+        },
+        ...this.domainAttributes,
+      ];
+      this.defaultAttribute = this.attributeId ? this.attributeId : 'ALL';
+      // this.attributes = entity.attributes;
+      this.filterData = this.dataSource.filter((res: any) => res.entityId === id);
+      this.rows = this.filterData;
+      this.currentDataSource = this.filterData.slice(
+        this.pageIndex,
+        this.pageIndex + this.pageSize
+      );
+      this.paginator?.firstPage();
+      this.loading = false;
+    } else {
       this.rows = [];
       this.filterData = [];
       this.attributes = [];
