@@ -207,7 +207,7 @@
               [value]="type"
               (change)="radioButtonChanged($event)"
               [disabled]="
-                attDetails?.onlyDisplayNameEditable || attAction === 'Update'
+                attDetails?.onlyDisplayNameEditable && attAction === 'Update'
               "
             >
               <mat-radio-button value="FREE_FORM">Free Form</mat-radio-button>
@@ -225,7 +225,7 @@
               [(ngModel)]="attDetails.referencedTableId"
               (selectionChange)="selectedEntity($event)"
               [disabled]="
-                attDetails?.onlyDisplayNameEditable || attAction === 'Update'
+                attDetails?.onlyDisplayNameEditable && attAction === 'Update'
               "
             >
               <mat-option
