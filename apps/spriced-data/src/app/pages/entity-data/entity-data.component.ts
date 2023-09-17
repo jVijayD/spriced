@@ -467,7 +467,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     //   `${this.currentSelectedEntity?.displayName}.xlsx`,
     //   this.currentCriteria
     // );
-    //.subscribe(() => {});
   }
 
   // private getFilterColumns(): QueryColumns[] {
