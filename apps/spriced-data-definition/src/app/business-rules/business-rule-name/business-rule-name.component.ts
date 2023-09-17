@@ -113,10 +113,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
      */
     if (!!entity_id) {
       this.entityId = entity_id;
-      await this.patchEnumTypes(this.entityId);
-      const ruleType = this.myForm.get('group')?.value;
-      this.handleRuleType(ruleType);
-      this.loading = false;
+      this.patchEnumTypes(this.entityId);
     }
 
     /**
@@ -125,10 +122,8 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     if (!!ruleId) {
       this.businessRuleService.getAllRulesById(ruleId).pipe(takeUntil(this.notifier$)).subscribe(async (res: any) => {
         this.entityId = res.entityId;
-        await this.patchEnumTypes(this.entityId);
         this.rulesData = res;
-        const ruleType = res.group;
-        this.handleRuleType(ruleType);
+        this.patchEnumTypes(this.entityId);
       });
     }
 
@@ -157,39 +152,32 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       attributeList = entity.attributes;
       // Handle for nested attribute
       if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
-        if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
-          // Use Promise.all to wait for all promises to resolve
-          Promise.all(
-            relatedRefreneceTableEntity.map(async (el: any) => {
-              const { entityData } = await this.getEntityById(el.referencedTableId);
-              const filteredAttributes = entityData?.attributes.filter((el: any) => el.type !== 'LOOKUP');
-              entityData.attributes = filteredAttributes.filter((attr: any) => !attr.systemAttribute);
-              await this.processNestedAttributes(entityData.attributes, el);
-            })
-          )
-            .then(() => {
-              attributeList = attributeList.filter((el: any) => !el.systemAttribute);
-              this.conditionsData = {
-                ...action,
-                attributes: attributeList,
-                conditions: this.transformObjectToKeyValueArray(conditions),
-                operators: this.transformObjectToKeyValueArray(operators),
-                operands: this.transformObjectToKeyValueArray(operands),
-              };
-              const ruleType = this.myForm.get('group')?.value;
-              this.handleRuleType(ruleType);
-              this.patchForm(this.rulesData);
-              this.conditionsData.ruleTypes = this.conditionsData?.ruleTypes.slice(0, 3);
-              this.conditionsData?.operators.splice(7, 12);
-              this.conditionsData.operators = this.conditionsData?.operators.filter((el: any) => el.name !== 'none')
-              this.loading = false;
-            })
-            .catch((error) => {
-              // Handle errors if needed
-            });
-        }
+        // Use Promise.all to wait for all promises to resolve
+        await Promise.all(
+          relatedRefreneceTableEntity.map(async (el: any) => {
+            const { entityData } = await this.getEntityById(el.referencedTableId);
+            const filteredAttributes = entityData?.attributes.filter((el: any) => el.type !== 'LOOKUP');
+            entityData.attributes = filteredAttributes.filter((attr: any) => !attr.systemAttribute);
+            await this.processNestedAttributes(entityData.attributes, el);
+          })
+        )
       }
-
+      
+      attributeList = attributeList.filter((el: any) => !el.systemAttribute);
+      this.conditionsData = {
+        ...action,
+        attributes: attributeList,
+        conditions: this.transformObjectToKeyValueArray(conditions),
+        operators: this.transformObjectToKeyValueArray(operators),
+        operands: this.transformObjectToKeyValueArray(operands),
+      };
+      this.conditionsData.ruleTypes = this.conditionsData?.ruleTypes.slice(0, 3);
+      this.conditionsData?.operators.splice(7, 12);
+      this.conditionsData.operators = this.conditionsData?.operators.filter((el: any) => el.value !== 'NONE')
+      this.patchForm(this.rulesData);
+      const ruleType = this.myForm.get('group')?.value;
+      this.handleRuleType(ruleType);
+      this.loading = false;
     }
   }
 
@@ -202,7 +190,6 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         this.handleAttributeNames(attribute.attributes, nestedName);
       }
     });
-
   }
 
   /**
