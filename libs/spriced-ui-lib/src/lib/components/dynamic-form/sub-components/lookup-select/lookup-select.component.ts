@@ -88,7 +88,11 @@ export class LookupSelectComponent
     //displayProp = props.map((item) => option[item]).join(" | ");
 
     return props.reduce((prev, cur) => {
-      return prev === "-##" ? option[cur] : `${prev} {${option[cur]}}`;
+      return prev === "-##"
+        ? option[cur]
+        : `${prev == null ? "" : prev} {${
+            option[cur] == null ? "" : option[cur]
+          }}`;
     }, "-##");
     //return displayProp;
   }

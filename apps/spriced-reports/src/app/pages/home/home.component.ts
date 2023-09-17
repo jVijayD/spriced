@@ -60,8 +60,8 @@ export class HomeComponent implements OnInit {
         id: "3cc3cd99-4866-422d-9991-59a1bc1aacee",
       },
       {
-        name: "DN Pricing Entity Audit Report",
-        id: "7f3404c4-620c-4e8d-91e4-6425f41ab1e3",
+        name: "Brazil OEM PL From Price List",
+        id: "a10c808d-3f40-45ef-b400-9e49cf605946",
       },
     ];
   }

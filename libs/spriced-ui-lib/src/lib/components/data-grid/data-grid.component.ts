@@ -187,7 +187,10 @@ export class DataGridComponent implements AfterViewInit {
     const headers = itemHeader.column.split(",");
 
     return headers.reduce((prev, cur) => {
-      return prev === "-##" ? row[cur] : `${prev} {${row[cur]}}`;
+      debugger;
+      return prev === "-##"
+        ? row[cur]
+        : `${prev == null ? "" : prev} {${row[cur] == null ? "" : row[cur]}}`;
     }, "-##");
   }
   @HostListener("window:resize", ["$event"])
