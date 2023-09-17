@@ -164,20 +164,6 @@ export class DataGridComponent implements AfterViewInit {
     }
   }
 
-  public exportServerData(format: "csv" | "xlsx" | "pdf", data: any) {
-    switch (format) {
-      case "csv":
-        this.exportService.exportServerDataToCsv();
-        break;
-      case "xlsx":
-        this.exportService.exportServerDataToExcel();
-        break;
-      case "pdf":
-        this.exportService.exportServerDataToPdf();
-        break;
-    }
-  }
-
   public redraw() {
     this.hidden = true;
     const timeOut = setTimeout(() => {
@@ -201,13 +187,16 @@ export class DataGridComponent implements AfterViewInit {
     const headers = itemHeader.column.split(",");
 
     return headers.reduce((prev, cur) => {
-      return prev === "-##" ? row[cur] : `${prev} {${row[cur]}}`;
+      debugger;
+      return prev === "-##"
+        ? row[cur]
+        : `${prev == null ? "" : prev} {${row[cur] == null ? "" : row[cur]}}`;
     }, "-##");
   }
-  @HostListener('window:resize',['$event'])
-  resize(event:any){
+  @HostListener("window:resize", ["$event"])
+  resize(event: any) {
     this.resizeTable.next(true);
-  } 
+  }
 }
 
 export interface Header {

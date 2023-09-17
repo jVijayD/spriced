@@ -462,12 +462,11 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onExport(format: "csv" | "xlsx" | "pdf") {
     this.dataGrid.export(format);
-    // this.entityDataService
-    //   .exportToExcel(
-    //     this.currentSelectedEntity?.id as number,
-    //     this.currentCriteria
-    //   )
-    //   .subscribe(() => {});
+    // this.entityDataService.exportToExcel(
+    //   this.currentSelectedEntity?.id as number,
+    //   `${this.currentSelectedEntity?.displayName}.xlsx`,
+    //   this.currentCriteria
+    // );
   }
 
   // private getFilterColumns(): QueryColumns[] {

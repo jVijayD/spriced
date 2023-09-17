@@ -6,6 +6,7 @@ import {
   RequestUtilityService,
 } from "@spriced-frontend/spriced-common-lib";
 import { Observable, map } from "rxjs";
+import { saveAs } from "file-saver";
 
 @Injectable({ providedIn: "root" })
 export class EntityDataService {
@@ -53,12 +54,25 @@ export class EntityDataService {
     );
   }
 
-  exportToExcel(id: string | number, criteria: Criteria) {
+  exportToExcel(id: string | number, filename: string, criteria: Criteria) {
     const url = this.requestUtility.addCriteria(
       `${this.api_url}/entity/${id}/export/excel`,
       criteria
     );
-    return this.http.get(url);
+
+    return this.http
+      .get(url, {
+        responseType: "blob",
+      })
+      .subscribe((blob) => {
+        let data = new Blob([blob], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        saveAs(data, filename);
+      });
+    /*{
+  responseType: 'blob'
+}*/
   }
 
   private createRows(content: any) {
