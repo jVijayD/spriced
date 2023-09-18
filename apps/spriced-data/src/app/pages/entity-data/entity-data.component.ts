@@ -194,8 +194,12 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onSort(e: any) {
     const sorters = e.sorts.map((sort: any) => {
-      return { direction: sort.dir.toUpperCase(), property: sort.prop };
+      const values = sort.prop.split(',');
+      const codeValues = values.filter((value: any) => value.trim().endsWith("code"));
+      const prop = values.length === 1 ? values[0] : codeValues[0];
+      return { direction: sort.dir.toUpperCase(), property: prop };
     });
+    
     const criteria: Criteria = { ...this.currentCriteria, sorters: sorters };
     this.loadEntityData(this.currentSelectedEntity as Entity, criteria);
   }
