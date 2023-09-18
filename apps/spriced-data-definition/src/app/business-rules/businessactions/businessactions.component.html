@@ -4,6 +4,22 @@
     <div class="example-container mt-4 mr-5 flex flex-col">
         <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
             <mat-label>Attribute</mat-label>
+            <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="attributeId"
+                (valueChange)="handleAttributes($event, 'changeAttribute')">
+                <mat-option *ngFor="let attribute of filteredAttributes" [value]="attribute?.id">
+                    {{attribute.displayName}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-error class="text-sm italic text-red-500"
+            *ngIf="actionForm.get('attributeId')!.invalid && actionForm.get('attributeId')!.touched && actionForm.get('attributeId')!.hasError('required')">
+            Attribute value is required
+        </mat-error>
+    </div>
+
+    <!-- <div class="example-container mt-4 mr-5 flex flex-col">
+        <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
+            <mat-label>Attribute</mat-label>
             <div class="flex attribute-input" [ngClass]="preview ? 'disableMenu' : ''"
                 [matMenuTriggerFor]="attributeMenu">
                 <input style="display: none;" [readonly]="true" [readonly]="preview" matInput placeholder="Add Value"
@@ -17,7 +33,7 @@
             *ngIf="actionForm.get('attributeId')!.invalid && actionForm.get('attributeId')!.touched && actionForm.get('attributeId')!.hasError('required')">
             Attribute value is required
         </mat-error>
-    </div>
+    </div> -->
 
     <!-- MAT MENU FOR NESTED ATTRIBUTE -->
     <mat-menu class="attribute-menu" #attributeMenu="matMenu" yPosition="below">
@@ -138,8 +154,8 @@
             <mat-error class="text-sm italic text-red-500" *ngIf="actionForm.get('operand')!.hasError('pattern')">Please
                 enter a valid pattern</mat-error> -->
 
-            <!-- MAT MENU FOR NESTED ATTRIBUTE -->
-            <!-- <mat-menu class="attribute-menu" #operandMenu="matMenu" yPosition="below">
+        <!-- MAT MENU FOR NESTED ATTRIBUTE -->
+        <!-- <mat-menu class="attribute-menu" #operandMenu="matMenu" yPosition="below">
                 <ng-container *ngFor="let attribute of dataRules?.attributes">
                     <button [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
                         (click)="selectAttribute(attribute, '', 'operand')">

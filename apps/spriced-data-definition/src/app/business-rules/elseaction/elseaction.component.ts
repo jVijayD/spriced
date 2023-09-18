@@ -127,6 +127,7 @@ export class ElseactionComponent {
       return
     });
 
+    this.filteredAttributes = this.dataRules?.attributes.filter((el: any) => el.type !== 'LOOKUP');
     const value = this.getValue('actionType');
     const operandType = this.getValue('operandType');
     const attributeId = this.getValue('attributeId');
