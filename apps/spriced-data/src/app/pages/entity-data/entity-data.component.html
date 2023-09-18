@@ -116,9 +116,18 @@
           ></sp-header-action> -->
 
             <sp-header-action
+              *ngIf="!query"
               icon="filter_list"
               text="Filter"
               title="Filter"
+              (actionClick)="onFilter()"
+              [disabled]="this.headers.length === 0"
+            ></sp-header-action>
+
+            <sp-header-action
+              *ngIf="!!query"
+              icon="filter_list"
+              text=""
               (actionClick)="onFilter()"
               [disabled]="this.headers.length === 0"
               spToolTipRenderer
