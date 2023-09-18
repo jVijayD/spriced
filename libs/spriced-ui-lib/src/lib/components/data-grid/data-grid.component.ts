@@ -187,7 +187,6 @@ export class DataGridComponent implements AfterViewInit {
     const headers = itemHeader.column.split(",");
 
     return headers.reduce((prev, cur) => {
-      debugger;
       return prev === "-##"
         ? row[cur]
         : `${prev == null ? "" : prev} {${row[cur] == null ? "" : row[cur]}}`;
