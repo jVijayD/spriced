@@ -116,33 +116,19 @@
           ></sp-header-action> -->
 
             <sp-header-action
-              *ngIf="!query"
               icon="filter_list"
-              text="Filter"
-              title="Filter"
-              (actionClick)="onFilter()"
-              [disabled]="this.headers.length === 0"
-            ></sp-header-action>
-
-            <sp-header-action
-              *ngIf="!!query"
-              icon="filter_list"
-              text=""
+              [text]="!query ? 'Filter' : ''"
               (actionClick)="onFilter()"
               [disabled]="this.headers.length === 0"
               spToolTipRenderer
               [contentTemplate]="template"
               [customPosition]="true"
+              [showToolTip]="!!query"
             ></sp-header-action>
 
             <ng-template #template>
               <div [innerHTML]="getToolTipTemplate(query)"></div>
             </ng-template>
-            <!-- <ng-template #template>
-            <div *ngIf="query"> 
-              <div [innerHTML]="getToolTipTemplate(query)"></div>
-            </div>
-          </ng-template> -->
 
             <sp-header-action
               icon="filter_list_off"
