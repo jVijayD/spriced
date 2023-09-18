@@ -90,10 +90,14 @@ export class LookupSelectComponent
     return props.reduce((prev, cur) => {
       return prev === "-##"
         ? option[cur]
-        : `${prev == null ? "" : prev} {${
-            option[cur] == null ? "" : option[cur]
-          }}`;
+        : `${prev == null ? "" : prev} ${this.renderDataWithCurlyBrace(
+            option[cur]
+          )}`;
     }, "-##");
     //return displayProp;
+  }
+
+  private renderDataWithCurlyBrace(data: any) {
+    return data == null ? "" : "{" + data + "}";
   }
 }

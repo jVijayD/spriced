@@ -150,16 +150,16 @@ export class DataGridComponent implements AfterViewInit {
     this.table.selected = [];
   }
 
-  public export(format: "csv" | "xlsx" | "pdf") {
+  public export(format: "csv" | "xlsx" | "pdf", filename: string) {
     switch (format) {
       case "csv":
-        this.exportService.exportToCsv(this.rows, this.headers, this.title);
+        this.exportService.exportToCsv(this.rows, this.headers, filename);
         break;
       case "xlsx":
-        this.exportService.exportToExcel(this.rows, this.headers, this.title);
+        this.exportService.exportToExcel(this.rows, this.headers, filename);
         break;
       case "pdf":
-        this.exportService.exportToPdf(this.rows, this.headers, this.title);
+        this.exportService.exportToPdf(this.rows, this.headers, filename);
         break;
     }
   }
@@ -189,9 +189,16 @@ export class DataGridComponent implements AfterViewInit {
     return headers.reduce((prev, cur) => {
       return prev === "-##"
         ? row[cur]
-        : `${prev == null ? "" : prev} {${row[cur] == null ? "" : row[cur]}}`;
+        : `${prev == null ? "" : prev} ${this.renderDataWithCurlyBrace(
+            row[cur]
+          )}`;
     }, "-##");
   }
+
+  private renderDataWithCurlyBrace(data: any) {
+    return data == null ? "" : "{" + data + "}";
+  }
+
   @HostListener("window:resize", ["$event"])
   resize(event: any) {
     this.resizeTable.next(true);

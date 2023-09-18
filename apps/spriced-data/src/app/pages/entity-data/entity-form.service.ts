@@ -68,13 +68,13 @@ export class EntityFormService {
           },
         },
         validations: [
-          {
-            name: "required",
-            message: `${
-              attr.displayName || attr.name
-            } is required.`.toLowerCase(),
-            validator: Validators.required,
-          },
+          // {
+          //   name: "required",
+          //   message: `${
+          //     attr.displayName || attr.name
+          //   } is required.`.toLowerCase(),
+          //   validator: Validators.required,
+          // },
         ],
       };
     } else {
@@ -143,7 +143,6 @@ export class EntityFormService {
 
   private getValidations(attr: Attribute): IValidator[] {
     let validations: IValidator[] = [];
-
     if (!attr.nullable) {
       validations.push({
         name: `required`,
