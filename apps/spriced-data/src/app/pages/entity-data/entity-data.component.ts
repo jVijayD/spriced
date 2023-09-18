@@ -443,6 +443,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       )
       .subscribe((val) => {
         this.relatedEntity = val;
+        this.query = null;
       });
   }
   onSubmitEntityData(data: any) {
