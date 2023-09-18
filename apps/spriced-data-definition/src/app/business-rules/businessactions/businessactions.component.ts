@@ -140,7 +140,7 @@ export class BusinessactionsComponent implements OnInit {
     const parentAttributeId = this.getValue('parentAttributeId');
     const parentOperandId = this.getValue('parentOperandId');
 
-    this.handleValue(operandType);
+    // this.handleValue(operandType);
     this.handleValueChange(value);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
   }
@@ -175,8 +175,8 @@ export class BusinessactionsComponent implements OnInit {
     }
     else if (['IS_REQUIRED', 'IS_NOT_VALID', 'NONE'].includes(value)) {
       this.Value = this.maxValue = this.minValue = false;
-      const operandType = this.actionForm?.get('operandType')?.value;
-      this.actionForm?.get('operandType').setValue(operandType);
+      // const operandType = this.actionForm?.get('operandType')?.value;
+      // this.actionForm?.get('operandType').setValue(operandType);
 
       minValueControl?.disable();
       maxValueControl?.disable();

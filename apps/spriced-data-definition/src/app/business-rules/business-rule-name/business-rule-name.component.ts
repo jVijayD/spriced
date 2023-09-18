@@ -578,6 +578,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       'operatorType',
       'subConditions',
       'subConditionType',
+      'operandType'
     ];
 
     controlNames.forEach((controlName) => {

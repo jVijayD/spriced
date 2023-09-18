@@ -134,7 +134,7 @@ export class ElseactionComponent {
     const parentAttributeId = this.getValue('parentAttributeId');
     const parentOperandId = this.getValue('parentOperandId');
 
-    this.handleValue(operandType);
+    // this.handleValue(operandType);
     this.handleValueChange(value);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
   }
@@ -168,8 +168,8 @@ export class ElseactionComponent {
       valueControl?.disable();
     }
     else if (['IS_REQUIRED', 'IS_NOT_VALID', 'NONE'].includes(value)) {
-      const operandType = this.actionForm?.get('operandType')?.value;
-      this.actionForm?.get('operandType').setValue(operandType);
+      // const operandType = this.actionForm?.get('operandType')?.value;
+      // this.actionForm?.get('operandType').setValue(operandType);
       this.Value = this.maxValue = this.minValue = false;
 
       minValueControl?.disable();
