@@ -277,7 +277,8 @@ export class BusinessRuleListComponent {
 
     }
     else if (['IS_NULL','IS_NOT_NULL'].includes(value)) {
-      this.conditionForm?.get('operandType').setValue('CONSTANT');
+      const operandType = this.conditionForm?.get('operandType')?.value;
+      this.conditionForm?.get('operandType').setValue(operandType);
       this.value = this.maxValue = this.minValue = false;
       valueControl?.disable();
       minValueControl?.disable();
@@ -307,13 +308,14 @@ export class BusinessRuleListComponent {
       });
     }
     this.dataType = attribute?.dataType ? attribute?.dataType : 'AUTO';
+    const decimalValueSize = attribute?.size;
     this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
     if (text === 'changeAttribute') {
       this.conditionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
     }
     if (['DECIMAL', 'FLOAT', 'LINK'].includes(this.dataType)) {
-      const pattern = this.dataType === 'DECIMAL' ? /^(\d{1,9}\.\d{1,})$/ : this.dataType === 'FLOAT' ? /^(\d{1,5}\.\d{1,})$/ : this.dataType === 'LINK' ? /^(ftp|http|https):\/\/[^ "]+$/i : '';
-      this.conditionForm?.get('operand')!.setValidators([Validators.required, Validators.pattern(pattern)]);
+      const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
+      this.conditionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
   }
 
@@ -341,10 +343,11 @@ export class BusinessRuleListComponent {
     }
 
     this.dataType = attribute?.dataType || 'AUTO';
+    const decimalValueSize = attribute?.size;
     this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
 
     if (['DECIMAL', 'FLOAT', 'LINK'].includes(this.dataType)) {
-      const pattern = this.getValidationPatternForDataType(this.dataType);
+      const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.conditionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
   }
@@ -405,17 +408,32 @@ export class BusinessRuleListComponent {
     return !parentOperand && !operand ? '' : !parentOperand ? operand?.displayName.trim() : `${parentOperand?.displayName.trim()}.${operand.displayName}`;
   }
 
-  private getValidationPatternForDataType(dataType: string): RegExp {
+  /**
+   * HANDLE THIS FUNCTION FOR INPUT PATTERN
+   * @param dataType 
+   * @param decimalSize 
+   * @returns 
+   */
+  private getValidationPatternForDataType(dataType: string, decimalSize?: number): RegExp {
+    const number = decimalSize || 1; // Use decimalSize if provided, or default to 1
+    let pattern = '';
+  
     switch (dataType) {
       case 'DECIMAL':
-        return /^(\d{1,9}\.\d{1,})$/;
+        pattern = `^\\d{1,9}\\.\\d{${number},}$`;
+        break;
       case 'FLOAT':
-        return /^(\d{1,5}\.\d{1,})$/;
+        pattern = `^\\d{1,5}\\.\\d{${number},}$`;
+        break;
       case 'LINK':
-        return /^(ftp|http|https):\/\/[^ "]+$/i;
+        pattern = '^(ftp|http|https):\\/\\/[^ "]+$';
+        break;
       default:
-        return /./; // Default pattern for other data types
+        pattern = '.';
+        break;
     }
+  
+    return new RegExp(pattern);
   }
 
 
@@ -450,7 +468,6 @@ export class BusinessRuleListComponent {
   public get parentItemId(): string {
     return this.dragDisabled ? '' : this.parentItem?.value!.id;
   }
-
 
   public capitalizeOperatorType(value: any): string {
     return value.replace(/_/g, ' ').replace(/\w\S*/g, (word: string) => {

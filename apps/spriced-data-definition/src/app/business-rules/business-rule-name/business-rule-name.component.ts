@@ -162,7 +162,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
           })
         )
       }
-      
+
       attributeList = attributeList.filter((el: any) => !el.systemAttribute);
       this.conditionsData = {
         ...action,
@@ -173,8 +173,10 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       };
       this.conditionsData.ruleTypes = this.conditionsData?.ruleTypes.slice(0, 3);
       this.conditionsData?.operators.splice(7, 12);
-      this.conditionsData.operators = this.conditionsData?.operators.filter((el: any) => el.value !== 'NONE')
-      this.patchForm(this.rulesData);
+      this.conditionsData.operators = this.conditionsData?.operators.filter((el: any) => el.value !== 'NONE');
+      if (!!this.rulesData) {
+        this.patchForm(this.rulesData);
+      }
       const ruleType = this.myForm.get('group')?.value;
       this.handleRuleType(ruleType);
       this.loading = false;
@@ -346,7 +348,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
    * @param res any
    */
   public async patchForm(res: any) {
-    this.ruleId = res.id;
+    this.ruleId = res?.id;
     this.myForm = this.formbuilder.group({
       name: [res.name, Validators.required],
       priority: [res.priority, [Validators.required, Validators.min(1), Validators.max(1000)]],
@@ -572,21 +574,8 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
   // Common method to remove controls
   public removeControls(formGroup: FormGroup): void {
     const controlNames = [
-      'operandName',
-      'operandDisplayName',
-      'parentOperandId',
-      'parentOperandName',
-      'parentOperandDisplayName',
-      'operandTableName',
-      'attributeName',
-      'attributeDisplayName',
-      'parentAttributeId',
-      'parentAttributeName',
-      'parentAttributeDisplayName',
-      'attributeTableName',
       'conditionType',
       'operatorType',
-      'operandType',
       'subConditions',
       'subConditionType',
     ];
@@ -880,7 +869,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       action[1].forEach((item: any) => {
         item.actionGroup = dataItem.group;
         const attribute = this.conditionsData?.attributes.find((el: any) => el.id === item.attributeId);
-        if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute.dataType)) {
+        if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute?.dataType)) {
           item.operand = moment(item.operand).toISOString();
           item.min_value = moment(item.min_value).toISOString();
           item.max_value = moment(item.max_value).toISOString();
