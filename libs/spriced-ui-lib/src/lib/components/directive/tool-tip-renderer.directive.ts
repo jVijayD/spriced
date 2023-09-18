@@ -31,10 +31,6 @@ export class ToolTipRendererDirective {
      * Init life cycle event handler
      */
     ngOnInit() {
-      if (!this.showToolTip) {
-        return;
-      }
-
       const position = 
       {
         originX: 'start',
@@ -71,7 +67,11 @@ export class ToolTipRendererDirective {
      */
     @HostListener('mouseenter')
     show() {
-      
+      if(!this.showToolTip)
+      {
+        this.closeToolTip();
+        return
+      }
       //attach the component if it has not already attached to the overlay
       if (this._overlayRef && !this._overlayRef.hasAttached()) {
         const tooltipRef: ComponentRef<CustomToolTipComponent> = this._overlayRef.attach(new ComponentPortal(CustomToolTipComponent));

@@ -200,6 +200,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       }
       return { direction: sort.dir.toUpperCase(), property: sort.prop };
     });
+
     const criteria: Criteria = { ...this.currentCriteria, sorters: sorters };
     this.loadEntityData(this.currentSelectedEntity as Entity, criteria);
   }
@@ -443,6 +444,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       )
       .subscribe((val) => {
         this.relatedEntity = val;
+        this.query = null;
       });
   }
   onSubmitEntityData(data: any) {
