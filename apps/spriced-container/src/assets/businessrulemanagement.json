@@ -50,6 +50,22 @@
             {
                 "value": "MUST_BE_EQUAL_TO",
                 "name": "must be equal to"
+            },
+            {
+                "value": "GREATER_THAN",
+                "name": ">"
+            },
+            {
+                "value": "GREATER_THAN_EQUALS",
+                "name": ">="
+            },
+            {
+                "value": "LESS_THAN",
+                "name": "<"
+            },
+            {
+                "value": "LESS_THAN_EQUALS",
+                "name": "<="
             }
         ],
         "EXTERNAL_ACTION": [

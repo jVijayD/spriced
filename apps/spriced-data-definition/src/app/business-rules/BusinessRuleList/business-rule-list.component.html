@@ -21,7 +21,7 @@
           <i *ngIf="!dragDisabled && !preview" class="material-icons flex items-center"> drag_indicator </i>
 
           <div class="rule-drop-down flex condition-conatiner">
-            <div class="example-container  mt-8 mr-5 flex flex-col">
+            <div class="example-container mt-8 mr-5 flex flex-col">
               <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
                 <mat-label>Attribute</mat-label>
                 <div class="flex attribute-input" [ngClass]="preview ? 'disableMenu' : ''" [matMenuTriggerFor]="attributeMenu">
@@ -76,7 +76,7 @@
             </div>
 
             <div class="example-container mr-5 flex flex-col" *ngIf="value">
-              <mat-radio-group class="flex mb-2 radio-groups" aria-label="Select an option"
+              <mat-radio-group class="flex mb-1 radio-groups" aria-label="Select an option"
                 formControlName="operandType" (change)="handleValue($event.value, 'editValue')">
                 <ng-container *ngFor="let item of dataRules?.operands; let i = index">
                   <mat-radio-button [disabled]="preview" color="primary" [value]="item.value" class="ml-4 capitalize">
@@ -87,7 +87,7 @@
               <ng-container *ngIf="valueConstant">
                 <!-- WHEN DATATYPE IS EQUAL TO STRING -->
                 <mat-form-field
-                  *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER'].includes(dataType)"
+                  *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)"
                   [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
                   <mat-label>Value</mat-label>
                   <input [readonly]="preview" [type]="dynamicInputType" [readonly]="preview" matInput
@@ -171,7 +171,7 @@
 
             <div class="example-container mt-8 mr-5 flex flex-col" *ngIf="minValue">
               <mat-form-field
-                *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER'].includes(dataType)"
+                *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)"
                 [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
                 <mat-label>Min Value</mat-label>
                 <input [readonly]="preview" matInput placeholder="Add Value" formControlName="min_value">
@@ -225,7 +225,7 @@
 
             <div class="example-container mt-8 mr-5 flex flex-col" *ngIf="maxValue">
               <mat-form-field
-                *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER'].includes(dataType)"
+                *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)"
                 [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
                 <mat-label>Max Value</mat-label>
                 <input [readonly]="preview" matInput placeholder="Add Value" formControlName="max_value">
