@@ -1,19 +1,19 @@
 {
     "ruleTypes": [
         {
-            "name": "default value action",
+            "name": "default value",
             "value": "DEFAULT_VALUE_ACTION"
         },
         {
-            "name": "change value action",
+            "name": "change value",
             "value": "CHANGE_VALUE_ACTION"
         },
         {
-            "name": "validation action",
+            "name": "validation",
             "value": "VALIDATION_ACTION"
         },
         {
-            "name": "external action",
+            "name": "external",
             "value": "EXTERNAL_ACTION"
         },
         {
