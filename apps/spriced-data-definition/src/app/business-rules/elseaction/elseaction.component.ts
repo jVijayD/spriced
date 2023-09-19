@@ -38,7 +38,7 @@ const NGX_DATE_FORMAT = {
     // dateOutput: 'MM/DD/YYYY', // Specifies the output format for displaying dates
   },
   display: {
-    dateInput: 'MM/DD/YYYY HH:mm:ss a', // Specifies the format for displaying dates in the input field
+    dateInput: 'MM/DD/YYYY', // Specifies the format for displaying dates in the input field
     monthYearLabel: 'MMMM YYYY', // Specifies the format for displaying the month and year in the datepicker header
     dateA11yLabel: 'LL', // Specifies the format for accessibility labels of dates
     monthYearA11yLabel: 'MMMM YYYY', // Specifies the format for accessibility labels of the month and year
