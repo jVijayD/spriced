@@ -194,12 +194,13 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onSort(e: any) {
     const sorters = e.sorts.map((sort: any) => {
-      const values = sort.prop.split(',');
-      const codeValues = values.filter((value: any) => value.trim().endsWith("code"));
-      const prop = values.length === 1 ? values[0] : codeValues[0];
-      return { direction: sort.dir.toUpperCase(), property: prop };
+      const props: string[] = sort.prop.split(",");
+      if (props.length > 1) {
+        sort.prop = props.find((item) => item.endsWith("_code"));
+      }
+      return { direction: sort.dir.toUpperCase(), property: sort.prop };
     });
-    
+
     const criteria: Criteria = { ...this.currentCriteria, sorters: sorters };
     this.loadEntityData(this.currentSelectedEntity as Entity, criteria);
   }
@@ -466,7 +467,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   onExport(format: "csv" | "xlsx" | "pdf") {
-    this.dataGrid.export(format);
+    this.dataGrid.export(
+      format,
+      this.currentSelectedEntity?.displayName as string
+    );
     // this.entityDataService.exportToExcel(
     //   this.currentSelectedEntity?.id as number,
     //   `${this.currentSelectedEntity?.displayName}.xlsx`,
@@ -545,19 +549,21 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     if (entity) {
       this.applyEntitySettings(entity);
       this.subscriptions.push(
-        this.entityDataService.loadEntityData(entity.id, criteria).subscribe({
-          next: (page) => {
-            this.rows = page.content;
-            this.totalElements = page.totalElements;
-            if (this.rows && this.rows?.length > 0) {
-              this.onItemSelected(this.rows[0]);
-            }
-          },
-          error: (err) => {
-            this.rows = [];
-            console.error(err);
-          },
-        })
+        this.entityDataService
+          .loadEntityDataArray(entity.id, criteria)
+          .subscribe({
+            next: (page) => {
+              this.rows = page.content;
+              this.totalElements = page.totalElements;
+              if (this.rows && this.rows?.length > 0) {
+                this.onItemSelected(this.rows[0]);
+              }
+            },
+            error: (err) => {
+              this.rows = [];
+              console.error(err);
+            },
+          })
       );
     } else {
       this.rows = [];
