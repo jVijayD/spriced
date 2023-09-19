@@ -138,7 +138,7 @@ export class EntityDataService {
     return this.http.get(`${this.api_url}/bulk/getAll`);
   }
 
-  loadEntity(id: number) {
+  loadEntity(id: number): Observable<any> {
     return this.http.get(`${this.def_url}/entities/${id}`);
   }
 }
