@@ -549,21 +549,19 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     if (entity) {
       this.applyEntitySettings(entity);
       this.subscriptions.push(
-        this.entityDataService
-          .loadEntityDataArray(entity.id, criteria)
-          .subscribe({
-            next: (page) => {
-              this.rows = page.content;
-              this.totalElements = page.totalElements;
-              if (this.rows && this.rows?.length > 0) {
-                this.onItemSelected(this.rows[0]);
-              }
-            },
-            error: (err) => {
-              this.rows = [];
-              console.error(err);
-            },
-          })
+        this.entityDataService.loadEntityData(entity.id, criteria).subscribe({
+          next: (page) => {
+            this.rows = page.content;
+            this.totalElements = page.totalElements;
+            if (this.rows && this.rows?.length > 0) {
+              this.onItemSelected(this.rows[0]);
+            }
+          },
+          error: (err) => {
+            this.rows = [];
+            console.error(err);
+          },
+        })
       );
     } else {
       this.rows = [];

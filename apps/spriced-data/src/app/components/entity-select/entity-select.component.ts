@@ -67,7 +67,7 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
           this.models = items;
           if (items.length) {
             this.selectedModelValue = modelId || items[0].id;
-            this.loadEntity(this.selectedModelValue, entityId);
+            this.loadEntities(this.selectedModelValue, entityId);
           }
         },
         error: () => {
@@ -78,18 +78,20 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
   }
 
   //onTouched() {}
-  loadEntity(modelId: number, entityId?: number) {
+  loadEntities(modelId: number, entityId?: number) {
     this.subscriptions.push(
-      this.entityService.loadEntityByModel(modelId).subscribe({
+      this.entityService.loadEntityByModelWithOutAttributes(modelId).subscribe({
         next: (items) => {
           if (items) {
             this.entities = items;
             if (this.entities.length) {
-              this.selectedEntity =
+              // this.selectedEntity =
+              //   this.entities.find((item) => item.id === entityId) ||
+              //   this.entities[0];
+              const curSelectedEntity =
                 this.entities.find((item) => item.id === entityId) ||
                 this.entities[0];
-
-              this.entitySelectionEvent.emit(this.selectedEntity);
+              this.loadEntityWithId(curSelectedEntity);
             }
           }
         },
@@ -104,11 +106,20 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
     this.entities = [];
     this.modelSelectionEvent.emit();
     if (e.value != "") {
-      this.loadEntity(Number(e.value));
+      this.loadEntities(Number(e.value));
     }
   }
 
   onEntitySelectionChange(e: MatSelectChange) {
-    this.entitySelectionEvent.emit(e.value);
+    //this.entitySelectionEvent.emit(e.value);
+    this.loadEntityWithId(e.value);
+  }
+
+  private loadEntityWithId(curSelectedEntity: Entity) {
+    this.entityService.load(curSelectedEntity.id).subscribe((item: any) => {
+      curSelectedEntity.attributes = item.attributes;
+      this.selectedEntity = curSelectedEntity;
+      this.entitySelectionEvent.emit(this.selectedEntity);
+    });
   }
 }
