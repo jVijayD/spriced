@@ -174,7 +174,7 @@ export class BusinessactionsComponent implements OnInit {
       maxValueControl?.enable();
       valueControl?.disable();
     }
-    else if (['IS_REQUIRED', 'IS_NOT_VALID', 'NONE'].includes(value)) {
+    else if (['IS_REQUIRED', 'IS_NOT_VALID', 'IS_NULL'].includes(value)) {
       this.Value = this.maxValue = this.minValue = false;
       // const operandType = this.actionForm?.get('operandType')?.value;
       // this.actionForm?.get('operandType').setValue(operandType);
