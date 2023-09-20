@@ -130,6 +130,9 @@ export class ModelComponent implements OnInit, OnDestroy {
       this.rows = results;
       this.totalElements = results.length;
       this.filterData = results;
+      const previousItem = this.rows.find((el: any) => el.name === this.selectedItem.name);
+      this.selectedItem = null;
+      this.onItemSelected(previousItem);
     });
   }
 
@@ -171,7 +174,6 @@ export class ModelComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.load(this.pageNo, this.pageSize);
-        this.selectedItem = null;
       }
     });
   }
