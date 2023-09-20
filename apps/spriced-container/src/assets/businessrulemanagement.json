@@ -24,8 +24,8 @@
     "actions": {
         "DEFAULT_VALUE_ACTION": [
             {
-                "value": "NONE",
-                "name": "none"
+                "value": "IS_NULL",
+                "name": "is null"
             },
             {
                 "value": "DEFAULTS_TO",
