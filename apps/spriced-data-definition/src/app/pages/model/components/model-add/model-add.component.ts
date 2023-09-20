@@ -82,9 +82,14 @@ export class ModelAddComponent {
           validator: Validators.pattern('^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$'),
         },
         {
+          name: "minlength",
+          message: "Min length must be greater than 3.",
+          validator: Validators.minLength(3),
+        },
+        {
           name: "maxlength",
           message: "Max length should be 100.",
-          validator: Validators.maxLength(100),
+          validator: Validators.maxLength(100), 
         },
       ],
     },
@@ -106,6 +111,11 @@ export class ModelAddComponent {
           name: "pattern",
           message: "Invalid Display Name",
           validator: Validators.pattern('^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$'),
+        },
+        {
+          name: "minlength",
+          message: "Min length must be greater than 3.",
+          validator: Validators.minLength(3),
         },
         {
           name: "maxlength",
