@@ -135,7 +135,7 @@ export class ElseactionComponent {
     const parentAttributeId = this.getValue('parentAttributeId');
     const parentOperandId = this.getValue('parentOperandId');
 
-    // this.handleValue(operandType);
+    this.handleValue(operandType);
     this.handleValueChange(value);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
   }
@@ -202,6 +202,7 @@ export class ElseactionComponent {
     }
     this.dataType = attribute?.dataType ? attribute?.dataType : 'AUTO';
     const decimalValueSize = attribute?.size;
+    this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern('')]);
     this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
     if (text === 'changeAttribute') {
       this.actionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
