@@ -21,6 +21,7 @@
     [count]="totalElements"
     (paginate)="onPaginate($event)"
     (itemSelected)="onItemSelected($event)"
+    [selected]="!!selectedItem ? [selectedItem] : []"
     (sort)="onSort($event)"
   >
     <ng-container>

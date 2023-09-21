@@ -51,7 +51,7 @@
         [width]="header.width || 0"
         [resizeable]="true"
         [sortable]="true"
-        [draggable]="true"
+        [draggable]="header.pinned === 'left' ? false : true"
         [canAutoResize]="header.canAutoResize || true"
         *ngIf="!header.hidden"
       >
