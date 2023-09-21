@@ -54,10 +54,10 @@ li {
   height: 0;
 }
 
-::ng-deep .mat-mdc-menu-panel {
+::ng-deep .attribute-menu.mat-mdc-menu-panel {
   max-height: 300px;
   overflow-y: auto;
-  width: 160px;
+  width: 180px;
 }
 
 .radio-groups {

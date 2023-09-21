@@ -1,24 +1,8 @@
 <!-- MANGAE BUSINESS ACTION RULES -->
 <div *ngIf="!!actionForm" class="rule-drop-down flex action-container" [formGroup]="actionForm">
 
-    <!-- <div class="example-container mt-8 mr-5 flex flex-col">
-        <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
-            <mat-label>Attribute</mat-label>
-            <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="attributeId"
-                (valueChange)="handleAttributes($event, 'changeAttribute')">
-                <mat-option *ngFor="let attribute of filteredAttributes" [value]="attribute?.id">
-                    {{attribute.displayName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-error class="text-sm italic text-red-500"
-            *ngIf="actionForm.get('attributeId')!.invalid && actionForm.get('attributeId')!.touched && actionForm.get('attributeId')!.hasError('required')">
-            Attribute value is required
-        </mat-error>
-    </div> -->
-
     <div class="example-container mt-8 mr-5 flex flex-col">
-        <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
+        <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-auto" appearance="outline">
             <mat-label>Attribute</mat-label>
             <div class="flex attribute-input" [ngClass]="preview ? 'disableMenu' : ''"
                 [matMenuTriggerFor]="attributeMenu">
@@ -134,7 +118,7 @@
 
         <!-- WHEN OPERANDS TYPE IS ATTRIBUTE -->
         <ng-container *ngIf="!valueConstant">
-            <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline"
+            <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-auto" appearance="outline"
                 *ngIf="!valueConstant">
                 <mat-label>Attribute</mat-label>
                 <div class="flex attribute-input" [ngClass]="preview ? 'disableMenu' : ''"
