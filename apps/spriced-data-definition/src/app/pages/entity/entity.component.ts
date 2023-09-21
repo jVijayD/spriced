@@ -162,7 +162,11 @@ export class EntityComponent {
         error: (err: any) => {
           if (err.error.errorCode == "DB_UK-008") {
             this.snackbarService.error("Entity Already Exists.");
-          } else {
+          }
+         else if (err.error.errorCode == "DB_EC-005") {
+            this.snackbarService.error("Attributes with same name or display name not allowed.");
+          }
+           else {
             this.snackbarService.error("Entity Creation Failed.");
           }
         },
@@ -203,7 +207,15 @@ export class EntityComponent {
           this.load({ value: this.groupId });
         },
         error: (err: any) => {
-          this.snackbarService.error("Entity Update Failed.");
+          if (err.error.errorCode == "DB_UK-008") {
+            this.snackbarService.error("Entity Already Exists.");
+          }
+         else if (err.error.errorCode == "DB_EC-005") {
+            this.snackbarService.error("Attributes with same name or display name not allowed.");
+          }
+           else {
+            this.snackbarService.error("Entity Updation Failed.");
+          }
         },
       });
     });
