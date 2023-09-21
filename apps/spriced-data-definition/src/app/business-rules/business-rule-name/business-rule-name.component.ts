@@ -172,8 +172,25 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         operands: this.transformObjectToKeyValueArray(operands),
       };
       this.conditionsData.ruleTypes = this.conditionsData?.ruleTypes.slice(0, 3);
-      this.conditionsData?.operators.splice(7, 12);
-      this.conditionsData.operators = this.conditionsData?.operators.filter((el: any) => el.value !== 'NONE');
+
+      // Define the names of items to exclude
+      const excludedNames = [
+        "none",
+        "starts_with",
+        "does_not_start_with",
+        "ends_with",
+        "does_not_end_with",
+        "contains_pattern",
+        "does_not_contain_pattern",
+        "contains_subset",
+        "does_not_contain_subset",
+        "is_between",
+        "is_not_between"
+      ];
+
+      // Filter the array to exclude items with names in the excludedNames array
+      this.conditionsData.operators = this.conditionsData?.operators.filter((item: any) => !excludedNames.includes(item.name));
+
       if (!!this.rulesData) {
         this.patchForm(this.rulesData);
       }
