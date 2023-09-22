@@ -2,6 +2,7 @@ import { Attribute, Component, Inject } from "@angular/core";
 
 import { QueryBuilderConfig } from "ngx-angular-query-builder";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { FormGroup, FormBuilder } from "@angular/forms";
 
 @Component({
   selector: "sp-filter",
@@ -9,8 +10,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
   styleUrls: ["./filter-dialog.component.scss"],
 })
 export class FilterDialogComponent {
+  form!: FormGroup
   config!: QueryBuilderConfig;
   constructor(
+    public fb: FormBuilder,
     public dialogRef: MatDialogRef<FilterDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: FilterData
   ) {
@@ -18,19 +21,22 @@ export class FilterDialogComponent {
       data && data.query
         ? data.query
         : {
-            condition: "and",
-            rules: [],
-          };
+          condition: "and",
+          rules: [],
+        };
     this.config =
       data && data.config ? data.config : this.createConfig(data.columns || []);
 
+    this.form = this.fb.group({
+      query: [data.query]
+    })
     dialogRef.disableClose = true;
   }
   onCancel(): void {
     this.dialogRef.close(null);
   }
   onApply(): void {
-    const filterGroup = this.convertToFilters(this.data.query);
+    const filterGroup = this.convertToFilters(this.form.value.query);
     this.dialogRef.close(filterGroup);
   }
 
@@ -59,9 +65,9 @@ export class FilterDialogComponent {
 
       const groupFilters = item.rules
         ? this.convertToFilters({
-            rules: item.rules,
-            condition: item.condition,
-          })
+          rules: item.rules,
+          condition: item.condition,
+        })
         : undefined;
       const filter: Filter = {
         filterType: item.rules
@@ -151,6 +157,17 @@ export class FilterDialogComponent {
         operators: this.mapOperators(col.dataType),
         options: col.options,
         nullable: col.nullable,
+        validator: (rule) => {
+          if (['', null, undefined].includes(rule.value)) {
+            return {
+              required: {
+                rule: rule,
+                message: 'Field is required'
+              }
+            }
+          }
+          return null;
+        }
       };
     });
     return config;
