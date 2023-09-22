@@ -58,7 +58,11 @@
         color="primary"
         class="square-button"
         matTooltipClass="custom-tooltip"
-        [matTooltip]="'Go to the \'' + control.label + '\' entity to view attribute value details'"
+        [matTooltip]="
+          'Go to the \'' +
+          control.label +
+          '\' entity to view attribute value details'
+        "
         (click)="onNavigateClick()"
         [disabled]="control.readOnly || disabled"
       >
