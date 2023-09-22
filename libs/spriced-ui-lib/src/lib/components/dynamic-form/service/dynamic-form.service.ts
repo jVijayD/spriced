@@ -4,8 +4,9 @@ import { Subject } from "rxjs";
 
 @Injectable()
 export class DynamicFormService {
-  parentForm?: FormGroup;
+  private parentForm?: FormGroup;
   roles: string[] = [];
+  private extraData = new Map<string, object>();
   private eventSubject = new Subject<EventElement>();
   public eventSubject$ = this.eventSubject.asObservable();
 
@@ -33,6 +34,31 @@ export class DynamicFormService {
 
   publishEvent(event: EventElement) {
     this.eventSubject.next(event);
+  }
+
+  setFormValues(extraData: Map<string, object> | null, values: any) {
+    this.extraData.clear();
+    if (extraData) {
+      this.extraData = extraData;
+    }
+    this.parentForm?.setValue(values);
+  }
+
+  resetFormValues() {
+    this.extraData.clear();
+    this.parentForm?.reset();
+  }
+
+  getFormValues() {
+    return this.parentForm?.value;
+  }
+
+  getFormItemValue(item: any) {
+    return this.parentForm?.get(item);
+  }
+
+  getExtraData() {
+    return this.extraData;
   }
 
   private getValues(params: string[]) {

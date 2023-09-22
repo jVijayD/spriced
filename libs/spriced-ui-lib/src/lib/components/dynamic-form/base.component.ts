@@ -100,7 +100,7 @@ export abstract class BaseComponent implements ControlValueAccessor {
         this._subscriptions.push(item);
       });
 
-      this.runRule(this.dynamicFormService?.parentForm?.value);
+      this.runRule(this.dynamicFormService?.getFormValues);
     }
   }
 
@@ -119,7 +119,7 @@ export abstract class BaseComponent implements ControlValueAccessor {
     if (rule) {
       const conditions: string[] = rule.dependantItems || [];
       conditions.forEach((item) => {
-        const ctrl = this.dynamicFormService?.parentForm?.get(item);
+        const ctrl = this.dynamicFormService?.getFormItemValue(item);
         if (ctrl) {
           subscriptions.push(
             ctrl?.valueChanges.subscribe((val) => {
@@ -141,7 +141,7 @@ export abstract class BaseComponent implements ControlValueAccessor {
   private createFact(item: string, value: unknown) {
     const fact: any = {};
     fact[item] = value;
-    return { ...this.dynamicFormService?.parentForm?.value, ...fact };
+    return { ...this.dynamicFormService?.getFormValues(), ...fact };
   }
 
   private initRuleEngine() {

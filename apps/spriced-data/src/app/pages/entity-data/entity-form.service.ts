@@ -38,6 +38,24 @@ export class EntityFormService {
     return extractedFields;
   }
 
+  public extractExtraData(selectedItem: any, selectedEntity: Entity) {
+    let extraData: Map<string, object> = new Map<string, object>();
+    selectedEntity.attributes
+      .filter((item) => item.type == "LOOKUP" && item.permission == "UPDATE")
+      .forEach((attribute) => {
+        const attribute_name = `${attribute.name}_name`;
+        const attribute_code = `${attribute.name}_code`;
+        if (
+          selectedItem.hasOwnProperty(attribute_name) &&
+          selectedItem.hasOwnProperty(attribute_code)
+        ) {
+          extraData.set(attribute_name, selectedItem[attribute_name]);
+          extraData.set(attribute_code, selectedItem[attribute_code]);
+        }
+      });
+    return extraData;
+  }
+
   private getType(attr: Attribute, codeSettings: string): GenericControl {
     if (attr.type === "LOOKUP") {
       return {
