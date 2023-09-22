@@ -11,6 +11,7 @@ import { NgxAngularQueryBuilderModule } from "ngx-angular-query-builder";
 import { FormsModule } from "@angular/forms";
 import { MatRadioModule } from "@angular/material/radio";
 import { FilterDialogComponent } from "./filter-dialog/filter-dialog.component";
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { FilterDialogComponent } from "./filter-dialog/filter-dialog.component";
     MatIconModule,
     MatRadioModule,
     MatSelectModule,
+    ReactiveFormsModule
   ],
   providers: [DialogService],
   exports: [ConfirmDialogComponent, InfoDialogComponent, FilterDialogComponent],

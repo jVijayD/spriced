@@ -2,9 +2,10 @@
 <div class="container">
   <div class="header">Filter</div>
   <div class="body">
+    <form [formGroup]="form">
     <query-builder
-      [(ngModel)]="data.query"
       [config]="config"
+      formControlName="query"
       [allowCollapse]="true"
       [allowRuleset]="true"
       [disabled]="data.disabled || false"
@@ -66,7 +67,7 @@
 
       <ng-container *queryField="let rule; let fields=fields; let onChange=onChange">
         <mat-form-field class="ml-2" appearance="outline">
-          <mat-select [(ngModel)]="rule.field" (ngModelChange)="onChange($event, rule)">
+          <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.field" (ngModelChange)="onChange($event, rule)">
             <mat-option *ngFor="let field of fields" [value]="field.value">{{field.name}}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -74,7 +75,7 @@
 
       <ng-container  *queryOperator="let rule; let operators=operators">
         <mat-form-field class="mx-4" appearance="outline">
-          <mat-select [(ngModel)]="rule.operator">
+          <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.operator">
             <mat-option *ngFor="let value of operators" [value]="value">{{value}}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -125,9 +126,10 @@
         ></mat-checkbox>
       </ng-container> -->
     </query-builder>
+    </form>
   </div>
   <div class="footer">
-    <button mat-raised-button color="primary" (click)="onApply()" class="ml-2">
+    <button [disabled]="!form.valid" mat-raised-button color="primary" (click)="onApply()" class="ml-2">
       Apply
     </button>
     <button mat-raised-button color="accent" (click)="onCancel()" class="ml-2">
