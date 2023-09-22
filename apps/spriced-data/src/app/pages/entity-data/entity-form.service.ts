@@ -164,6 +164,16 @@ export class EntityFormService {
       });
     }
 
+    if (attr.dataType === "INTEGER") {
+      validations.push({
+        name: `pattern`,
+        message: `Invalid input.`.toLowerCase(),
+        validator: Validators.pattern(
+          "[^-]*"
+        ),
+      });
+    }
+
     if (attr.dataType === "LINK") {
       validations.push({
         name: `${attr.name}_pattern`,

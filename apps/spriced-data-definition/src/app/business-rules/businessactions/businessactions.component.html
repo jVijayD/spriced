@@ -22,12 +22,14 @@
     <!-- MAT MENU FOR NESTED ATTRIBUTE -->
     <mat-menu class="attribute-menu" #attributeMenu="matMenu" yPosition="below">
         <ng-container *ngFor="let attribute of dataRules?.attributes">
-            <button [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
+            <button [ngClass]="{'selected-item': selectedAttribute.split('.')[0] === attribute?.displayName}"
+                [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
                 (click)="selectAttribute(attribute)">
                 {{ attribute.displayName }}
             </button>
             <mat-menu #nestedMenu="matMenu">
-                <button mat-menu-item *ngFor="let nestedAttribute of attribute.attributes"
+                <button [ngClass]="{'selected-item': selectedAttribute.split('.')[1] === attribute?.displayName}"
+                    mat-menu-item *ngFor="let nestedAttribute of attribute.attributes"
                     (click)="selectAttribute(nestedAttribute, attribute)">
                     {{ nestedAttribute.displayName }}
                 </button>
@@ -105,7 +107,8 @@
                     formControlName="operand">
                 <mat-datepicker-toggle [disabled]="preview" matSuffix
                     [for]="$any(mindatetimepicker1)"></mat-datepicker-toggle>
-                <ngx-mat-datetime-picker [hideTime]="true" #mindatetimepicker1 [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
+                <ngx-mat-datetime-picker [hideTime]="true" #mindatetimepicker1
+                    [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
             </mat-form-field>
 
             <mat-error class="text-sm italic text-red-500"
@@ -138,15 +141,18 @@
             <mat-error class="text-sm italic text-red-500" *ngIf="actionForm.get('operand')!.hasError('pattern')">Please
                 enter a valid pattern</mat-error>
 
-        <!-- MAT MENU FOR NESTED ATTRIBUTE -->
-        <mat-menu class="attribute-menu" #operandMenu="matMenu" yPosition="below">
+            <!-- MAT MENU FOR NESTED ATTRIBUTE -->
+            <mat-menu class="attribute-menu" #operandMenu="matMenu" yPosition="below">
                 <ng-container *ngFor="let attribute of dataRules?.attributes">
-                    <button [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
+                    <button [ngClass]="{'selected-item': selectedOperand.split('.')[0] === attribute?.displayName}"
+                        [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
                         (click)="selectAttribute(attribute, '', 'operand')">
                         {{ attribute.displayName }}
                     </button>
                     <mat-menu #nestedMenu="matMenu">
-                        <button mat-menu-item *ngFor="let nestedAttribute of attribute.attributes"
+                        <button
+                            [ngClass]="{'selected-item': selectedOperand.split('.')[1] === nestedAttribute?.displayName}"
+                            mat-menu-item *ngFor="let nestedAttribute of attribute.attributes"
                             (click)="selectAttribute(nestedAttribute, attribute, 'operand')">
                             {{ nestedAttribute.displayName }}
                         </button>
@@ -200,7 +206,8 @@
                 formControlName="min_value">
             <mat-datepicker-toggle [disabled]="preview" matSuffix
                 [for]="$any(mindatetimepicker1)"></mat-datepicker-toggle>
-            <ngx-mat-datetime-picker [hideTime]="true" #mindatetimepicker1 [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
+            <ngx-mat-datetime-picker [hideTime]="true" #mindatetimepicker1
+                [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
         </mat-form-field>
 
 
@@ -253,7 +260,8 @@
                 formControlName="max_value">
             <mat-datepicker-toggle [disabled]="preview" matSuffix
                 [for]="$any(maxdatetimepicker1)"></mat-datepicker-toggle>
-            <ngx-mat-datetime-picker [hideTime]="true" #maxdatetimepicker1 [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
+            <ngx-mat-datetime-picker [hideTime]="true" #maxdatetimepicker1
+                [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
         </mat-form-field>
 
         <mat-error class="text-sm italic text-red-500"
