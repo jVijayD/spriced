@@ -52,28 +52,8 @@
                 "name": "must be equal to"
             },
             {
-                "value": "EQUALS",
-                "name": "equals"
-            },
-            {
-                "value": "MUST_CONTAIN_PATTERN",
-                "name": "must_contain_pattern"
-            },
-            {
-                "value": "MUST_BE_UNIQUE",
-                "name": "must be unique"
-            },
-            {
-                "value": "MUST_HAVE_ONE_OF_FOLLOWING_VALUES",
-                "name": "must_have_one_of_following_values"
-            },
-            {
                 "value": "MUST_BE_GREATER_THAN",
                 "name": "must be greater than"
-            },
-            {
-                "value": "MUST_BE_EQUAL_TO",
-                "name": "must be equal to"
             },
             {
                 "value": "MUST_BE_GREATER_THAN_EQUAL",
@@ -86,14 +66,6 @@
             {
                 "value": "MUST_BE_LESS_THAN_EQUAL",
                 "name": "must be less than equal"
-            },
-            {
-                "value": "MUST_HAVE_MINIMUM_LENGTH_OF",
-                "name": "must have minimum length of"
-            },
-            {
-                "value": "MUST_HAVE_MAXIMUM_LENGTH_OF",
-                "name": "must have maximum length of"
             }
         ],
         "EXTERNAL_ACTION": [
