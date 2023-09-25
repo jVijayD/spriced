@@ -187,7 +187,7 @@ export class EntityFormService {
         name: `pattern`,
         message: `Invalid input.`.toLowerCase(),
         validator: Validators.pattern(
-          "[^-]*"
+          "^-?\d+$"
         ),
       });
     }
