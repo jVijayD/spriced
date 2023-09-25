@@ -208,28 +208,33 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   onItemSelected(e: any) {
     this.selectedItem = e;
     //this.dynamicFormService.parentForm?.setValue(this.selectedItem);
-
-    this.dynamicFormService.parentForm?.setValue(
-      this.entityFormService.extractFormFieldsOnly(
-        this.selectedItem,
-        this.dynamicFormService.parentForm?.value
-      )
+    const extractedFormFields = this.entityFormService.extractFormFieldsOnly(
+      this.selectedItem,
+      this.dynamicFormService.getFormValues()
     );
+
+    const extraData = this.entityFormService.extractExtraData(
+      this.selectedItem,
+      this.currentSelectedEntity as Entity
+    );
+
+    this.dynamicFormService.setFormValues(extraData, extractedFormFields);
+    debugger;
   }
 
   onClear() {
     this.selectedItem = null;
     this.dataGrid.clearSelection();
     this.dataGrid.selected = [];
-    this.dynamicFormService.parentForm?.reset();
+    this.dynamicFormService.resetFormValues();
   }
+
   onReset() {
-    this.dynamicFormService.parentForm?.setValue(
-      this.entityFormService.extractFormFieldsOnly(
-        this.selectedItem,
-        this.dynamicFormService.parentForm?.value
-      )
+    const extractedFormFields = this.entityFormService.extractFormFieldsOnly(
+      this.selectedItem,
+      this.dynamicFormService.getFormValues()
     );
+    this.dynamicFormService.setFormValues(null, extractedFormFields);
   }
   onDelete() {
     const dialog = this.dialogService.openConfirmDialoge({
@@ -477,7 +482,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       if (data.valid) {
         const entityId = this.currentSelectedEntity?.id as number;
         //const finalData = this.removeNull(data.value);
-        const finalData = data.value;
+        const finalData = {
+          ...data.value,
+          ...Object.fromEntries(this.dynamicFormService.getExtraData()),
+        };
         if (!this.selectedItem) {
           this.createEntityData(entityId, finalData);
         } else {
@@ -490,15 +498,15 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   onExport(format: "csv" | "xlsx" | "pdf") {
-    this.dataGrid.export(
-      format,
-      this.currentSelectedEntity?.displayName as string
-    );
-    // this.entityDataService.exportToExcel(
-    //   this.currentSelectedEntity?.id as number,
-    //   `${this.currentSelectedEntity?.displayName}.xlsx`,
-    //   this.currentCriteria
+    // this.dataGrid.export(
+    //   format,
+    //   this.currentSelectedEntity?.displayName as string
     // );
+    this.entityDataService.exportToExcel(
+      this.currentSelectedEntity?.id as number,
+      `${this.currentSelectedEntity?.displayName}.xlsx`,
+      this.currentCriteria
+    );
   }
 
   // private getFilterColumns(): QueryColumns[] {
@@ -638,7 +646,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
             },
           ]);
         } else {
-          this.dynamicFormService.parentForm?.reset();
+          this.dynamicFormService.resetFormValues();
           this.snackbarService.success("Record created successfully.");
           this.loadEntityData(
             this.currentSelectedEntity as Entity,

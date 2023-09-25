@@ -72,7 +72,7 @@ export class AddModelComponent implements OnInit {
   }
   ngOnInit(): void {
     if (this.selectedItem) {
-      this.dynamicFormService.parentForm?.setValue(this.selectedItem);
+      this.dynamicFormService?.setFormValues(null, this.selectedItem);
     }
   }
 
@@ -99,7 +99,7 @@ export class AddModelComponent implements OnInit {
   private createEntityData(entityId: number, data: any) {
     this.entityDataService.createEntityData(entityId, data).subscribe({
       next: (item) => {
-        this.dynamicFormService.parentForm?.reset();
+        this.dynamicFormService.resetFormValues();
         this.snackbarService.success("Record created successfully.");
         // this.loadEntityData(
         //   this.currentSelectedEntity as Entity,
@@ -139,6 +139,6 @@ export class AddModelComponent implements OnInit {
 
   onClear(submittedData: any) {
     //debugger;
-    this.dynamicFormService.parentForm?.setValue(submittedData);
+    this.dynamicFormService.setFormValues(null, submittedData);
   }
 }

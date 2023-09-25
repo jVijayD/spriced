@@ -82,6 +82,26 @@ export class LookupSelectComponent
     this.setControlAccess();
   }
 
+  public getSelectedDisplayProp() {
+    debugger;
+    const lookupControl = this._control as LookupSelectControl;
+    const props = lookupControl.displayProp?.split("|") || [];
+    const option: any = {};
+    for (let key of this.dynamicFormService.getExtraData().keys()) {
+      if (key.startsWith(this._control.name)) {
+        option[key.replace(`${this._control.name}_`, "")] =
+          this.dynamicFormService.getExtraData().get(key);
+      }
+    }
+    return props.reduce((prev, cur) => {
+      return prev === "-##"
+        ? option[cur]
+        : `${prev == null ? "" : prev} ${this.renderDataWithCurlyBrace(
+            option[cur]
+          )}`;
+    }, "-##");
+  }
+
   public getDisplayProp(option: any, prop: string) {
     //let displayProp = "";
     const props = prop.split("|");
