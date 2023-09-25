@@ -52,24 +52,8 @@
                 "name": "must be equal to"
             },
             {
-                "value": "DEFAULTS_TO",
-                "name": "defaults to"
-            },
-            {
-                "value": "DEFAULTS_TO_GENERATED_VALUE",
-                "name": "defaults to generated value"
-            },
-            {
-                "value": "DEFAULTS_TO_CONCATNATED_VALUE",
-                "name": "defaults to concatenated value"
-            },
-            {
                 "value": "EQUALS",
                 "name": "equals"
-            },
-            {
-                "value": "EQUALS_CONCATENATED_VALUE",
-                "name": "equals concatenated value"
             },
             {
                 "value": "MUST_CONTAIN_PATTERN",
@@ -104,20 +88,12 @@
                 "name": "must be less than equal"
             },
             {
-                "value": "MUST_BE_BETWEEN",
-                "name": "must be between"
-            },
-            {
                 "value": "MUST_HAVE_MINIMUM_LENGTH_OF",
                 "name": "must have minimum length of"
             },
             {
                 "value": "MUST_HAVE_MAXIMUM_LENGTH_OF",
                 "name": "must have maximum length of"
-            },
-            {
-                "value": "START_WORKFLOW",
-                "name": "start workflow"
             }
         ],
         "EXTERNAL_ACTION": [
