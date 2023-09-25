@@ -23,17 +23,17 @@
     <mat-menu class="attribute-menu" #attributeMenu="matMenu" yPosition="below">
         <ng-container *ngFor="let attribute of dataRules?.attributes">
             <button [ngClass]="{'selected-item': selectedAttribute.split('.')[0] === attribute?.displayName}"
-                [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
+                mat-menu-item
                 (click)="selectAttribute(attribute)">
                 {{ attribute.displayName }}
             </button>
-            <mat-menu #nestedMenu="matMenu">
+            <!-- <mat-menu #nestedMenu="matMenu">
                 <button [ngClass]="{'selected-item': selectedAttribute.split('.')[1] === attribute?.displayName}"
                     mat-menu-item *ngFor="let nestedAttribute of attribute.attributes"
                     (click)="selectAttribute(nestedAttribute, attribute)">
                     {{ nestedAttribute.displayName }}
                 </button>
-            </mat-menu>
+            </mat-menu> -->
 
         </ng-container>
     </mat-menu>

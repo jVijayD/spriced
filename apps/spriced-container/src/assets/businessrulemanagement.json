@@ -40,10 +40,6 @@
         ],
         "VALIDATION_ACTION": [
             {
-                "value": "IS_BLANK",
-                "name": "is blank"
-            },
-            {
                 "value": "IS_REQUIRED",
                 "name": "is required"
             },
@@ -54,22 +50,6 @@
             {
                 "value": "MUST_BE_EQUAL_TO",
                 "name": "must be equal to"
-            },
-            {
-                "value": "GREATER_THAN",
-                "name": ">"
-            },
-            {
-                "value": "GREATER_THAN_EQUALS",
-                "name": ">="
-            },
-            {
-                "value": "LESS_THAN",
-                "name": "<"
-            },
-            {
-                "value": "LESS_THAN_EQUALS",
-                "name": "<="
             },
             {
                 "value": "DEFAULTS_TO",
@@ -151,3 +131,5 @@
         ]
     }
 }
+
+
