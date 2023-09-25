@@ -24,6 +24,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ExportFileService } from "./export-file";
 import { MatIconModule } from "@angular/material/icon";
 import { Subject, debounceTime } from "rxjs";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "sp-data-grid",
@@ -124,7 +125,7 @@ export class DataGridComponent implements AfterViewInit {
   @Output()
   sort: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private exportService: ExportFileService) {
+  constructor(private exportService: ExportFileService, private router: Router) {
     this.resizeTable.pipe(debounceTime(400)).subscribe(() => {
       this.table.recalculate();
     });
@@ -203,6 +204,11 @@ export class DataGridComponent implements AfterViewInit {
   resize(event: any) {
     this.resizeTable.next(true);
   }
+  viewError()
+{
+  window.open("/spriced-data/upload-error", "_blank");
+}
+
 }
 
 export interface Header {

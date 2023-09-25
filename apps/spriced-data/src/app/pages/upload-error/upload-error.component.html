@@ -1,0 +1,267 @@
+<sp-two-col-three-forth [singleColumn]="isFullScreen">
+    <!--Left Section with Grid-->
+    <div class="flex flex-col w-full h-full" left>
+      <!-- <div class="page-header pb-0">Entity Data Management</div> -->
+      <!-- <sp-entity-select
+        (entitySelectionEvent)="onEntitySelectionChange($event)"
+        (modelSelectionEvent)="onModelSelectionChange()"
+      ></sp-entity-select> -->
+      <div class="grid-container grid-height bg-primary-dark rounded-t-md">
+        <sp-data-grid
+          class="w-full h-full"
+          #dataGrid
+          [enableRowIndex]="false"
+          [isArray]="false"
+          [headers]="headers"
+          [rows]="rows"
+          [rowHeight]="20"
+          [headerHeight]="30"
+          [footerHeight]="25"
+          [columnMode]="columnMode"
+          [virtualScroll]="false"
+          [selectionType]="selectionType"
+          [count]="totalElements"
+          [limit]="limit"
+          [isExternalPaging]="true"
+          [isExternalSorting]="true"
+          [sortType]="sortType"
+          (paginate)="onPaginate($event)"
+          (itemSelected)="onItemSelected($event)"
+          [selected]="!!selectedItem ? [selectedItem] : []"
+          (sort)="onSort($event)"
+          *ngIf="!hide"
+        >
+          <ng-container>
+            <!-- <sp-header-action
+              [disabled]="!this.isFullScreen"
+              icon="add_box"
+              text="Add"
+              title="Add Entity"
+              (actionClick)="showAddPopup()"
+            ></sp-header-action> -->
+  
+            <!-- <sp-header-action
+              icon="edit"
+              text="Edit"
+              title="Edit Entity"
+              [disabled]="!selectedItem && !isFullScreen"
+              (actionClick)="onEdit()"
+            ></sp-header-action> -->
+            <sp-header-component-wrapper>
+              <sp-entity-select
+                (entitySelectionEvent)="onEntitySelectionChange($event)"
+                (modelSelectionEvent)="onModelSelectionChange()"
+              ></sp-entity-select>
+            </sp-header-component-wrapper>
+  
+            <div
+              class="text-white items-center font-medium flex justify-center w-full"
+            >
+              <span class="elipsis">
+                {{ this.currentSelectedEntity?.displayName || "" }}
+              </span>
+            </div>
+  
+            <div class="flex">
+              <sp-header-action
+                icon="delete"
+                text="Delete"
+                title="Delete Member"
+                [disabled]="selectedItem == null || selectedItem == undefined || disableSubmit"
+                (actionClick)="onDelete()"
+              ></sp-header-action>
+  
+              <!-- <sp-header-action
+              [disabled]="!selectedItem"
+              icon="clear"
+              text="Clear"
+              title="Clear"
+              (actionClick)="onClear()"
+            ></sp-header-action> -->
+  
+              <sp-header-action
+                icon="add"
+                text="Add"
+                title="Add"
+                (click)="onClear()"
+                [disabled] ="disableSubmit"
+              ></sp-header-action>
+  
+              <sp-header-action
+                icon="history"
+                text="Change Tracker"
+                title="Change Tracker"
+                [disabled]="
+                  this.currentSelectedEntity === null ||
+                  this.currentSelectedEntity === undefined ||
+                  this.headers.length === 0
+                "
+                (actionClick)="onAudit()"
+              ></sp-header-action>
+  
+              <!-- <sp-header-action
+              [disabled]="this.isFullScreen"
+              icon="fullscreen"
+              text="Full Screen"
+              title="Full Screen"
+              (actionClick)="onFullScreen()"
+              [disabled]="this.headers.length === 0"
+            ></sp-header-action> -->
+  
+              <!-- <sp-header-action
+              [disabled]="!this.isFullScreen"
+              icon="fullscreen_exit"
+              text="Exit"
+              title="Full Screen Exit"
+              (actionClick)="onFullScreen()"
+            ></sp-header-action> -->
+  
+              <sp-header-action
+                icon="filter_list"
+                [text]="!query ? 'Filter' : ''"
+                (actionClick)="onFilter()"
+                [disabled]="this.headers.length === 0"
+                spToolTipRenderer
+                [contentTemplate]="template"
+                [customPosition]="true"
+                [showToolTip]="!!query"
+              ></sp-header-action>
+  
+              <ng-template #template>
+                <div [innerHTML]="getToolTipTemplate(query)"></div>
+              </ng-template>
+  
+              <sp-header-action
+                icon="filter_list_off"
+                text="Clear Filter"
+                title="Clear Filter"
+                [disabled]="
+                  this.currentCriteria?.filters?.length == 0 ||
+                  this.currentCriteria?.filters == undefined
+                "
+                (actionClick)="onClearFilter()"
+              ></sp-header-action>
+  
+              <sp-header-action
+                icon="cloud_upload"
+                text="Upload"
+                title="Bulk Upload"
+                (actionClick)="onUpload()"
+                [disabled]="this.headers.length === 0"
+              ></sp-header-action>
+  
+              <sp-header-action
+                [context]="true"
+                icon="insert_drive_file"
+                text="Export"
+                title="Export"
+                [disabled]="this.headers.length === 0"
+              >
+                <!-- <button mat-menu-item (click)="onExport('csv')">
+                  <mat-icon class="mt-auto">insert_drive_file</mat-icon>
+                  <span class="text-xs self-end">csv</span>
+                </button> -->
+                <button mat-menu-item (click)="onExport('xlsx')">
+                  <mat-icon class="mt-auto">insert_drive_file</mat-icon>
+                  <span class="text-xs self-end file-excel fontawesomeicon"
+                    >xslx</span
+                  >
+                </button>
+              </sp-header-action>
+  
+              <sp-header-action
+                icon="view_list"
+                text="Status"
+                title="Status"
+                (actionClick)="onStatus()"
+                [disabled]="this.headers.length === 0"
+              ></sp-header-action>
+  
+              <sp-header-action
+                icon="settings"
+                text="Settings"
+                title="Settings"
+                [disabled]="
+                  this.currentSelectedEntity == null ||
+                  this.currentSelectedEntity == undefined
+                "
+                (actionClick)="onSettings()"
+              ></sp-header-action>
+            </div>
+          </ng-container>
+        </sp-data-grid>
+      </div>
+    </div>
+  
+    <!--Right Section with Form-->
+    <div class="h-full flex flex-col" right>
+      <!-- <div
+        class="header bg-primary-default flex flex-row justify-between rounded-t-xl"
+      >
+        <div class="component-header-with-background">
+          {{ this.currentSelectedEntity?.displayName }}
+        </div>
+        <div class="flex flex-row justify-end text-white">
+  
+        </div>
+      </div> -->
+      <mat-accordion [multi]="false">
+        <mat-expansion-panel
+          [expanded]="this.currentSelectedEntity ? true : false"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <b> {{ this.currentSelectedEntity?.displayName }}</b>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div
+            style="
+              height: calc(100vh - 35px - 2rem - 35px - 70px);
+              overflow-y: auto;
+            "
+          >
+            <!-- 100vh-2rem(padding)-35px(footer)-35px(header)-70px(expanded/panel) -->
+            <sp-dynamic-form-container
+              *ngIf="appForm.groups[0].formFieldControls.length"
+              [appForm]="appForm"
+              reset="Reset"
+              save="Save"
+              [disableSubmit]="disableSubmit"
+              (submitEvent)="onSubmitEntityData($event)"
+              (resetEvent)="onReset()"
+            ></sp-dynamic-form-container>
+          </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel
+          [expanded]="relatedEntity?.length != 0 ? true : false"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <b>Related Entities</b>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div
+            class="w-full flex flex-col space-y-1 text-sm pl-2 pr-2"
+            style="
+              height: calc(100vh - 35px - 2rem - 35px - 70px);
+              overflow-y: auto;
+            "
+            *ngIf="relatedEntity?.length != 0"
+          >
+            <span class="mb-2 text-black"
+              >These entities use the {{ currentSelectedEntity?.displayName }} as
+              a domain-based attribute:</span
+            >
+            <ng-container *ngFor="let item of relatedEntity">
+              <a
+                class="cursor-pointer text-primary-dark"
+                (click)="loadLookupPopup(item.id)"
+                >{{ item.displayName }}</a
+              >
+            </ng-container>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </sp-two-col-three-forth>
+  
