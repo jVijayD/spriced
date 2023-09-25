@@ -468,7 +468,6 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         break;
 
       case 'action':
-        form.get('operand')?.removeValidators([Validators.required]);
         this.removeControls(form);
         break;
     }
@@ -580,12 +579,10 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         })
         break;
       case 'action':
-        formGroup.get('operand')?.removeValidators([Validators.required]);
         this.removeControls(formGroup);
         this.actions.push(formGroup);
         break;
       case 'elseaction':
-        formGroup.get('operand')?.removeValidators([Validators.required]);
         this.removeControls(formGroup);
         this.elseAction.push(formGroup);
         break;

@@ -1,7 +1,7 @@
 import { NGX_MAT_DATE_FORMATS, NgxMatDateAdapter, NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, Input, Output, EventEmitter, forwardRef } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, forwardRef, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatButtonModule } from '@angular/material/button';
@@ -99,7 +99,7 @@ const sToken = new ServiceTokens();
   templateUrl: './businessactions.component.html',
   styleUrls: ['./businessactions.component.scss'],
 })
-export class BusinessactionsComponent implements OnInit {
+export class BusinessactionsComponent implements AfterViewInit {
   @Input() actionForm!: any;
   @Output() public remove: EventEmitter<any> = new EventEmitter<any>();
   @Input() public actionType: any;
@@ -126,7 +126,7 @@ export class BusinessactionsComponent implements OnInit {
   /**
    *  Initialization tasks or data fetching can be done here
    */
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     // CURRENTLY HARD CODE FOR CHANGE THE NAME OF CONST TO VALUE
     this.dataRules?.operands.map((el: any) => {
       el.name === 'const' ? el.name = 'value' : '';
@@ -140,7 +140,7 @@ export class BusinessactionsComponent implements OnInit {
     const operand = this.getValue('operand');
     const parentAttributeId = this.getValue('parentAttributeId');
     const parentOperandId = this.getValue('parentOperandId');
-
+    
     this.handleValue(operandType);
     this.handleValueChange(value);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
@@ -230,6 +230,11 @@ export class BusinessactionsComponent implements OnInit {
     this.isFieldDisabled = event === 'BLANK';
     this.selectedOperand = '';
     this.actionForm?.get('a')
+    if(event === 'CONSTANT') {
+      this.actionForm?.get('operand')?.removeValidators([Validators.required]);
+    } else {
+      this.actionForm?.get('operand')?.addValidators([Validators.required]);
+    }
     if (text === 'editValue') {
       this.disableFormControl();
     }

@@ -224,6 +224,11 @@ export class ElseactionComponent {
     this.isFieldDisabled = event === 'BLANK';
     this.selectedOperand = '';
     this.actionForm?.get('a')
+    if(event === 'CONSTANT') {
+      this.actionForm.get('operand')?.removeValidators([Validators.required]);
+    } else {
+      this.actionForm.get('operand')?.addValidators([Validators.required]);
+    }
     if (text === 'editValue') {
       this.disableFormControl();
     }
