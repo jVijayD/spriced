@@ -47,13 +47,11 @@ export class ModelListComponent {
       isTreeColumn: true,
     },
     {
-      column: "action",
-      name: "Action",
+      column: "description",
+      name: "Description",
       canAutoResize: true,
       isSortable: true,
       isTreeColumn: false,
-      action: true,
-      width: 100
     },
     {
       column: "updatedBy",
@@ -74,13 +72,7 @@ export class ModelListComponent {
       },
       width: 200
     },
-    {
-      column: "description",
-      name: "Description",
-      canAutoResize: true,
-      isSortable: true,
-      isTreeColumn: false,
-    },
+
 
   ];
   columnMode: ColumnMode = ColumnMode.force;
