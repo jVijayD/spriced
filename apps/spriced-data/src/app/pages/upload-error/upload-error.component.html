@@ -14,9 +14,9 @@
           [isArray]="false"
           [headers]="headers"
           [rows]="rows"
-          [rowHeight]="20"
+          [rowHeight]="30"
           [headerHeight]="30"
-          [footerHeight]="25"
+          [footerHeight]="30"
           [columnMode]="columnMode"
           [virtualScroll]="false"
           [selectionType]="selectionType"
@@ -86,36 +86,7 @@
                 (click)="onClear()"
                 [disabled] ="disableSubmit"
               ></sp-header-action>
-  
-              <sp-header-action
-                icon="history"
-                text="Change Tracker"
-                title="Change Tracker"
-                [disabled]="
-                  this.currentSelectedEntity === null ||
-                  this.currentSelectedEntity === undefined ||
-                  this.headers.length === 0
-                "
-                (actionClick)="onAudit()"
-              ></sp-header-action>
-  
-              <!-- <sp-header-action
-              [disabled]="this.isFullScreen"
-              icon="fullscreen"
-              text="Full Screen"
-              title="Full Screen"
-              (actionClick)="onFullScreen()"
-              [disabled]="this.headers.length === 0"
-            ></sp-header-action> -->
-  
-              <!-- <sp-header-action
-              [disabled]="!this.isFullScreen"
-              icon="fullscreen_exit"
-              text="Exit"
-              title="Full Screen Exit"
-              (actionClick)="onFullScreen()"
-            ></sp-header-action> -->
-  
+    
               <sp-header-action
                 icon="filter_list"
                 [text]="!query ? 'Filter' : ''"
@@ -142,13 +113,13 @@
                 (actionClick)="onClearFilter()"
               ></sp-header-action>
   
-              <sp-header-action
+              <!-- <sp-header-action
                 icon="cloud_upload"
                 text="Upload"
                 title="Bulk Upload"
                 (actionClick)="onUpload()"
                 [disabled]="this.headers.length === 0"
-              ></sp-header-action>
+              ></sp-header-action> -->
   
               <sp-header-action
                 [context]="true"
@@ -169,14 +140,16 @@
                 </button>
               </sp-header-action>
   
+             
+
               <sp-header-action
-                icon="view_list"
-                text="Status"
-                title="Status"
-                (actionClick)="onStatus()"
-                [disabled]="this.headers.length === 0"
-              ></sp-header-action>
-  
+              icon="save"
+              text="Save"
+              title="Save"
+              (actionClick)="onSave()"
+            ></sp-header-action>
+
+<!--   
               <sp-header-action
                 icon="settings"
                 text="Settings"
@@ -186,7 +159,7 @@
                   this.currentSelectedEntity == undefined
                 "
                 (actionClick)="onSettings()"
-              ></sp-header-action>
+              ></sp-header-action> -->
             </div>
           </ng-container>
         </sp-data-grid>
@@ -232,35 +205,7 @@
             ></sp-dynamic-form-container>
           </div>
         </mat-expansion-panel>
-        <mat-expansion-panel
-          [expanded]="relatedEntity?.length != 0 ? true : false"
-        >
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <b>Related Entities</b>
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          <div
-            class="w-full flex flex-col space-y-1 text-sm pl-2 pr-2"
-            style="
-              height: calc(100vh - 35px - 2rem - 35px - 70px);
-              overflow-y: auto;
-            "
-            *ngIf="relatedEntity?.length != 0"
-          >
-            <span class="mb-2 text-black"
-              >These entities use the {{ currentSelectedEntity?.displayName }} as
-              a domain-based attribute:</span
-            >
-            <ng-container *ngFor="let item of relatedEntity">
-              <a
-                class="cursor-pointer text-primary-dark"
-                (click)="loadLookupPopup(item.id)"
-                >{{ item.displayName }}</a
-              >
-            </ng-container>
-          </div>
-        </mat-expansion-panel>
+      
       </mat-accordion>
     </div>
   </sp-two-col-three-forth>

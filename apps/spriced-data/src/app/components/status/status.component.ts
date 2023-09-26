@@ -3,6 +3,7 @@ import { CommonModule } from "@angular/common";
 import {
   DataGridComponent,
   Header,
+  HeaderActionComponent,
   OneColComponent,
 } from "@spriced-frontend/spriced-ui-lib";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
@@ -20,6 +21,7 @@ import { EntityDataService } from "../../services/entity-data.service";
     DataGridComponent,
     MatIconModule,
     MatButtonModule,
+    HeaderActionComponent,
   ],
   templateUrl: "./status.component.html",
   styleUrls: ["./status.component.scss"],
@@ -84,4 +86,12 @@ export class StatusComponent implements OnInit {
       this.totalElements = this.rows.length;
     });
   }
+  onItemSelected(e: any) {
+    this.selectedItem = e;
+  }
+  viewError()
+  {
+    window.open("/spriced-data/upload-error");
+  }
+  
 }

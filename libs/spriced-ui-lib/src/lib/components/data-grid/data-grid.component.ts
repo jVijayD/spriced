@@ -208,11 +208,6 @@ export class DataGridComponent implements AfterViewInit {
   resize(event: any) {
     this.resizeTable.next(true);
   }
-  viewError()
-{
-  window.open("/spriced-data/upload-error", "_blank");
-}
-
 }
 
 export interface Header {

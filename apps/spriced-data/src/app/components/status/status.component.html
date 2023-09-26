@@ -23,7 +23,14 @@
       [isExternalSorting]="false"
       [sortType]="sortType"
       [count]="totalElements"
+      (itemSelected)="onItemSelected($event)"
     >
+     <sp-header-action
+            [disabled]="!selectedItem"
+            icon="visibility"
+            (actionClick)="viewError()"
+          ></sp-header-action>
     </sp-data-grid>
+
   </div>
 </div>
