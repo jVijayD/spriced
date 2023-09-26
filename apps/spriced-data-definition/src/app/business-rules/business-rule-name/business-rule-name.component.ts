@@ -108,14 +108,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     const model_id = this.activeRoute?.snapshot?.queryParams?.['model_id'];
     this.previewField = !['', undefined, null].includes(previewRule);
     this.modelId = model_id;
-
-    /**
-     * Handling create rule when entity id is present
-     */
-    if (!!entity_id) {
-      this.entityId = entity_id;
-      this.patchEnumTypes(this.entityId);
-    }
+    this.entityId = entity_id;
 
     /**
      * Handling edit rule when rule id is present
@@ -124,9 +117,9 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       this.businessRuleService.getAllRulesById(ruleId).pipe(takeUntil(this.notifier$)).subscribe(async (res: any) => {
         this.entityId = res.entityId;
         this.rulesData = res;
-        this.patchEnumTypes(this.entityId);
       });
     }
+    this.patchEnumTypes(this.entityId);
 
     this.item = {
       value: { id: 'parent', subConditions: this.conditions },
