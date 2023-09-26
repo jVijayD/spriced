@@ -316,6 +316,25 @@ export class EntityAddComponent implements OnInit {
       }
     })
   }
+
+  /**
+   * HANDLE THIS FUNCTION FOR CHANGE THE DATA-TYPE DROPDOWN
+   * @param value string
+   */
+  public handleChangeDataType(value: string)
+  {
+    switch (value) {
+      case 'TIME_STAMP':
+        this.attDetails.formatter = 'MM/DD/YYYY';
+        break;
+       
+      case 'INTEGER':
+        this.attDetails.formatter = '-####';
+        this.attDetails.size = 0;
+        break;
+    }
+  }
+
   onPaginate(e: Paginate) {
     //this.rows = this.getData(e.limit, e.offset);
   }

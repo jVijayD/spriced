@@ -252,6 +252,7 @@
           >
             <mat-label>Data Type</mat-label>
             <mat-select
+              (valueChange)="handleChangeDataType($event)"
               [(ngModel)]="attDetails.dataType"
               [disabled]="
                 attDetails?.onlyDisplayNameEditable || attAction === 'Update'
