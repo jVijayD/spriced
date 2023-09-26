@@ -74,13 +74,13 @@
         >
 
           <ng-container *ngIf="header?.isLink">
-            <mat-icon
-              class="cursor-pointer"
-              onclick="window.open(`${ isArray
-              ? this.renderData(row[i], header)
-              : this.renderData(getData(row, header), header)}`,'blank')"
-              >link</mat-icon
-            >
+          <mat-icon
+           class="cursor-pointer"
+            (click)="openLink(isArray 
+            ? renderData(row[i], header) 
+            : renderData(getData(row, header), header))"
+            >link</mat-icon>
+
           </ng-container>
 
 

@@ -196,6 +196,10 @@ export class DataGridComponent implements AfterViewInit {
     }, "-##");
   }
 
+  public openLink(linkUrl: string){
+    window.open(linkUrl, 'blank');
+  }
+  
   private renderDataWithCurlyBrace(data: any) {
     return data == null ? "" : "{" + data + "}";
   }
