@@ -66,15 +66,17 @@
             >Display Name is required</mat-error
           >
       </div>
-
-      <mat-form-field appearance="outline" class="mb-2">
-        <mat-label>Description</mat-label>
-        <textarea
-          matInput
-          maxlength="100"
-          [(ngModel)]="local_data.description"
-        ></textarea>
-      </mat-form-field>
+      <div class="ml-2">
+        <mat-form-field appearance="outline" class="mb-2">
+          <mat-label>Description</mat-label>
+          <input
+            matInput
+            maxlength="100"
+            [(ngModel)]="local_data.description"
+          />
+        </mat-form-field>
+      </div>
+     
 
       <div class="autoCheck">
         <mat-checkbox
@@ -189,14 +191,14 @@
             >
           <mat-form-field appearance="outline" class="mt-2">
             <mat-label>Description</mat-label>
-            <textarea
+            <input
               matInput
-              maxlength="100"
+              max="100"
               [disabled]="
                 attDetails?.onlyDisplayNameEditable && attAction === 'Update'
               "
               [(ngModel)]="attDetails.description"
-            ></textarea>
+            />
           </mat-form-field>
 
           <div class="flex flex-row mt-2">
