@@ -18,7 +18,7 @@
 }
 
 .mat-mdc-raised-button:not(:disabled) {
-    margin-top: 20px;
+    margin-top: 32px;
 }
 
 .disableMenu {
@@ -37,4 +37,9 @@
             font-size: 12px;
         }
     }
+}
+
+.selected-item {
+    background-color: rgba(0, 0, 0, 0.04);
+    color: #c4312b;
 }

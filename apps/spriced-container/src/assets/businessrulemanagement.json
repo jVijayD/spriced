@@ -52,20 +52,20 @@
                 "name": "must be equal to"
             },
             {
-                "value": "GREATER_THAN",
-                "name": ">"
+                "value": "MUST_BE_GREATER_THAN",
+                "name": "must be greater than"
             },
             {
-                "value": "GREATER_THAN_EQUALS",
-                "name": ">="
+                "value": "MUST_BE_GREATER_THAN_EQUAL",
+                "name": "must be greater than equals"
             },
             {
-                "value": "LESS_THAN",
-                "name": "<"
+                "value": "MUST_BE_LESS_THAN",
+                "name": "must be less than"
             },
             {
-                "value": "LESS_THAN_EQUALS",
-                "name": "<="
+                "value": "MUST_BE_LESS_THAN_EQUAL",
+                "name": "must be less than equal"
             }
         ],
         "EXTERNAL_ACTION": [
@@ -79,3 +79,5 @@
         ]
     }
 }
+
+

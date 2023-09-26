@@ -64,6 +64,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
   public attributeId: any;
   public entityName: any;
   public modelName: any;
+  public entities: any = [];
 
   // DEMO LIST CODE
   public get connectedBRDropListsIds(): string[] {
@@ -152,13 +153,17 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       attributeList = entity.attributes;
       // Handle for nested attribute
       if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
+        this.entities = [];
         // Use Promise.all to wait for all promises to resolve
         await Promise.all(
           relatedRefreneceTableEntity.map(async (el: any) => {
-            const { entityData } = await this.getEntityById(el.referencedTableId);
-            const filteredAttributes = entityData?.attributes.filter((el: any) => el.type !== 'LOOKUP');
-            entityData.attributes = filteredAttributes.filter((attr: any) => !attr.systemAttribute);
-            await this.processNestedAttributes(entityData.attributes, el);
+            if (!(`entity_${el.referencedTableId}` in this.entities)) {
+              const { entityData } = await this.getEntityById(el.referencedTableId);
+              this.entities[`entity_${el.referencedTableId}`] = entityData;
+            }
+            const filteredAttributes = this.entities[`entity_${el.referencedTableId}`]?.attributes.filter((el: any) => el.type !== 'LOOKUP');
+            this.entities[`entity_${el.referencedTableId}`].attributes = filteredAttributes.filter((attr: any) => !attr.systemAttribute);
+            await this.processNestedAttributes(this.entities[`entity_${el.referencedTableId}`].attributes, el);
           })
         )
       }
@@ -594,8 +599,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       'conditionType',
       'operatorType',
       'subConditions',
-      'subConditionType',
-      'operandType'
+      'subConditionType'
     ];
 
     controlNames.forEach((controlName) => {

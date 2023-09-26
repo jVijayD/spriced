@@ -135,7 +135,7 @@ export class ElseactionComponent {
     const parentAttributeId = this.getValue('parentAttributeId');
     const parentOperandId = this.getValue('parentOperandId');
 
-    // this.handleValue(operandType);
+    this.handleValue(operandType);
     this.handleValueChange(value);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
   }
@@ -168,7 +168,7 @@ export class ElseactionComponent {
       maxValueControl?.enable();
       valueControl?.disable();
     }
-    else if (['IS_REQUIRED', 'IS_NOT_VALID', 'IS_NULL'].includes(value)) {
+    else if (['IS_REQUIRED', 'IS_NOT_VALID', 'IS_NULL', 'IS_BLANK'].includes(value)) {
       // const operandType = this.actionForm?.get('operandType')?.value;
       // this.actionForm?.get('operandType').setValue(operandType);
       this.Value = this.maxValue = this.minValue = false;
@@ -202,6 +202,7 @@ export class ElseactionComponent {
     }
     this.dataType = attribute?.dataType ? attribute?.dataType : 'AUTO';
     const decimalValueSize = attribute?.size;
+    this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern('')]);
     this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
     if (text === 'changeAttribute') {
       this.actionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
@@ -223,6 +224,11 @@ export class ElseactionComponent {
     this.isFieldDisabled = event === 'BLANK';
     this.selectedOperand = '';
     this.actionForm?.get('a')
+    if(event === 'CONSTANT') {
+      this.actionForm.get('operand')?.removeValidators([Validators.required]);
+    } else {
+      this.actionForm.get('operand')?.addValidators([Validators.required]);
+    }
     if (text === 'editValue') {
       this.disableFormControl();
     }

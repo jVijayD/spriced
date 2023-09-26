@@ -1,24 +1,8 @@
 <!-- MANGAE BUSINESS ACTION RULES -->
 <div *ngIf="!!actionForm" class="rule-drop-down flex action-container" [formGroup]="actionForm">
 
-    <div class="example-container mt-4 mr-5 flex flex-col">
-        <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
-            <mat-label>Attribute</mat-label>
-            <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="attributeId"
-                (valueChange)="handleAttributes($event, 'changeAttribute')">
-                <mat-option *ngFor="let attribute of filteredAttributes" [value]="attribute?.id">
-                    {{attribute.displayName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-error class="text-sm italic text-red-500"
-            *ngIf="actionForm.get('attributeId')!.invalid && actionForm.get('attributeId')!.touched && actionForm.get('attributeId')!.hasError('required')">
-            Attribute value is required
-        </mat-error>
-    </div>
-
-    <!-- <div class="example-container mt-4 mr-5 flex flex-col">
-        <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
+    <div class="example-container mt-8 mr-5 flex flex-col">
+        <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-auto" appearance="outline">
             <mat-label>Attribute</mat-label>
             <div class="flex attribute-input" [ngClass]="preview ? 'disableMenu' : ''"
                 [matMenuTriggerFor]="attributeMenu">
@@ -33,26 +17,28 @@
             *ngIf="actionForm.get('attributeId')!.invalid && actionForm.get('attributeId')!.touched && actionForm.get('attributeId')!.hasError('required')">
             Attribute value is required
         </mat-error>
-    </div> -->
+    </div>
 
     <!-- MAT MENU FOR NESTED ATTRIBUTE -->
     <mat-menu class="attribute-menu" #attributeMenu="matMenu" yPosition="below">
         <ng-container *ngFor="let attribute of dataRules?.attributes">
-            <button [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
+            <button [ngClass]="{'selected-item': selectedAttribute.split('.')[0] === attribute?.displayName}"
+                mat-menu-item
                 (click)="selectAttribute(attribute)">
                 {{ attribute.displayName }}
             </button>
-            <mat-menu #nestedMenu="matMenu">
-                <button mat-menu-item *ngFor="let nestedAttribute of attribute.attributes"
+            <!-- <mat-menu #nestedMenu="matMenu">
+                <button [ngClass]="{'selected-item': selectedAttribute.split('.')[1] === attribute?.displayName}"
+                    mat-menu-item *ngFor="let nestedAttribute of attribute.attributes"
                     (click)="selectAttribute(nestedAttribute, attribute)">
                     {{ nestedAttribute.displayName }}
                 </button>
-            </mat-menu>
+            </mat-menu> -->
 
         </ng-container>
     </mat-menu>
 
-    <div class="example-container mt-4 mr-5 flex flex-col">
+    <div class="example-container mt-8 mr-5 flex flex-col">
         <mat-form-field [ngClass]="preview ? 'not-allow' : ''" appearance="outline">
             <mat-label>Actions</mat-label>
             <mat-select [panelClass]="preview ? 'hideOption' : ''" panelClass="mat-select-options"
@@ -68,14 +54,14 @@
         </mat-error>
     </div>
 
-    <div class="example-container mt-4 mr-5 flex flex-col" *ngIf="Value">
-        <!-- <mat-radio-group class="flex mb-1 radio-groups" aria-label="Select an option" formControlName="operandType"
+    <div class="example-container mr-5 flex flex-col" *ngIf="Value">
+        <mat-radio-group class="flex mb-1 radio-groups" aria-label="Select an option" formControlName="operandType"
             (change)="handleValue($event.value, 'editValue')">
             <ng-container *ngFor="let item of dataRules?.operands; let i = index">
                 <mat-radio-button [disabled]="preview" color="primary" [value]="item.value" class="ml-4 capitalize">
                     {{item.name}} </mat-radio-button>
             </ng-container>
-        </mat-radio-group> -->
+        </mat-radio-group>
 
         <ng-container *ngIf="valueConstant">
             <mat-form-field
@@ -121,7 +107,8 @@
                     formControlName="operand">
                 <mat-datepicker-toggle [disabled]="preview" matSuffix
                     [for]="$any(mindatetimepicker1)"></mat-datepicker-toggle>
-                <ngx-mat-datetime-picker [hideTime]="true" #mindatetimepicker1 [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
+                <ngx-mat-datetime-picker [hideTime]="true" #mindatetimepicker1
+                    [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
             </mat-form-field>
 
             <mat-error class="text-sm italic text-red-500"
@@ -133,8 +120,8 @@
         </ng-container>
 
         <!-- WHEN OPERANDS TYPE IS ATTRIBUTE -->
-        <!-- <ng-container *ngIf="!valueConstant">
-            <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline"
+        <ng-container *ngIf="!valueConstant">
+            <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-auto" appearance="outline"
                 *ngIf="!valueConstant">
                 <mat-label>Attribute</mat-label>
                 <div class="flex attribute-input" [ngClass]="preview ? 'disableMenu' : ''"
@@ -152,17 +139,20 @@
                 Value is required
             </mat-error>
             <mat-error class="text-sm italic text-red-500" *ngIf="actionForm.get('operand')!.hasError('pattern')">Please
-                enter a valid pattern</mat-error> -->
+                enter a valid pattern</mat-error>
 
-        <!-- MAT MENU FOR NESTED ATTRIBUTE -->
-        <!-- <mat-menu class="attribute-menu" #operandMenu="matMenu" yPosition="below">
+            <!-- MAT MENU FOR NESTED ATTRIBUTE -->
+            <mat-menu class="attribute-menu" #operandMenu="matMenu" yPosition="below">
                 <ng-container *ngFor="let attribute of dataRules?.attributes">
-                    <button [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
+                    <button [ngClass]="{'selected-item': selectedOperand.split('.')[0] === attribute?.displayName}"
+                        [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
                         (click)="selectAttribute(attribute, '', 'operand')">
                         {{ attribute.displayName }}
                     </button>
                     <mat-menu #nestedMenu="matMenu">
-                        <button mat-menu-item *ngFor="let nestedAttribute of attribute.attributes"
+                        <button
+                            [ngClass]="{'selected-item': selectedOperand.split('.')[1] === nestedAttribute?.displayName}"
+                            mat-menu-item *ngFor="let nestedAttribute of attribute.attributes"
                             (click)="selectAttribute(nestedAttribute, attribute, 'operand')">
                             {{ nestedAttribute.displayName }}
                         </button>
@@ -170,10 +160,10 @@
 
                 </ng-container>
             </mat-menu>
-        </ng-container> -->
+        </ng-container>
     </div>
 
-    <div class="example-container mt-4 mr-5 flex flex-col" *ngIf="minValue">
+    <div class="example-container mt-8 mr-5 flex flex-col" *ngIf="minValue">
         <mat-form-field
             *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)"
             [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
@@ -216,7 +206,8 @@
                 formControlName="min_value">
             <mat-datepicker-toggle [disabled]="preview" matSuffix
                 [for]="$any(mindatetimepicker1)"></mat-datepicker-toggle>
-            <ngx-mat-datetime-picker [hideTime]="true" #mindatetimepicker1 [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
+            <ngx-mat-datetime-picker [hideTime]="true" #mindatetimepicker1
+                [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
         </mat-form-field>
 
 
@@ -226,7 +217,7 @@
         </mat-error>
     </div>
 
-    <div class="example-container mt-4 mr-5 flex flex-col" *ngIf="maxValue">
+    <div class="example-container mt-8 mr-5 flex flex-col" *ngIf="maxValue">
         <mat-form-field
             *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)"
             [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
@@ -269,7 +260,8 @@
                 formControlName="max_value">
             <mat-datepicker-toggle [disabled]="preview" matSuffix
                 [for]="$any(maxdatetimepicker1)"></mat-datepicker-toggle>
-            <ngx-mat-datetime-picker [hideTime]="true" #maxdatetimepicker1 [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
+            <ngx-mat-datetime-picker [hideTime]="true" #maxdatetimepicker1
+                [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
         </mat-form-field>
 
         <mat-error class="text-sm italic text-red-500"
