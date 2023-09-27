@@ -6,6 +6,7 @@ export interface HierarchyDetails {
   tabledisplayname: string;
   localColumn: string;
   refColumn: string;
+  entity: any;
 }
 export interface Hierarchy {
   id: number;

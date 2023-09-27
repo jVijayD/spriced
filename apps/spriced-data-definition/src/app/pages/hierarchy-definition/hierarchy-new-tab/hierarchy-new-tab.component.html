@@ -12,20 +12,24 @@
         <mat-option class="option" *ngFor="let item of entityList" [value]="item">{{ item.name }}</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline" class="ml-5" >
-      <mat-label>Display Name</mat-label>
-      <input matInput [value]="name"/>
+    <mat-form-field appearance="outline" class="ml-5">
+      <mat-label>Name</mat-label>
+      <input matInput [(ngModel)]="name"/>
     </mat-form-field>
-    <button mat-raised-button color="accent" class="ml-5" (click)="onClearClick('')">
+    <mat-form-field appearance="outline" class="ml-5">
+      <mat-label>Description</mat-label>
+      <input matInput  [(ngModel)]="description"/>
+    </mat-form-field>
+    <button mat-raised-button color="accent" class="ml-5" (click)="onClearClick()">
       Clear
     </button>
-    <button mat-raised-button color="primary" class="ml-5" (click)="onSaveClick('')">
+    <button mat-raised-button color="primary" class="ml-5" (click)="onSaveClick()">
       Save
     </button>
   </div>
-  <mat-card style="min-width: 350px;">
+  <mat-card style="min-width: 350px; min-height: 500px;">
     <mat-card-content class="p-0">
-      <sp-vbox [noGap]="true" [marginX]="true" class="w-full bg-white h-full" >
+      <sp-vbox [noGap]="true" [marginX]="true" class="w-full bg-white h-full">
         <div class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
           <span class="float-left text-white font-medium">Available Entities</span>
         </div>
@@ -42,18 +46,17 @@
       </sp-vbox>
     </mat-card-content>
   </mat-card>
-
-  <sp-data-grid class="col-span-2 w-full h-full" #dataGrid title="Preview" [enableRowIndex]="false" [isArray]="false"
-    [headers]="headers" [rows]="hierarchyDetails" [rowHeight]="30" [headerHeight]="30" [footerHeight]="0"
-    [columnMode]="columnMode" [virtualScroll]="true" [selectionType]="selectionType" [limit]="10"
-    [isExternalPaging]="false" [isExternalSorting]="false" [sortType]="sortType">
-    <ng-container>
-      <sp-header-action icon="delete" text="Remove" title="Remove" (actionClick)="onSaveClick(null)"></sp-header-action>
-    </ng-container>
-  </sp-data-grid>
   <sp-data-grid class="col-span-2 w-full h-full" #dataGrid title="Current Levels" [enableRowIndex]="false"
     [isArray]="false" [headers]="headers" [rows]="hierarchyDetails" [rowHeight]="30" [headerHeight]="30"
     [footerHeight]="0" [columnMode]="columnMode" [virtualScroll]="true" [selectionType]="selectionType" [limit]="10"
+    [isExternalPaging]="false" [isExternalSorting]="false" [sortType]="sortType">
+    <ng-container>
+      <sp-header-action icon="delete" text="Remove" title="Remove" [disabled]="this.hierarchyDetails.length <= 1 " (actionClick)="onRemoveClick(null)"></sp-header-action>
+    </ng-container>
+  </sp-data-grid>
+  <sp-data-grid class="col-span-2 w-full h-full" #dataGrid title="Preview" [enableRowIndex]="false" [isArray]="false"
+    [headers]="headers" [rows]="hierarchyDetails" [rowHeight]="30" [headerHeight]="30" [footerHeight]="0"
+    [columnMode]="columnMode" [virtualScroll]="true" [selectionType]="selectionType" [limit]="10"
     [isExternalPaging]="false" [isExternalSorting]="false" [sortType]="sortType">
   </sp-data-grid>
 </div>

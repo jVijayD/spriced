@@ -3,12 +3,9 @@ import {
   Component,
   OnDestroy,
   OnInit,
-  Output,
   ViewChild,
 } from "@angular/core";
 import { MatTabsModule } from "@angular/material/tabs";
-import { MatSelectModule } from "@angular/material/select";
-import { MatInputModule } from "@angular/material/input";
 import { MatIconModule } from "@angular/material/icon";
 import { HierarchyViewTabComponent } from "./hierarchy-view-tab/hierarchy-view-tab.component";
 import { HierarchyNewTabComponent } from "./hierarchy-new-tab/hierarchy-new-tab.component";
@@ -72,8 +69,13 @@ export class HierarchyDefinitionComponent
         this.onDelete(selection);
       })
     );
+    this.subscriptions.push(
+      this.newTab.onSaveEventEmitter.subscribe(
+        (a) => (this.selectedTabIndex = a)
+      )
+    );
   }
   onDelete(sel: Hierarchy) {
-    console.log(sel);
+    this.subscriptions.forEach((e) => e.unsubscribe());
   }
 }

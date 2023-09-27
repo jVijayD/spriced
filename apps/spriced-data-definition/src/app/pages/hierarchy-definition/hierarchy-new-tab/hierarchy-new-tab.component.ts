@@ -1,7 +1,6 @@
 import { HierarchyDetails, Hierarchy } from "./../models/HierarchyTypes.class";
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
-import { MatInputModule } from "@angular/material/input";
 import { MatSelectChange, MatSelectModule } from "@angular/material/select";
 import { MatTableModule } from "@angular/material/table";
 
@@ -19,6 +18,8 @@ import {
   Header,
   HeaderActionComponent,
   HeaderComponentWrapperComponent,
+  SnackBarService,
+  SnackbarModule,
   VboxComponent,
 } from "@spriced-frontend/spriced-ui-lib";
 import {
@@ -27,16 +28,21 @@ import {
   SelectionType,
   SortType,
 } from "@swimlane/ngx-datatable";
+import { FormsModule } from "@angular/forms";
+import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { HierarchyServiceService } from "../service/hierarchy-service.service";
 @Component({
   selector: "app-hierarchy-new-tab",
   templateUrl: "./hierarchy-new-tab.component.html",
   styleUrls: ["./hierarchy-new-tab.component.css"],
   standalone: true,
+  providers:[SnackBarService],
   imports: [
     CommonModule,
     NgFor,
+    FormsModule,
     VboxComponent,
     DataGridComponent,
     MatListModule,
@@ -49,11 +55,13 @@ import { MatFormFieldModule } from "@angular/material/form-field";
     HeaderActionComponent,
     MatButtonModule,
     MatTableModule,
-    MatInputModule,
     MatSelectModule,
+    MatInputModule,
+    SnackbarModule,
   ],
 })
 export class HierarchyNewTabComponent implements OnInit {
+  @Output() onSaveEventEmitter = new EventEmitter<any>();
   headers: Header[] = [
     {
       column: "tabledisplayname",
@@ -77,19 +85,26 @@ export class HierarchyNewTabComponent implements OnInit {
   selectedModel!: Model | null;
   selectedEntity!: Entity | null;
   name: string = "";
+  description: string = "";
 
-  constructor(private entityService: EntityService) {}
+  constructor(
+    private entityService: EntityService,
+    private snackBarService: SnackBarService,
+    private hierarchyService: HierarchyServiceService
+  ) {}
   ngOnInit() {}
 
   loadEntities(model: Model) {}
-  onClearClick(el: any) {
+  onClearClick() {
     this.hierarchyDetails = [];
     this.availableEntities = [];
     this.entityList = [];
     this.selectedModel = null;
+    this.name = "";
+    this.description = "";
     this.selectedEntity = null;
   }
-  onSaveClick(el: any) {
+  onSaveClick() {
     if (
       !this.selectedEntity ||
       !this.selectedModel ||
@@ -99,7 +114,7 @@ export class HierarchyNewTabComponent implements OnInit {
       return;
     }
     let hie: Hierarchy = {
-      name: "",
+      name: this.name,
       id: 0,
       entityId: this.selectedEntity?.id,
       modelId: this.selectedModel?.id,
@@ -108,6 +123,11 @@ export class HierarchyNewTabComponent implements OnInit {
       updatedBy: "",
       details: this.hierarchyDetails,
     };
+    this.hierarchyService.saveHierarchy(hie).forEach((r) => {
+      this.snackBarService.success("Derived Hierarchy Saved Successfully");
+      this.onClearClick()
+      this.onSaveEventEmitter.emit(0);
+    });
     console.log(hie);
   }
   addToLevel(entity: Entity) {
@@ -118,6 +138,7 @@ export class HierarchyNewTabComponent implements OnInit {
       tablename: entity.name,
       tabledisplayname: entity.displayName,
       localColumn: "id",
+      entity: entity,
       refColumn: "RefId -- tobe set",
     });
     this.availableEntities = [];
@@ -126,7 +147,7 @@ export class HierarchyNewTabComponent implements OnInit {
         .filter((att) => att.type == "LOOKUP")
         .map((att) => {
           return {
-            displayName: att.referencedTableName,
+            displayName: att.referencedTableDisplayName,
             name: att.referencedTable,
             id: att.referencedTableId,
           } as Entity;
@@ -147,10 +168,17 @@ export class HierarchyNewTabComponent implements OnInit {
     });
     console.log(ev.value);
   }
+  onRemoveClick(ev: any) {
+    this.hierarchyDetails = this.hierarchyDetails.sort((a,b)=>a.level - b.level)
+    let dtl = this.hierarchyDetails.pop();
+    dtl = this.hierarchyDetails.pop();
+    this.addToLevel(dtl?.entity);
+    this.hierarchyDetails = [...this.hierarchyDetails];
+  }
   onEntityChange(ev: MatSelectChange) {
     this.selectedEntity = ev.value as Entity;
     this.hierarchyDetails = [];
     this.addToLevel(this.selectedEntity);
-    console.log(this.selectedEntity );
+    console.log(this.selectedEntity);
   }
 }

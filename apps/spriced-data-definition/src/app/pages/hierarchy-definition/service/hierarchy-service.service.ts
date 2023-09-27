@@ -16,4 +16,17 @@ export class HierarchyServiceService {
       .get(`${this.api_url}/hierarchy`)
       .pipe(map((h) => h as Hierarchy[]));
   }
+
+  saveHierarchy(hierarchy: Hierarchy) {
+    if (hierarchy.id == 0) {
+
+      // return this.http.post(`${this.api_url}/entities`, body);
+      return this.http.post(`${this.api_url}/hierarchy`,hierarchy).pipe(map((h) => h));;
+    } else {
+      return this.http.patch(
+        `${this.api_url}/hierarchy/${hierarchy.id}`,
+        hierarchy
+      ).pipe(map((h) => h));;
+    }
+  }
 }

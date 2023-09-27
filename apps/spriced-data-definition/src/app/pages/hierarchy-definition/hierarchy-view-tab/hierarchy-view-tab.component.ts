@@ -15,17 +15,10 @@ import { MatIconModule } from "@angular/material/icon";
 
 import {
   DataGridComponent,
-  DialogService,
-  DialogueModule,
   //FilterComponent,
   Header,
   HeaderActionComponent,
   HeaderComponentWrapperComponent,
-  OneColComponent,
-  Paginate,
-  QueryColumns,
-  SnackBarService,
-  SnackbarModule,
 } from "@spriced-frontend/spriced-ui-lib";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import * as moment from "moment";
@@ -65,7 +58,7 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
     },
     {
       column: "description",
-      name: "Display Name",
+      name: "Description",
       canAutoResize: true,
       isSortable: false,
       flexGrow: 5,
@@ -86,13 +79,6 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
       pipe: (data: any) => {
         return moment(data).format("MM/DD/YYYY HH:mm:ss");
       },
-    },
-    {
-      column: "view",
-      name: "view",
-      canAutoResize: false,
-      isSortable: false,
-      width: 25,
     },
   ];
   // displayedColumns = ["name", "description", "view"];
