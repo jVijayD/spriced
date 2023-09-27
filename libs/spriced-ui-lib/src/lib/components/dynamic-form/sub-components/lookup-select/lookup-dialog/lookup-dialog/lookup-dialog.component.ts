@@ -27,10 +27,10 @@ export class LookupDialogComponent {
     private dialogRef: MatDialogRef<LookupDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: LookupDialogComponent,
     ){
-      debugger
-      this.item = data;
+      this.item = this.data;
       this.count = this.item.total;
       console.log()
+      this.rows = this.item.value;
   }
   public headers: Header[] = [
     {
@@ -57,7 +57,7 @@ export class LookupDialogComponent {
   ]
  
   ngOnInit(){
-    this.rows = this.item.value;
+    
   }
 
   public onItemSelected(event: any) {
@@ -67,17 +67,10 @@ export class LookupDialogComponent {
     this.dialogRef.close({ event: "Update", data: this.selectedItem });
   }
   onPage(e: any) {
-    debugger
     const pageNumber = e.offset;
     this.dialogEventSubject.next(pageNumber);
-  // this.offset = event.offset;
-  // const start = this.offset * this.pageSize;
-  // const end = start + this.pageSize;
-  // this.row= this.rows.slice(start, end);
-  // this.entityDataService.loadLookupData(1, this.offset);
 }
-  ngOnChanges(){
-    debugger
-    this.rows = this.item.value;
-  }
+   upDatedData(newData:any){
+    this.rows = newData.value;
+   }
 }

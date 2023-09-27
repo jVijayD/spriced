@@ -123,7 +123,7 @@ export class LookupSelectComponent
   openPopup(): void {
     const dialogRef = this.dialog.open(LookupDialogComponent, {
       width: '700px',
-      height: '630px',
+      height: '620px',
       data:{value:this.source,total:this.count},
       // hasBackdrop:false
     });
@@ -133,8 +133,10 @@ export class LookupSelectComponent
     //  this.displayValue = this.getSelectedDisplayProp();
     });
     dialogRef.componentInstance.dialogEvent$.subscribe((pageNumber:any) => {
-      debugger
     this.nextSet(pageNumber);
+    setTimeout(()=>{
+      dialogRef.componentInstance.upDatedData({ value: this.source, total: this.count });
+    },100);
   })
   }
   
@@ -143,7 +145,6 @@ export class LookupSelectComponent
     const [id]  = controlData.data.api?.params;
     controlData.data.api && (controlData.data.api.params = [id, pageNumber]);
     this.populateSource();
-
    }
   private renderDataWithCurlyBrace(data: any) {
     return data == null ? "" : "{" + data + "}";
