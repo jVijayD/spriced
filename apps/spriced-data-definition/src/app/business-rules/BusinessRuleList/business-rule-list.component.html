@@ -31,14 +31,14 @@
             <!-- MAT MENU FOR NESTED ATTRIBUTE -->
             <mat-menu class="attribute-menu" #attributeMenu="matMenu" yPosition="below">
               <ng-container *ngFor="let attribute of dataRules?.attributes">
-                <button [ngClass]="{'selected-item': selectedAttribute.split('.')[0] === attribute?.displayName}"
+                <button [ngClass]="{'selected-item': !!selectedAttribute ? selectedAttribute.split('.')[0] === attribute?.displayName : ''}"
                   [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
                   (click)="selectAttribute(attribute)">
                   {{ attribute.displayName }}
                 </button>
                 <mat-menu #nestedMenu="matMenu">
                   <button
-                    [ngClass]="{'selected-item': selectedAttribute.split('.')[1] === nestedAttribute?.displayName}"
+                    [ngClass]="{'selected-item': !!selectedAttribute ? selectedAttribute.split('.')[1] === nestedAttribute?.displayName : ''}"
                     mat-menu-item *ngFor="let nestedAttribute of attribute.attributes"
                     (click)="selectAttribute(nestedAttribute, attribute)">
                     {{ nestedAttribute.displayName }}
@@ -146,13 +146,13 @@
             <!-- MAT MENU FOR NESTED ATTRIBUTE -->
             <mat-menu class="attribute-menu" #operandMenu="matMenu" yPosition="below">
               <ng-container *ngFor="let attribute of dataRules?.attributes">
-                <button [ngClass]="{'selected-item': selectedOperand.split('.')[0] === attribute?.displayName}"
+                <button [ngClass]="{'selected-item': !!selectedOperand ? selectedOperand.split('.')[0] === attribute?.displayName : ''}"
                   [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
                   (click)="selectAttribute(attribute, '', 'operand')">
                   {{ attribute.displayName }}
                 </button>
                 <mat-menu #nestedMenu="matMenu">
-                  <button [ngClass]="{'selected-item': selectedOperand.split('.')[1] === nestedAttribute?.displayName}"
+                  <button [ngClass]="{'selected-item': !!selectedOperand ? selectedOperand.split('.')[1] === nestedAttribute?.displayName : ''}"
                     mat-menu-item *ngFor="let nestedAttribute of attribute.attributes"
                     (click)="selectAttribute(nestedAttribute, attribute, 'operand')">
                     {{ nestedAttribute.displayName }}

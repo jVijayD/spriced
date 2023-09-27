@@ -135,6 +135,7 @@ export class ElseactionComponent {
     const parentAttributeId = this.getValue('parentAttributeId');
     const parentOperandId = this.getValue('parentOperandId');
 
+    this.setAttributeNamesById(attributeId, operand);
     this.handleValue(operandType);
     this.handleValueChange(value);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
@@ -172,10 +173,11 @@ export class ElseactionComponent {
       // const operandType = this.actionForm?.get('operandType')?.value;
       // this.actionForm?.get('operandType').setValue(operandType);
       this.Value = this.maxValue = this.minValue = false;
+      this.disableFormControl();
+      this.removeValidators(valueControl);
 
       minValueControl?.disable();
       maxValueControl?.disable();
-      valueControl?.disable();
     } else {
       this.Value = true;
       this.maxValue = this.minValue = false;
@@ -253,6 +255,18 @@ export class ElseactionComponent {
     });
   }
 
+  public removeValidators(valueControl: any)
+  {
+    valueControl.clearValidators();
+    valueControl.updateValueAndValidity();
+  }
+
+  public addValidators(valueControl: any)
+  {
+    valueControl.setValidators(Validators.required);
+    valueControl.updateValueAndValidity();
+  }
+
   public capitalizeOperatorType(value: any): string {
     return value.replace(/_/g, ' ').replace(/\w\S*/g, (word: string) => {
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
@@ -288,6 +302,23 @@ export class ElseactionComponent {
       this.actionForm?.get('parentAttributeDisplayName')?.setValue(parentAtt.displayName ?? '');
       this.actionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
       this.handleAttributes(item.id, 'changeAttribute');
+    }
+  }
+
+  public setAttributeNamesById(attributeId: any, operandAttribute: any)
+  {
+    const attribute = this.findAttributeById(attributeId);
+    const operandAtt = this.findAttributeById(operandAttribute);
+    !!operandAtt ? this.actionForm?.get('operandType')?.setValue('ATTRIBUTE') : this.actionForm?.get('operandType')?.setValue('CONSTANT');
+    if(!!attribute)
+    {
+      this.actionForm?.get('attributeDisplayName')?.setValue(attribute.displayName);
+      this.actionForm?.get('attributeName')?.setValue(attribute.name);
+    }
+    if(!!operandAtt)
+    {
+      this.actionForm?.get('operandName')?.setValue(operandAtt.name);
+      this.actionForm?.get('operandDisplayName')?.setValue(operandAtt.displayName);
     }
   }
 

@@ -171,6 +171,7 @@ export class BusinessRuleListComponent {
     const parentAttributeId = this.getValue('parentAttributeId');
     const parentOperandId = this.getValue('parentOperandId');
     
+    this.setAttributeNamesById(attributeId, operand);
     this.handleValue(operandType);
     this.handleValueChange(value);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
@@ -273,14 +274,15 @@ export class BusinessRuleListComponent {
 
       minValueControl?.enable();
       maxValueControl?.enable();
-      valueControl?.disable();
+      this.removeValidators(valueControl);
 
     }
     else if (['IS_NULL','IS_NOT_NULL'].includes(value)) {
       const operandType = this.conditionForm?.get('operandType')?.value;
       this.conditionForm?.get('operandType').setValue(operandType);
+      this.disableFormControl();
+      this.removeValidators(valueControl);
       this.value = this.maxValue = this.minValue = false;
-      valueControl?.disable();
       minValueControl?.disable();
       maxValueControl?.disable();
     }
@@ -290,7 +292,36 @@ export class BusinessRuleListComponent {
 
       minValueControl?.disable();
       maxValueControl?.disable();
-      this.isFieldDisabled ? valueControl?.disable() : valueControl?.enable();
+      this.isFieldDisabled ? this.removeValidators(valueControl) : this.addValidators(valueControl);
+    }
+  }
+
+  public removeValidators(valueControl: any)
+  {
+    valueControl.clearValidators();
+    valueControl.updateValueAndValidity();
+  }
+
+  public addValidators(valueControl: any)
+  {
+    valueControl.setValidators(Validators.required);
+    valueControl.updateValueAndValidity();
+  }
+
+  public setAttributeNamesById(attributeId: any, operandAttribute: any)
+  {
+    const attribute = this.findAttributeById(attributeId);
+    const operandAtt = this.findAttributeById(operandAttribute);
+    !!operandAtt ? this.conditionForm?.get('operandType')?.setValue('ATTRIBUTE') : this.conditionForm?.get('operandType')?.setValue('CONSTANT');
+    if(!!attribute)
+    {
+      this.conditionForm?.get('attributeDisplayName')?.setValue(attribute.displayName);
+      this.conditionForm?.get('attributeName')?.setValue(attribute.name);
+    }
+    if(!!operandAtt)
+    {
+      this.conditionForm?.get('operandName')?.setValue(operandAtt.name);
+      this.conditionForm?.get('operandDisplayName')?.setValue(operandAtt.displayName);
     }
   }
 
@@ -396,7 +427,7 @@ export class BusinessRuleListComponent {
    * @returns 
    */
   private buildSelectedAttribute(attribute: any, parentAttribute: any): string {
-    return !parentAttribute && !attribute ? '' : !parentAttribute ? attribute?.displayName.trim() : `${parentAttribute?.displayName.trim()}.${attribute.displayName}`;
+    return !!parentAttribute && !!attribute ? `${parentAttribute?.displayName.trim()}.${attribute.displayName}` : !parentAttribute ? attribute?.displayName.trim() : '';
   }
 
   /**
@@ -406,7 +437,7 @@ export class BusinessRuleListComponent {
    * @returns 
    */
   private buildSelectedOperand(operand: any, parentOperand: any): string {
-    return !parentOperand && !operand ? '' : !parentOperand ? operand?.displayName.trim() : `${parentOperand?.displayName.trim()}.${operand.displayName}`;
+    return !!parentOperand && !!operand ? `${parentOperand?.displayName.trim()}.${operand.displayName}` : !parentOperand ? operand?.displayName.trim() : '';
   }
 
   /**
