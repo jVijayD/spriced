@@ -1,0 +1,12 @@
+.container{
+    height:560px;
+}
+
+.grid-container {
+    @apply h-full w-full;
+    overflow: auto;
+  }
+  .grid-height {
+    display: block;
+    @apply h-full;
+  }

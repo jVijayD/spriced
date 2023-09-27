@@ -9,12 +9,14 @@ import {
   forwardRef,
 } from "@angular/core";
 import { BaseDataComponent } from "../../base-data.component";
-import { GenericControl, LookupSelectControl } from "../../dynamic-form.types";
+import { DataControl, GenericControl, LookupSelectControl } from "../../dynamic-form.types";
 import {
   DynamicFormService,
   EventElement,
 } from "../../service/dynamic-form.service";
 import { NG_VALUE_ACCESSOR } from "@angular/forms";
+import { MatDialog } from "@angular/material/dialog";
+import { LookupDialogComponent } from "./lookup-dialog/lookup-dialog/lookup-dialog.component";
 
 @Component({
   selector: "sp-lookup-select",
@@ -33,6 +35,8 @@ export class LookupSelectComponent
   extends BaseDataComponent
   implements OnInit, OnDestroy
 {
+  public prop:string = 'code|name';
+  maxCount:number = 30;
   @Input()
   set control(selectControl: GenericControl) {
     this._control = selectControl;
@@ -46,7 +50,8 @@ export class LookupSelectComponent
 
   constructor(
     @Inject(Injector) private injector: Injector,
-    private dynamicService: DynamicFormService
+    private dynamicService: DynamicFormService,
+    private dialog: MatDialog
   ) {
     super(dynamicService);
     //this._control = _defaultSelect;
@@ -83,9 +88,8 @@ export class LookupSelectComponent
   }
 
   public getSelectedDisplayProp() {
-    debugger;
     const lookupControl = this._control as LookupSelectControl;
-    const props = lookupControl.displayProp?.split("|") || [];
+    const props = this.prop.split("|") || [];
     const option: any = {};
     for (let key of this.dynamicFormService.getExtraData().keys()) {
       if (key.startsWith(this._control.name)) {
@@ -116,7 +120,31 @@ export class LookupSelectComponent
     }, "-##");
     //return displayProp;
   }
+  openPopup(): void {
+    const dialogRef = this.dialog.open(LookupDialogComponent, {
+      width: '700px',
+      height: '630px',
+      data:{value:this.source,total:this.count},
+      // hasBackdrop:false
+    });
 
+    dialogRef.afterClosed().subscribe(({data}:any) => {
+     this.writeValue(data.id);
+    //  this.displayValue = this.getSelectedDisplayProp();
+    });
+    dialogRef.componentInstance.dialogEvent$.subscribe((pageNumber:any) => {
+      debugger
+    this.nextSet(pageNumber);
+  })
+  }
+  
+   nextSet(pageNumber:number=0){
+    let controlData = this.control as DataControl;
+    const [id]  = controlData.data.api?.params;
+    controlData.data.api && (controlData.data.api.params = [id, pageNumber]);
+    this.populateSource();
+
+   }
   private renderDataWithCurlyBrace(data: any) {
     return data == null ? "" : "{" + data + "}";
   }

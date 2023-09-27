@@ -10,10 +10,11 @@
         appearance="outline"
         [ngClass]="frmControl.errors ? 'error' : ''"
       >
-        <mat-label>{{ control.label }}</mat-label>
+        <mat-label *ngIf="value==''">{{ control.label }}</mat-label>
 
         <mat-select
           matNativeControl
+          *ngIf="count<=maxCount"
           (blur)="onTouched()"
           [(ngModel)]="value"
           [disabled]="control.readOnly || disabled"
@@ -37,12 +38,28 @@
             }}
           </mat-option>
         </mat-select>
-
+        <ng-container *ngIf="count>=maxCount">
+           <div *ngIf="value">{{getSelectedDisplayProp()}}</div>
+          <input [style.display]="'none'" matInput [(ngModel)]="value">
+        </ng-container>
         <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
         <mat-hint align="start" *ngIf="control.hint">{{
           control.hint
         }}</mat-hint>
+       
+
       </mat-form-field>
+      <button
+      mat-raised-button
+      *ngIf="count>=maxCount"
+      color="primary"
+      title="Edit"
+      class="square-button"
+      title="selectItem"
+      (click)="openPopup()"
+    >
+      <mat-icon>edit</mat-icon>
+    </button>
       <button
         mat-raised-button
         color="primary"

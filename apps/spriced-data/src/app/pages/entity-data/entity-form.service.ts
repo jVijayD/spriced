@@ -81,7 +81,7 @@ export class EntityFormService {
             onLoad: true,
             isFixed: true,
             method: "loadLookupData",
-            params: [attr.referencedTableId],
+            params: [attr.referencedTableId,0],
             provider: FORM_DATA_SERVICE,
           },
         },
