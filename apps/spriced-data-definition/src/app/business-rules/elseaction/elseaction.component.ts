@@ -135,6 +135,7 @@ export class ElseactionComponent {
     const parentAttributeId = this.getValue('parentAttributeId');
     const parentOperandId = this.getValue('parentOperandId');
 
+    this.setAttributeNamesById(attributeId, operand);
     this.handleValue(operandType);
     this.handleValueChange(value);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
@@ -288,6 +289,23 @@ export class ElseactionComponent {
       this.actionForm?.get('parentAttributeDisplayName')?.setValue(parentAtt.displayName ?? '');
       this.actionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
       this.handleAttributes(item.id, 'changeAttribute');
+    }
+  }
+
+  public setAttributeNamesById(attributeId: any, operandAttribute: any)
+  {
+    const attribute = this.findAttributeById(attributeId);
+    const operandAtt = this.findAttributeById(operandAttribute);
+    !!operandAtt ? this.actionForm?.get('operandType')?.setValue('ATTRIBUTE') : this.actionForm?.get('operandType')?.setValue('CONSTANT');
+    if(!!attribute)
+    {
+      this.actionForm?.get('attributeDisplayName')?.setValue(attribute.displayName);
+      this.actionForm?.get('attributeName')?.setValue(attribute.name);
+    }
+    if(!!operandAtt)
+    {
+      this.actionForm?.get('operandName')?.setValue(operandAtt.name);
+      this.actionForm?.get('operandDisplayName')?.setValue(operandAtt.displayName);
     }
   }
 
