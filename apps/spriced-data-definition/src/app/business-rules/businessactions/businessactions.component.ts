@@ -179,10 +179,11 @@ export class BusinessactionsComponent implements AfterViewInit {
       this.Value = this.maxValue = this.minValue = false;
       // const operandType = this.actionForm?.get('operandType')?.value;
       // this.actionForm?.get('operandType').setValue(operandType);
+      this.disableFormControl();
+      this.removeValidators(valueControl);
 
       minValueControl?.disable();
       maxValueControl?.disable();
-      valueControl?.disable();
     } else {
       this.Value = true;
       this.maxValue = this.minValue = false;
@@ -258,6 +259,18 @@ export class BusinessactionsComponent implements AfterViewInit {
     controlNames.forEach((controlName) => {
       this.actionForm?.get(controlName)?.setValue('');
     });
+  }
+
+  public removeValidators(valueControl: any)
+  {
+    valueControl.clearValidators();
+    valueControl.updateValueAndValidity();
+  }
+
+  public addValidators(valueControl: any)
+  {
+    valueControl.setValidators(Validators.required);
+    valueControl.updateValueAndValidity();
   }
 
   public capitalizeOperatorType(value: any): string {
