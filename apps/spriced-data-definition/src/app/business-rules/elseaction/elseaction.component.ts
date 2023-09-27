@@ -173,10 +173,11 @@ export class ElseactionComponent {
       // const operandType = this.actionForm?.get('operandType')?.value;
       // this.actionForm?.get('operandType').setValue(operandType);
       this.Value = this.maxValue = this.minValue = false;
+      this.disableFormControl();
+      this.removeValidators(valueControl);
 
       minValueControl?.disable();
       maxValueControl?.disable();
-      valueControl?.disable();
     } else {
       this.Value = true;
       this.maxValue = this.minValue = false;
@@ -252,6 +253,18 @@ export class ElseactionComponent {
     controlNames.forEach((controlName) => {
       this.actionForm?.get(controlName)?.setValue('');
     });
+  }
+
+  public removeValidators(valueControl: any)
+  {
+    valueControl.clearValidators();
+    valueControl.updateValueAndValidity();
+  }
+
+  public addValidators(valueControl: any)
+  {
+    valueControl.setValidators(Validators.required);
+    valueControl.updateValueAndValidity();
   }
 
   public capitalizeOperatorType(value: any): string {
