@@ -151,6 +151,6 @@ export class HierarchyNewTabComponent implements OnInit {
     this.selectedEntity = ev.value as Entity;
     this.hierarchyDetails = [];
     this.addToLevel(this.selectedEntity);
-    console.log(this.selectedEntity);
+    console.log(this.selectedEntity );
   }
 }
