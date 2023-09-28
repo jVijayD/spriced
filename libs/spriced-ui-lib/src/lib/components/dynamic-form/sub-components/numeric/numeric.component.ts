@@ -60,8 +60,8 @@ export class NumericComponent
   }
 
   onValidate() {
-    if (Number(this.value).toString() === "NaN") {
-      this.value = undefined;
+    if (this.value === "" || this.value === null || Number(this.value).toString() === "NaN") {
+      this.value = null;
     } else {
       this.value = Number(this.value);
     }
