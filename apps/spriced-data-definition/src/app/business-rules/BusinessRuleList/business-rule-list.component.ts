@@ -312,7 +312,7 @@ export class BusinessRuleListComponent {
   {
     const attribute = this.findAttributeById(attributeId);
     const operandAtt = this.findAttributeById(operandAttribute);
-    !!operandAtt ? this.conditionForm?.get('operandType')?.setValue('ATTRIBUTE') : this.conditionForm?.get('operandType')?.setValue('CONSTANT');
+    // !!operandAtt ? this.conditionForm?.get('operandType')?.setValue('ATTRIBUTE') : this.conditionForm?.get('operandType')?.setValue('CONSTANT');
     if(!!attribute)
     {
       this.conditionForm?.get('attributeDisplayName')?.setValue(attribute.displayName);

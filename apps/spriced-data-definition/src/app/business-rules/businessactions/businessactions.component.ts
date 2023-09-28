@@ -315,7 +315,7 @@ export class BusinessactionsComponent implements AfterViewInit {
   {
     const attribute = this.findAttributeById(attributeId);
     const operandAtt = this.findAttributeById(operandAttribute);
-    !!operandAtt ? this.actionForm?.get('operandType')?.setValue('ATTRIBUTE') : this.actionForm?.get('operandType')?.setValue('CONSTANT');
+    // !!operandAtt ? this.actionForm?.get('operandType')?.setValue('ATTRIBUTE') : this.actionForm?.get('operandType')?.setValue('CONSTANT');
     if(!!attribute)
     {
       this.actionForm?.get('attributeDisplayName')?.setValue(attribute.displayName);
