@@ -83,6 +83,12 @@
         <sp-vbox [noGap]="true" [marginX]="true" class="w-full bg-white h-full">
           <div class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
             <span class="float-left text-white font-medium">Available Entities</span>
+            <div class="flex flex-row">
+              <ng-container>
+                <sp-header-action icon="delete" text="Remove" title="Remove"
+                  [disabled]="this.hierarchyDetails.length <= 1" (actionClick)="onRemoveClick(null)"></sp-header-action>
+              </ng-container>
+            </div>
           </div>
           <ngx-datatable style="min-width: 300px; min-height: calc(100vh - 20rem);" class="material striped tableScroll"
             [columnMode]="ColumnMode.flex" [headerHeight]="50" [footerHeight]="0" [rowHeight]="40"

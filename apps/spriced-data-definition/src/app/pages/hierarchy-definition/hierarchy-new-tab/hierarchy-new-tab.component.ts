@@ -16,7 +16,11 @@ import { MatSelectChange, MatSelectModule } from "@angular/material/select";
 import { MatTableModule } from "@angular/material/table";
 
 import { MatTabsModule } from "@angular/material/tabs";
-import { Entity, EntityService, Model } from "@spriced-frontend/spriced-common-lib";
+import {
+  Entity,
+  EntityService,
+  Model,
+} from "@spriced-frontend/spriced-common-lib";
 import { MatListModule } from "@angular/material/list";
 import { CommonModule, NgFor } from "@angular/common";
 import { MatCardModule } from "@angular/material/card";
@@ -123,6 +127,7 @@ export class HierarchyNewTabComponent implements OnInit {
   onClearClick() {
     this.hierarchyDetails = [];
     this.availableEntities = [];
+    this.hierarchyLevelNodes = [];
     this.entityList = [];
     this.selectedModel = null;
     this.name = "";
@@ -179,17 +184,17 @@ export class HierarchyNewTabComponent implements OnInit {
     console.log(hie);
   }
   addToLevel(entity: Entity) {
-    let parentRefId =
-      this.hierarchyDetails.length != 0
-        ? this.hierarchyDetails.length - 1
-        : null;
+    // let parentRefId =
+    //   this.hierarchyDetails.length != 0
+    //     ? this.hierarchyDetails.length - 1
+    //     : null;
     let hDtl = {
       id: 0,
-      refId: parentRefId != null ? parentRefId + 1 : 0,
+      // refId: parentRefId != null ? parentRefId + 1 : 0,
       hierarchyId: this.id,
-      parentRefId: parentRefId,
+      // parentRefId: parentRefId,
       groupLevel: this.hierarchyDetails.length,
-      level: 0,
+      // level: 0,
       treeStatus: "expanded",
       expanded: false,
       tablename: entity.name,
@@ -213,18 +218,7 @@ export class HierarchyNewTabComponent implements OnInit {
       this.availableEntities.push(...derAttrList);
     });
     this.hierarchyDetails = [...this.hierarchyDetails, hDtl];
-    let node = {
-      treeStatus: "expanded",
-      expandable: false,
-      id: hDtl.refId + 1,
-      parentId: hDtl.parentRefId == null ? null : hDtl.parentRefId + 1,
-      tablename: hDtl.tablename,
-      name: hDtl.tabledisplayname,
-      expanded: true,
-    } as HierarchyTreeNode;
-    this.hierarchyLevelNodes = [...this.hierarchyLevelNodes, node];
-    this.cd.detectChanges();
-    console.log(this.hierarchyDetails);
+    this.populateLevelTree();
   }
   onModelChange(ev: MatSelectChange) {
     this.selectedModel = ev.value as Model;
@@ -243,17 +237,31 @@ export class HierarchyNewTabComponent implements OnInit {
       if (hie && hie.details) {
         hie.details = hie.details
           .map((e) => {
-            e.parentRefId = e.groupLevel - 1;
-            e.refId = e.groupLevel;
             e.entity = this.getEntityByTable(e.tablename);
-            e.parentRefId = e.parentRefId < 0 ? null : e.parentRefId + 1;
             return e;
           })
           .sort((a, b) => b.groupLevel - a.groupLevel);
         this.hierarchyDetails = hie.details;
+        this.populateLevelTree();
+        this.cd.detectChanges();
       }
-      this.cd.detectChanges();
     });
+  }
+  populateLevelTree() {
+    this.hierarchyLevelNodes = [
+      ...this.hierarchyDetails.map((hdtl) => {
+        return {
+          treeStatus: "expanded",
+          expandable: false,
+          id: hdtl.groupLevel + 1,
+          parentId: hdtl.groupLevel == 0 ? null : hdtl.groupLevel,
+          tablename: hdtl.tablename,
+          name: hdtl.tabledisplayname || hdtl.tablename,
+          expanded: true,
+        } as HierarchyTreeNode;
+      }),
+    ];
+    this.cd.detectChanges();
   }
   onRemoveClick(ev: any) {
     this.hierarchyDetails = this.hierarchyDetails.sort(
@@ -265,6 +273,7 @@ export class HierarchyNewTabComponent implements OnInit {
     this.hierarchyDetails = [
       ...this.hierarchyDetails.sort((a, b) => b.groupLevel - a.groupLevel),
     ];
+    this.populateLevelTree();
   }
   onBind(hie: Hierarchy) {
     this.id = hie.id;
