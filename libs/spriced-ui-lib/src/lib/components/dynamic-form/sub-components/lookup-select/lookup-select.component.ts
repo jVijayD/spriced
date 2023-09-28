@@ -97,7 +97,7 @@ export class LookupSelectComponent
           this.dynamicFormService.getExtraData().get(key);
       }
     }
-    return props.reduce((prev, cur) => {
+     return props.reduce((prev, cur) => {
       return prev === "-##"
         ? option[cur]
         : `${prev == null ? "" : prev} ${this.renderDataWithCurlyBrace(
@@ -133,19 +133,20 @@ export class LookupSelectComponent
     //  this.displayValue = this.getSelectedDisplayProp();
     });
     dialogRef.componentInstance.dialogEvent$.subscribe((pageNumber:any) => {
-    this.nextSet(pageNumber);
-    setTimeout(()=>{
-      dialogRef.componentInstance.upDatedData({ value: this.source, total: this.count });
-    },100);
+    this.nextPage(pageNumber,dialogRef);
   })
   }
   
-   nextSet(pageNumber:number=0){
+   nextPage(pageNumber:number=0,dialogRef:any){
     let controlData = this.control as DataControl;
     const [id]  = controlData.data.api?.params;
     controlData.data.api && (controlData.data.api.params = [id, pageNumber]);
     this.populateSource();
+    setTimeout(()=>{
+      dialogRef.componentInstance.upDatedData({ value: this.source, total: this.count });
+    },100);
    }
+
   private renderDataWithCurlyBrace(data: any) {
     return data == null ? "" : "{" + data + "}";
   }
