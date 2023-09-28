@@ -5,6 +5,7 @@ import { ModelListComponent } from "../pages/model-list/model-list.component";
 import { AppComponent } from "../app.component";
 import { ModelAccessComponent } from "../pages/model-access/model-access.component";
 import { AppAccessComponent } from "../pages/app-access/app-access.component";
+import { ViewTransactionsAdminComponent } from "../pages/view-Transactions/viewTransactions-admin/view-transactions-admin.component";
 
 export const remoteRoutes: Route[] = [
   {
@@ -17,6 +18,7 @@ export const remoteRoutes: Route[] = [
       { path: "model-list", component: ModelListComponent },
       { path: "model-access", component: ModelAccessComponent },
       { path: "app-access", component: AppAccessComponent },
+      { path: "view-transactions" , component: ViewTransactionsAdminComponent},
       { path: "rules", loadChildren: () => import('../business-rules/business-rules.module').then( m => m.BusinessRulesModule)}
     ],
   },

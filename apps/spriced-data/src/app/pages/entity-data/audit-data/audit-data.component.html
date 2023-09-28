@@ -1,12 +1,13 @@
 <div class="flex flex-col container p-5 h-fit">
   <div class="page-header">Change Tracker</div>
 
-  <button mat-icon-button color="transparent" class="close p-5" (click)="onClose()">
+  <!-- <button mat-icon-button color="transparent" class="close p-5" (click)="onClose()">
     <mat-icon>close</mat-icon>
-  </button>
-
+  </button> -->
+  <div class="grid">
   <sp-data-grid
         #dataGrid
+        class="w-full h-full"
         [title]="this.currentSelectedEntity.displayName || 'Data'"
         [enableRowIndex]="false"
         [isArray]="false"
@@ -14,7 +15,7 @@
         [rows]="rows"
         [rowHeight]="40"
         [headerHeight]="40"
-        [footerHeight]="40"
+        [footerHeight]="30"
         [columnMode]="columnMode"
         [virtualScroll]="false"
         [selectionType]="selectionType"
@@ -23,6 +24,8 @@
         [isExternalPaging]="true"
         [isExternalSorting]="true"
         [sortType]="sortType"
+        [selected]="!!selectedItem?[selectedItem]:[]"
+        (itemSelected)="onItemSelected($event)"
         (paginate)="onPaginate($event)"
         (sort)="onSort($event)"
       >
@@ -30,5 +33,47 @@
 
     </ng-container> -->
   </sp-data-grid>
+  </div>
+<mat-label class="mt-4 "><span class="text-lg">Annotations</span></mat-label>
+  <div class="annotations px-2 w-full border-4 overflow-auto">
+    <div *ngFor="let item of rows" class="w-full flex bg-primary-dark h-16 bg-slate-50 mb-4 mt-2">
+    <div
+      class="annotations-data  w-10/12 w-full  flex-col mx-2 my-2  items-center"
+    > 
+    <div>
+      <span>{{item.id}}</span>
+      </div>
+      <div>
+        <span class="text-lg" >{{ item.updated_by }}</span>
+      </div>
+      
+    </div>
+    <div class="flex justify-center p-2 w-3/12">
+    <span class="font-bold">{{item.updated_date}}</span>
+    </div>
+  </div>
+  </div>
+  <div class="add-annotations flex mt-2 mb-4">
+    <div class="annotation-field w-10/12">
+    <mat-form-field class=" mr-2 w-full" appearance="outline">
+      <input #inputField matInput formControlName="annotations" placeholder="Add Annotations"/>
+    </mat-form-field>
+  </div>
+    <div class="add-annotation flex w-3/12 items-center justify-center">
+      <button
+  title="add"
+  class=" h-full flex text-white cursor-pointer p-3 bg-primary-default rounded-full"
+  (click)="onAdd(inputField.value)"
+>
+  <mat-icon class="mt-auto">add</mat-icon>
+</button>
+
+    <span class="text-lg ml-2">Add annotations</span>
+  </div>
+  </div>
+  <div  align="end">
+    <button mat-raised-button color="accent" (click)="onClose()" class="ml-2">Close</button>
+  </div>
 </div>
+
 <!-- (itemSelected)="onItemSelected($event)" -->

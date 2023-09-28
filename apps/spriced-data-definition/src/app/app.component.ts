@@ -41,6 +41,11 @@ export class AppComponent {
       active: false,
       path: "/spriced-data-definition/app-access",
     },
+    {
+      name: "Transactions",
+      active: false,
+      path: "/spriced-data-definition/view-transactions",
+    },
   ];
   constructor(private appDataService: AppDataService) {
     this.appDataService.setMenuData(this.menuDItems);
