@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-5 h-full p-5">
+<div class="flex flex-col gap-5 h-full p-5 overflow-auto">
   <div class="flex flex-row col-span-6  items-center">
     <mat-form-field appearance="outline">
       <mat-label>Model</mat-label>
@@ -28,7 +28,7 @@
     </button>
   </div>
   <div class="flex flex-row gap-5">
-    <mat-card style="min-width: 350px; min-height: 500px;">
+    <mat-card style="min-width: 300px; min-height: calc(100vh - 18rem);">
       <mat-card-content class="p-0">
         <sp-vbox [noGap]="true" [marginX]="true" class="w-full bg-white h-full">
           <div class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
@@ -47,7 +47,7 @@
         </sp-vbox>
       </mat-card-content>
     </mat-card>
-    <sp-data-grid style="min-width: 350px; min-height: 500px;" class="col-span-2 w-full h-full" #dataGrid
+    <sp-data-grid style="min-width: 300px; min-height: calc(100vh - 18rem);" class="col-span-2 w-full h-full" #dataGrid
       title="Current Levels" [enableRowIndex]="false" [isArray]="false" [headers]="headers" [rows]="hierarchyDetails"
       [rowHeight]="30" [headerHeight]="30" [footerHeight]="0" [columnMode]="columnMode" [virtualScroll]="true"
       [selectionType]="selectionType" [limit]="10" [isExternalPaging]="false" [isExternalSorting]="false"

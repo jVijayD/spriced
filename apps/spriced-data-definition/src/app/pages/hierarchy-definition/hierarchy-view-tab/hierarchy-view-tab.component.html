@@ -1,6 +1,6 @@
 <!-- <mat-tab label="View"> -->
-<div class="p-5">
-  <sp-data-grid class="w-full h-full" #dataGrid title="Derived Hierarchies" [enableRowIndex]="false" [isArray]="false"
+<div class="flex flex-grow p-5 overflow-auto ">
+  <sp-data-grid style="min-height: calc(100vh - 12rem);" class="w-full h-full" #dataGrid title="Derived Hierarchies" [enableRowIndex]="false" [isArray]="false"
     [headers]="headers" [rows]="rows" [rowHeight]="30" [headerHeight]="30" [footerHeight]="0" [columnMode]="columnMode"
     [virtualScroll]="true" [selectionType]="selectionType" [limit]="10" [isExternalPaging]="false"
     [isExternalSorting]="false" [sortType]="sortType" [count]="totalElements" (itemSelected)="onItemSelected($event)"
@@ -13,10 +13,10 @@
           </mat-select>
         </mat-form-field>
       </sp-header-component-wrapper>
-      <sp-header-action icon="edit" text="Edit" title="Edit Model" [disabled]="selectedHierarchy == null"
+      <sp-header-action icon="edit" text="View/Edit" title="View/Edit Derived Hierarchy" [disabled]="selectedHierarchy == null"
         (actionClick)="onEdit()"></sp-header-action>
 
-      <sp-header-action icon="delete" text="Delete" title="Delete Model" [disabled]="selectedHierarchy == null"
+      <sp-header-action icon="delete" text="Delete" title="Delete Derived Hierarchy" [disabled]="selectedHierarchy == null"
         (actionClick)="onDelete()"></sp-header-action>
     </ng-container>
   </sp-data-grid>

@@ -79,10 +79,11 @@ export class HierarchyDefinitionComponent
       })
     );
     this.subscriptions.push(
-      this.newTab.onSaveEventEmitter.subscribe((a) => {
+      this.newTab.onSaveEventEmitter.subscribe((a:Model) => {
         this.HierarchytabGroup.selectedIndex = 0;
         this.selectedTabIndex = 0;
-        this.viewTab.loadAllHierarchies(this.viewTab.selectedModel);
+        this.viewTab.selectedModel = a;
+        this.viewTab.loadAllHierarchies(a);
       })
     );
   }

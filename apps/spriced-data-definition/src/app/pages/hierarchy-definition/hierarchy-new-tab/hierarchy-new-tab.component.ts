@@ -130,10 +130,15 @@ export class HierarchyNewTabComponent implements OnInit {
     if (!this.selectedEntity) {
       this.snackBarService.error("Please select an entity");
     }
+    if (!this.name) {
+      this.snackBarService.error(
+        "Please enter a name for the derived Hierarchy"
+      );
+    }
     if (!this.selectedModel) {
       this.snackBarService.error("Please select an entity");
     }
-    if (this.hierarchyDetails.length == 1) {
+    if (this.hierarchyDetails.length <= 1) {
       this.snackBarService.error("Please add grouping levels");
     }
   }
@@ -142,8 +147,10 @@ export class HierarchyNewTabComponent implements OnInit {
     if (
       !this.selectedEntity ||
       !this.selectedModel ||
+      !this.name ||
       !this.hierarchyDetails ||
-      this.hierarchyDetails.length == 0
+      this.hierarchyDetails.length == 0 ||
+      this.hierarchyDetails.length == 1
     ) {
       this.validateBeforeSave();
       return;
@@ -162,8 +169,8 @@ export class HierarchyNewTabComponent implements OnInit {
     };
     this.hierarchyService.saveHierarchy(hie).forEach((r) => {
       this.snackBarService.success("Derived Hierarchy Saved Successfully");
+      this.onSaveEventEmitter.emit(this.selectedModel);
       this.onClearClick();
-      this.onSaveEventEmitter.emit(0);
     });
     console.log(hie);
   }
@@ -227,7 +234,7 @@ export class HierarchyNewTabComponent implements OnInit {
             e.parentRefId = e.parentRefId < 0 ? null : e.parentRefId;
             return e;
           })
-          .sort((a, b) => a.groupLevel - b.groupLevel);
+          .sort((a, b) => b.groupLevel - a.groupLevel);
         this.hierarchyDetails = hie.details;
       }
       this.cd.detectChanges();
@@ -240,7 +247,9 @@ export class HierarchyNewTabComponent implements OnInit {
     let dtl = this.hierarchyDetails.pop();
     dtl = this.hierarchyDetails.pop();
     this.addToLevel(dtl?.entity);
-    this.hierarchyDetails = [...this.hierarchyDetails];
+    this.hierarchyDetails = [
+      ...this.hierarchyDetails.sort((a, b) => b.groupLevel - a.groupLevel),
+    ];
   }
   onBind(hie: Hierarchy) {
     this.id = hie.id;
