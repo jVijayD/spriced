@@ -878,7 +878,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         condition.min_value = moment(condition.min_value).toISOString();
         condition.max_value = moment(condition.max_value).toISOString();
       }
-      if(['DECIMAL', 'INTEGER'].includes(attribute?.dataType))
+      if(['DECIMAL', 'INTEGER'].includes(attribute?.dataType) && !!condition?.operand && condition?.operand !== '')
         {
           condition.operand = +condition.operand;
         }
@@ -925,13 +925,12 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       action[1].forEach((item: any) => {
         item.actionGroup = dataItem.group;
         const attribute = this.findAttributeById(item.attributeId);
-        debugger
         if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute?.dataType)) {
           item.operand = moment(item.operand).toISOString();
           item.min_value = moment(item.min_value).toISOString();
           item.max_value = moment(item.max_value).toISOString();
         }
-        if(['DECIMAL', 'INTEGER'].includes(attribute?.dataType))
+        if(['DECIMAL', 'INTEGER'].includes(attribute?.dataType) && !!item?.operand && item?.operand !== '')
         {
           item.operand = +item.operand;
         }
