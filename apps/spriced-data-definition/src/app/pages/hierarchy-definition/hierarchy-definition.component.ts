@@ -5,7 +5,11 @@ import {
   OnInit,
   ViewChild,
 } from "@angular/core";
-import { MatTabsModule } from "@angular/material/tabs";
+import {
+  MatTabChangeEvent,
+  MatTabGroup,
+  MatTabsModule,
+} from "@angular/material/tabs";
 import { MatIconModule } from "@angular/material/icon";
 import { HierarchyViewTabComponent } from "./hierarchy-view-tab/hierarchy-view-tab.component";
 import { HierarchyNewTabComponent } from "./hierarchy-new-tab/hierarchy-new-tab.component";
@@ -30,13 +34,17 @@ export class HierarchyDefinitionComponent
   implements OnInit, AfterViewInit, OnDestroy
 {
   selectedTabIndex = 0;
-  selectedHierarchy!: Hierarchy;
+  selectedHierarchy: Hierarchy | null = null;
   subscriptions: Subscription[] = [];
 
   modelList!: Model[];
 
   @ViewChild(HierarchyViewTabComponent)
   viewTab!: HierarchyViewTabComponent;
+
+  @ViewChild("HierarchytabGroup")
+  HierarchytabGroup!: MatTabGroup;
+
   @ViewChild(HierarchyNewTabComponent)
   newTab!: HierarchyNewTabComponent;
 
@@ -61,6 +69,7 @@ export class HierarchyDefinitionComponent
       this.viewTab.onEditEventEmitter.subscribe((selection: Hierarchy) => {
         this.selectedTabIndex = 1;
         this.selectedHierarchy = selection;
+        this.newTab.onBind(selection);
       })
     );
     this.subscriptions.push(
@@ -70,12 +79,18 @@ export class HierarchyDefinitionComponent
       })
     );
     this.subscriptions.push(
-      this.newTab.onSaveEventEmitter.subscribe(
-        (a) => (this.selectedTabIndex = a)
-      )
+      this.newTab.onSaveEventEmitter.subscribe((a) => {
+        this.HierarchytabGroup.selectedIndex = 0;
+        this.selectedTabIndex = 0;
+        this.viewTab.loadAllHierarchies(this.viewTab.selectedModel);
+      })
     );
   }
   onDelete(sel: Hierarchy) {
-    this.subscriptions.forEach((e) => e.unsubscribe());
+    this.selectedHierarchy = null;
+  }
+
+  onTabSelChange(ev: MatTabChangeEvent) {
+    this.selectedTabIndex = ev.index;
   }
 }

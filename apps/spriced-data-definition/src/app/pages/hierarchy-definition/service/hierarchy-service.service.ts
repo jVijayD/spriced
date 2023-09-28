@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Hierarchy } from "../models/HierarchyTypes.class";
 import { map } from "rxjs";
+import { Model } from "@spriced-frontend/spriced-common-lib";
 
 @Injectable({
   providedIn: "root",
@@ -11,9 +12,14 @@ export class HierarchyServiceService {
   constructor(private http: HttpClient) {
     this.api_url = process.env["NX_API_DEFINITION_URL"] as string;
   }
-  loadAllHierarchies() {
+  loadAllHierarchies(model:Model) {
     return this.http
-      .get(`${this.api_url}/hierarchy`)
+      .get(`${this.api_url}/hierarchy/model/${model.id}`)
+      .pipe(map((h) => h as Hierarchy[]));
+  }
+  loadHierarchy(hierarchy:Hierarchy) {
+    return this.http
+      .get(`${this.api_url}/hierarchy/${hierarchy.id}`)
       .pipe(map((h) => h as Hierarchy[]));
   }
 
@@ -28,5 +34,11 @@ export class HierarchyServiceService {
         hierarchy
       ).pipe(map((h) => h));;
     }
+  }
+
+  deleteHierarchy(hierarchy: Hierarchy){
+    return this.http.delete(
+      `${this.api_url}/hierarchy/${hierarchy.id}`
+    ).pipe(map((h) => h));;
   }
 }

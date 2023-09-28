@@ -1,4 +1,4 @@
-import { Hierarchy } from './../models/HierarchyTypes.class';
+import { Hierarchy } from "./../models/HierarchyTypes.class";
 import {
   Component,
   EventEmitter,
@@ -30,7 +30,8 @@ import { HierarchyServiceService } from "../service/hierarchy-service.service";
   templateUrl: "./hierarchy-view-tab.component.html",
   styleUrls: ["./hierarchy-view-tab.component.css"],
   standalone: true,
-  imports: [NgFor,
+  imports: [
+    NgFor,
     HeaderComponentWrapperComponent,
     MatIconModule,
     MatTabsModule,
@@ -82,8 +83,7 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
     },
   ];
   // displayedColumns = ["name", "description", "view"];
-  rows:Hierarchy[] = [
-  ];
+  rows: Hierarchy[] = [];
 
   columnMode: ColumnMode = ColumnMode.flex;
   selectionType: SelectionType = SelectionType.single;
@@ -94,29 +94,36 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
   selectedHierarchy!: Hierarchy;
   selectedModel!: Model;
 
-  constructor( private hierarchyService: HierarchyServiceService) {}
+  constructor(private hierarchyService: HierarchyServiceService) {}
   ngOnDestroy() {}
-  ngOnInit() {
-    
-  }
+  ngOnInit() {}
   onItemSelected(e: any) {
     this.selectedHierarchy = e;
   }
 
-  loadAllHierarchies(){
-    this.hierarchyService.loadAllHierarchies().subscribe(r => this.rows = [...r]);
+  loadAllHierarchies(model:Model) {
+    this.hierarchyService
+      .loadAllHierarchies(model)
+      .subscribe((r) => (this.rows = [...r]));
   }
 
   onEdit() {
-    this.onEditEventEmitter.emit(this.selectedHierarchy);
+    this.hierarchyService.loadHierarchy(this.selectedHierarchy).forEach((e) => {
+      this.onEditEventEmitter.emit(e);
+    });
   }
 
   onModelChange(ev: MatSelectChange) {
     this.selectedModel = ev.value;
-    this.loadAllHierarchies();
+    this.loadAllHierarchies(this.selectedModel);
   }
 
   onDelete() {
+    this.hierarchyService
+      .deleteHierarchy(this.selectedHierarchy)
+      .forEach((e) => {
+        this.loadAllHierarchies(this.selectedModel);
+      });
     this.onDeleteEventEmitter.emit(this.selectedHierarchy);
   }
 }
