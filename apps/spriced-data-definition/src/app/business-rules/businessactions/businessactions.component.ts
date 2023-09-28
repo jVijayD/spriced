@@ -201,6 +201,7 @@ export class BusinessactionsComponent implements AfterViewInit {
    */
   public handleAttributes(id: any, text?: string) {
     let attribute = this.findAttributeInArray(id, this.dataRules?.attributes);
+    const actionType = this.getValue('actionType');
     // If not found, search within nested attributes
     if (!attribute) {
       this.dataRules?.attributes.some((el: any) => {
@@ -217,8 +218,9 @@ export class BusinessactionsComponent implements AfterViewInit {
     }
     if (['DECIMAL', 'FLOAT', 'LINK'].includes(this.dataType)) {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
-      this.actionForm?.get('operand')?.setValidators([Validators.pattern(pattern)]);
+      this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
+    this.handleValueChange(actionType, 'changeValue');
   }
 
   /**
@@ -228,7 +230,8 @@ export class BusinessactionsComponent implements AfterViewInit {
  */
   public handleValue(event: any, text?: string) {
     this.valueConstant = ['CONSTANT', 'BLANK'].includes(event);
-    this.actionForm?.get('operand')?.enable();
+    const valueControl = this.actionForm?.get('operand');
+    this.addValidators(valueControl);
     this.isFieldDisabled = event === 'BLANK';
     this.selectedOperand = '';
     this.actionForm?.get('a')
@@ -241,7 +244,8 @@ export class BusinessactionsComponent implements AfterViewInit {
       this.disableFormControl();
     }
     if (this.isFieldDisabled) {
-      this.actionForm?.get('operand')?.disable();
+      const valueControl = this.actionForm?.get('operand');
+      this.removeValidators(valueControl);
     }
   }
 
