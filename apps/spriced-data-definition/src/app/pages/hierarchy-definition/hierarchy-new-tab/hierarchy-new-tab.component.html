@@ -1,0 +1,121 @@
+<div class="flex flex-col gap-5 h-full p-5 overflow-auto">
+  <div class="flex flex-row col-span-6  items-center">
+    <mat-form-field appearance="outline">
+      <mat-label>Model</mat-label>
+      <mat-select (selectionChange)="onModelChange($event)" [(value)]="selectedModel">
+        <mat-option class="option" *ngFor="let item of modelList" [value]="item">{{ item.displayName }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="ml-5">
+      <mat-label>Entity</mat-label>
+      <mat-select (selectionChange)="onEntityChange($event)" [(value)]="selectedEntity">
+        <mat-option class="option" *ngFor="let item of entityList" [value]="item">{{ item.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="ml-5">
+      <mat-label>Name</mat-label>
+      <input matInput [(ngModel)]="name" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="ml-5">
+      <mat-label>Description</mat-label>
+      <input matInput [(ngModel)]="description" />
+    </mat-form-field>
+    <button mat-raised-button color="accent" class="ml-5" (click)="onClearClick()">
+      Clear
+    </button>
+    <button mat-raised-button color="primary" class="ml-5" (click)="onSaveClick()">
+      Save
+    </button>
+  </div>
+  <div class="flex flex-row gap-5">
+    <mat-card style="min-width: 300px; min-height: calc(100vh - 18rem);">
+      <mat-card-content class="p-0">
+        <sp-vbox [noGap]="true" [marginX]="true" class="w-full bg-white h-full">
+          <div class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
+            <span class="float-left text-white font-medium">Available Entities</span>
+          </div>
+          <mat-list class="col-span-2 h-2/3">
+            <mat-list-item *ngFor="let entity of availableEntities" class="py-10">
+              <div class="flex flex-row justify-between items-center">
+                <span>{{entity.displayName}}</span>
+                <button mat-icon-button aria-label="Add" color="primary" (click)="addToLevel(entity)">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+            </mat-list-item>
+          </mat-list>
+        </sp-vbox>
+      </mat-card-content>
+    </mat-card>
+    <!-- <sp-data-grid style="min-width: 300px; min-height: calc(100vh - 18rem);" class="col-span-2 w-full h-full" #dataGrid
+      title="Current Levels" [enableRowIndex]="false" [isArray]="false" [headers]="headers" [rows]="hierarchyDetails"
+      [rowHeight]="30" [headerHeight]="30" [footerHeight]="0" [columnMode]="columnMode" [virtualScroll]="true"
+      [selectionType]="selectionType" [limit]="10" [isExternalPaging]="false" [isExternalSorting]="false"
+      [sortType]="sortType">
+      <ng-container>
+        <sp-header-action icon="delete" text="Remove" title="Remove" [disabled]="this.hierarchyDetails.length <= 1 "
+          (actionClick)="onRemoveClick(null)"></sp-header-action>
+      </ng-container>
+    </sp-data-grid> -->
+    <!-- <sp-data-grid-tree
+    class="w-full h-full"
+    #dataGrid123
+    title="Model List"
+    [enableRowIndex]="false"
+    [isArray]="false"
+    [headers]="levelHeaders"
+    [rows]="hierarchyDetails"
+    [rowHeight]="40"
+    [headerHeight]="40"
+    [footerHeight]="0"
+    [columnMode]="columnMode"
+    [virtualScroll]="true"
+    [selectionType]="selectionType"
+    [limit]="10"
+    [isExternalPaging]="false"
+    [isExternalSorting]="false"
+    [sortType]="sortType"
+    [count]="hierarchyDetails.length"
+  >
+  </sp-data-grid-tree> -->
+    <mat-card style="min-width: 300px; min-height: calc(100vh - 18rem);">
+      <mat-card-content class="p-0">
+        <sp-vbox [noGap]="true" [marginX]="true" class="w-full bg-white h-full">
+          <div class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
+            <span class="float-left text-white font-medium">Available Entities</span>
+            <div class="flex flex-row">
+              <ng-container>
+                <sp-header-action icon="delete" text="Remove" title="Remove"
+                  [disabled]="this.hierarchyDetails.length <= 1" (actionClick)="onRemoveClick(null)"></sp-header-action>
+              </ng-container>
+            </div>
+          </div>
+          <ngx-datatable style="min-width: 300px; min-height: calc(100vh - 20rem);" class="material striped tableScroll"
+            [columnMode]="ColumnMode.flex" [headerHeight]="50" [footerHeight]="0" [rowHeight]="40"
+            [rows]="hierarchyLevelNodes" [scrollbarV]="true" [scrollbarH]="true" [treeFromRelation]="'id'"
+            (treeAction)="onTreeAction($event)" [treeToRelation]="'parentId'">
+            <ngx-datatable-column name="Name" [flexGrow]="3" [isTreeColumn]="true">
+              <!-- <ng-template let-value="value" ngx-datatable-cell-template>
+                <div class="flex flex-row items-center" style="
+                margin-top: -12px;
+                margin-left: 25px;
+            "><mat-icon>folder</mat-icon><span>{{ value }}</span> </div>
+              </ng-template> -->
+
+              <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                <span style="display: inline-flex" class="ml-5">
+                  <mat-icon>folder</mat-icon>
+                  <span class="ml-2"> {{ value }}</span></span>
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
+        </sp-vbox>
+      </mat-card-content>
+    </mat-card>
+    <sp-data-grid class="col-span-2 w-full h-full" #dataGrid title="Preview" [enableRowIndex]="false" [isArray]="false"
+      [headers]="headers" [rows]="hierarchyDetails" [rowHeight]="30" [headerHeight]="30" [footerHeight]="0"
+      [columnMode]="columnMode" [virtualScroll]="true" [selectionType]="selectionType" [limit]="10"
+      [isExternalPaging]="false" [isExternalSorting]="false" [sortType]="sortType">
+    </sp-data-grid>
+  </div>
+</div>

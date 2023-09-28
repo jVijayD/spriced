@@ -195,6 +195,7 @@ export class ElseactionComponent {
    */
   public handleAttributes(id: any, text?: string) {
     let attribute = this.findAttributeInArray(id, this.dataRules?.attributes);
+    const actionType = this.getValue('actionType');
     // If not found, search within nested attributes
     if (!attribute) {
       this.dataRules?.attributes.some((el: any) => {
@@ -213,6 +214,7 @@ export class ElseactionComponent {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
+    this.handleValueChange(actionType, 'changeValue');
   }
 
   /**
@@ -235,7 +237,8 @@ export class ElseactionComponent {
       this.disableFormControl();
     }
     if (this.isFieldDisabled) {
-      this.actionForm?.get('operand')?.disable();
+      const valueControl = this.actionForm?.get('operand');
+      this.removeValidators(valueControl);
     }
   }
 

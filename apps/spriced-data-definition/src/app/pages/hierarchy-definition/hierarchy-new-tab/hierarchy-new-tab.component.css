@@ -1,0 +1,24 @@
+.mdc-list-item {
+    @apply bg-white shadow-inner hover:bg-primary-light px-5 py-5;
+    
+}
+
+.mdc-list {
+    @apply bg-white shadow;
+    margin: 0;
+    padding: 0px 0;
+    list-style-type: square;
+}
+
+.mat-mdc-icon-button.mat-mdc-button-base {
+    padding: calc(var(--mdc-icon-button-state-layer-size) / 7);
+}
+
+.mat-mdc-card-content {
+    display: block;
+    padding: 0px !important;
+}
+.mat-mdc-card {
+    background: #fff;
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}

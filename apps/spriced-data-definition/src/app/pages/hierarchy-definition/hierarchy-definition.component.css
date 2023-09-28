@@ -1,0 +1,6 @@
+.mat-mdc-icon-button.mat-mdc-button-base {
+    --mdc-icon-button-state-layer-size: 36px;
+    width: var(--mdc-icon-button-state-layer-size);
+    height: var(--mdc-icon-button-state-layer-size);
+    padding: calc(var(--mdc-icon-button-state-layer-size) / 7);
+}
