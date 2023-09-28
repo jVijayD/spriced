@@ -122,6 +122,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       value: this.currentSelectedEntity.name,
       joinType: "NONE",
       operatorType: "EQUALS",
+      datatype:"string"
     });
     this.loadAuditData();
   }
