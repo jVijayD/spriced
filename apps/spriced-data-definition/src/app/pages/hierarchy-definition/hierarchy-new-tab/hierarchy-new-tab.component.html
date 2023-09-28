@@ -47,7 +47,7 @@
         </sp-vbox>
       </mat-card-content>
     </mat-card>
-    <sp-data-grid style="min-width: 300px; min-height: calc(100vh - 18rem);" class="col-span-2 w-full h-full" #dataGrid
+    <!-- <sp-data-grid style="min-width: 300px; min-height: calc(100vh - 18rem);" class="col-span-2 w-full h-full" #dataGrid
       title="Current Levels" [enableRowIndex]="false" [isArray]="false" [headers]="headers" [rows]="hierarchyDetails"
       [rowHeight]="30" [headerHeight]="30" [footerHeight]="0" [columnMode]="columnMode" [virtualScroll]="true"
       [selectionType]="selectionType" [limit]="10" [isExternalPaging]="false" [isExternalSorting]="false"
@@ -56,7 +56,7 @@
         <sp-header-action icon="delete" text="Remove" title="Remove" [disabled]="this.hierarchyDetails.length <= 1 "
           (actionClick)="onRemoveClick(null)"></sp-header-action>
       </ng-container>
-    </sp-data-grid>
+    </sp-data-grid> -->
     <!-- <sp-data-grid-tree
     class="w-full h-full"
     #dataGrid123
@@ -78,26 +78,34 @@
     [count]="hierarchyDetails.length"
   >
   </sp-data-grid-tree> -->
-    <!-- <mat-card style="min-width: 350px; min-height: 500px;">
-    <mat-card-content class="p-0">
-      <sp-vbox [noGap]="true" [marginX]="true" class="w-full bg-white h-full">
-        <div class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
-          <span class="float-left text-white font-medium">Available Entities</span>
-        </div>
-        <ngx-datatable class="material striped tableScroll" [columnMode]="ColumnMode.flex" [headerHeight]="50" [footerHeight]="0" [rowHeight]="60"
-          [rows]="hierarchyDetails" [scrollbarV]="true" [scrollbarH]="true" [treeFromRelation]="'parentRefId'"
-          (treeAction)="onTreeAction($event)"
-          [treeToRelation]="'refId'">
-          <ngx-datatable-column name="Name" prop="tablename" [canAutoResize]="true" [isTreeColumn]="true" [flexGrow]="3"
-            [treeLevelIndent]="20">
-            <ng-template let-row="row" let-value="value" let-rowIndex="rowIndex" ngx-datatable-cell-template>
-              <span>{{ row.tablename }}</span>
-            </ng-template>
-          </ngx-datatable-column>
-        </ngx-datatable>
-      </sp-vbox>
-    </mat-card-content>
-  </mat-card> -->
+    <mat-card style="min-width: 300px; min-height: calc(100vh - 18rem);">
+      <mat-card-content class="p-0">
+        <sp-vbox [noGap]="true" [marginX]="true" class="w-full bg-white h-full">
+          <div class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
+            <span class="float-left text-white font-medium">Available Entities</span>
+          </div>
+          <ngx-datatable style="min-width: 300px; min-height: calc(100vh - 20rem);" class="material striped tableScroll"
+            [columnMode]="ColumnMode.flex" [headerHeight]="50" [footerHeight]="0" [rowHeight]="40"
+            [rows]="hierarchyLevelNodes" [scrollbarV]="true" [scrollbarH]="true" [treeFromRelation]="'id'"
+            (treeAction)="onTreeAction($event)" [treeToRelation]="'parentId'">
+            <ngx-datatable-column name="Name" [flexGrow]="3" [isTreeColumn]="true">
+              <!-- <ng-template let-value="value" ngx-datatable-cell-template>
+                <div class="flex flex-row items-center" style="
+                margin-top: -12px;
+                margin-left: 25px;
+            "><mat-icon>folder</mat-icon><span>{{ value }}</span> </div>
+              </ng-template> -->
+
+              <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                <span style="display: inline-flex" class="ml-5">
+                  <mat-icon>folder</mat-icon>
+                  <span class="ml-2"> {{ value }}</span></span>
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
+        </sp-vbox>
+      </mat-card-content>
+    </mat-card>
     <sp-data-grid class="col-span-2 w-full h-full" #dataGrid title="Preview" [enableRowIndex]="false" [isArray]="false"
       [headers]="headers" [rows]="hierarchyDetails" [rowHeight]="30" [headerHeight]="30" [footerHeight]="0"
       [columnMode]="columnMode" [virtualScroll]="true" [selectionType]="selectionType" [limit]="10"
