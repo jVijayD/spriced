@@ -91,7 +91,7 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
   isFullScreen = false;
   totalElements = 1000000000000;
 
-  selectedHierarchy!: Hierarchy;
+  selectedHierarchy : Hierarchy | null =null;
   selectedModel!: Model;
 
   constructor(private hierarchyService: HierarchyServiceService) {}
@@ -108,6 +108,9 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
   }
 
   onEdit() {
+    if(!this.selectedHierarchy){
+      return
+    }
     this.hierarchyService.loadHierarchy(this.selectedHierarchy).forEach((e) => {
       this.onEditEventEmitter.emit(e);
     });
@@ -119,10 +122,14 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
   }
 
   onDelete() {
+    if(!this.selectedHierarchy){
+      return
+    }
     this.hierarchyService
       .deleteHierarchy(this.selectedHierarchy)
       .forEach((e) => {
         this.loadAllHierarchies(this.selectedModel);
+        this.selectedHierarchy = null;
       });
     this.onDeleteEventEmitter.emit(this.selectedHierarchy);
   }
