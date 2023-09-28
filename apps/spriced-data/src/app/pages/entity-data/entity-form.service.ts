@@ -125,11 +125,10 @@ export class EntityFormService {
           };
 
         case "TIME_STAMP":
-          //debugger;
           return {
             name: attr.name,
             type: "date",
-            format: attr.formatter || "MM/DD/yyyy",
+            format: attr.formatter || "MM/DD/YYYY",
             label: attr.displayName || attr.name,
             placeholder: attr.displayName || attr.name,
             startDate: moment(new Date()).format("YYYY-MM-DD"),
