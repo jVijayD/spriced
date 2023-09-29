@@ -9,12 +9,14 @@ import {
   forwardRef,
 } from "@angular/core";
 import { BaseDataComponent } from "../../base-data.component";
-import { GenericControl, LookupSelectControl } from "../../dynamic-form.types";
+import { DataControl, GenericControl, LookupSelectControl } from "../../dynamic-form.types";
 import {
   DynamicFormService,
   EventElement,
 } from "../../service/dynamic-form.service";
 import { NG_VALUE_ACCESSOR } from "@angular/forms";
+import { MatDialog } from "@angular/material/dialog";
+import { LookupDialogComponent } from "./lookup-dialog/lookup-dialog/lookup-dialog.component";
 
 @Component({
   selector: "sp-lookup-select",
@@ -33,6 +35,10 @@ export class LookupSelectComponent
   extends BaseDataComponent
   implements OnInit, OnDestroy
 {
+  public prop:string = 'code|name';
+  pageSize:number = 30;
+  displayValue:any='';
+  lookupDataId:any;
   @Input()
   set control(selectControl: GenericControl) {
     this._control = selectControl;
@@ -46,7 +52,8 @@ export class LookupSelectComponent
 
   constructor(
     @Inject(Injector) private injector: Injector,
-    private dynamicService: DynamicFormService
+    private dynamicService: DynamicFormService,
+    private dialog: MatDialog
   ) {
     super(dynamicService);
     //this._control = _defaultSelect;
@@ -83,7 +90,8 @@ export class LookupSelectComponent
   }
 
   public getSelectedDisplayProp() {
-    debugger;
+    this.lookupDataId !== this.value? this.displayValue ='':'';
+    if(this.displayValue==''){
     const lookupControl = this._control as LookupSelectControl;
     const props = lookupControl.displayProp?.split("|") || [];
     const option: any = {};
@@ -93,7 +101,7 @@ export class LookupSelectComponent
           this.dynamicFormService.getExtraData().get(key);
       }
     }
-    return props.reduce((prev, cur) => {
+     return props.reduce((prev, cur) => {
       return prev === "-##"
         ? option[cur]
         : `${prev == null ? "" : prev} ${this.renderDataWithCurlyBrace(
@@ -101,12 +109,14 @@ export class LookupSelectComponent
           )}`;
     }, "-##");
   }
+   else {
+    return this.displayValue;
+  }
+}
 
   public getDisplayProp(option: any, prop: string) {
-    //let displayProp = "";
-    const props = prop.split("|");
-    //displayProp = props.map((item) => option[item]).join(" | ");
-
+    const lookupControl = this._control as LookupSelectControl
+    const props = lookupControl.displayProp?.split("|") || [];
     return props.reduce((prev, cur) => {
       return prev === "-##"
         ? option[cur]
@@ -114,9 +124,35 @@ export class LookupSelectComponent
             option[cur]
           )}`;
     }, "-##");
-    //return displayProp;
   }
+  openPopup(): void {
+    const dialogRef = this.dialog.open(LookupDialogComponent, {
+      width: '700px',
+      height: '620px',
+      data:{value:this.source,total:this.count,pageSize:this.pageSize},
+      hasBackdrop:false
+    });
 
+    dialogRef.afterClosed().subscribe(({data}:any) => {
+     this.writeValue(data.id);
+     this.lookupDataId = data.id
+     this.displayValue = this.getDisplayProp(data,this.prop);
+    });
+    dialogRef.componentInstance.dialogEvent$.subscribe((pageNumber:any) => {
+    this.nextPage(pageNumber,dialogRef,this.pageSize);
+  })
+  }
+  
+   nextPage(pageNumber:number=0,dialogRef:any,pageSize:number){
+    let controlData = this.control as DataControl;
+    const [id]  = controlData.data.api?.params;
+    controlData.data.api && (controlData.data.api.params = [id, pageNumber,pageSize]);
+    this.populateSource();
+    setTimeout(()=>{
+      dialogRef.componentInstance.upDatedData({ value: this.source, total: this.count });
+    },100);
+   }
+  
   private renderDataWithCurlyBrace(data: any) {
     return data == null ? "" : "{" + data + "}";
   }
