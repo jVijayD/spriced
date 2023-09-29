@@ -198,7 +198,7 @@ export class BusinessRuleListComponent {
       this.conditionForm?.get('parentOperandId')?.setValue(parentAtt.id ?? '');
       this.conditionForm?.get('parentOperandDisplayName')?.setValue(parentAtt.displayName ?? '');
       this.conditionForm?.get('parentOperandName')?.setValue(parentAtt.name ?? '');
-      this.conditionForm?.get('operandTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
+      this.conditionForm?.get('operandTableName')?.setValue(parentAtt.referencedTable ?? '');
     }
     else {
       const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
@@ -214,7 +214,7 @@ export class BusinessRuleListComponent {
       this.conditionForm?.get('parentAttributeId')?.setValue(parentAtt.id ?? '');
       this.conditionForm?.get('parentAttributeName')?.setValue(parentAtt.name ?? '');
       this.conditionForm?.get('parentAttributeDisplayName')?.setValue(parentAtt.displayName ?? '');
-      this.conditionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
+      this.conditionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTable ?? '');
       this.handleAttributes(item.id, 'changeAttribute');
     }
   }
@@ -261,6 +261,7 @@ export class BusinessRuleListComponent {
    * @param text string
    */
   public handleValueChange(value: any, text?: string) {
+    debugger
     const valueControl = this.conditionForm?.get('operand');
     const minValueControl = this.conditionForm?.get('min_value');
     const maxValueControl = this.conditionForm?.get('max_value');
