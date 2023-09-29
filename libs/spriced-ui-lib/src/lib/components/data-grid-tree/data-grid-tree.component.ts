@@ -20,11 +20,12 @@ import {
 import { Paginate } from "../data-grid/data-grid.component";
 import { MatIconModule } from "@angular/material/icon";
 import { Subject, debounceTime } from "rxjs";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
   selector: "sp-data-grid-tree",
   standalone: true,
-  imports: [CommonModule, NgxDatatableModule, MatIconModule],
+  imports: [CommonModule, NgxDatatableModule, MatIconModule, MatTooltipModule],
   templateUrl: "./data-grid-tree.component.html",
   styleUrls: ["./data-grid-tree.component.scss"],
 })
@@ -40,6 +41,9 @@ export class DataGridTreeComponent implements AfterViewInit {
 
   @Input()
   footerHeight = 50;
+
+  @Input()
+  tooltipTemplate: any;
 
   @Input()
   rows: any[] = [];
@@ -118,7 +122,7 @@ export class DataGridTreeComponent implements AfterViewInit {
   public clearSorting() {
     this.table.sorts = [];
   }
-
+  
   public clearSelection() {
     this.table.selected = [];
   }
@@ -157,4 +161,7 @@ export interface Head {
   canAutoResize?: boolean;
   pipe?: unknown;
   action?:boolean;
+  showTooltip?: any;
+  TooltipLevel?: number;
+  tooltipTemplate?: any;
 }
