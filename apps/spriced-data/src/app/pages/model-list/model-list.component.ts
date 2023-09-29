@@ -46,7 +46,7 @@ export class ModelListComponent {
       isSortable: true,
       isTreeColumn: true,
       showTooltip: true,
-      TooltipLevel: 2,
+      tooltipLevel: 2,
       tooltipTemplate: (row: any) => this.getAttributeTooltip(row)
     },
     {

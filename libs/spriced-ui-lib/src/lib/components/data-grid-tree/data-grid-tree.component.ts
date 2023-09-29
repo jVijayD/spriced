@@ -162,6 +162,6 @@ export interface Head {
   pipe?: unknown;
   action?:boolean;
   showTooltip?: any;
-  TooltipLevel?: number;
+  tooltipLevel?: number;
   tooltipTemplate?: any;
 }

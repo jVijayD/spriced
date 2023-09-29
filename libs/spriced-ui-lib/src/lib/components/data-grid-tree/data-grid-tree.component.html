@@ -52,7 +52,7 @@
           <span class="ml-2" 
                 matTooltipClass="custom-tooltip"
                 [matTooltipPosition]="'right'"
-                [matTooltip]="(header?.showTooltip && header?.TooltipLevel === row?.level) ? header?.tooltipTemplate(row) : ''">
+                [matTooltip]="(header?.showTooltip && header?.tooltipLevel === row?.level) ? header?.tooltipTemplate(row) : ''">
             {{
               isArray
                 ? this.renderData(row[i], header)
