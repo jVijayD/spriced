@@ -419,14 +419,14 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
    */
   public patchConditionAndActionForm(text: string, item: any): FormGroup {
     const type = typeof item?.operand;
-    const value = type !== 'number' && item?.operand ? item?.operand.split(',') : '';
+    const value = type !== 'number' && item?.operand ? item?.operand.split(',') : item?.operand;
     const form: FormGroup = this.formbuilder.group({
       id: [this.generateRandomIds()],
       conditionType: item?.conditionType ? [item.conditionType, Validators.required] : ['', Validators.required],
       attributeId: item?.attributeId ? [item.attributeId, Validators.required] : ['', Validators.required],
       actionType: item?.actionType ? [item.actionType, Validators.required] : ['', Validators.required],
       operatorType: item?.operatorType ? [item.operatorType, Validators.required] : ['', Validators.required],
-      operand: item?.operand && !item?.operand?.max ? [item.operand, Validators.required] : ['', Validators.required],
+      operand: item?.operand.toString() ? [item.operand, Validators.required] : ['', Validators.required],
       max_value: value && value[1] ? [value[1], Validators.required] : ['', Validators.required],
       min_value: value && value[0] ? [value[0], Validators.required] : ['', Validators.required],
       operandType: item?.operandType ? [item.operandType, Validators.required] : ['ATTRIBUTE', Validators.required],

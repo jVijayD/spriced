@@ -173,8 +173,8 @@ export class BusinessRuleListComponent {
     
     this.setAttributeNamesById(attributeId, operand);
     this.handleValue(operandType);
-    this.handleValueChange(value);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
+    this.handleValueChange(value);
   }
 
   // Helper function to get values from conditionForm
@@ -261,7 +261,6 @@ export class BusinessRuleListComponent {
    * @param text string
    */
   public handleValueChange(value: any, text?: string) {
-    debugger
     const valueControl = this.conditionForm?.get('operand');
     const minValueControl = this.conditionForm?.get('min_value');
     const maxValueControl = this.conditionForm?.get('max_value');
