@@ -73,4 +73,7 @@ export class LookupDialogComponent {
    upDatedData(newData:any){
     this.rows = newData.value;
    }
+   onCancel(){
+    this.dialogRef.close(null);
+   }
 }

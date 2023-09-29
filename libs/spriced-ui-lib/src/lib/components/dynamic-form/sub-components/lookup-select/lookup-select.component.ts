@@ -37,6 +37,8 @@ export class LookupSelectComponent
 {
   public prop:string = 'code|name';
   maxCount:number = 30;
+  displayValue:any='';
+  lookupDataId:any;
   @Input()
   set control(selectControl: GenericControl) {
     this._control = selectControl;
@@ -88,6 +90,8 @@ export class LookupSelectComponent
   }
 
   public getSelectedDisplayProp() {
+    this.lookupDataId !== this.value? this.displayValue ='':'';
+    if(this.displayValue==''){
     const lookupControl = this._control as LookupSelectControl;
     const props = this.prop.split("|") || [];
     const option: any = {};
@@ -105,12 +109,13 @@ export class LookupSelectComponent
           )}`;
     }, "-##");
   }
+   else {
+    return this.displayValue;
+  }
+}
 
   public getDisplayProp(option: any, prop: string) {
-    //let displayProp = "";
     const props = prop.split("|");
-    //displayProp = props.map((item) => option[item]).join(" | ");
-
     return props.reduce((prev, cur) => {
       return prev === "-##"
         ? option[cur]
@@ -118,19 +123,19 @@ export class LookupSelectComponent
             option[cur]
           )}`;
     }, "-##");
-    //return displayProp;
   }
   openPopup(): void {
     const dialogRef = this.dialog.open(LookupDialogComponent, {
       width: '700px',
       height: '620px',
       data:{value:this.source,total:this.count},
-      // hasBackdrop:false
+      hasBackdrop:false
     });
 
     dialogRef.afterClosed().subscribe(({data}:any) => {
      this.writeValue(data.id);
-    //  this.displayValue = this.getSelectedDisplayProp();
+     this.lookupDataId = data.id
+     this.displayValue = this.getDisplayProp(data,this.prop);
     });
     dialogRef.componentInstance.dialogEvent$.subscribe((pageNumber:any) => {
     this.nextPage(pageNumber,dialogRef);
@@ -146,7 +151,7 @@ export class LookupSelectComponent
       dialogRef.componentInstance.upDatedData({ value: this.source, total: this.count });
     },100);
    }
-
+  
   private renderDataWithCurlyBrace(data: any) {
     return data == null ? "" : "{" + data + "}";
   }
