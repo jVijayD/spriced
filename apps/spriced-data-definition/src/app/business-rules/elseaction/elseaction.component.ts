@@ -287,7 +287,7 @@ export class ElseactionComponent {
       this.actionForm?.get('parentOperandId')?.setValue(parentAtt.id ?? '');
       this.actionForm?.get('parentOperandDisplayName')?.setValue(parentAtt.displayName ?? '');
       this.actionForm?.get('parentOperandName')?.setValue(parentAtt.name ?? '');
-      this.actionForm?.get('operandTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
+      this.actionForm?.get('operandTableName')?.setValue(parentAtt.referencedTable ?? '');
     }
     else {
       const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
@@ -303,7 +303,7 @@ export class ElseactionComponent {
       this.actionForm?.get('parentAttributeId')?.setValue(parentAtt.id ?? '');
       this.actionForm?.get('parentAttributeName')?.setValue(parentAtt.name ?? '');
       this.actionForm?.get('parentAttributeDisplayName')?.setValue(parentAtt.displayName ?? '');
-      this.actionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
+      this.actionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTable ?? '');
       this.handleAttributes(item.id, 'changeAttribute');
     }
   }
