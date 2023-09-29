@@ -42,6 +42,11 @@ export class AppComponent {
       path: "/spriced-data-definition/app-access",
     },
     {
+      name: "Transactions",
+      active: false,
+      path: "/spriced-data-definition/view-transactions",
+    },
+    {
       name: "Derived Hierarchy",
       active: false,
       path: "/spriced-data-definition/hierarchy-definition",
