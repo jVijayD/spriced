@@ -278,7 +278,7 @@ export class BusinessRuleListComponent {
       this.removeValidators(valueControl);
 
     }
-    else if (['IS_NULL','IS_NOT_NULL'].includes(value)) {
+    else if (['IS_NULL','IS_NOT_NULL', 'HAS_CHANGED'].includes(value)) {
       const operandType = this.conditionForm?.get('operandType')?.value;
       this.conditionForm?.get('operandType').setValue(operandType);
       this.disableFormControl();
