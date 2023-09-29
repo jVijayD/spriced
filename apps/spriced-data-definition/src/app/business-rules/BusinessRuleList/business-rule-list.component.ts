@@ -173,8 +173,8 @@ export class BusinessRuleListComponent {
     
     this.setAttributeNamesById(attributeId, operand);
     this.handleValue(operandType);
-    this.handleValueChange(value);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
+    this.handleValueChange(value);
   }
 
   // Helper function to get values from conditionForm
@@ -198,7 +198,7 @@ export class BusinessRuleListComponent {
       this.conditionForm?.get('parentOperandId')?.setValue(parentAtt.id ?? '');
       this.conditionForm?.get('parentOperandDisplayName')?.setValue(parentAtt.displayName ?? '');
       this.conditionForm?.get('parentOperandName')?.setValue(parentAtt.name ?? '');
-      this.conditionForm?.get('operandTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
+      this.conditionForm?.get('operandTableName')?.setValue(parentAtt.referencedTable ?? '');
     }
     else {
       const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
@@ -214,7 +214,7 @@ export class BusinessRuleListComponent {
       this.conditionForm?.get('parentAttributeId')?.setValue(parentAtt.id ?? '');
       this.conditionForm?.get('parentAttributeName')?.setValue(parentAtt.name ?? '');
       this.conditionForm?.get('parentAttributeDisplayName')?.setValue(parentAtt.displayName ?? '');
-      this.conditionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
+      this.conditionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTable ?? '');
       this.handleAttributes(item.id, 'changeAttribute');
     }
   }
@@ -233,7 +233,8 @@ export class BusinessRuleListComponent {
       this.disableFormControl();
     }
     if (this.isFieldDisabled) {
-      this.conditionForm?.get('operand')?.disable();
+      const valueControl = this.conditionForm?.get('operand');
+      this.removeValidators(valueControl);
     }
   }
 
@@ -312,7 +313,7 @@ export class BusinessRuleListComponent {
   {
     const attribute = this.findAttributeById(attributeId);
     const operandAtt = this.findAttributeById(operandAttribute);
-    !!operandAtt ? this.conditionForm?.get('operandType')?.setValue('ATTRIBUTE') : this.conditionForm?.get('operandType')?.setValue('CONSTANT');
+    // !!operandAtt ? this.conditionForm?.get('operandType')?.setValue('ATTRIBUTE') : this.conditionForm?.get('operandType')?.setValue('CONSTANT');
     if(!!attribute)
     {
       this.conditionForm?.get('attributeDisplayName')?.setValue(attribute.displayName);
@@ -331,6 +332,7 @@ export class BusinessRuleListComponent {
    */
   public handleAttributes(id: any, text?: string) {
     let attribute = this.findAttributeInArray(id, this.dataRules?.attributes);
+    const operatorType = this.getValue('operatorType');
     // If not found, search within nested attributes
     if (!attribute) {
       this.dataRules?.attributes.some((el: any) => {
@@ -349,6 +351,7 @@ export class BusinessRuleListComponent {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.conditionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
+    this.handleValueChange(operatorType, 'changeValue');
   }
 
   /**

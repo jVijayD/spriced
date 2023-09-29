@@ -137,8 +137,8 @@ export class ElseactionComponent {
 
     this.setAttributeNamesById(attributeId, operand);
     this.handleValue(operandType);
-    this.handleValueChange(value);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
+    this.handleValueChange(value);
   }
 
   // Helper function to get values from actionForm
@@ -185,7 +185,7 @@ export class ElseactionComponent {
       minValueControl?.disable();
       maxValueControl?.disable();
       valueControl?.enable();
-      this.isFieldDisabled ? valueControl?.disable() : valueControl?.enable();
+      this.isFieldDisabled ? this.removeValidators(valueControl) : this.addValidators(valueControl);
     }
   }
 
@@ -195,6 +195,7 @@ export class ElseactionComponent {
    */
   public handleAttributes(id: any, text?: string) {
     let attribute = this.findAttributeInArray(id, this.dataRules?.attributes);
+    const actionType = this.getValue('actionType');
     // If not found, search within nested attributes
     if (!attribute) {
       this.dataRules?.attributes.some((el: any) => {
@@ -213,6 +214,7 @@ export class ElseactionComponent {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
+    this.handleValueChange(actionType, 'changeValue');
   }
 
   /**
@@ -235,7 +237,8 @@ export class ElseactionComponent {
       this.disableFormControl();
     }
     if (this.isFieldDisabled) {
-      this.actionForm?.get('operand')?.disable();
+      const valueControl = this.actionForm?.get('operand');
+      this.removeValidators(valueControl);
     }
   }
 
@@ -284,7 +287,7 @@ export class ElseactionComponent {
       this.actionForm?.get('parentOperandId')?.setValue(parentAtt.id ?? '');
       this.actionForm?.get('parentOperandDisplayName')?.setValue(parentAtt.displayName ?? '');
       this.actionForm?.get('parentOperandName')?.setValue(parentAtt.name ?? '');
-      this.actionForm?.get('operandTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
+      this.actionForm?.get('operandTableName')?.setValue(parentAtt.referencedTable ?? '');
     }
     else {
       const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
@@ -300,7 +303,7 @@ export class ElseactionComponent {
       this.actionForm?.get('parentAttributeId')?.setValue(parentAtt.id ?? '');
       this.actionForm?.get('parentAttributeName')?.setValue(parentAtt.name ?? '');
       this.actionForm?.get('parentAttributeDisplayName')?.setValue(parentAtt.displayName ?? '');
-      this.actionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
+      this.actionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTable ?? '');
       this.handleAttributes(item.id, 'changeAttribute');
     }
   }
@@ -309,7 +312,7 @@ export class ElseactionComponent {
   {
     const attribute = this.findAttributeById(attributeId);
     const operandAtt = this.findAttributeById(operandAttribute);
-    !!operandAtt ? this.actionForm?.get('operandType')?.setValue('ATTRIBUTE') : this.actionForm?.get('operandType')?.setValue('CONSTANT');
+    // !!operandAtt ? this.actionForm?.get('operandType')?.setValue('ATTRIBUTE') : this.actionForm?.get('operandType')?.setValue('CONSTANT');
     if(!!attribute)
     {
       this.actionForm?.get('attributeDisplayName')?.setValue(attribute.displayName);
