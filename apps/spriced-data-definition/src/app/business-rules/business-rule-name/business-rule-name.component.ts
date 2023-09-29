@@ -419,7 +419,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
    */
   public patchConditionAndActionForm(text: string, item: any): FormGroup {
     const type = typeof item?.operand;
-    const value = type !== 'number' && item?.operand ? item?.operand.split(',') : '';
+    const value = type !== 'number' && item?.operand ? item?.operand.split(',') : item?.operand;
     const form: FormGroup = this.formbuilder.group({
       id: [this.generateRandomIds()],
       conditionType: item?.conditionType ? [item.conditionType, Validators.required] : ['', Validators.required],

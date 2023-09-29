@@ -137,8 +137,8 @@ export class ElseactionComponent {
 
     this.setAttributeNamesById(attributeId, operand);
     this.handleValue(operandType);
-    this.handleValueChange(value);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
+    this.handleValueChange(value);
   }
 
   // Helper function to get values from actionForm
@@ -185,7 +185,7 @@ export class ElseactionComponent {
       minValueControl?.disable();
       maxValueControl?.disable();
       valueControl?.enable();
-      this.isFieldDisabled ? valueControl?.disable() : valueControl?.enable();
+      this.isFieldDisabled ? this.removeValidators(valueControl) : this.addValidators(valueControl);
     }
   }
 
