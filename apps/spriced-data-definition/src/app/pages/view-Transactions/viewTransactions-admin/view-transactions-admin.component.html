@@ -1,1 +1,43 @@
-<p>view-transactions-admin works!</p>
+<div class="flex flex-col container p-5 h-fit">
+    <div class="page-header">Transactions</div>
+  
+    <!-- <button mat-icon-button color="transparent" class="close p-5" (click)="onClose()">
+      <mat-icon>close</mat-icon>
+    </button> -->
+    <div class="grid">
+    <sp-data-grid
+          #dataGrid
+          class="w-full h-full"
+          [title]="'Data'"
+          [enableRowIndex]="false"
+          [isArray]="false"
+          [headers]="headers"
+          [rows]="rows"
+          [rowHeight]="40"
+          [headerHeight]="40"
+          [footerHeight]="30"
+          [columnMode]="columnMode"
+          [virtualScroll]="false"
+          [selectionType]="selectionType"
+          [count]="totalElements"
+          [limit]="limit"
+          [isExternalPaging]="true"
+          [isExternalSorting]="true"
+          [sortType]="sortType"
+          [selected]="!!selectedItem?[selectedItem]:[]"
+          (itemSelected)="onItemSelected($event)"
+          (paginate)="onPaginate($event)"
+          (sort)="onSort($event)"
+        >
+      <ng-container>
+        <sp-header-component-wrapper title="Model">
+            <mat-form-field>
+              <mat-select (selectionChange)="onModelChange($event)" [(value)]="selectedModel">
+                <mat-option class="option" *ngFor="let model of modelList" [value]="model.id">{{model.displayName}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </sp-header-component-wrapper>
+      </ng-container>
+    </sp-data-grid>
+    </div>
+    </div>
