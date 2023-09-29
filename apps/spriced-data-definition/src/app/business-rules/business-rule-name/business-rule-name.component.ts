@@ -154,8 +154,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
               const { entityData } = await this.getEntityById(el.referencedTableId);
               this.entities[`entity_${el.referencedTableId}`] = entityData;
             }
-            const filteredAttributes = this.entities[`entity_${el.referencedTableId}`]?.attributes.filter((el: any) => el.type !== 'LOOKUP');
-            this.entities[`entity_${el.referencedTableId}`].attributes = filteredAttributes.filter((attr: any) => !attr.systemAttribute);
+            this.entities[`entity_${el.referencedTableId}`].attributes = this.entities[`entity_${el.referencedTableId}`]?.attributes.filter((attr: any) => !attr.systemAttribute);
             await this.processNestedAttributes(this.entities[`entity_${el.referencedTableId}`].attributes, el);
           })
         )
@@ -426,7 +425,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       attributeId: item?.attributeId ? [item.attributeId, Validators.required] : ['', Validators.required],
       actionType: item?.actionType ? [item.actionType, Validators.required] : ['', Validators.required],
       operatorType: item?.operatorType ? [item.operatorType, Validators.required] : ['', Validators.required],
-      operand: item?.operand.toString() ? [item.operand, Validators.required] : ['', Validators.required],
+      operand: item?.operand?.toString() ? [item.operand, Validators.required] : ['', Validators.required],
       max_value: value && value[1] ? [value[1], Validators.required] : ['', Validators.required],
       min_value: value && value[0] ? [value[0], Validators.required] : ['', Validators.required],
       operandType: item?.operandType ? [item.operandType, Validators.required] : ['ATTRIBUTE', Validators.required],
