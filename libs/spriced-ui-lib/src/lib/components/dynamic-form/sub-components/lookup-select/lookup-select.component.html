@@ -14,7 +14,7 @@
 
         <mat-select
           matNativeControl
-          *ngIf="count<=maxCount"
+          *ngIf="count<=pageSize"
           (blur)="onTouched()"
           [(ngModel)]="value"
           [disabled]="control.readOnly || disabled"
@@ -38,7 +38,7 @@
             }}
           </mat-option>
         </mat-select>
-        <ng-container *ngIf="count>=maxCount">
+        <ng-container *ngIf="count>=pageSize">
            <div *ngIf="value">{{getSelectedDisplayProp()}}</div>
           <input [style.display]="'none'" matInput [(ngModel)]="value">
         </ng-container>
@@ -51,7 +51,7 @@
       </mat-form-field>
       <button
       mat-raised-button
-      *ngIf="count>=maxCount"
+      *ngIf="count>=pageSize"
       color="primary"
       title="Edit"
       class="square-button"

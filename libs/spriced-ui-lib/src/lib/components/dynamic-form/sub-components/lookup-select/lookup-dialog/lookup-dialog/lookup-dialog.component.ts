@@ -16,7 +16,7 @@ export class LookupDialogComponent {
   count:any;
   offset:number=0;
   item:any;
-  pageSize:number = 30;
+  pageSize:any;
   selected=[];
   selectedItem: any;
   rows: any = [];
@@ -29,6 +29,7 @@ export class LookupDialogComponent {
     ){
       this.item = this.data;
       this.count = this.item.total;
+      this.pageSize = this.item.pageSize;
       console.log()
       this.rows = this.item.value;
   }
@@ -67,6 +68,7 @@ export class LookupDialogComponent {
     this.dialogRef.close({ event: "Update", data: this.selectedItem });
   }
   onPage(e: any) {
+    debugger
     const pageNumber = e.offset;
     this.dialogEventSubject.next(pageNumber);
 }

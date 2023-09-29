@@ -36,7 +36,7 @@ export class LookupSelectComponent
   implements OnInit, OnDestroy
 {
   public prop:string = 'code|name';
-  maxCount:number = 30;
+  pageSize:number = 30;
   displayValue:any='';
   lookupDataId:any;
   @Input()
@@ -93,7 +93,7 @@ export class LookupSelectComponent
     this.lookupDataId !== this.value? this.displayValue ='':'';
     if(this.displayValue==''){
     const lookupControl = this._control as LookupSelectControl;
-    const props = this.prop.split("|") || [];
+    const props = lookupControl.displayProp?.split("|") || [];
     const option: any = {};
     for (let key of this.dynamicFormService.getExtraData().keys()) {
       if (key.startsWith(this._control.name)) {
@@ -115,7 +115,8 @@ export class LookupSelectComponent
 }
 
   public getDisplayProp(option: any, prop: string) {
-    const props = prop.split("|");
+    const lookupControl = this._control as LookupSelectControl
+    const props = lookupControl.displayProp?.split("|") || [];
     return props.reduce((prev, cur) => {
       return prev === "-##"
         ? option[cur]
@@ -128,7 +129,7 @@ export class LookupSelectComponent
     const dialogRef = this.dialog.open(LookupDialogComponent, {
       width: '700px',
       height: '620px',
-      data:{value:this.source,total:this.count},
+      data:{value:this.source,total:this.count,pageSize:this.pageSize},
       hasBackdrop:false
     });
 
@@ -138,14 +139,14 @@ export class LookupSelectComponent
      this.displayValue = this.getDisplayProp(data,this.prop);
     });
     dialogRef.componentInstance.dialogEvent$.subscribe((pageNumber:any) => {
-    this.nextPage(pageNumber,dialogRef);
+    this.nextPage(pageNumber,dialogRef,this.pageSize);
   })
   }
   
-   nextPage(pageNumber:number=0,dialogRef:any){
+   nextPage(pageNumber:number=0,dialogRef:any,pageSize:number){
     let controlData = this.control as DataControl;
     const [id]  = controlData.data.api?.params;
-    controlData.data.api && (controlData.data.api.params = [id, pageNumber]);
+    controlData.data.api && (controlData.data.api.params = [id, pageNumber,pageSize]);
     this.populateSource();
     setTimeout(()=>{
       dialogRef.componentInstance.upDatedData({ value: this.source, total: this.count });

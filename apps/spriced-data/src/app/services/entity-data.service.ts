@@ -97,10 +97,10 @@ export class EntityDataService {
     return this.http.get<PageData>(url);
   }
 
-  loadLookupData(id: string | number,pageNumber:number = 0): Observable<PageData> {
+  loadLookupData(id: string | number,pageNumber:number = 0,pageSize:number =30): Observable<PageData> {
     const criteria: Criteria = {
       pager: {
-        pageSize: 30,
+        pageSize,
         pageNumber,
       },
     };
