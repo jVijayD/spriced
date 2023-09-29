@@ -576,6 +576,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   private loadEntityData(entity: Entity, criteria: Criteria) {
+    const sort: any = {direction: "desc", property: "updated_date"};
+    criteria.sorters = [sort];
     this.currentCriteria = criteria;
     if (entity) {
       this.applyEntitySettings(entity);
