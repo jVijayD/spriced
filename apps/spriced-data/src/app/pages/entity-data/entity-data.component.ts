@@ -202,7 +202,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     });
 
     const criteria: Criteria = { ...this.currentCriteria, sorters: sorters };
-    this.loadEntityData(this.currentSelectedEntity as Entity, criteria);
+    this.loadEntityData(this.currentSelectedEntity as Entity, criteria, true);
   }
 
   onItemSelected(e: any) {
@@ -575,8 +575,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     }
   }
 
-  private loadEntityData(entity: Entity, criteria: Criteria) {
-    if(!criteria?.sorters || criteria?.sorters?.length === 0)
+  private loadEntityData(entity: Entity, criteria: Criteria, columnSort?: boolean) {
+    if(!columnSort)
     {
       const sort: any = {direction: "DESC", property: "updated_date"};
       criteria.sorters = [sort];
