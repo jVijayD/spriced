@@ -877,7 +877,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         condition.min_value = moment(condition.min_value).toISOString();
         condition.max_value = moment(condition.max_value).toISOString();
       }
-      if(['DECIMAL', 'INTEGER'].includes(attribute?.dataType) && !!condition?.operand && condition?.operand !== '')
+      if(['DECIMAL', 'INTEGER'].includes(attribute?.dataType) && condition?.operandType === 'CONSTANT' && !!condition?.operand && condition?.operand !== '')
         {
           condition.operand = +condition.operand;
         }
@@ -929,7 +929,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
           item.min_value = moment(item.min_value).toISOString();
           item.max_value = moment(item.max_value).toISOString();
         }
-        if(['DECIMAL', 'INTEGER'].includes(attribute?.dataType) && !!item?.operand && item?.operand !== '')
+        if(['DECIMAL', 'INTEGER'].includes(attribute?.dataType) && item?.operandType === 'CONSTANT' && !!item?.operand && item?.operand !== '')
         {
           item.operand = +item.operand;
         }

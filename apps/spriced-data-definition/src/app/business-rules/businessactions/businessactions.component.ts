@@ -1,7 +1,7 @@
 import { NGX_MAT_DATE_FORMATS, NgxMatDateAdapter, NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, Input, Output, EventEmitter, forwardRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, forwardRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatButtonModule } from '@angular/material/button';
@@ -121,7 +121,9 @@ export class BusinessactionsComponent implements AfterViewInit {
   public selectedOperand: any = '';
 
 
-  constructor() { }
+  constructor(
+    private cdr: ChangeDetectorRef
+  ) { }
 
   /**
    *  Initialization tasks or data fetching can be done here
@@ -164,6 +166,7 @@ export class BusinessactionsComponent implements AfterViewInit {
     // HANDLE FOR EDIT BY CHANGE VALUEf
     if (text === 'changeValue') {
       this.actionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
+      this.selectedOperand = '';
     }
 
     // HANDLING VALIDATION OR FILED ENABLE OR DISABLE
@@ -193,6 +196,7 @@ export class BusinessactionsComponent implements AfterViewInit {
       valueControl?.enable();
       this.isFieldDisabled ? this.removeValidators(valueControl) : this.addValidators(valueControl);
     }
+    this.cdr.detectChanges();
   }
 
   /**
@@ -363,6 +367,7 @@ export class BusinessactionsComponent implements AfterViewInit {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.actionForm?.get('operand')?.setValidators([Validators.pattern(pattern)]);
     }
+    this.cdr.detectChanges();
   }
 
   /**
