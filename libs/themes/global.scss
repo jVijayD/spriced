@@ -338,15 +338,13 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   border: 1px solid black;
   border-radius: 4px;
 }
-.mat-mdc-form-field .mdc-text-field--outlined .mdc-floating-label--float-above
-{
+.mat-mdc-form-field .mdc-text-field--outlined .mdc-floating-label--float-above {
   background: white;
 }
 .mdc-text-field--outlined.mdc-text-field--disabled .mdc-text-field__input {
   color: rgba(0, 0, 0, 0.87) !important;
 }
-.mat-mdc-option .mdc-list-item__primary-text
-{
+.mat-mdc-option .mdc-list-item__primary-text {
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
