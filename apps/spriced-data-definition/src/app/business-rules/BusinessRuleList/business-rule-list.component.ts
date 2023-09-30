@@ -264,10 +264,10 @@ export class BusinessRuleListComponent {
     const valueControl = this.conditionForm?.get('operand');
     const minValueControl = this.conditionForm?.get('min_value');
     const maxValueControl = this.conditionForm?.get('max_value');
-    this.selectedOperand = '';
     // HANDLE FOR EDIT BY CHANGE VALUE
     if (text === 'changeValue') {
       this.conditionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
+      this.selectedOperand = '';
     }
     if (['MUST_BE_BETWEEN', 'IS_BETWEEN', 'IS_NOT_BETWEEN'].includes(value)) {
       this.minValue = this.maxValue = true;

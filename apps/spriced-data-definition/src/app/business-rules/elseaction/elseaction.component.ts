@@ -158,6 +158,7 @@ export class ElseactionComponent {
     // HANDLE FOR EDIT BY CHANGE VALUEf
     if (text === 'changeValue') {
       this.actionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
+      this.selectedOperand = '';
     }
 
     // HANDLING VALIDATION OR FILED ENABLE OR DISABLE
