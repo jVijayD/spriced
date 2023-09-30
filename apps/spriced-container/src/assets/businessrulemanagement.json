@@ -1,19 +1,19 @@
 {
     "ruleTypes": [
         {
-            "name": "default value action",
+            "name": "default value",
             "value": "DEFAULT_VALUE_ACTION"
         },
         {
-            "name": "change value action",
+            "name": "change value",
             "value": "CHANGE_VALUE_ACTION"
         },
         {
-            "name": "validation action",
+            "name": "validation",
             "value": "VALIDATION_ACTION"
         },
         {
-            "name": "external action",
+            "name": "external",
             "value": "EXTERNAL_ACTION"
         },
         {
@@ -23,10 +23,6 @@
     ],
     "actions": {
         "DEFAULT_VALUE_ACTION": [
-            {
-                "value": "NONE",
-                "name": "none"
-            },
             {
                 "value": "DEFAULTS_TO",
                 "name": "defaults to"
@@ -50,6 +46,22 @@
             {
                 "value": "MUST_BE_EQUAL_TO",
                 "name": "must be equal to"
+            },
+            {
+                "value": "MUST_BE_GREATER_THAN",
+                "name": "must be greater than"
+            },
+            {
+                "value": "MUST_BE_GREATER_THAN_EQUAL",
+                "name": "must be greater than equals"
+            },
+            {
+                "value": "MUST_BE_LESS_THAN",
+                "name": "must be less than"
+            },
+            {
+                "value": "MUST_BE_LESS_THAN_EQUAL",
+                "name": "must be less than equal"
             }
         ],
         "EXTERNAL_ACTION": [
@@ -63,3 +75,5 @@
         ]
     }
 }
+
+

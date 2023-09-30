@@ -67,7 +67,7 @@
               icon="delete"
               text="Delete"
               title="Delete Member"
-              [disabled]="selectedItem == null || selectedItem == undefined"
+              [disabled]="selectedItem == null || selectedItem == undefined || disableSubmit"
               (actionClick)="onDelete()"
             ></sp-header-action>
 
@@ -84,6 +84,7 @@
               text="Add"
               title="Add"
               (click)="onClear()"
+              [disabled] ="disableSubmit"
             ></sp-header-action>
 
             <sp-header-action

@@ -45,15 +45,16 @@ export class ModelListComponent {
       canAutoResize: true,
       isSortable: true,
       isTreeColumn: true,
+      showTooltip: true,
+      tooltipLevel: 2,
+      tooltipTemplate: (row: any) => this.getAttributeTooltip(row)
     },
     {
-      column: "action",
-      name: "Action",
+      column: "description",
+      name: "Description",
       canAutoResize: true,
       isSortable: true,
       isTreeColumn: false,
-      action: true,
-      width: 100
     },
     {
       column: "updatedBy",
@@ -74,13 +75,7 @@ export class ModelListComponent {
       },
       width: 200
     },
-    {
-      column: "description",
-      name: "Description",
-      canAutoResize: true,
-      isSortable: true,
-      isTreeColumn: false,
-    },
+
 
   ];
   columnMode: ColumnMode = ColumnMode.force;
@@ -90,6 +85,40 @@ export class ModelListComponent {
   totalElements = 10000;
   rows: any[] = [];
   selectedItem: any = null;
+  dataTypesArray: any = [
+    {
+      name: 'Fixed Length String',
+      value: 'STRING_VAR'
+    },
+    {
+      name: 'Text',
+      value: 'TEXT'
+    },
+    {
+      name: 'Number',
+      value: 'INTEGER'
+    },
+    {
+      name: 'Decimal',
+      value: 'DECIMAL'
+    },
+    {
+      name: 'Auto',
+      value: 'AUTO'
+    },
+    {
+      name: 'Link',
+      value: 'LINK'
+    },
+    {
+      name: 'Date Time',
+      value: 'TIME_STAMP'
+    },
+    {
+      name: 'Boolean',
+      value: 'BOOLEAN'
+    },
+  ]
 
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
@@ -168,6 +197,19 @@ export class ModelListComponent {
       row.treeStatus = "collapsed";
       this.rows = [...this.rows];
     }
+  }
+
+  /**
+   * HANDLE THIS FUNCTION FOR GENERATE TOOLTIP TEXT
+   * @param attribute any
+   * @returns 
+   */
+  public getAttributeTooltip(attribute: any)
+  {
+    const dataType = this.dataTypesArray.find((item: any) => item.value === attribute.dataType);
+    const item = attribute.dataType === 'DECIMAL' ? `(0,${attribute.size})` : attribute.dataType === 'TIME_STAMP' ? attribute.formatter : ['BOOLEAN', 'LINK', 'AUTO'].includes(attribute.dataType) ? '' : attribute.size;
+    const attributeData = !!item && item !== '' ? `${dataType?.name}, ${item}` : dataType?.name;
+    return attributeData
   }
 
   onRefresh() {

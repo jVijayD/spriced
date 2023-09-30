@@ -143,7 +143,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.setFormData("", []);
     this.subscribeToFormEvents();
   }
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   subscribeToFormEvents() {
     this.subscriptions.push(
@@ -202,7 +202,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     });
 
     const criteria: Criteria = { ...this.currentCriteria, sorters: sorters };
-    this.loadEntityData(this.currentSelectedEntity as Entity, criteria);
+    this.loadEntityData(this.currentSelectedEntity as Entity, criteria, true);
   }
 
   onItemSelected(e: any) {
@@ -271,6 +271,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     dialogResult.afterClosed().subscribe((val) => {
       if (val) {
         this.query = dialogResult.componentInstance.data.query;
+        this.addDisplayNameInFilter(this.query);
         this.currentCriteria.filters = val;
         this.loadEntityData(
           this.currentSelectedEntity as Entity,
@@ -278,6 +279,25 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         );
       }
     });
+  }
+
+  /**
+   * HANDLE THIS FUNCTION FOR ADD DISPLAY NAME IN FILTER QUERY
+   * @param query any
+   */
+  public addDisplayNameInFilter(query: any) {
+    if (query.rules) {
+      query.rules.forEach((el: any) => {
+        const item: any = this.headers.find((elm: any) => elm.column === el.field);
+        if (el?.rules && el?.rules.length > 0) {
+          this.addDisplayNameInFilter(el); // Recursively process sub-rules
+        }
+        if (!!item) {
+          el.displayName = item.name;
+        }
+        return
+      });
+    }
   }
 
   public getToolTipTemplate(conditions: any): string {
@@ -295,7 +315,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       const lastItem = items.rules.length - 1;
       items.rules.forEach((rule: any, index: number) => {
         if (!rule.condition && !rule.rules) {
-          const field = rule?.field.replace(/_/g, " ");
+          const field = rule?.displayName;
           const value = !!rule?.value ? rule?.value : "";
           const condition = lastItem !== index ? items.condition : "";
           tooltipText += `<strong>${field}</strong> ${rule.operator} ${value} <strong>${condition}</strong> <br>`;
@@ -318,10 +338,13 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       const lastItem = items.rules.length - 1;
       items.rules.forEach((rule: any, index: number) => {
         if (!rule.condition && !rule.rules) {
-          const field = rule?.field.replace(/_/g, " ");
+          const field = rule?.displayName;
           const value = !!rule?.value ? rule?.value : "";
           const condition = lastItem !== index ? items.condition : "";
-          tooltipText += `<strong>${field}</strong> ${rule.operator} ${value} <strong>${condition}</strong><br>`;
+          tooltipText += `<strong>${field}</strong> ${rule.operator} ${value} <strong>${condition}</strong>`;
+          if (index < items.rules.length - 1) {
+            tooltipText += '<br>';
+          }
         }
         if (!!rule.condition && !!rule.rules) {
           tooltipText += `(`;
@@ -381,7 +404,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   onStatus() {
     const dialogResult = this.dialog.open(StatusComponent, {});
 
-    dialogResult.afterClosed().subscribe((val) => {});
+    dialogResult.afterClosed().subscribe((val) => { });
   }
 
   onSettings() {
@@ -552,7 +575,12 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     }
   }
 
-  private loadEntityData(entity: Entity, criteria: Criteria) {
+  private loadEntityData(entity: Entity, criteria: Criteria, columnSort?: boolean) {
+    if(!columnSort)
+    {
+      const sort: any = {direction: "DESC", property: "updated_date"};
+      criteria.sorters = [sort];
+    }
     this.currentCriteria = criteria;
     if (entity) {
       this.applyEntitySettings(entity);
@@ -586,7 +614,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       };
       this.headers.forEach((item, index) => {
         item.pinned = undefined;
-        if (index + 1 === entitySettings.freeze) {
+        if (index < entitySettings.freeze) {
           item.pinned = "left";
         }
       });

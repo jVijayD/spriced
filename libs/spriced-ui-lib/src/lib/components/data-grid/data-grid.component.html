@@ -51,7 +51,7 @@
         [width]="header.width || 0"
         [resizeable]="true"
         [sortable]="true"
-        [draggable]="true"
+        [draggable]="header.pinned === 'left' ? false : true"
         [canAutoResize]="header.canAutoResize || true"
         *ngIf="!header.hidden"
       >
@@ -61,13 +61,13 @@
           ngx-datatable-cell-template
         >
           <ng-container *ngIf="header?.isLink">
-            <mat-icon
-              class="cursor-pointer"
-              onclick="window.open(`${ isArray
-              ? this.renderData(row[i], header)
-              : this.renderData(getData(row, header), header)}`,'blank')"
-              >link</mat-icon
-            >
+          <mat-icon
+           class="cursor-pointer"
+            (click)="openLink(isArray 
+            ? renderData(row[i], header) 
+            : renderData(getData(row, header), header))"
+            >link</mat-icon>
+
           </ng-container>
           <ng-container *ngIf="!header?.isLink">
             <ng-container *ngIf="!header?.checkbox"

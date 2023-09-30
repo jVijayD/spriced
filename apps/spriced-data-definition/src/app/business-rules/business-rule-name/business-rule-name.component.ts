@@ -64,6 +64,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
   public attributeId: any;
   public entityName: any;
   public modelName: any;
+  public entities: any = [];
 
   // DEMO LIST CODE
   public get connectedBRDropListsIds(): string[] {
@@ -107,14 +108,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     const model_id = this.activeRoute?.snapshot?.queryParams?.['model_id'];
     this.previewField = !['', undefined, null].includes(previewRule);
     this.modelId = model_id;
-
-    /**
-     * Handling create rule when entity id is present
-     */
-    if (!!entity_id) {
-      this.entityId = entity_id;
-      this.patchEnumTypes(this.entityId);
-    }
+    this.entityId = entity_id;
 
     /**
      * Handling edit rule when rule id is present
@@ -123,9 +117,9 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       this.businessRuleService.getAllRulesById(ruleId).pipe(takeUntil(this.notifier$)).subscribe(async (res: any) => {
         this.entityId = res.entityId;
         this.rulesData = res;
-        this.patchEnumTypes(this.entityId);
       });
     }
+    this.patchEnumTypes(this.entityId);
 
     this.item = {
       value: { id: 'parent', subConditions: this.conditions },
@@ -152,17 +146,20 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       attributeList = entity.attributes;
       // Handle for nested attribute
       if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
+        this.entities = [];
         // Use Promise.all to wait for all promises to resolve
         await Promise.all(
           relatedRefreneceTableEntity.map(async (el: any) => {
-            const { entityData } = await this.getEntityById(el.referencedTableId);
-            const filteredAttributes = entityData?.attributes.filter((el: any) => el.type !== 'LOOKUP');
-            entityData.attributes = filteredAttributes.filter((attr: any) => !attr.systemAttribute);
-            await this.processNestedAttributes(entityData.attributes, el);
+            if (!(`entity_${el.referencedTableId}` in this.entities)) {
+              const { entityData } = await this.getEntityById(el.referencedTableId);
+              this.entities[`entity_${el.referencedTableId}`] = entityData;
+            }
+            this.entities[`entity_${el.referencedTableId}`].attributes = this.entities[`entity_${el.referencedTableId}`]?.attributes.filter((attr: any) => !attr.systemAttribute);
+            await this.processNestedAttributes(this.entities[`entity_${el.referencedTableId}`].attributes, el);
           })
         )
       }
-      
+
       attributeList = attributeList.filter((el: any) => !el.systemAttribute);
       this.conditionsData = {
         ...action,
@@ -172,9 +169,28 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         operands: this.transformObjectToKeyValueArray(operands),
       };
       this.conditionsData.ruleTypes = this.conditionsData?.ruleTypes.slice(0, 3);
-      this.conditionsData?.operators.splice(7, 12);
-      this.conditionsData.operators = this.conditionsData?.operators.filter((el: any) => el.value !== 'NONE')
-      this.patchForm(this.rulesData);
+
+      // Define the names of items to exclude
+      const excludedNames = [
+        "none",
+        "starts_with",
+        "does_not_start_with",
+        "ends_with",
+        "does_not_end_with",
+        "contains_pattern",
+        "does_not_contain_pattern",
+        "contains_subset",
+        "does_not_contain_subset",
+        "is_between",
+        "is_not_between"
+      ];
+
+      // Filter the array to exclude items with names in the excludedNames array
+      this.conditionsData.operators = this.conditionsData?.operators.filter((item: any) => !excludedNames.includes(item.name));
+
+      if (!!this.rulesData) {
+        this.patchForm(this.rulesData);
+      }
       const ruleType = this.myForm.get('group')?.value;
       this.handleRuleType(ruleType);
       this.loading = false;
@@ -346,7 +362,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
    * @param res any
    */
   public async patchForm(res: any) {
-    this.ruleId = res.id;
+    this.ruleId = res?.id;
     this.myForm = this.formbuilder.group({
       name: [res.name, Validators.required],
       priority: [res.priority, [Validators.required, Validators.min(1), Validators.max(1000)]],
@@ -401,14 +417,15 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
    * @returns 
    */
   public patchConditionAndActionForm(text: string, item: any): FormGroup {
-    const value = item?.operand ? item?.operand.split(',') : '';
+    const type = typeof item?.operand;
+    const value = type !== 'number' && item?.operand ? item?.operand.split(',') : item?.operand;
     const form: FormGroup = this.formbuilder.group({
       id: [this.generateRandomIds()],
       conditionType: item?.conditionType ? [item.conditionType, Validators.required] : ['', Validators.required],
       attributeId: item?.attributeId ? [item.attributeId, Validators.required] : ['', Validators.required],
       actionType: item?.actionType ? [item.actionType, Validators.required] : ['', Validators.required],
       operatorType: item?.operatorType ? [item.operatorType, Validators.required] : ['', Validators.required],
-      operand: item?.operand && !item?.operand?.max ? [item.operand, Validators.required] : ['', Validators.required],
+      operand: item?.operand?.toString() ? [item.operand, Validators.required] : ['', Validators.required],
       max_value: value && value[1] ? [value[1], Validators.required] : ['', Validators.required],
       min_value: value && value[0] ? [value[0], Validators.required] : ['', Validators.required],
       operandType: item?.operandType ? [item.operandType, Validators.required] : ['ATTRIBUTE', Validators.required],
@@ -572,23 +589,10 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
   // Common method to remove controls
   public removeControls(formGroup: FormGroup): void {
     const controlNames = [
-      'operandName',
-      'operandDisplayName',
-      'parentOperandId',
-      'parentOperandName',
-      'parentOperandDisplayName',
-      'operandTableName',
-      'attributeName',
-      'attributeDisplayName',
-      'parentAttributeId',
-      'parentAttributeName',
-      'parentAttributeDisplayName',
-      'attributeTableName',
       'conditionType',
       'operatorType',
-      'operandType',
       'subConditions',
-      'subConditionType',
+      'subConditionType'
     ];
 
     controlNames.forEach((controlName) => {
@@ -824,6 +828,42 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       : parentItem.subConditions.some((item: any) => this.hasBRChild(item, childItem));
   }
 
+      /**
+   * HANDLE THIS FUNCTION FOR FIND THE ATTRIBUTE ARRAY
+   * @param id string
+   * @param array any
+   * @returns 
+   */
+      private findAttributeInArray(id: any, array: any[]): any {
+        return array ? array.find((elm: any) => elm.id === id) : null;
+      }
+  
+    /**
+     * HANDLE THIS FUNCTION FOR FIND THE ATTRIBUTE BY ID
+     * @param id string
+     * @returns 
+     */
+    private findAttributeById(id: any): any {
+      if (id === '') {
+        return null;
+      }
+  
+      let attributeItem: any = null;
+  
+      // Look for the attribute directly in the attributes array
+      attributeItem = this.findAttributeInArray(id, this.conditionsData?.attributes);
+  
+      // If not found, search within nested attributes
+      if (!attributeItem) {
+        this.conditionsData?.attributes.some((el: any) => {
+          attributeItem = this.findAttributeInArray(id, el?.attributes);
+          return !!attributeItem;
+        });
+      }
+  
+      return attributeItem;
+    }  
+
   /**
    * HANDLE CONDITIONS AND SUBCONDITIONS VALUES
    * @param conditions any
@@ -831,12 +871,16 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
   public conditionAndSubcondition(conditions: any) {
     conditions.forEach((condition: any) => {
       condition.operand = condition.operandType === 'BLANK' ? '' : condition.operand;
-      const attribute = this.conditionsData?.attributes.find((el: any) => el.id === condition.attributeId);
+      const attribute = this.findAttributeById(condition.attributeId);
       if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute?.dataType)) {
         condition.operand = moment(condition.operand).toISOString();
         condition.min_value = moment(condition.min_value).toISOString();
         condition.max_value = moment(condition.max_value).toISOString();
       }
+      if(['DECIMAL', 'INTEGER'].includes(attribute?.dataType) && !!condition?.operand && condition?.operand !== '')
+        {
+          condition.operand = +condition.operand;
+        }
       if (['MUST_BE_BETWEEN', 'IS_BETWEEN', 'IS_NOT_BETWEEN'].includes(condition.operatorType)) {
         condition.operand = `${condition.min_value},${condition.max_value}`;
       } else if (['NONE'].includes(condition?.operatorType)) {
@@ -879,11 +923,15 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     Object.entries(dataItem.conditionalAction).map((action: any) => {
       action[1].forEach((item: any) => {
         item.actionGroup = dataItem.group;
-        const attribute = this.conditionsData?.attributes.find((el: any) => el.id === item.attributeId);
-        if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute.dataType)) {
+        const attribute = this.findAttributeById(item.attributeId);
+        if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute?.dataType)) {
           item.operand = moment(item.operand).toISOString();
           item.min_value = moment(item.min_value).toISOString();
           item.max_value = moment(item.max_value).toISOString();
+        }
+        if(['DECIMAL', 'INTEGER'].includes(attribute?.dataType) && !!item?.operand && item?.operand !== '')
+        {
+          item.operand = +item.operand;
         }
         if (item?.actionType === 'MUST_BE_BETWEEN') {
           item.operand = `${item.min_value},${item.max_value}`;

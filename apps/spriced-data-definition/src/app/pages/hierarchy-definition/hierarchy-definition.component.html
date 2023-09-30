@@ -1,0 +1,13 @@
+<mat-tab-group #HierarchytabGroup mat-stretch-tabs="false" 
+dynamicHeight="true" animationDuration="3"
+ headerPosition="above"
+  mat-align-tabs="start" (selectedTabChange)="onTabSelChange($event)"
+   [selectedIndex]="selectedTabIndex" class="flex flex-col flex-grow gap-5  h-full w-full"
+    color="primary">
+  <mat-tab label="View"  class="flex flex-grow p-5 h-full w-full">
+    <app-hierarchy-view-tab #HierarchyViewTabComponent [modelList]="modelList" />
+  </mat-tab>
+  <mat-tab label="Add/Edit" class="flex flex-grow p-5 h-full w-full">
+    <app-hierarchy-new-tab [selectedHierarchy]="selectedHierarchy" #HierarchyNewTabComponent [modelList]="modelList" />
+  </mat-tab>
+</mat-tab-group>

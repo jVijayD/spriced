@@ -82,9 +82,14 @@ export class ModelAddComponent {
           validator: Validators.pattern('^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$'),
         },
         {
+          name: "minlength",
+          message: "Min length must be greater than 3.",
+          validator: Validators.minLength(3),
+        },
+        {
           name: "maxlength",
           message: "Max length should be 100.",
-          validator: Validators.maxLength(100),
+          validator: Validators.maxLength(100), 
         },
       ],
     },
@@ -106,6 +111,11 @@ export class ModelAddComponent {
           name: "pattern",
           message: "Invalid Display Name",
           validator: Validators.pattern('^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$'),
+        },
+        {
+          name: "minlength",
+          message: "Min length must be greater than 3.",
+          validator: Validators.minLength(3),
         },
         {
           name: "maxlength",
@@ -146,7 +156,7 @@ export class ModelAddComponent {
           },
           error: (err: any) => {
             if (err.error.errorCode == "DB_UK-008") {
-              this.snackbarService.error("Model Already Exists.");
+              this.snackbarService.error("Model Already Exists");
             } else {
               this.snackbarService.error("Model Creation Failed.");
             }
@@ -160,7 +170,12 @@ export class ModelAddComponent {
             this.onClose({ data: results, action: this.data.action });
           },
           error: (err: any) => {
+            if (err.error.errorCode == "DB_UK-008") {
+              this.snackbarService.error("Model Already Exists.");
+            }
+            else{
             this.snackbarService.error("Update Model  Failed.");
+            }
           },
         });
       }

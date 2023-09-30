@@ -18,5 +18,28 @@
 }
 
 .mat-mdc-raised-button:not(:disabled) {
-    margin-top: 20px;
+    margin-top: 32px;
+}
+
+.disableMenu {
+    pointer-events: none;
+}
+
+.radio-groups {
+    mat-radio-button:first-child {
+        margin-left: 0 !important;
+    }
+
+    mat-radio-button {
+        margin-left: 4px;
+
+        .mdc-form-field .mdc-label {
+            font-size: 12px;
+        }
+    }
+}
+
+.selected-item {
+    background-color: rgba(0, 0, 0, 0.04);
+    color: #c4312b;
 }

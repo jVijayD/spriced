@@ -64,6 +64,7 @@ export interface Attribute {
   defaultValue?: any;
   referencedTable?: string;
   referencedTableName?: string;
+  referencedTableDisplayName?: string;
   referencedTableId?: string | number;
   businessIdAppender?: string;
   formatter?: string;

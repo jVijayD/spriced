@@ -18,6 +18,9 @@ import { Criteria, Entity } from "@spriced-frontend/spriced-common-lib";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import { EntityDataService } from "../../../services/entity-data.service";
 import * as moment from "moment";
+import { MatFormField, MatFormFieldModule, MatLabel } from "@angular/material/form-field";
+import { MatButtonModule } from "@angular/material/button";
+import { MatInputModule } from "@angular/material/input";
 // import { SettingsService } from "../../../components/settingsPopUp/service/settings.service";
 
 @Component({
@@ -29,6 +32,9 @@ import * as moment from "moment";
     DynamicFormModule,
     MatIconModule,
     DataGridComponent,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatInputModule,
   ],
   providers: [
     EntityDataService,
@@ -43,7 +49,20 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   /*
 
 */
-
+annotations:any[]=[
+  {
+  name:'team1',
+  message:"changes by team 1"
+},
+{
+  name:'team2',
+  message:"changes by team 1"
+},
+{
+  name:'team3',
+  message:"changes by team 1"
+}
+]
   headers: Header[] = [
     {
       canAutoResize: true,
@@ -122,11 +141,13 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       value: this.currentSelectedEntity.name,
       joinType: "NONE",
       operatorType: "EQUALS",
+      datatype:"string"
     });
     this.loadAuditData();
   }
 
   onPaginate(e: Paginate) {
+    debugger
     this.currentCriteria = {
       ...this.currentCriteria,
       pager: {
@@ -135,6 +156,10 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       },
     };
     this.loadAuditData();
+  }
+  
+  onItemSelected(e:any){
+    this.selectedItem = e;
   }
 
   onSort(e: any) {
@@ -150,6 +175,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
           next: (page: any) => {
             this.rows = page.content;
             this.totalElements = page.totalElements;
+            this.onItemSelected(this.rows[0]);
           },
           error: (err: any) => {
             this.rows = [];
@@ -162,7 +188,9 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   onClose(): void {
     this.dialogRef.close(null);
   }
-
+   onAdd(value:any){
+debugger
+   }
   onSubmit(data: FormGroup<any>) {
     if (data.valid) {
       this.dialogRef.close(data.value);

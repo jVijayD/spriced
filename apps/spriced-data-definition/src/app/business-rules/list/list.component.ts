@@ -490,7 +490,8 @@ export class ListComponent implements OnInit, OnDestroy {
     if (id) {
       const entity = this.entities.find((item: any) => item.id == id);
       this.attributes = [];
-      this.domainAttributes = entity.attributes;
+      const attributeList = entity.attributes.filter((el: any) => !el.systemAttribute);
+      this.domainAttributes = attributeList;
       const relatedRefreneceTableEntity = entity.attributes.filter((el: any) => !!el.referencedTableId);
       // Handle for nested attribute
       if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
@@ -498,7 +499,8 @@ export class ListComponent implements OnInit, OnDestroy {
         await Promise.all(
           relatedRefreneceTableEntity.map(async (el: any) => {
             const { entityData } = await this.getEntityById(el.referencedTableId);
-            const nestedProcessedAttributes = this.processNestedAttributes(entityData.attributes, el);
+            const attributes = entityData.attributes.filter((el: any) => !el.systemAttribute);
+            const nestedProcessedAttributes = this.processNestedAttributes(attributes, el);
             this.domainAttributes.push(...nestedProcessedAttributes);
           })
         )

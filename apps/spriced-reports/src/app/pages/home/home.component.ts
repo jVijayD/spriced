@@ -67,6 +67,30 @@ export class HomeComponent implements OnInit {
         name: "Brazil OEM PL From Price List",
         id: "a10c808d-3f40-45ef-b400-9e49cf605946",
       },
+      {
+        name: "MDS Arbitrage Report",
+        id: "268047c0-3e26-498a-9eeb-f109ae83fcc1",
+      },
+      {
+        name: "Brazil Parts Price List from Calculations",
+        id: "bf101d6c-5547-496a-9830-38196cc37e87",
+      },
+      {
+        name: "GOMS Kit Configuration Suggestions",
+        id: "d2b10da3-517d-4234-8cfa-8d6bcf6f1330",
+      },
+      {
+        name: "Base Price Outbound",
+        id: "130ad012-7a70-4976-b5d5-189f62328024",
+      },
+      {
+        name: "PVC Outbound",
+        id: "2068e27f-bdea-40ed-ad01-e84d69d813dd",
+      },
+      {
+        name: "Pricing Action History",
+        id: "28c886dd-f695-456c-87a4-8976224562f1",
+      },
     ];
   }
 }

@@ -2,3 +2,21 @@
 // {
 //     height: calc(100vh - 12rem);
 // }
+
+::ng-deep .cdk-overlay-pane .custom-tooltip .mdc-tooltip__surface{
+    background-color: #fff;
+    color: #000;
+    border: 1px solid;
+    border-radius: 0px;
+    width: auto;
+    max-width: 230px;
+    min-width: 5px;
+    font-size: 9px;
+    padding: 0px;
+    padding-left: 3px;
+    padding-right: 3px;
+    display: flex;
+    align-items: center;
+    height:auto;
+    min-height: 10px;
+  }

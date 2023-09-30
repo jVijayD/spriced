@@ -171,9 +171,10 @@ export class BusinessRuleListComponent {
     const parentAttributeId = this.getValue('parentAttributeId');
     const parentOperandId = this.getValue('parentOperandId');
     
+    this.setAttributeNamesById(attributeId, operand);
     this.handleValue(operandType);
-    this.handleValueChange(value);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
+    this.handleValueChange(value);
   }
 
   // Helper function to get values from conditionForm
@@ -197,7 +198,7 @@ export class BusinessRuleListComponent {
       this.conditionForm?.get('parentOperandId')?.setValue(parentAtt.id ?? '');
       this.conditionForm?.get('parentOperandDisplayName')?.setValue(parentAtt.displayName ?? '');
       this.conditionForm?.get('parentOperandName')?.setValue(parentAtt.name ?? '');
-      this.conditionForm?.get('operandTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
+      this.conditionForm?.get('operandTableName')?.setValue(parentAtt.referencedTable ?? '');
     }
     else {
       const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
@@ -213,7 +214,7 @@ export class BusinessRuleListComponent {
       this.conditionForm?.get('parentAttributeId')?.setValue(parentAtt.id ?? '');
       this.conditionForm?.get('parentAttributeName')?.setValue(parentAtt.name ?? '');
       this.conditionForm?.get('parentAttributeDisplayName')?.setValue(parentAtt.displayName ?? '');
-      this.conditionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
+      this.conditionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTable ?? '');
       this.handleAttributes(item.id, 'changeAttribute');
     }
   }
@@ -232,7 +233,8 @@ export class BusinessRuleListComponent {
       this.disableFormControl();
     }
     if (this.isFieldDisabled) {
-      this.conditionForm?.get('operand')?.disable();
+      const valueControl = this.conditionForm?.get('operand');
+      this.removeValidators(valueControl);
     }
   }
 
@@ -273,13 +275,15 @@ export class BusinessRuleListComponent {
 
       minValueControl?.enable();
       maxValueControl?.enable();
-      valueControl?.disable();
+      this.removeValidators(valueControl);
 
     }
-    else if (['IS_NULL','IS_NOT_NULL'].includes(value)) {
-      this.conditionForm?.get('operandType').setValue('CONSTANT');
+    else if (['IS_NULL','IS_NOT_NULL', 'HAS_CHANGED'].includes(value)) {
+      const operandType = this.conditionForm?.get('operandType')?.value;
+      this.conditionForm?.get('operandType').setValue(operandType);
+      this.disableFormControl();
+      this.removeValidators(valueControl);
       this.value = this.maxValue = this.minValue = false;
-      valueControl?.disable();
       minValueControl?.disable();
       maxValueControl?.disable();
     }
@@ -289,7 +293,36 @@ export class BusinessRuleListComponent {
 
       minValueControl?.disable();
       maxValueControl?.disable();
-      this.isFieldDisabled ? valueControl?.disable() : valueControl?.enable();
+      this.isFieldDisabled ? this.removeValidators(valueControl) : this.addValidators(valueControl);
+    }
+  }
+
+  public removeValidators(valueControl: any)
+  {
+    valueControl.clearValidators();
+    valueControl.updateValueAndValidity();
+  }
+
+  public addValidators(valueControl: any)
+  {
+    valueControl.setValidators(Validators.required);
+    valueControl.updateValueAndValidity();
+  }
+
+  public setAttributeNamesById(attributeId: any, operandAttribute: any)
+  {
+    const attribute = this.findAttributeById(attributeId);
+    const operandAtt = this.findAttributeById(operandAttribute);
+    // !!operandAtt ? this.conditionForm?.get('operandType')?.setValue('ATTRIBUTE') : this.conditionForm?.get('operandType')?.setValue('CONSTANT');
+    if(!!attribute)
+    {
+      this.conditionForm?.get('attributeDisplayName')?.setValue(attribute.displayName);
+      this.conditionForm?.get('attributeName')?.setValue(attribute.name);
+    }
+    if(!!operandAtt)
+    {
+      this.conditionForm?.get('operandName')?.setValue(operandAtt.name);
+      this.conditionForm?.get('operandDisplayName')?.setValue(operandAtt.displayName);
     }
   }
 
@@ -299,6 +332,7 @@ export class BusinessRuleListComponent {
    */
   public handleAttributes(id: any, text?: string) {
     let attribute = this.findAttributeInArray(id, this.dataRules?.attributes);
+    const operatorType = this.getValue('operatorType');
     // If not found, search within nested attributes
     if (!attribute) {
       this.dataRules?.attributes.some((el: any) => {
@@ -307,14 +341,17 @@ export class BusinessRuleListComponent {
       });
     }
     this.dataType = attribute?.dataType ? attribute?.dataType : 'AUTO';
+    const decimalValueSize = attribute?.size;
+    this.conditionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern('')]);
     this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
     if (text === 'changeAttribute') {
       this.conditionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
     }
     if (['DECIMAL', 'FLOAT', 'LINK'].includes(this.dataType)) {
-      const pattern = this.dataType === 'DECIMAL' ? /^(\d{1,9}\.\d{1,})$/ : this.dataType === 'FLOAT' ? /^(\d{1,5}\.\d{1,})$/ : this.dataType === 'LINK' ? /^(ftp|http|https):\/\/[^ "]+$/i : '';
-      this.conditionForm?.get('operand')!.setValidators([Validators.required, Validators.pattern(pattern)]);
+      const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
+      this.conditionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
+    this.handleValueChange(operatorType, 'changeValue');
   }
 
   /**
@@ -341,10 +378,11 @@ export class BusinessRuleListComponent {
     }
 
     this.dataType = attribute?.dataType || 'AUTO';
+    const decimalValueSize = attribute?.size;
     this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
 
     if (['DECIMAL', 'FLOAT', 'LINK'].includes(this.dataType)) {
-      const pattern = this.getValidationPatternForDataType(this.dataType);
+      const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.conditionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
   }
@@ -392,7 +430,7 @@ export class BusinessRuleListComponent {
    * @returns 
    */
   private buildSelectedAttribute(attribute: any, parentAttribute: any): string {
-    return !parentAttribute && !attribute ? '' : !parentAttribute ? attribute?.displayName.trim() : `${parentAttribute?.displayName.trim()}.${attribute.displayName}`;
+    return !!parentAttribute && !!attribute ? `${parentAttribute?.displayName.trim()}.${attribute.displayName}` : !parentAttribute ? attribute?.displayName.trim() : '';
   }
 
   /**
@@ -402,20 +440,35 @@ export class BusinessRuleListComponent {
    * @returns 
    */
   private buildSelectedOperand(operand: any, parentOperand: any): string {
-    return !parentOperand && !operand ? '' : !parentOperand ? operand?.displayName.trim() : `${parentOperand?.displayName.trim()}.${operand.displayName}`;
+    return !!parentOperand && !!operand ? `${parentOperand?.displayName.trim()}.${operand.displayName}` : !parentOperand ? operand?.displayName.trim() : '';
   }
 
-  private getValidationPatternForDataType(dataType: string): RegExp {
+  /**
+   * HANDLE THIS FUNCTION FOR INPUT PATTERN
+   * @param dataType 
+   * @param decimalSize 
+   * @returns 
+   */
+  private getValidationPatternForDataType(dataType: string, decimalSize?: number): RegExp {
+    const number = decimalSize || 1; // Use decimalSize if provided, or default to 1
+    let pattern = '';
+  
     switch (dataType) {
       case 'DECIMAL':
-        return /^(\d{1,9}\.\d{1,})$/;
+        pattern = `^\\d{1,9}\\.\\d{${number},}$`;
+        break;
       case 'FLOAT':
-        return /^(\d{1,5}\.\d{1,})$/;
+        pattern = `^\\d{1,5}\\.\\d{${number},}$`;
+        break;
       case 'LINK':
-        return /^(ftp|http|https):\/\/[^ "]+$/i;
+        pattern = '^(ftp|http|https):\\/\\/[^ "]+$';
+        break;
       default:
-        return /./; // Default pattern for other data types
+        pattern = '.';
+        break;
     }
+  
+    return new RegExp(pattern);
   }
 
 
@@ -450,7 +503,6 @@ export class BusinessRuleListComponent {
   public get parentItemId(): string {
     return this.dragDisabled ? '' : this.parentItem?.value!.id;
   }
-
 
   public capitalizeOperatorType(value: any): string {
     return value.replace(/_/g, ' ').replace(/\w\S*/g, (word: string) => {

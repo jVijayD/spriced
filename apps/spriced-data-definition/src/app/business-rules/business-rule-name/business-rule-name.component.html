@@ -99,7 +99,7 @@
             *ngIf="(!previewField && conditions.value.length === 0 || conditions.value.length > 0) || (previewField && conditions.value.length > 0)">
             <!-- ADD CONDITIONS ROW -->
             <div class="heading mt-2 w-full flex justify-between conditions">
-                <h2 class="font-medium"> Conditions </h2>
+                <h2 class="font-medium"> If </h2>
                 <button *ngIf="!previewField" mat-raised-button color="primary" class="p-4"
                     (click)="handleAddNewRow('condition'); $event.preventDefault();">Add
                     new</button>
@@ -125,7 +125,7 @@
             *ngIf="(!previewField && actions.value.length === 0 || actions.value.length > 0) || (previewField && actions.value.length > 0)">
             <!-- ADD ACTIONS ROW -->
             <div class="heading mt-8 w-full flex justify-between actions">
-                <h2 class="font-medium"> If Action </h2>
+                <h2 class="font-medium"> Then </h2>
                 <button mat-raised-button *ngIf="!previewField" color="primary" class="p-4"
                     (click)="handleAddNewRow('action'); $event.preventDefault();">Add new</button>
             </div>
@@ -159,7 +159,7 @@
             *ngIf="(!previewField && elseAction.value.length === 0 || elseAction.value.length > 0) || (previewField && elseAction.value.length > 0)">
             <!-- ADD IF ACTIONS ROW -->
             <div class="heading mt-16 w-full flex justify-between actions">
-                <h2 class="font-medium"> Else Action </h2>
+                <h2 class="font-medium"> Else </h2>
                 <button *ngIf="!previewField" mat-raised-button color="primary" class="p-4"
                     (click)="handleAddNewRow('elseaction'); $event.preventDefault();">Add new</button>
             </div>
