@@ -42,6 +42,7 @@ import { DateFormatDirectiveYYYY__MM__DD } from "./directives/dateformat-yyyy-MM
 import { DateFormatDirectiveYYYYMMDD } from "./directives/.dateformat-yyyymmdd.directive";
 import { LookupDialogComponent } from "./sub-components/lookup-select/lookup-dialog/lookup-dialog/lookup-dialog.component";
 import { NgxDatatableModule } from "@swimlane/ngx-datatable";
+import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 
 @NgModule({
   declarations: [
@@ -93,7 +94,8 @@ import { NgxDatatableModule } from "@swimlane/ngx-datatable";
     MatRadioModule,
     MatSelectModule,
     MatTooltipModule,
-    NgxDatatableModule
+    NgxDatatableModule,
+    NgxMatSelectSearchModule,
   ],
   exports: [
     InputComponent,
