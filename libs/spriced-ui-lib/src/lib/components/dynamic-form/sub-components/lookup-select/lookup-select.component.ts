@@ -9,7 +9,11 @@ import {
   forwardRef,
 } from "@angular/core";
 import { BaseDataComponent } from "../../base-data.component";
-import { DataControl, GenericControl, LookupSelectControl } from "../../dynamic-form.types";
+import {
+  DataControl,
+  GenericControl,
+  LookupSelectControl,
+} from "../../dynamic-form.types";
 import {
   DynamicFormService,
   EventElement,
@@ -17,6 +21,7 @@ import {
 import { NG_VALUE_ACCESSOR } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { LookupDialogComponent } from "./lookup-dialog/lookup-dialog/lookup-dialog.component";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "sp-lookup-select",
@@ -35,10 +40,13 @@ export class LookupSelectComponent
   extends BaseDataComponent
   implements OnInit, OnDestroy
 {
-  public prop:string = 'code|name';
-  pageSize:number = 30;
-  displayValue:any='';
-  lookupDataId:any;
+  public prop: string = "code|name";
+  pageSize: number = 30;
+  displayValue: any = "";
+  lookupDataId: any;
+  filteredSource: any = [];
+  dialogReference: any = null;
+  subscriptions: Subscription[] = [];
   @Input()
   set control(selectControl: GenericControl) {
     this._control = selectControl;
@@ -59,10 +67,22 @@ export class LookupSelectComponent
     //this._control = _defaultSelect;
   }
   ngOnDestroy(): void {
+    this.subscriptions.forEach((item) => item.unsubscribe());
     this.onDestroy();
   }
   ngOnInit(): void {
     this.setFormControl(this.injector);
+    this.subscriptions.push(
+      this.dataPopulation$.subscribe((items) => {
+        this.filteredSource = items;
+        if (this.dialogReference) {
+          this.dialogReference.componentInstance.upDatedData({
+            value: items,
+            total: this.count,
+          });
+        }
+      })
+    );
   }
 
   onClearClick(): void {
@@ -79,6 +99,25 @@ export class LookupSelectComponent
     this.dynamicService.publishEvent(event);
   }
 
+  filterSource(text: string) {
+    const lookupControl = this._control as LookupSelectControl;
+    const props = lookupControl.displayProp?.split("|") || [];
+    this.filteredSource = this.source.filter((item) => {
+      let retValue = false;
+      props.forEach((name) => {
+        if (item.hasOwnProperty(name)) {
+          retValue =
+            retValue ||
+            item[name]
+              .toString()
+              .toLowerCase()
+              .indexOf(text.toLowerCase().trim()) != -1;
+        }
+      });
+      return retValue;
+    });
+  }
+
   onClick() {
     //this.populateSourceOnDemand();
   }
@@ -90,32 +129,31 @@ export class LookupSelectComponent
   }
 
   public getSelectedDisplayProp() {
-    this.lookupDataId !== this.value? this.displayValue ='':'';
-    if(this.displayValue==''){
-    const lookupControl = this._control as LookupSelectControl;
-    const props = lookupControl.displayProp?.split("|") || [];
-    const option: any = {};
-    for (let key of this.dynamicFormService.getExtraData().keys()) {
-      if (key.startsWith(this._control.name)) {
-        option[key.replace(`${this._control.name}_`, "")] =
-          this.dynamicFormService.getExtraData().get(key);
+    this.lookupDataId !== this.value ? (this.displayValue = "") : "";
+    if (this.displayValue == "") {
+      const lookupControl = this._control as LookupSelectControl;
+      const props = lookupControl.displayProp?.split("|") || [];
+      const option: any = {};
+      for (let key of this.dynamicFormService.getExtraData().keys()) {
+        if (key.startsWith(this._control.name)) {
+          option[key.replace(`${this._control.name}_`, "")] =
+            this.dynamicFormService.getExtraData().get(key);
+        }
       }
+      return props.reduce((prev, cur) => {
+        return prev === "-##"
+          ? option[cur]
+          : `${prev == null ? "" : prev} ${this.renderDataWithCurlyBrace(
+              option[cur]
+            )}`;
+      }, "-##");
+    } else {
+      return this.displayValue;
     }
-     return props.reduce((prev, cur) => {
-      return prev === "-##"
-        ? option[cur]
-        : `${prev == null ? "" : prev} ${this.renderDataWithCurlyBrace(
-            option[cur]
-          )}`;
-    }, "-##");
   }
-   else {
-    return this.displayValue;
-  }
-}
 
   public getDisplayProp(option: any, prop: string) {
-    const lookupControl = this._control as LookupSelectControl
+    const lookupControl = this._control as LookupSelectControl;
     const props = lookupControl.displayProp?.split("|") || [];
     return props.reduce((prev, cur) => {
       return prev === "-##"
@@ -127,32 +165,39 @@ export class LookupSelectComponent
   }
   openPopup(): void {
     const dialogRef = this.dialog.open(LookupDialogComponent, {
-      width: '700px',
-      height: '620px',
-      data:{value:this.source,total:this.count,pageSize:this.pageSize},
-      hasBackdrop:false
+      width: "700px",
+      height: "620px",
+      data: { value: this.source, total: this.count, pageSize: this.pageSize },
+      hasBackdrop: false,
     });
 
-    dialogRef.afterClosed().subscribe(({data}:any) => {
-     this.writeValue(data.id);
-     this.lookupDataId = data.id
-     this.displayValue = this.getDisplayProp(data,this.prop);
+    dialogRef.afterClosed().subscribe(({ data }: any) => {
+      this.writeValue(data.id);
+      this.lookupDataId = data.id;
+      this.displayValue = this.getDisplayProp(data, this.prop);
+      this.dialogReference = null;
     });
-    dialogRef.componentInstance.dialogEvent$.subscribe((pageNumber:any) => {
-    this.nextPage(pageNumber,dialogRef,this.pageSize);
-  })
+
+    dialogRef.componentInstance.dialogEvent$.subscribe((pageNumber: any) => {
+      this.nextPage(pageNumber, dialogRef, this.pageSize);
+    });
   }
-  
-   nextPage(pageNumber:number=0,dialogRef:any,pageSize:number){
+
+  nextPage(pageNumber: number = 0, dialogRef: any, pageSize: number) {
     let controlData = this.control as DataControl;
-    const [id]  = controlData.data.api?.params;
-    controlData.data.api && (controlData.data.api.params = [id, pageNumber,pageSize]);
+    const [id] = controlData.data.api?.params;
+    controlData.data.api &&
+      (controlData.data.api.params = [id, pageNumber, pageSize]);
     this.populateSource();
-    setTimeout(()=>{
-      dialogRef.componentInstance.upDatedData({ value: this.source, total: this.count });
-    },100);
-   }
-  
+    //TO DO: Why we need set timeout
+    // setTimeout(() => {
+    //   dialogRef.componentInstance.upDatedData({
+    //     value: this.source,
+    //     total: this.count,
+    //   });
+    // }, 100);
+  }
+
   private renderDataWithCurlyBrace(data: any) {
     return data == null ? "" : "{" + data + "}";
   }

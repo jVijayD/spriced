@@ -1,10 +1,10 @@
 import {
   Component,
-  NgModule,
   OnDestroy,
   OnInit,
   Output,
   EventEmitter,
+  ViewEncapsulation,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
@@ -12,6 +12,7 @@ import { FormsModule } from "@angular/forms";
 import { MatIconModule } from "@angular/material/icon";
 import { MatSelectChange, MatSelectModule } from "@angular/material/select";
 import { ActivatedRoute } from "@angular/router";
+import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 import {
   ModelService,
   EntityService,
@@ -29,14 +30,18 @@ import { Subscription } from "rxjs";
     FormsModule,
     MatIconModule,
     MatSelectModule,
+    NgxMatSelectSearchModule,
   ],
   templateUrl: "./entity-select.component.html",
   styleUrls: ["./entity-select.component.scss"],
+  //encapsulation: ViewEncapsulation.None,
 })
 export class EntitySelectComponent implements OnInit, OnDestroy {
   subscriptions: Subscription[] = [];
   models: Model[] = [];
+  filteredModels: Model[] = [];
   entities: Entity[] = [];
+  filteredEntities: Entity[] = [];
 
   selectedModelValue: string | number = "";
   selectedEntity: string | Entity = "";
@@ -65,6 +70,7 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
       this.modelService.loadAllModels().subscribe({
         next: (items: Model[]) => {
           this.models = items;
+          this.filteredModels = items;
           if (items.length) {
             this.selectedModelValue = modelId || items[0].id;
             this.loadEntities(this.selectedModelValue, entityId);
@@ -72,6 +78,7 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.models = [];
+          this.filteredModels = [];
         },
       })
     );
@@ -84,6 +91,7 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
         next: (items) => {
           if (items) {
             this.entities = items;
+            this.filteredEntities = items;
             if (this.entities.length) {
               // this.selectedEntity =
               //   this.entities.find((item) => item.id === entityId) ||
@@ -97,9 +105,32 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.entities = [];
+          this.filteredEntities = [];
         },
       })
     );
+  }
+
+  filterModelSelection(text: string) {
+    this.filteredModels = this.models.filter((item) => {
+      return (
+        item.displayName
+          .trim()
+          .toLowerCase()
+          .indexOf(text.trim().toLowerCase()) != -1
+      );
+    });
+  }
+
+  filterEntitySelection(text: string) {
+    this.filteredEntities = this.entities.filter((item) => {
+      return (
+        item.displayName
+          .trim()
+          .toLowerCase()
+          .indexOf(text.trim().toLowerCase()) != -1
+      );
+    });
   }
 
   onModelSelectionChange(e: MatSelectChange) {
