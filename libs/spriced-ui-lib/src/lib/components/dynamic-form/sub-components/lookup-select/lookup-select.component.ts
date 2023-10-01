@@ -45,6 +45,7 @@ export class LookupSelectComponent
   displayValue: any = "";
   lookupDataId: any;
   filteredSource: any = [];
+  dialogReference: any = null;
   subscriptions: Subscription[] = [];
   @Input()
   set control(selectControl: GenericControl) {
@@ -74,6 +75,12 @@ export class LookupSelectComponent
     this.subscriptions.push(
       this.dataPopulation$.subscribe((items) => {
         this.filteredSource = items;
+        if (this.dialogReference) {
+          this.dialogReference.componentInstance.upDatedData({
+            value: items,
+            total: this.count,
+          });
+        }
       })
     );
   }
@@ -168,7 +175,9 @@ export class LookupSelectComponent
       this.writeValue(data.id);
       this.lookupDataId = data.id;
       this.displayValue = this.getDisplayProp(data, this.prop);
+      this.dialogReference = null;
     });
+
     dialogRef.componentInstance.dialogEvent$.subscribe((pageNumber: any) => {
       this.nextPage(pageNumber, dialogRef, this.pageSize);
     });
@@ -181,12 +190,12 @@ export class LookupSelectComponent
       (controlData.data.api.params = [id, pageNumber, pageSize]);
     this.populateSource();
     //TO DO: Why we need set timeout
-    setTimeout(() => {
-      dialogRef.componentInstance.upDatedData({
-        value: this.source,
-        total: this.count,
-      });
-    }, 100);
+    // setTimeout(() => {
+    //   dialogRef.componentInstance.upDatedData({
+    //     value: this.source,
+    //     total: this.count,
+    //   });
+    // }, 100);
   }
 
   private renderDataWithCurlyBrace(data: any) {
