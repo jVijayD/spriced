@@ -872,7 +872,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     conditions.forEach((condition: any) => {
       condition.operand = condition.operandType === 'BLANK' ? '' : condition.operand;
       const attribute = this.findAttributeById(condition.attributeId);
-      if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute?.dataType)) {
+      if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute?.dataType) && condition?.operandType === 'CONSTANT') {
         condition.operand = moment(condition.operand).toISOString();
         condition.min_value = moment(condition.min_value).toISOString();
         condition.max_value = moment(condition.max_value).toISOString();
@@ -881,7 +881,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         {
           condition.operand = +condition.operand;
         }
-      if (['MUST_BE_BETWEEN', 'IS_BETWEEN', 'IS_NOT_BETWEEN'].includes(condition.operatorType)) {
+      if (['MUST_BE_BETWEEN', 'IS_BETWEEN', 'IS_NOT_BETWEEN'].includes(condition.operatorType) && condition?.operandType === 'CONSTANT') {
         condition.operand = `${condition.min_value},${condition.max_value}`;
       } else if (['NONE'].includes(condition?.operatorType)) {
         condition.operand = '';
@@ -924,7 +924,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       action[1].forEach((item: any) => {
         item.actionGroup = dataItem.group;
         const attribute = this.findAttributeById(item.attributeId);
-        if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute?.dataType)) {
+        if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute?.dataType) && item?.operandType === 'CONSTANT') {
           item.operand = moment(item.operand).toISOString();
           item.min_value = moment(item.min_value).toISOString();
           item.max_value = moment(item.max_value).toISOString();
@@ -933,7 +933,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         {
           item.operand = +item.operand;
         }
-        if (item?.actionType === 'MUST_BE_BETWEEN') {
+        if (item?.actionType === 'MUST_BE_BETWEEN' && item?.operandType === 'CONSTANT') {
           item.operand = `${item.min_value},${item.max_value}`;
         } else if (['IS_REQUIRED', 'IS_NOT_VALID'].includes(item?.actionType)) {
           item.operand = '';
