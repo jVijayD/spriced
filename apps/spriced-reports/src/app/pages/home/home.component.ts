@@ -91,6 +91,22 @@ export class HomeComponent implements OnInit {
         name: "Pricing Action History",
         id: "28c886dd-f695-456c-87a4-8976224562f1",
       },
+      {
+        name: "IMS (CPIF) Kit Components Where Used",
+        id: "99a40dfc-f7b3-446e-840c-241e421a8a3f",
+      },
+      {
+        name: "Suggestion Report",
+        id: "46f0d17d-d4fb-4d81-9e1c-c248f9c895aa",
+      },
+      {
+        name: "New RX NX Core Details",
+        id: "391db3b6-7250-476a-a3e9-dded0a14dbec",
+      },
+      {
+        name: "Suggested Transit Unique Parts",
+        id: "73682193-2d83-4baf-8f62-9fe9c9fdb481",
+      },
     ];
   }
 }
