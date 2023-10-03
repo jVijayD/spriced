@@ -10,15 +10,23 @@
         appearance="outline"
         [ngClass]="frmControl.errors ? 'error' : ''"
       >
-        <mat-label>{{ control.label }}</mat-label>
+        <mat-label *ngIf="value == ''">{{ control.label }}</mat-label>
 
         <mat-select
           matNativeControl
+          *ngIf="count <= pageSize"
           (blur)="onTouched()"
           [(ngModel)]="value"
           [disabled]="control.readOnly || disabled"
           (click)="onClick()"
         >
+          <mat-option>
+            <ngx-mat-select-search
+              placeholderLabel="Search"
+              ngModel
+              (ngModelChange)="filterSource($event)"
+            ></ngx-mat-select-search>
+          </mat-option>
           <mat-option
             [value]="control.placeholder.value"
             *ngIf="control.placeholder"
@@ -27,7 +35,7 @@
           </mat-option>
 
           <mat-option
-            *ngFor="let option of source"
+            *ngFor="let option of filteredSource"
             [value]="control.valueProp ? option[control.valueProp] : option"
           >
             {{
@@ -37,12 +45,26 @@
             }}
           </mat-option>
         </mat-select>
-
+        <ng-container *ngIf="count >= pageSize">
+          <div *ngIf="value">{{ getSelectedDisplayProp() }}</div>
+          <input [style.display]="'none'" matInput [(ngModel)]="value" />
+        </ng-container>
         <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
         <mat-hint align="start" *ngIf="control.hint">{{
           control.hint
         }}</mat-hint>
       </mat-form-field>
+      <button
+        mat-raised-button
+        *ngIf="count >= pageSize"
+        color="primary"
+        title="Edit"
+        class="square-button"
+        title="selectItem"
+        (click)="openPopup()"
+      >
+        <mat-icon>edit</mat-icon>
+      </button>
       <button
         mat-raised-button
         color="primary"

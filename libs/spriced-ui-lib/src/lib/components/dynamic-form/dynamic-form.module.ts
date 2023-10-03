@@ -39,8 +39,10 @@ import { DateFormatDirectiveDD__MM__YY } from "./directives/dateformat-dd-MM-yy.
 import { DateFormatDirectiveDD__MM__YYYY } from "./directives/dateformat-dd-MM-yyyy.directive";
 import { DateFormatDirectiveYY__MM__DD } from "./directives/dateformat-yy-MM-dd.directive";
 import { DateFormatDirectiveYYYY__MM__DD } from "./directives/dateformat-yyyy-MM-dd.directive";
-import { DateFormatDirectiveYYYYMMDD } from './directives/.dateformat-yyyymmdd.directive';
-
+import { DateFormatDirectiveYYYYMMDD } from "./directives/.dateformat-yyyymmdd.directive";
+import { LookupDialogComponent } from "./sub-components/lookup-select/lookup-dialog/lookup-dialog/lookup-dialog.component";
+import { NgxDatatableModule } from "@swimlane/ngx-datatable";
+import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 
 @NgModule({
   declarations: [
@@ -73,7 +75,8 @@ import { DateFormatDirectiveYYYYMMDD } from './directives/.dateformat-yyyymmdd.d
     DateFormatDirectiveYY__MM__DD,
     DateFormatDirectiveYYYY__MM__DD,
     DateFormatDirectiveYYYYMMDD,
-    CheckboxComponent,    
+    CheckboxComponent,
+    LookupDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -90,7 +93,9 @@ import { DateFormatDirectiveYYYYMMDD } from './directives/.dateformat-yyyymmdd.d
     MatCheckboxModule,
     MatRadioModule,
     MatSelectModule,
-    MatTooltipModule
+    MatTooltipModule,
+    NgxDatatableModule,
+    NgxMatSelectSearchModule,
   ],
   exports: [
     InputComponent,

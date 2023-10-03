@@ -1,7 +1,7 @@
 import { NGX_MAT_DATE_FORMATS, NgxMatDateAdapter, NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, Input, Output, EventEmitter, forwardRef } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, forwardRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatButtonModule } from '@angular/material/button';
@@ -99,7 +99,7 @@ const sToken = new ServiceTokens();
   templateUrl: './businessactions.component.html',
   styleUrls: ['./businessactions.component.scss'],
 })
-export class BusinessactionsComponent implements OnInit {
+export class BusinessactionsComponent implements AfterViewInit {
   @Input() actionForm!: any;
   @Output() public remove: EventEmitter<any> = new EventEmitter<any>();
   @Input() public actionType: any;
@@ -121,12 +121,14 @@ export class BusinessactionsComponent implements OnInit {
   public selectedOperand: any = '';
 
 
-  constructor() { }
+  constructor(
+    private cdr: ChangeDetectorRef
+  ) { }
 
   /**
    *  Initialization tasks or data fetching can be done here
    */
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     // CURRENTLY HARD CODE FOR CHANGE THE NAME OF CONST TO VALUE
     this.dataRules?.operands.map((el: any) => {
       el.name === 'const' ? el.name = 'value' : '';
@@ -140,10 +142,11 @@ export class BusinessactionsComponent implements OnInit {
     const operand = this.getValue('operand');
     const parentAttributeId = this.getValue('parentAttributeId');
     const parentOperandId = this.getValue('parentOperandId');
-
-    // this.handleValue(operandType);
-    this.handleValueChange(value);
+    
+    this.setAttributeNamesById(attributeId, operand);
+    this.handleValue(operandType);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
+    this.handleValueChange(value);
   }
 
   // Helper function to get values from actionForm
@@ -163,6 +166,7 @@ export class BusinessactionsComponent implements OnInit {
     // HANDLE FOR EDIT BY CHANGE VALUEf
     if (text === 'changeValue') {
       this.actionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
+      this.selectedOperand = '';
     }
 
     // HANDLING VALIDATION OR FILED ENABLE OR DISABLE
@@ -174,14 +178,15 @@ export class BusinessactionsComponent implements OnInit {
       maxValueControl?.enable();
       valueControl?.disable();
     }
-    else if (['IS_REQUIRED', 'IS_NOT_VALID', 'IS_NULL'].includes(value)) {
+    else if (['IS_REQUIRED', 'IS_NOT_VALID', 'IS_NULL', 'IS_BLANK'].includes(value)) {
       this.Value = this.maxValue = this.minValue = false;
       // const operandType = this.actionForm?.get('operandType')?.value;
       // this.actionForm?.get('operandType').setValue(operandType);
+      this.disableFormControl();
+      this.removeValidators(valueControl);
 
       minValueControl?.disable();
       maxValueControl?.disable();
-      valueControl?.disable();
     } else {
       this.Value = true;
       this.maxValue = this.minValue = false;
@@ -189,8 +194,9 @@ export class BusinessactionsComponent implements OnInit {
       minValueControl?.disable();
       maxValueControl?.disable();
       valueControl?.enable();
-      this.isFieldDisabled ? valueControl?.disable() : valueControl?.enable();
+      this.isFieldDisabled ? this.removeValidators(valueControl) : this.addValidators(valueControl);
     }
+    this.cdr.detectChanges();
   }
 
   /**
@@ -199,6 +205,7 @@ export class BusinessactionsComponent implements OnInit {
    */
   public handleAttributes(id: any, text?: string) {
     let attribute = this.findAttributeInArray(id, this.dataRules?.attributes);
+    const actionType = this.getValue('actionType');
     // If not found, search within nested attributes
     if (!attribute) {
       this.dataRules?.attributes.some((el: any) => {
@@ -208,6 +215,7 @@ export class BusinessactionsComponent implements OnInit {
     }
     this.dataType = attribute?.dataType ? attribute?.dataType : 'AUTO';
     const decimalValueSize = attribute?.size;
+    this.actionForm?.get('operand')?.setValidators([Validators.pattern('')]);
     this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
     if (text === 'changeAttribute') {
       this.actionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
@@ -216,6 +224,7 @@ export class BusinessactionsComponent implements OnInit {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
+    this.handleValueChange(actionType, 'changeValue');
   }
 
   /**
@@ -225,15 +234,22 @@ export class BusinessactionsComponent implements OnInit {
  */
   public handleValue(event: any, text?: string) {
     this.valueConstant = ['CONSTANT', 'BLANK'].includes(event);
-    this.actionForm?.get('operand')?.enable();
+    const valueControl = this.actionForm?.get('operand');
+    this.addValidators(valueControl);
     this.isFieldDisabled = event === 'BLANK';
     this.selectedOperand = '';
     this.actionForm?.get('a')
+    if(event === 'CONSTANT') {
+      this.actionForm?.get('operand')?.removeValidators([Validators.required]);
+    } else {
+      this.actionForm?.get('operand')?.addValidators([Validators.required]);
+    }
     if (text === 'editValue') {
       this.disableFormControl();
     }
     if (this.isFieldDisabled) {
-      this.actionForm?.get('operand')?.disable();
+      const valueControl = this.actionForm?.get('operand');
+      this.removeValidators(valueControl);
     }
   }
 
@@ -253,6 +269,18 @@ export class BusinessactionsComponent implements OnInit {
     });
   }
 
+  public removeValidators(valueControl: any)
+  {
+    valueControl.clearValidators();
+    valueControl.updateValueAndValidity();
+  }
+
+  public addValidators(valueControl: any)
+  {
+    valueControl.setValidators(Validators.required);
+    valueControl.updateValueAndValidity();
+  }
+
   public capitalizeOperatorType(value: any): string {
     return value.replace(/_/g, ' ').replace(/\w\S*/g, (word: string) => {
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
@@ -270,7 +298,7 @@ export class BusinessactionsComponent implements OnInit {
       this.actionForm?.get('parentOperandId')?.setValue(parentAtt.id ?? '');
       this.actionForm?.get('parentOperandDisplayName')?.setValue(parentAtt.displayName ?? '');
       this.actionForm?.get('parentOperandName')?.setValue(parentAtt.name ?? '');
-      this.actionForm?.get('operandTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
+      this.actionForm?.get('operandTableName')?.setValue(parentAtt.referencedTable ?? '');
     }
     else {
       const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
@@ -286,8 +314,25 @@ export class BusinessactionsComponent implements OnInit {
       this.actionForm?.get('parentAttributeId')?.setValue(parentAtt.id ?? '');
       this.actionForm?.get('parentAttributeName')?.setValue(parentAtt.name ?? '');
       this.actionForm?.get('parentAttributeDisplayName')?.setValue(parentAtt.displayName ?? '');
-      this.actionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
+      this.actionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTable ?? '');
       this.handleAttributes(item.id, 'changeAttribute');
+    }
+  }
+
+  public setAttributeNamesById(attributeId: any, operandAttribute: any)
+  {
+    const attribute = this.findAttributeById(attributeId);
+    const operandAtt = this.findAttributeById(operandAttribute);
+    // !!operandAtt ? this.actionForm?.get('operandType')?.setValue('ATTRIBUTE') : this.actionForm?.get('operandType')?.setValue('CONSTANT');
+    if(!!attribute)
+    {
+      this.actionForm?.get('attributeDisplayName')?.setValue(attribute.displayName);
+      this.actionForm?.get('attributeName')?.setValue(attribute.name);
+    }
+    if(!!operandAtt)
+    {
+      this.actionForm?.get('operandName')?.setValue(operandAtt.name);
+      this.actionForm?.get('operandDisplayName')?.setValue(operandAtt.displayName);
     }
   }
 
@@ -320,8 +365,9 @@ export class BusinessactionsComponent implements OnInit {
 
     if (['DECIMAL', 'FLOAT', 'LINK'].includes(this.dataType)) {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
-      this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
+      this.actionForm?.get('operand')?.setValidators([Validators.pattern(pattern)]);
     }
+    this.cdr.detectChanges();
   }
 
   /**

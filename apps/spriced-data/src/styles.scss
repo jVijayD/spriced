@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import '../../../libs/themes/global.scss';
-@import '../../../libs/themes/material-theme.scss';
-
+@import "../../../libs/themes/global.scss";
+@import "../../../libs/themes/material-theme.scss";
+@import "../../../node_modules/@ng-select/ng-select/themes/default.theme.css";
 /* You can add global styles to this file, and also import other style files */

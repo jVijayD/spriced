@@ -135,9 +135,10 @@ export class ElseactionComponent {
     const parentAttributeId = this.getValue('parentAttributeId');
     const parentOperandId = this.getValue('parentOperandId');
 
-    // this.handleValue(operandType);
-    this.handleValueChange(value);
+    this.setAttributeNamesById(attributeId, operand);
+    this.handleValue(operandType);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
+    this.handleValueChange(value);
   }
 
   // Helper function to get values from actionForm
@@ -157,6 +158,7 @@ export class ElseactionComponent {
     // HANDLE FOR EDIT BY CHANGE VALUEf
     if (text === 'changeValue') {
       this.actionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
+      this.selectedOperand = '';
     }
 
     // HANDLING VALIDATION OR FILED ENABLE OR DISABLE
@@ -168,14 +170,15 @@ export class ElseactionComponent {
       maxValueControl?.enable();
       valueControl?.disable();
     }
-    else if (['IS_REQUIRED', 'IS_NOT_VALID', 'IS_NULL'].includes(value)) {
+    else if (['IS_REQUIRED', 'IS_NOT_VALID', 'IS_NULL', 'IS_BLANK'].includes(value)) {
       // const operandType = this.actionForm?.get('operandType')?.value;
       // this.actionForm?.get('operandType').setValue(operandType);
       this.Value = this.maxValue = this.minValue = false;
+      this.disableFormControl();
+      this.removeValidators(valueControl);
 
       minValueControl?.disable();
       maxValueControl?.disable();
-      valueControl?.disable();
     } else {
       this.Value = true;
       this.maxValue = this.minValue = false;
@@ -183,7 +186,7 @@ export class ElseactionComponent {
       minValueControl?.disable();
       maxValueControl?.disable();
       valueControl?.enable();
-      this.isFieldDisabled ? valueControl?.disable() : valueControl?.enable();
+      this.isFieldDisabled ? this.removeValidators(valueControl) : this.addValidators(valueControl);
     }
   }
 
@@ -193,6 +196,7 @@ export class ElseactionComponent {
    */
   public handleAttributes(id: any, text?: string) {
     let attribute = this.findAttributeInArray(id, this.dataRules?.attributes);
+    const actionType = this.getValue('actionType');
     // If not found, search within nested attributes
     if (!attribute) {
       this.dataRules?.attributes.some((el: any) => {
@@ -202,6 +206,7 @@ export class ElseactionComponent {
     }
     this.dataType = attribute?.dataType ? attribute?.dataType : 'AUTO';
     const decimalValueSize = attribute?.size;
+    this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern('')]);
     this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
     if (text === 'changeAttribute') {
       this.actionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
@@ -210,6 +215,7 @@ export class ElseactionComponent {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
+    this.handleValueChange(actionType, 'changeValue');
   }
 
   /**
@@ -223,11 +229,17 @@ export class ElseactionComponent {
     this.isFieldDisabled = event === 'BLANK';
     this.selectedOperand = '';
     this.actionForm?.get('a')
+    if(event === 'CONSTANT') {
+      this.actionForm.get('operand')?.removeValidators([Validators.required]);
+    } else {
+      this.actionForm.get('operand')?.addValidators([Validators.required]);
+    }
     if (text === 'editValue') {
       this.disableFormControl();
     }
     if (this.isFieldDisabled) {
-      this.actionForm?.get('operand')?.disable();
+      const valueControl = this.actionForm?.get('operand');
+      this.removeValidators(valueControl);
     }
   }
 
@@ -247,6 +259,18 @@ export class ElseactionComponent {
     });
   }
 
+  public removeValidators(valueControl: any)
+  {
+    valueControl.clearValidators();
+    valueControl.updateValueAndValidity();
+  }
+
+  public addValidators(valueControl: any)
+  {
+    valueControl.setValidators(Validators.required);
+    valueControl.updateValueAndValidity();
+  }
+
   public capitalizeOperatorType(value: any): string {
     return value.replace(/_/g, ' ').replace(/\w\S*/g, (word: string) => {
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
@@ -264,7 +288,7 @@ export class ElseactionComponent {
       this.actionForm?.get('parentOperandId')?.setValue(parentAtt.id ?? '');
       this.actionForm?.get('parentOperandDisplayName')?.setValue(parentAtt.displayName ?? '');
       this.actionForm?.get('parentOperandName')?.setValue(parentAtt.name ?? '');
-      this.actionForm?.get('operandTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
+      this.actionForm?.get('operandTableName')?.setValue(parentAtt.referencedTable ?? '');
     }
     else {
       const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
@@ -280,8 +304,25 @@ export class ElseactionComponent {
       this.actionForm?.get('parentAttributeId')?.setValue(parentAtt.id ?? '');
       this.actionForm?.get('parentAttributeName')?.setValue(parentAtt.name ?? '');
       this.actionForm?.get('parentAttributeDisplayName')?.setValue(parentAtt.displayName ?? '');
-      this.actionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTableDisplayName ?? '');
+      this.actionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTable ?? '');
       this.handleAttributes(item.id, 'changeAttribute');
+    }
+  }
+
+  public setAttributeNamesById(attributeId: any, operandAttribute: any)
+  {
+    const attribute = this.findAttributeById(attributeId);
+    const operandAtt = this.findAttributeById(operandAttribute);
+    // !!operandAtt ? this.actionForm?.get('operandType')?.setValue('ATTRIBUTE') : this.actionForm?.get('operandType')?.setValue('CONSTANT');
+    if(!!attribute)
+    {
+      this.actionForm?.get('attributeDisplayName')?.setValue(attribute.displayName);
+      this.actionForm?.get('attributeName')?.setValue(attribute.name);
+    }
+    if(!!operandAtt)
+    {
+      this.actionForm?.get('operandName')?.setValue(operandAtt.name);
+      this.actionForm?.get('operandDisplayName')?.setValue(operandAtt.displayName);
     }
   }
 

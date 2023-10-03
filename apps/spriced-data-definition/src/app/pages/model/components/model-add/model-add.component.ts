@@ -156,7 +156,7 @@ export class ModelAddComponent {
           },
           error: (err: any) => {
             if (err.error.errorCode == "DB_UK-008") {
-              this.snackbarService.error("Model Already Exists.");
+              this.snackbarService.error("Model Already Exists");
             } else {
               this.snackbarService.error("Model Creation Failed.");
             }
@@ -170,7 +170,12 @@ export class ModelAddComponent {
             this.onClose({ data: results, action: this.data.action });
           },
           error: (err: any) => {
+            if (err.error.errorCode == "DB_UK-008") {
+              this.snackbarService.error("Model Already Exists.");
+            }
+            else{
             this.snackbarService.error("Update Model  Failed.");
+            }
           },
         });
       }

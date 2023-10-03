@@ -5,6 +5,7 @@ import { DataControl, IData } from "./dynamic-form.types";
 
 export abstract class BaseDataComponent extends BaseComponent {
   dataPopulation$: Subject<unknown[]> = new Subject();
+
   private _dataSubscriptions: Subscription[] = [];
   source: any[] = [];
   count = 0;

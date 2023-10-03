@@ -1,19 +1,8 @@
 <!-- MANAGE BUSINESS CONDITION RULES -->
-<div 
-   cdkDropList 
-   class="item-dropzone parent" 
-   [id]="parentItemId" 
-   [cdkDropListData]="parentItem"
-   [cdkDropListConnectedTo]="allDropListsIds" 
-   (cdkDropListDropped)="onDragDrop($event)"
-   >
-  <div 
-     cdkDrag 
-     [id]="item?.value?.id" 
-     *ngIf="item?.value?.id !== 'parent'" 
-     [cdkDragData]="item"
-     [cdkDragDisabled]="dragDisabled || preview"
-     >
+<div cdkDropList class="item-dropzone parent" [id]="parentItemId" [cdkDropListData]="parentItem"
+  [cdkDropListConnectedTo]="allDropListsIds" (cdkDropListDropped)="onDragDrop($event)">
+  <div cdkDrag [id]="item?.value?.id" *ngIf="item?.value?.id !== 'parent'" [cdkDragData]="item"
+    [cdkDragDisabled]="dragDisabled || preview">
     <form *ngIf="!!conditionForm" [formGroup]="conditionForm">
       <div title="Drag this item with children" class="item-drag-handle" cdkDragHandle>
 
@@ -22,9 +11,10 @@
 
           <div class="rule-drop-down flex condition-conatiner">
             <div class="example-container mt-8 mr-5 flex flex-col">
-              <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
+              <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-auto" appearance="outline">
                 <mat-label>Attribute</mat-label>
-                <div class="flex attribute-input" [ngClass]="preview ? 'disableMenu' : ''" [matMenuTriggerFor]="attributeMenu">
+                <div class="flex attribute-input" [ngClass]="preview ? 'disableMenu' : ''"
+                  [matMenuTriggerFor]="attributeMenu">
                   <input style="display: none;" [readonly]="true" [readonly]="preview" matInput placeholder="Add Value"
                     formControlName="attributeId" [disabled]="isFieldDisabled">
                   <input [readonly]="true" [readonly]="preview" matInput placeholder="Add Value" required
@@ -41,12 +31,15 @@
             <!-- MAT MENU FOR NESTED ATTRIBUTE -->
             <mat-menu class="attribute-menu" #attributeMenu="matMenu" yPosition="below">
               <ng-container *ngFor="let attribute of dataRules?.attributes">
-                <button [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
+                <button [ngClass]="{'selected-item': !!selectedAttribute ? selectedAttribute.split('.')[0] === attribute?.displayName : ''}"
+                  [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
                   (click)="selectAttribute(attribute)">
                   {{ attribute.displayName }}
                 </button>
                 <mat-menu #nestedMenu="matMenu">
-                  <button mat-menu-item *ngFor="let nestedAttribute of attribute.attributes"
+                  <button
+                    [ngClass]="{'selected-item': !!selectedAttribute ? selectedAttribute.split('.')[1] === nestedAttribute?.displayName : ''}"
+                    mat-menu-item *ngFor="let nestedAttribute of attribute.attributes"
                     (click)="selectAttribute(nestedAttribute, attribute)">
                     {{ nestedAttribute.displayName }}
                   </button>
@@ -58,12 +51,8 @@
             <div class="example-container  mt-8 mr-5 flex flex-col">
               <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
                 <mat-label>Operator</mat-label>
-                <mat-select 
-                     [panelClass]="preview ? 'hideOption' : ''" 
-                     class="break-all"
-                     (valueChange)="handleValueChange($event, 'changeValue')" 
-                     formControlName="operatorType"
-                >
+                <mat-select [panelClass]="preview ? 'hideOption' : ''" class="break-all"
+                  (valueChange)="handleValueChange($event, 'changeValue')" formControlName="operatorType">
                   <mat-option *ngFor="let Operator of dataRules?.operators" [value]="Operator?.value">
                     <p>{{this.capitalizeOperatorType(Operator.value)}}</p>
                   </mat-option>
@@ -132,9 +121,11 @@
               </ng-container>
 
               <!-- WHEN OPERANDS TYPE IS ATTRIBUTE -->
-              <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline" *ngIf="!valueConstant">
+              <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-auto" appearance="outline"
+                *ngIf="!valueConstant">
                 <mat-label>Attribute</mat-label>
-                <div class="flex attribute-input" [ngClass]="preview ? 'disableMenu' : ''" [matMenuTriggerFor]="operandMenu">
+                <div class="flex attribute-input" [ngClass]="preview ? 'disableMenu' : ''"
+                  [matMenuTriggerFor]="operandMenu">
                   <input style="display: none;" [readonly]="true" [readonly]="preview" matInput placeholder="Add Value"
                     formControlName="operand" [disabled]="isFieldDisabled">
                   <input [readonly]="true" [readonly]="preview" matInput placeholder="Add Value" required
@@ -155,12 +146,14 @@
             <!-- MAT MENU FOR NESTED ATTRIBUTE -->
             <mat-menu class="attribute-menu" #operandMenu="matMenu" yPosition="below">
               <ng-container *ngFor="let attribute of dataRules?.attributes">
-                <button [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
+                <button [ngClass]="{'selected-item': !!selectedOperand ? selectedOperand.split('.')[0] === attribute?.displayName : ''}"
+                  [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
                   (click)="selectAttribute(attribute, '', 'operand')">
                   {{ attribute.displayName }}
                 </button>
                 <mat-menu #nestedMenu="matMenu">
-                  <button mat-menu-item *ngFor="let nestedAttribute of attribute.attributes"
+                  <button [ngClass]="{'selected-item': !!selectedOperand ? selectedOperand.split('.')[1] === nestedAttribute?.displayName : ''}"
+                    mat-menu-item *ngFor="let nestedAttribute of attribute.attributes"
                     (click)="selectAttribute(nestedAttribute, attribute, 'operand')">
                     {{ nestedAttribute.displayName }}
                   </button>
@@ -312,14 +305,8 @@
   </div>
 
   <!-- SUBCONDITIONS CONTAINER -->
-  <ul 
-    cdkDropList 
-    class="item-dropzone" 
-    [id]="item?.value.id" 
-    [cdkDropListConnectedTo]="connectedDropListsIds"
-    [cdkDropListData]="item" 
-    (cdkDropListDropped)="onDragDrop($event)"
-    >
+  <ul cdkDropList class="item-dropzone" [id]="item?.value.id" [cdkDropListConnectedTo]="connectedDropListsIds"
+    [cdkDropListData]="item" (cdkDropListDropped)="onDragDrop($event)">
 
     <div *ngIf="!!conditionForm && item?.value.id !== 'parent'" [formGroup]="conditionForm">
       <div class="example-container mr-5">
@@ -333,21 +320,11 @@
       </div>
     </div>
 
-    <li 
-      class="border-gray-400 border border-gray border-solid"
-      *ngFor="let subItem of item?.controls?.subConditions?.controls; 
-      let i = index"
-    >
+    <li class="border-gray-400 border border-gray border-solid" *ngFor="let subItem of item?.controls?.subConditions?.controls; 
+      let i = index">
 
-      <sp-business-rule-list 
-          [item]="subItem" 
-          [parentItem]="item" 
-          [index]="i" 
-          [preview]="preview"
-          [dataRules]="dataRules" 
-          [connectedDropListsIds]="allDropListsIds" 
-          (itemDrop)="onDragDrop($event)"
-          >
+      <sp-business-rule-list [item]="subItem" [parentItem]="item" [index]="i" [preview]="preview"
+        [dataRules]="dataRules" [connectedDropListsIds]="allDropListsIds" (itemDrop)="onDragDrop($event)">
       </sp-business-rule-list>
 
     </li>
