@@ -183,6 +183,7 @@ export class EntityComponent {
   }
 
   onEdit() {
+    console.log(this.rows);
     const dialogRef = this.dialog.open(EntityAddComponent, {
       data: { action: "Edit", entities: this.rows, row: this.selectedItem },
     });
@@ -202,7 +203,9 @@ export class EntityComponent {
       };
       this.entityService.edit(entity).subscribe({
         next: (results: any) => {
-          this.snackbarService.success("Succesfully Updated");
+          const matchObject = this.areObjectsEqual(this.selectedItem, result);
+          const message = !matchObject ? 'Succesfully Updated' : ' No Updates Made';
+          this.snackbarService.success(message);
           dialogRef.close();
           this.load({ value: this.groupId });
         },
@@ -243,6 +246,38 @@ export class EntityComponent {
   }
   onPaginate(e: Paginate) {
     //this.rows = this.getData(e.limit, e.offset);
+  }
+/**
+ * HANDLE THIS FUNCTION FOR MATCHING THE TWO OBJECTS
+ * @param obj1 any
+ * @param obj2 any
+ * @returns 
+ */
+  areObjectsEqual(obj1: any, obj2: any): boolean {
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+  
+    if (keys1.length !== keys2.length) {
+      return false;
+    }
+  
+    for (let key of keys1) {
+      const val1 = obj1[key];
+      const val2 = obj2[key];
+  
+      // Check if the values are objects and recursively compare them
+      if (typeof val1 === 'object' && val1 !== null && typeof val2 === 'object' && val2 !== null) {
+        if (!this.areObjectsEqual(val1, val2)) {
+          return false;
+        }
+      } else if (val1 !== val2) {
+        // Values are not equal
+        return false;
+      }
+    }
+  
+    // All keys and values are equal
+    return true;
   }
 
   onItemSelected(e: any) {
