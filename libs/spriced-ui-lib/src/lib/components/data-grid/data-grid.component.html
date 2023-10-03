@@ -46,7 +46,7 @@
         [name]="header.name"
         [prop]="header.column"
         [flexGrow]="header.flexGrow || 1"
-        [frozenLeft]="header.pinned === 'left' ? true : false"
+        [frozenLeft]="header.pinned === 'left' ? true : false || header.name=='validation  status'"
         [frozenRight]="header.pinned === 'right' ? true : false"
         [width]="header.width || 0"
         [resizeable]="true"
@@ -60,6 +60,18 @@
           let-value="value"
           ngx-datatable-cell-template
         >
+
+        <ng-container *ngIf="header?.name=='validation  status'" >
+  
+          <mat-icon class="ml-8" *ngIf="row.validation_status==false" style="color: white;background-color: red;"
+            >close 
+           </mat-icon
+          >
+          <mat-icon class="ml-8" *ngIf="row.validation_status==true"  style="color: white;background-color: green;"
+            >check</mat-icon
+          >
+    </ng-container>
+
           <ng-container *ngIf="header?.isLink">
           <mat-icon
            class="cursor-pointer"
@@ -70,7 +82,7 @@
 
           </ng-container>
           <ng-container *ngIf="!header?.isLink">
-            <ng-container *ngIf="!header?.checkbox && header?.name !=='Validation Status'"
+            <ng-container *ngIf="!header?.checkbox && header?.name !=='validation  status'"
               >{{
                 isArray
                   ? this.renderData(row[i], header)
@@ -100,14 +112,7 @@
               </mat-checkbox>
             </ng-container>
 
-            <ng-container *ngIf="header?.name=='Validation Status'">
-                  <mat-icon *ngIf="row.validation_status==false" style="color: white;background-color: red;"
-                    >close</mat-icon
-                  >
-                  <mat-icon *ngIf="row.validation_status==true"  style="color: white;background-color: green;"
-                    >check</mat-icon
-                  >
-            </ng-container>
+           
 
           </ng-container>
         </ng-template>

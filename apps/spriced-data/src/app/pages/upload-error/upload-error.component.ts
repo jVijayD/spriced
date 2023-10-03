@@ -45,7 +45,7 @@ import {
   EntityService,
 } from "@spriced-frontend/spriced-common-lib";
 import { Validators } from "@angular/forms";
-import { EntityDataService } from "../../services/entity-data.service";
+import { EntityDataStagingService } from "../../services/entity-data-staging.service";
 import { Subscription } from "rxjs";
 import * as moment from "moment";
 import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
@@ -88,11 +88,11 @@ import { CustomToolTipComponent } from "libs/spriced-ui-lib/src/lib/components/c
   providers: [
     EntityGridService,
     EntityFormService,
-    EntityDataService,
+    EntityDataStagingService,
     SettingsService,
     {
       provide: FORM_DATA_SERVICE,
-      useExisting: EntityDataService,
+      useExisting: EntityDataStagingService,
     },
     DynamicFormService,
   ],
@@ -132,7 +132,7 @@ export class UploadErrorComponent implements OnDestroy, OnInit {
     private snackbarService: SnackBarService,
     private dialogService: DialogService,
     private dynamicFormService: DynamicFormService,
-    private entityDataService: EntityDataService,
+    private entityDataService: EntityDataStagingService,
     private dialog: MatDialog,
     private settings: SettingsService,
     private entityGridService: EntityGridService,
@@ -572,6 +572,7 @@ export class UploadErrorComponent implements OnDestroy, OnInit {
         showSystemAttributes,
         globalSettings?.displayFormat || this.defaultCodeSetting
       );
+      console.log(this.headers)
       this.loadEntityData(entity, criteria);
     }
   }
