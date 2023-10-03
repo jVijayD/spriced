@@ -2,6 +2,7 @@ import {
   HierarchyDetails,
   Hierarchy,
   HierarchyTreeNode,
+  PreviewTreeNode,
 } from "./../models/HierarchyTypes.class";
 import {
   ChangeDetectorRef,
@@ -18,7 +19,7 @@ import { MatTableModule } from "@angular/material/table";
 import { MatTabsModule } from "@angular/material/tabs";
 import {
   Entity,
-  EntityService,
+  EntityService, Criteria,
   Model,
 } from "@spriced-frontend/spriced-common-lib";
 import { MatListModule } from "@angular/material/list";
@@ -109,6 +110,11 @@ export class HierarchyNewTabComponent implements OnInit {
 
   hierarchyDetails: HierarchyDetails[] = [];
   hierarchyLevelNodes: HierarchyTreeNode[] = [];
+  hierarchyPreviewNodes: PreviewTreeNode[] = [];
+  // = [
+  //   { "id": 1, "treeStatus": "expanded", "tablename": "", "name": "ROOT", tableId: this.hierarchyDetails[this.hierarchyDetails.length - 1].tableId },
+  // ]
+
   selectedModel!: Model | null;
   selectedEntity!: Entity | null;
   id: number = 0;
@@ -119,15 +125,16 @@ export class HierarchyNewTabComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private entityService: EntityService,
     private snackBarService: SnackBarService,
-    private hierarchyService: HierarchyServiceService
-  ) {}
-  ngOnInit() {}
+    private hierarchyService: HierarchyServiceService,
+  ) { }
+  ngOnInit() { }
 
-  loadEntities(model: Model) {}
+  loadEntities(model: Model) { }
   onClearClick() {
     this.hierarchyDetails = [];
     this.availableEntities = [];
     this.hierarchyLevelNodes = [];
+    this.hierarchyPreviewNodes = [];
     this.entityList = [];
     this.selectedModel = null;
     this.name = "";
@@ -181,29 +188,30 @@ export class HierarchyNewTabComponent implements OnInit {
       this.onSaveEventEmitter.emit(this.selectedModel);
       this.onClearClick();
     });
-    console.log(hie);
   }
+
+  getHierarchyDtlByLevel(level: number) {
+    return this.hierarchyDetails.find(h => h.groupLevel == level);
+  }
+
   addToLevel(entity: Entity) {
-    // let parentRefId =
-    //   this.hierarchyDetails.length != 0
-    //     ? this.hierarchyDetails.length - 1
-    //     : null;
     let hDtl = {
       id: 0,
-      // refId: parentRefId != null ? parentRefId + 1 : 0,
       hierarchyId: this.id,
-      // parentRefId: parentRefId,
       groupLevel: this.hierarchyDetails.length,
-      // level: 0,
       treeStatus: "expanded",
       expanded: false,
       tablename: entity.name,
+      tableId: entity.id,
       tabledisplayname: entity.displayName,
       localColumn: "id",
       entity: entity,
-      refColumn: "RefId -- tobe set",
-    };
-    // this.hierarchyDetails.push(hDtl);
+      refColumn: "",
+    } as HierarchyDetails;
+    if (this.hierarchyDetails.length - 1 >= 0) {
+      var hie = this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1)
+      hie && entity.comment ? hie.refColumn = entity.comment : "";
+    }
     this.availableEntities = [];
     this.entityService.load(entity.id).forEach((a) => {
       let derAttrList = (a as Entity).attributes
@@ -213,21 +221,30 @@ export class HierarchyNewTabComponent implements OnInit {
             displayName: att.referencedTableDisplayName,
             name: att.referencedTable,
             id: att.referencedTableId,
+            comment: att.name
           } as Entity;
         });
       this.availableEntities.push(...derAttrList);
     });
     this.hierarchyDetails = [...this.hierarchyDetails, hDtl];
     this.populateLevelTree();
+    this.setPreviewRootNode(entity);
+  }
+
+  setPreviewRootNode(entity: Entity) {
+    this.hierarchyPreviewNodes = [];
+    this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes, {
+      "id": 0, "treeStatus": "collapsed", "column": "", loaded: false, "name": "ROOT", level: 0, code: "", grpId: this.hierarchyDetails.length + "",
+      tableId: entity.id
+    }];
   }
   onModelChange(ev: MatSelectChange) {
     this.selectedModel = ev.value as Model;
     this.availableEntities = [];
     this.getEntitiesByModel(this.selectedModel);
-    console.log(ev.value);
   }
 
-  getEntitiesByModel(model: Model, entityId?: number, hie?: Hierarchy) {
+  getEntitiesByModel(model: Model, entityId?: number, hie?: Hierarchy, isOnBind: boolean = false) {
     this.entityList = [];
     this.entityService.loadEntityByModel(model.id).forEach((a) => {
       this.entityList.push(...a);
@@ -238,11 +255,15 @@ export class HierarchyNewTabComponent implements OnInit {
         hie.details = hie.details
           .map((e) => {
             e.entity = this.getEntityByTable(e.tablename);
+            e.tableId = e.entity.id;
             return e;
           })
           .sort((a, b) => b.groupLevel - a.groupLevel);
         this.hierarchyDetails = hie.details;
         this.populateLevelTree();
+        if (isOnBind) {
+          this.setPreviewRootNode(this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1)?.entity);
+        }
         this.cd.detectChanges();
       }
     });
@@ -256,8 +277,9 @@ export class HierarchyNewTabComponent implements OnInit {
           id: hdtl.groupLevel + 1,
           parentId: hdtl.groupLevel == 0 ? null : hdtl.groupLevel,
           tablename: hdtl.tablename,
+          tableId: hdtl.tableId,
           name: hdtl.tabledisplayname || hdtl.tablename,
-          expanded: true,
+          expanded: true
         } as HierarchyTreeNode;
       }),
     ];
@@ -276,12 +298,13 @@ export class HierarchyNewTabComponent implements OnInit {
     this.populateLevelTree();
   }
   onBind(hie: Hierarchy) {
+    this.onClearClick();
     this.id = hie.id;
     this.name = hie.name;
     this.description = hie.description;
     this.hierarchyDetails = hie.details ? hie.details : [];
     this.selectedModel = this.getModelById(hie.modelId);
-    this.getEntitiesByModel(this.selectedModel, hie.entityId, hie);
+    this.getEntitiesByModel(this.selectedModel, hie.entityId, hie, true);
   }
   getModelById(id: number) {
     return this.modelList.filter((m) => m.id == id)[0];
@@ -296,7 +319,6 @@ export class HierarchyNewTabComponent implements OnInit {
     this.selectedEntity = ev.value as Entity;
     this.hierarchyDetails = [];
     this.addToLevel(this.selectedEntity);
-    console.log(this.selectedEntity);
   }
 
   onTreeAction(event: any) {
@@ -309,4 +331,64 @@ export class HierarchyNewTabComponent implements OnInit {
     }
     this.hierarchyLevelNodes = [...this.hierarchyLevelNodes];
   }
+  onTreeActionPreview(event: any) {
+    const index = event.rowIndex;
+    const row = event.row;
+    if (row.treeStatus === 'collapsed') {
+      row.treeStatus = 'loading';
+
+      if (!row.loaded) {
+        var hie = this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1 - row.level)
+        this.getChildNodes(row, (data: any) => {
+          data = data.content.map((d: PreviewTreeNode) => {
+            d.treeStatus = 'collapsed';
+            d.parentGrpId = row.grpId;
+            d.column = hie ? hie.refColumn : "";
+            d.tableId = hie ? hie.tableId : 0;
+            d.name = d.code + `{${d.name}}`
+            d.grpId = row.grpId + "-" + d.id
+            return d;
+          });
+          row.treeStatus = 'expanded';
+          row.loaded = true;
+          this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes, ...data];
+          this.cd.detectChanges();
+        });
+        return;
+      }
+      row.treeStatus = 'expanded';
+      this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes];
+      this.cd.detectChanges();
+    } else {
+      row.treeStatus = 'collapsed';
+      this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes];
+      this.cd.detectChanges();
+    }
+  }
+
+
+  getChildNodes(row: PreviewTreeNode, callBack: Function) {
+    const hie = this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1 - row.level);
+    if (hie) {
+      let cr = {} as Criteria;
+      if (row.id && hie?.refColumn) {
+        cr.filters = [{
+          filterType: "CONDITION",
+          key: hie.refColumn,
+          value: row.id,
+          joinType: "NONE",
+          operatorType: "EQUALS",
+          dataType: "number"
+        }]
+      }
+      this.hierarchyService.loadEntityData(hie.tableId, cr).forEach(element => {
+        callBack(element);
+      });
+    } else {
+      row.treeStatus = "expanded";
+      callBack([]);
+    }
+  }
 }
+
+
