@@ -2,6 +2,8 @@ import { Component, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import { Header } from "libs/spriced-ui-lib/src/lib/components/data-grid/data-grid.component";
+import { DialogService } from "libs/spriced-ui-lib/src/lib/components/dialoge/dialog.service";
+import { QueryColumns } from "libs/spriced-ui-lib/src/lib/components/dialoge/filter-dialog/filter-dialog.component";
 import { Subject } from "rxjs";
 
 @Component({
@@ -11,12 +13,15 @@ import { Subject } from "rxjs";
 })
 export class LookupDialogComponent {
   columnMode: ColumnMode = ColumnMode.force;
-  private dialogEventSubject = new Subject<void>();
+  private dialogEventSubject = new Subject<any>();
   dialogEvent$ = this.dialogEventSubject.asObservable();
   count:any;
   offset:number=0;
   item:any;
   pageSize:any;
+  query?: any;
+  pageNumber:any;
+  filters:any;
   selected=[];
   selectedItem: any;
   rows: any = [];
@@ -26,6 +31,7 @@ export class LookupDialogComponent {
   constructor(
     private dialogRef: MatDialogRef<LookupDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: LookupDialogComponent,
+    private dialogService: DialogService,
     ){
       this.item = this.data;
       this.count = this.item.total;
@@ -68,14 +74,47 @@ export class LookupDialogComponent {
     this.dialogRef.close({ event: "Update", data: this.selectedItem });
   }
   onPage(e: any) {
-    debugger
-    const pageNumber = e.offset;
-    this.dialogEventSubject.next(pageNumber);
+    this.pageNumber = e.offset;
+    this.dialogEventSubject.next({ pageNumber:this.pageNumber,filters:'' });
 }
    upDatedData(newData:any){
     this.rows = newData.value;
    }
+   onFilter(){
+    const dialogResult = this.dialogService.openFilterDialog({
+      persistValueOnFieldChange: true,
+      columns:this.getFilterColumns(this.headers),
+      emptyMessage: "Please select filter criteria.",
+      config: null,
+      query: this.query,
+    });
+    dialogResult.afterClosed().subscribe((val) => {
+      this.filters = val;
+      if (val) {
+       this.dialogEventSubject.next({ pageNubmer:this.pageNumber, filters:this.filters });
+      }
+    });
+   }
+
+   onClearFilter(){
+    this.filters = [];
+    this.dialogEventSubject.next({ pageNubmer:this.pageNumber, filters: this.filters });
+   }
+   
    onCancel(){
     this.dialogRef.close(null);
    }
+
+   getFilterColumns(headers: Header[]): QueryColumns[] {
+    return headers
+      .map((col: any) => {
+        return {
+          name: col.column,
+          displayName: col.name,
+          dataType:  "string",
+          options: col?.dataType === "category" ? col.options : undefined,
+        };
+      });
+  }
+
 }
