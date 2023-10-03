@@ -186,30 +186,37 @@ export class ListComponent implements OnInit, OnDestroy {
 
     // HANDLE THIS FOR GET RULES AND MODELS APIS
     this.getRulesAndModelsData();
-    // this.businessRuleService.getConditionsData().subscribe((res: any) => {
-    //   if (res.attribute) {
-    //     res.attribute.forEach((item: any) => {
-    //       this.mockAttribute.push(item);
-    //       const nestedProcessedAttributes = this.processNestedAttributes(item.attributes, item.displayName);
-    //       this.mockAttribute.push(...nestedProcessedAttributes);
-    //     });
-    //   }
-    // })
+    this.businessRuleService.getAllRules().subscribe((rules: any) => {
+      if (rules) {
+        // Handling order by id
+        rules.sort((a: any, b: any) => {
+          return a.id - b.id;
+        });
+        this.dataSource = rules;
+      }
+    },
+      (error: any) => {
+        console.error('Error occurred during API request:', error);
+      })
   }
 
   // HANDLE FOR GETTING RULES AND MODEL DATA
   public async getRulesAndModelsData() {
     // eslint-disable-next-line prefer-const
-    let { rules, models } = await this.getALlApis();
+    // const { rules } = await this.getAllRules();
+    let { models } = await this.getALlApis();
     this.defaultModel = this.modelId ? this.modelId : models[0]?.id;
     this.handleEntityByModels(this.defaultModel);
-    if (rules && models) {
-      // Handling order by id
-      rules.sort((a: any, b: any) => {
-        return a.id - b.id;
-      });
+    // if (rules) {
+    //   // Handling order by id
+    //   rules.sort((a: any, b: any) => {
+    //     return a.id - b.id;
+    //   });
+    //   this.dataSource = rules;
+    // }
+    if (models) {
+
       this.models = models;
-      this.dataSource = rules;
       this.filterData = this.dataSource;
       // this.currentDataSource =  this.dataSource;
       this.currentDataSource = this.rows.slice(
@@ -234,25 +241,43 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *  HANDLE THIS FUNCTION FOR GET APIS WITH COMBINE LATEST
-   * @returns promise<any>
-   */
-  public async getALlApis(): Promise<any> {
+ * HANDLE THIS FUNCTION FOR GET ALL THE RULES
+ */
+  public getAllRules(): Promise<any> {
     return new Promise((resolve, rejects) => {
-      forkJoin([
-        this.businessRuleService.getAllRules(),
-        this.businessRuleService.getAllModles(),
-      ]).subscribe(
-        ([rules, models]: any) => {
+      this.businessRuleService.getAllRules().subscribe(
+        (rules: any) => {
           resolve({
             rules,
-            models,
           });
         },
         (err) => {
           this.loading = false;
           rejects({
             rules: [],
+          });
+        }
+      );
+    });
+  }
+
+  /**
+   *  HANDLE THIS FUNCTION FOR GET APIS WITH COMBINE LATEST
+   * @returns promise<any>
+   */
+  public async getALlApis(): Promise<any> {
+    return new Promise((resolve, rejects) => {
+      forkJoin([
+        this.businessRuleService.getAllModles(),
+      ]).subscribe(
+        ([models]: any) => {
+          resolve({
+            models,
+          });
+        },
+        (err) => {
+          this.loading = false;
+          rejects({
             models: [],
           });
         }
