@@ -106,12 +106,11 @@ export class LookupSelectComponent
       let retValue = false;
       props.forEach((name) => {
         if (item.hasOwnProperty(name)) {
+          let value = item[name] || "";
           retValue =
             retValue ||
-            item[name]
-              .toString()
-              .toLowerCase()
-              .indexOf(text.toLowerCase().trim()) != -1;
+            value.toString().toLowerCase().indexOf(text.toLowerCase().trim()) !=
+              -1;
         }
       });
       return retValue;
