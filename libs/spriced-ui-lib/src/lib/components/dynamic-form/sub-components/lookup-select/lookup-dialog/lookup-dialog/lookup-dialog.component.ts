@@ -89,14 +89,14 @@ export class LookupDialogComponent {
       query: this.query,
     });
     dialogResult.afterClosed().subscribe((val) => {
+      this.query = dialogResult.componentInstance.data.query;
       this.filters = val;
-      if (val) {
        this.dialogEventSubject.next({ pageNubmer:this.pageNumber, filters:this.filters });
-      }
     });
    }
 
    onClearFilter(){
+    this.query = null;
     this.filters = [];
     this.dialogEventSubject.next({ pageNubmer:this.pageNumber, filters: this.filters });
    }
