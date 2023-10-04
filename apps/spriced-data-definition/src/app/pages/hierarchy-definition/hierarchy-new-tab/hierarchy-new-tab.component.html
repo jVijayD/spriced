@@ -9,7 +9,7 @@
     <mat-form-field appearance="outline" class="ml-5">
       <mat-label>Entity</mat-label>
       <mat-select (selectionChange)="onEntityChange($event)" [(value)]="selectedEntity">
-        <mat-option class="option" *ngFor="let item of entityList" [value]="item">{{ item.name }}</mat-option>
+        <mat-option class="option" *ngFor="let item of entityList" [value]="item">{{ item.displayName }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" class="ml-5">
@@ -27,7 +27,7 @@
       Save
     </button>
   </div>
-  <div class="flex flex-row gap-5">
+  <div class="flex flex-row gap-5 ">
     <mat-card style="min-width: 300px; min-height: calc(100vh - 18rem);">
       <mat-card-content class="p-0">
         <sp-vbox [noGap]="true" [marginX]="true" class="w-full bg-white h-full">
@@ -47,42 +47,11 @@
         </sp-vbox>
       </mat-card-content>
     </mat-card>
-    <!-- <sp-data-grid style="min-width: 300px; min-height: calc(100vh - 18rem);" class="col-span-2 w-full h-full" #dataGrid
-      title="Current Levels" [enableRowIndex]="false" [isArray]="false" [headers]="headers" [rows]="hierarchyDetails"
-      [rowHeight]="30" [headerHeight]="30" [footerHeight]="0" [columnMode]="columnMode" [virtualScroll]="true"
-      [selectionType]="selectionType" [limit]="10" [isExternalPaging]="false" [isExternalSorting]="false"
-      [sortType]="sortType">
-      <ng-container>
-        <sp-header-action icon="delete" text="Remove" title="Remove" [disabled]="this.hierarchyDetails.length <= 1 "
-          (actionClick)="onRemoveClick(null)"></sp-header-action>
-      </ng-container>
-    </sp-data-grid> -->
-    <!-- <sp-data-grid-tree
-    class="w-full h-full"
-    #dataGrid123
-    title="Model List"
-    [enableRowIndex]="false"
-    [isArray]="false"
-    [headers]="levelHeaders"
-    [rows]="hierarchyDetails"
-    [rowHeight]="40"
-    [headerHeight]="40"
-    [footerHeight]="0"
-    [columnMode]="columnMode"
-    [virtualScroll]="true"
-    [selectionType]="selectionType"
-    [limit]="10"
-    [isExternalPaging]="false"
-    [isExternalSorting]="false"
-    [sortType]="sortType"
-    [count]="hierarchyDetails.length"
-  >
-  </sp-data-grid-tree> -->
-    <mat-card style="min-width: 300px; min-height: calc(100vh - 18rem);">
+    <mat-card class="flex flex-grow" style="max-width: 500px; min-width: 300px; min-height: calc(100vh - 18rem);">
       <mat-card-content class="p-0">
         <sp-vbox [noGap]="true" [marginX]="true" class="w-full bg-white h-full">
           <div class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
-            <span class="float-left text-white font-medium">Available Entities</span>
+            <span class="float-left text-white font-medium">Current Levels</span>
             <div class="flex flex-row">
               <ng-container>
                 <sp-header-action icon="delete" text="Remove" title="Remove"
@@ -90,21 +59,14 @@
               </ng-container>
             </div>
           </div>
-          <ngx-datatable style="min-width: 300px; min-height: calc(100vh - 20rem);" class="material striped tableScroll"
-            [columnMode]="ColumnMode.flex" [headerHeight]="50" [footerHeight]="0" [rowHeight]="40"
-            [rows]="hierarchyLevelNodes" [scrollbarV]="true" [scrollbarH]="true" [treeFromRelation]="'id'"
-            (treeAction)="onTreeAction($event)" [treeToRelation]="'parentId'">
+          <ngx-datatable style="min-width: 300px; max-width: 500px; min-height: calc(100vh - 20rem);"
+            class="material striped tableScroll" [columnMode]="ColumnMode.flex" [headerHeight]="50" [footerHeight]="0"
+            [rowHeight]="40" [rows]="hierarchyLevelNodes" [scrollbarV]="true" [scrollbarH]="true"
+            [treeFromRelation]="'id'" (treeAction)="onTreeAction($event)" [treeToRelation]="'parentId'">
             <ngx-datatable-column name="Name" [flexGrow]="3" [isTreeColumn]="true">
-              <!-- <ng-template let-value="value" ngx-datatable-cell-template>
-                <div class="flex flex-row items-center" style="
-                margin-top: -12px;
-                margin-left: 25px;
-            "><mat-icon>folder</mat-icon><span>{{ value }}</span> </div>
-              </ng-template> -->
-
               <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                 <span style="display: inline-flex" class="ml-5">
-                  <mat-icon>folder</mat-icon>
+                  <mat-icon>account_tree</mat-icon>
                   <span class="ml-2"> {{ value }}</span></span>
               </ng-template>
             </ngx-datatable-column>
@@ -112,10 +74,26 @@
         </sp-vbox>
       </mat-card-content>
     </mat-card>
-    <sp-data-grid class="col-span-2 w-full h-full" #dataGrid title="Preview" [enableRowIndex]="false" [isArray]="false"
-      [headers]="headers" [rows]="hierarchyDetails" [rowHeight]="30" [headerHeight]="30" [footerHeight]="0"
-      [columnMode]="columnMode" [virtualScroll]="true" [selectionType]="selectionType" [limit]="10"
-      [isExternalPaging]="false" [isExternalSorting]="false" [sortType]="sortType">
-    </sp-data-grid>
+    <mat-card class="flex flex-grow" style="min-width: 300px; min-height: calc(100vh - 18rem);">
+      <mat-card-content class="p-0">
+        <sp-vbox [noGap]="true" [marginX]="true" class="w-full bg-white h-full">
+          <div class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
+            <span class="float-left text-white font-medium">Preview</span>
+          </div>
+          <ngx-datatable style="min-width: 300px; min-height: calc(100vh - 20rem);" class="material striped tableScroll"
+            [columnMode]="ColumnMode.flex" [headerHeight]="50" [footerHeight]="0" [rowHeight]="50"
+            [rows]="hierarchyPreviewNodes" [scrollbarV]="true" [scrollbarH]="true" [treeFromRelation]="'parentGrpId'"
+            (treeAction)="onTreeActionPreview($event)" [treeToRelation]="'grpId'">
+            <ngx-datatable-column name="Name" [flexGrow]="3" [isTreeColumn]="true">
+              <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                <span style="display: inline-flex" class="ml-5">
+                  <mat-icon>account_tree</mat-icon>
+                  <span class="ml-2"> {{ value }}</span></span>
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
+        </sp-vbox>
+      </mat-card-content>
+    </mat-card>
   </div>
 </div>

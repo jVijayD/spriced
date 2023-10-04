@@ -119,6 +119,7 @@ export class EntityAddComponent implements OnInit {
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
   referencedTableDisplayName: any
+  referencedTableId: any
   pattern = "^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#\\-]+$"
   constructor(
     public dialogRef: MatDialogRef<EntityAddComponent>,
@@ -138,11 +139,15 @@ export class EntityAddComponent implements OnInit {
       this.attDetails.referencedTableId = this.entityList[1]?.id;
       this.referencedTable = this.entityList[1]?.name;
       this.referencedTableDisplayName = this.entityList[1]?.displayName;
+      this.referencedTableId = this.entityList[1]?.id;
+
     } else {
       //this.local_data.enableAuditTrial = false;
       this.attDetails.referencedTableId = this.entityList[0]?.id;
       this.referencedTable = this.entityList[0]?.name;
       this.referencedTableDisplayName = this.entityList[0]?.displayName;
+      this.referencedTableId = this.entityList[0]?.id;
+
     }
 
     this.action = data.action;
@@ -226,6 +231,8 @@ export class EntityAddComponent implements OnInit {
     this.entityList.map((value: any) => {
       if (value.id == event.source.value) {
         this.referencedTable = value.name;
+        this.referencedTableId = value.id;
+
       }
     });
   }
@@ -234,6 +241,12 @@ export class EntityAddComponent implements OnInit {
       row_obj.dataType = "DECIMAL";
     }
     if (this.attAction == "Update") {
+      if (row_obj.type !== "FREE_FORM")
+     { 
+      row_obj.referencedTableDisplayName=this.referencedTableDisplayName
+      row_obj.referencedTable=this.referencedTable
+      row_obj.referencedTableId=this.referencedTableId
+    }
       this.rows.map((value: any, index: number) => {
         if (value.name == row_obj.name) {
           this.rows[index] = row_obj;
@@ -265,7 +278,7 @@ export class EntityAddComponent implements OnInit {
           displayName: row_obj.displayName || row_obj.name,
           description: row_obj.description,
           type: row_obj.type,
-          referencedTableId: row_obj.referencedTableId,
+          referencedTableId: this.referencedTableId,
           referencedTable: this.referencedTable,
           referencedTableDisplayName: this.referencedTableDisplayName,
           width: row_obj.width || DEFAULT_ATTRIBUTE_WIDTH,
