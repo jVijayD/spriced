@@ -11,9 +11,9 @@ import { MatInputModule } from "@angular/material/input";
 import { MatIconModule } from "@angular/material/icon";
 import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components/directive/tool-tip-renderer.directive";
 import { TransactionsService } from "./service/transactions.service";
-import { Criteria,} from "@spriced-frontend/spriced-common-lib";
-import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { Criteria, Entity, EntityService,} from "@spriced-frontend/spriced-common-lib";
 import { ModelService } from "../../../services/model.service";
+import { forkJoin } from "rxjs";
 @Component({
   selector: "sp-view-transactions-admin",
   standalone: true,
@@ -42,14 +42,31 @@ export class ViewTransactionsAdminComponent {
   rows: any[] = [];
   limit: number = 10;
   modelList!:any[];
+  entityList!:any[];
   query?: any;
-  currentCriteria!: Criteria;
   subscriptions :any[]= [];
+  currentCriteria: Criteria = {
+    filters: [],
+    pager: {
+      pageNumber: 0,
+      pageSize: this.limit,
+    },
+  };
   constructor(
-    private modelService:ModelService
+    private modelService:ModelService,
+    private enitityService:EntityService,
+    private transactionService:TransactionsService
     ){
   }
   headers: Header[] = [
+    {
+      canAutoResize: true,
+      isSortable: true,
+      isFilterable: true,
+      column: "entity_name",
+      name: "Entity",
+    },
+   
     {
       canAutoResize: true,
       isSortable: true,
@@ -100,14 +117,13 @@ export class ViewTransactionsAdminComponent {
    
 
   onModelChange(ev: MatSelectChange) {
-    debugger
     this.selectedModel = ev.value;
+    this.loadEntitiesById(this.selectedModel)
   }
   onPaginate(e: Paginate) {
   }
 
   onItemSelected(e: any) {
-    console.log(e);
     this.selectedItem = e;
   }
 
@@ -118,10 +134,43 @@ export class ViewTransactionsAdminComponent {
   ngOnInit() {
     this.subscriptions.push(
       this.modelService.loadAllModels().subscribe((result: any) => {
-        debugger
         this.modelList = result;
         this.selectedModel = this.modelList[0].id;
+         this.loadEntitiesById(this.selectedModel);
       })
+    );
+  }
+
+  loadEntitiesById(modelId:number){
+    this.enitityService.loadEntityByModel(modelId).subscribe((entities)=>{
+     this.entityList = entities;
+      this.loadTransactionsData(entities)
+    })
+  }
+
+  loadTransactionsData(entities: any) {
+    const observables = entities.map((item: any) => {
+      this.currentCriteria.filters=[];
+      let newFilter = {
+        filterType: "CONDITION",
+        key: "entity_name",
+        value: item.name,
+        joinType: "NONE",
+        operatorType: "EQUALS",
+        datatype: "string"
+      };
+      this.currentCriteria.filters?.push(newFilter);
+      return this.transactionService.loadTransactionsData(this.currentCriteria);
+    });
+
+    forkJoin(observables).subscribe(
+      (results:any) => {
+       const combinedContent = [].concat(...results.map((item:any) => item.content));
+        this.rows = combinedContent;
+      },
+      (error:any) => {
+        
+      }
     );
   }
 }
