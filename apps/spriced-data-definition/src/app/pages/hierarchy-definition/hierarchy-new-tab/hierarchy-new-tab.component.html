@@ -37,7 +37,7 @@
           <mat-list class="col-span-2 h-full overflow-auto">
             <mat-list-item *ngFor="let entity of availableEntities" class="py-10">
               <div class="flex flex-row justify-between items-center">
-                <span>{{entity.displayName}}</span>
+                <span>{{entity.updatedBy}}</span>
                 <button mat-icon-button aria-label="Add" color="primary" (click)="addToLevel(entity)">
                   <mat-icon>add</mat-icon>
                 </button>
