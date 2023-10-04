@@ -15,6 +15,7 @@ import { MatIconModule } from "@angular/material/icon";
 
 import {
   DataGridComponent,
+  DialogService,
   //FilterComponent,
   Header,
   HeaderActionComponent,
@@ -30,6 +31,7 @@ import { HierarchyServiceService } from "../service/hierarchy-service.service";
   templateUrl: "./hierarchy-view-tab.component.html",
   styleUrls: ["./hierarchy-view-tab.component.css"],
   standalone: true,
+  providers: [DialogService],
   imports: [
     NgFor,
     HeaderComponentWrapperComponent,
@@ -91,24 +93,26 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
   isFullScreen = false;
   totalElements = 1000000000000;
 
-  selectedHierarchy : Hierarchy | null =null;
+  selectedHierarchy: Hierarchy | null = null;
   selectedModel!: Model;
 
-  constructor(private hierarchyService: HierarchyServiceService) {}
-  ngOnDestroy() {}
-  ngOnInit() {}
+  constructor(
+    private hierarchyService: HierarchyServiceService,
+    private dialogService: DialogService) { }
+  ngOnDestroy() { }
+  ngOnInit() { }
   onItemSelected(e: any) {
     this.selectedHierarchy = e;
   }
 
-  loadAllHierarchies(model:Model) {
+  loadAllHierarchies(model: Model) {
     this.hierarchyService
       .loadAllHierarchies(model)
       .subscribe((r) => (this.rows = [...r]));
   }
 
   onEdit() {
-    if(!this.selectedHierarchy){
+    if (!this.selectedHierarchy) {
       return
     }
     this.hierarchyService.loadHierarchy(this.selectedHierarchy).forEach((e) => {
@@ -116,21 +120,37 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
     });
   }
 
-  onModelChange(ev: MatSelectChange) {
+  onModelChange(ev: { value: Model }) {
     this.selectedModel = ev.value;
     this.loadAllHierarchies(this.selectedModel);
   }
 
+  showConfirmDeleteDialogue() {
+    const dialogResult = this.dialogService.openConfirmDialoge({
+      title: "Confirm",
+      icon: "public",
+      message:
+        "Do you really want to delete the derived hierarchy ?",
+      maxWidth: 400,
+    });
+
+    dialogResult.afterClosed().subscribe((val) => {
+      if (val && this.selectedHierarchy) {
+        this
+          .hierarchyService
+          .deleteHierarchy(this.selectedHierarchy)
+          .forEach((e) => {
+            this.loadAllHierarchies(this.selectedModel);
+            this.selectedHierarchy = null;
+          });
+        this.onDeleteEventEmitter.emit(this.selectedHierarchy);
+      }
+    });
+  }
+
   onDelete() {
-    if(!this.selectedHierarchy){
-      return
+    if (this.selectedHierarchy) {
+      this.showConfirmDeleteDialogue();
     }
-    this.hierarchyService
-      .deleteHierarchy(this.selectedHierarchy)
-      .forEach((e) => {
-        this.loadAllHierarchies(this.selectedModel);
-        this.selectedHierarchy = null;
-      });
-    this.onDeleteEventEmitter.emit(this.selectedHierarchy);
   }
 }
