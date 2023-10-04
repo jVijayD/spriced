@@ -46,13 +46,8 @@
           </mat-option>
         </mat-select>
         <ng-container *ngIf="count > pageSize">
-<<<<<<< HEAD
           <div>{{ getSelectedDisplayProp() }}</div>
           <input [style.display]="'none'" matInput [(ngModel)]="value"/>
-=======
-          <div *ngIf="value">{{ getSelectedDisplayProp() }}</div>
-          <input [style.display]="'none'" matInput [(ngModel)]="value" />
->>>>>>> 71bf20413f89916a208b4a9c20892d9c35d3c35a
         </ng-container>
         <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
         <mat-hint align="start" *ngIf="control.hint">{{
