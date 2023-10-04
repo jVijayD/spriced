@@ -9,6 +9,7 @@ import { Component, Input } from "@angular/core";
       [ngClass]="[
         noGap ? '' : 'gap-y-5',
         noMarginY ? '' : 'm-y-5',
+        hFull ? 'h-full' : '',
         marginX ? 'm-x-5' : ''
       ]"
     >
@@ -23,6 +24,8 @@ export class VboxComponent {
   noGap: boolean = false;
   @Input()
   noMarginY: boolean = false;
+  @Input()
+  hFull: boolean = false;
   @Input()
   marginX: boolean = false;
 }

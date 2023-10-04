@@ -18,6 +18,7 @@ import { Subscription } from "rxjs";
 import { EntityService } from "../../services/entity.service";
 import { ModelService } from "../../services/model.service";
 import { Model } from "@spriced-frontend/spriced-common-lib";
+import { MatSelectChange } from "@angular/material/select";
 @Component({
   selector: "app-hierarchy-definition",
   templateUrl: "./hierarchy-definition.component.html",
@@ -61,6 +62,10 @@ export class HierarchyDefinitionComponent
     this.subscriptions.push(
       this.modelService.loadAllModels().subscribe((result: any) => {
         this.modelList = result;
+        if(this.modelList.length>0){
+          this.viewTab.selectedModel =   this.modelList[0];
+          this.viewTab.onModelChange({value:this.viewTab.selectedModel});
+        }
       })
     );
   }

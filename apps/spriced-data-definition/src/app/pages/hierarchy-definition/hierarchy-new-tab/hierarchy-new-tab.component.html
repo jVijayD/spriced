@@ -1,5 +1,5 @@
-<div class="flex flex-col gap-5 h-full p-5 overflow-auto">
-  <div class="flex flex-row col-span-6  items-center">
+<div class="flex flex-col h-full p-2 overflow-auto">
+  <div class="flex flex-row col-span-6  items-center p-2">
     <mat-form-field appearance="outline">
       <mat-label>Model</mat-label>
       <mat-select (selectionChange)="onModelChange($event)" [(value)]="selectedModel">
@@ -27,14 +27,14 @@
       Save
     </button>
   </div>
-  <div class="flex flex-row gap-5 ">
-    <mat-card style="min-width: 300px; min-height: calc(100vh - 18rem);">
-      <mat-card-content class="p-0">
-        <sp-vbox [noGap]="true" [marginX]="true" class="w-full bg-white h-full">
+  <div class="flex flex-row gap-5 h-full p-2 overflow-hidden">
+    <mat-card style="min-width: 300px; height:100%">
+      <mat-card-content class="p-0 h-full">
+        <sp-vbox [noGap]="true" [hFull]="true" [marginX]="true" class="w-full bg-white h-full overflow-hidden">
           <div class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
             <span class="float-left text-white font-medium">Available Entities</span>
           </div>
-          <mat-list class="col-span-2 h-2/3">
+          <mat-list class="col-span-2 h-full overflow-auto">
             <mat-list-item *ngFor="let entity of availableEntities" class="py-10">
               <div class="flex flex-row justify-between items-center">
                 <span>{{entity.displayName}}</span>
@@ -47,9 +47,9 @@
         </sp-vbox>
       </mat-card-content>
     </mat-card>
-    <mat-card class="flex flex-grow" style="max-width: 500px; min-width: 300px; min-height: calc(100vh - 18rem);">
-      <mat-card-content class="p-0">
-        <sp-vbox [noGap]="true" [marginX]="true" class="w-full bg-white h-full">
+    <mat-card class="flex flex-grow h-full" style="max-width: 500px; min-width: 300px;">
+      <mat-card-content class="p-0 h-full overflow-hidden">
+        <sp-vbox [noGap]="true" [marginX]="true" [hFull]="true" class="w-full bg-white h-full">
           <div class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
             <span class="float-left text-white font-medium">Current Levels</span>
             <div class="flex flex-row">
@@ -74,9 +74,9 @@
         </sp-vbox>
       </mat-card-content>
     </mat-card>
-    <mat-card class="flex flex-grow" style="min-width: 300px; min-height: calc(100vh - 18rem);">
-      <mat-card-content class="p-0">
-        <sp-vbox [noGap]="true" [marginX]="true" class="w-full bg-white h-full">
+    <mat-card class="flex flex-grow h-full" style="min-width: 300px;">
+      <mat-card-content class="p-0 h-full overflow-hidden">
+        <sp-vbox [noGap]="true" [marginX]="true" [hFull]="true" class="w-full bg-white h-full">
           <div class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
             <span class="float-left text-white font-medium">Preview</span>
           </div>
