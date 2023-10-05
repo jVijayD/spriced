@@ -47,6 +47,7 @@ export class LookupSelectComponent
   filteredSource: any = [];
   dialogReference: any = null;
   subscriptions: Subscription[] = [];
+  totalcount!:number;
   @Input()
   set control(selectControl: GenericControl) {
     this._control = selectControl;
@@ -80,6 +81,9 @@ export class LookupSelectComponent
             value: items,
             total: this.count,
           });
+        }
+        if(this.totalcount == undefined){
+          this.totalcount = this.count;
         }
       })
     );
