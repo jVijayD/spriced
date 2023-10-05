@@ -221,7 +221,8 @@ export class HierarchyNewTabComponent implements OnInit {
             displayName: att.referencedTableDisplayName,
             name: att.referencedTable,
             id: att.referencedTableId,
-            comment: att.name
+            comment: att.name,
+            updatedBy:att.displayName
           } as Entity;
         });
       this.availableEntities.push(...derAttrList);
