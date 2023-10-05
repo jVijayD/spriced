@@ -41,15 +41,15 @@
             </div>
   
             <div class="flex">
-              <sp-header-action
+              <!-- <sp-header-action
                 icon="delete"
                 text="Delete"
                 title="Delete Member"
                 [disabled]="selectedItem == null || selectedItem == undefined || disableSubmit"
                 (actionClick)="onDelete()"
-              ></sp-header-action>
+              ></sp-header-action> -->
     
-              <sp-header-action
+              <!-- <sp-header-action
                 icon="filter_list"
                 [text]="!query ? 'Filter' : ''"
                 (actionClick)="onFilter()"
@@ -58,12 +58,12 @@
                 [contentTemplate]="template"
                 [customPosition]="true"
                 [showToolTip]="!!query"
-              ></sp-header-action>
+              ></sp-header-action> -->
   
               <ng-template #template>
                 <div [innerHTML]="getToolTipTemplate(query)"></div>
               </ng-template>
-  
+<!--   
               <sp-header-action
                 icon="filter_list_off"
                 text="Clear Filter"
@@ -73,10 +73,10 @@
                   this.currentCriteria?.filters == undefined
                 "
                 (actionClick)="onClearFilter()"
-              ></sp-header-action>
+              ></sp-header-action> -->
   
   
-              <sp-header-action
+              <!-- <sp-header-action
                 [context]="true"
                 icon="insert_drive_file"
                 text="Export"
@@ -90,7 +90,7 @@
                     >xslx</span
                   >
                 </button>
-              </sp-header-action>
+              </sp-header-action> -->
   
              
 
