@@ -22,6 +22,7 @@ import { NG_VALUE_ACCESSOR } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { LookupDialogComponent } from "./lookup-dialog/lookup-dialog/lookup-dialog.component";
 import { Subscription } from "rxjs";
+import { EntityService } from "@spriced-frontend/spriced-common-lib";
 
 @Component({
   selector: "sp-lookup-select",
@@ -61,6 +62,7 @@ export class LookupSelectComponent
   constructor(
     @Inject(Injector) private injector: Injector,
     private dynamicService: DynamicFormService,
+    private entityService: EntityService,
     private dialog: MatDialog
   ) {
     super(dynamicService);
@@ -71,6 +73,8 @@ export class LookupSelectComponent
     this.onDestroy();
   }
   ngOnInit(): void {
+    const lookupControl = this._control as LookupSelectControl;
+    this.setDomainBasedEntity(lookupControl);
     this.setFormControl(this.injector);
     this.subscriptions.push(
       this.dataPopulation$.subscribe((items) => {
@@ -83,6 +87,17 @@ export class LookupSelectComponent
         }
       })
     );
+  }
+
+  public setDomainBasedEntity(lookupControl: any)
+  {
+    if(lookupControl.eventType === 'lookup')
+    {
+      this.entityService.load(lookupControl?.eventValue).subscribe((item: any) => {
+        const updatedField = {...lookupControl, domainBasedEntity: item.displayName};
+        this._control = updatedField;
+      });
+    }
   }
 
   onClearClick(): void {
