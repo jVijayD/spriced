@@ -221,7 +221,8 @@ export class HierarchyNewTabComponent implements OnInit {
             displayName: att.referencedTableDisplayName,
             name: att.referencedTable,
             id: att.referencedTableId,
-            comment: att.name
+            comment: att.name,
+            updatedBy:att.displayName
           } as Entity;
         });
       this.availableEntities.push(...derAttrList);
@@ -278,7 +279,7 @@ export class HierarchyNewTabComponent implements OnInit {
           parentId: hdtl.groupLevel == 0 ? null : hdtl.groupLevel,
           tablename: hdtl.tablename,
           tableId: hdtl.tableId,
-          name: hdtl.tabledisplayname || hdtl.tablename,
+          name: hdtl.tabledisplayname || hdtl.entity.displayName || hdtl.tablename,
           expanded: true
         } as HierarchyTreeNode;
       }),
@@ -345,7 +346,7 @@ export class HierarchyNewTabComponent implements OnInit {
             d.parentGrpId = row.grpId;
             d.column = hie ? hie.refColumn : "";
             d.tableId = hie ? hie.tableId : 0;
-            d.name = d.code + `{${d.name}}`
+            d.name = d.code + (d.name && d.name.length ? `{${d.name}}` : "{}")
             d.grpId = row.grpId + "-" + d.id
             return d;
           });
