@@ -49,7 +49,7 @@ import { EntityDataStagingService } from "../../services/entity-data-staging.ser
 import { Subscription } from "rxjs";
 import * as moment from "moment";
 import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
-import { Router, RouterModule } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 
 import { AuditDataComponent } from "../entity-data/audit-data/audit-data.component";
 import { LookupPopupComponent } from "../../components/lookup-Popup/lookup-popup.component";
@@ -138,13 +138,21 @@ export class UploadErrorComponent implements OnDestroy, OnInit {
     private entityGridService: EntityGridService,
     private entityFormService: EntityFormService,
     private router: Router,
-    private statusPannelService: AppDataService
+    private statusPannelService: AppDataService,
+    private route: ActivatedRoute
   ) {
     this.globalSettings = this.settings.getGlobalSettings();
     this.setFormData("", []);
     this.subscribeToFormEvents();
   }
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    const entityId = Number(this.route.snapshot.paramMap.get("entityId"));
+
+      this.entityDataService.loadEntity(entityId).subscribe((item: any) => {
+     this.onEntitySelectionChange(item)
+      });
+
+   }
 
   subscribeToFormEvents() {
     this.subscriptions.push(
@@ -409,6 +417,7 @@ export class UploadErrorComponent implements OnDestroy, OnInit {
   }
 
   onSettings() {
+
     const dialogResult = this.dialog.open(SettingsPopUpComponent, {
       data: this.currentSelectedEntity,
     });
@@ -463,19 +472,8 @@ export class UploadErrorComponent implements OnDestroy, OnInit {
       this.settings.getGlobalSettings()
     );
     this.createDynamicUIMapping(entity as Entity);
-    this.loadRelatedEntity();
   }
-  loadRelatedEntity() {
-    this.entityDataService
-      .getRelatedEntity(
-        this.currentSelectedEntity?.groupId,
-        this.currentSelectedEntity?.id
-      )
-      .subscribe((val) => {
-        this.relatedEntity = val;
-        this.query = null;
-      });
-  }
+
   onSubmitEntityData(data: any) {
     if (this.headers.length < 1) {
       this.snackbarService.warn("Please check whether user has permission.");

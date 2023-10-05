@@ -29,7 +29,7 @@ export class EntityDataStagingService {
     criteria: Criteria
   ): Observable<PageData> {
     const url = this.requestUtility.addCriteria(
-      `${this.api_url}/entity/${id}/data`,
+      `${this.api_url}/entity/stage/${id}/data`,
       criteria
     );
     return this.http.get<PageData>(url);
@@ -117,12 +117,12 @@ export class EntityDataStagingService {
   }
 
   createEntityData(id: string | number, data: any): Observable<any> {
-    return this.http.post(`${this.api_url}/entity/${id}/data`, {
+    return this.http.post(`${this.api_url}/entity/stage/${id}/data`, {
       data: [data],
     });
   }
   updateEntityData(id: string | number, data: any): Observable<any> {
-    return this.http.put(`${this.api_url}/entity/${id}/data`, { data: [data] });
+    return this.http.put(`${this.api_url}/entity/stage/${id}/data`, { data: [data] });
   }
   deleteEntityData(id: string | number, entityDataId: number): Observable<any> {
     return this.http.delete(

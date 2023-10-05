@@ -402,7 +402,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     });
   }
   onStatus() {
-    const dialogResult = this.dialog.open(StatusComponent, {});
+    const dialogResult = this.dialog.open(StatusComponent, {data:this.currentSelectedEntity});
 
     dialogResult.afterClosed().subscribe((val) => { });
   }

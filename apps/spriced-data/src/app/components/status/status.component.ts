@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Inject, OnInit, Optional } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   DataGridComponent,
@@ -7,10 +7,11 @@ import {
   OneColComponent,
 } from "@spriced-frontend/spriced-ui-lib";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
-import { MatDialogRef } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityDataService } from "../../services/entity-data.service";
+import { Router, RouterModule } from "@angular/router";
 
 @Component({
   selector: "sp-status",
@@ -22,6 +23,7 @@ import { EntityDataService } from "../../services/entity-data.service";
     MatIconModule,
     MatButtonModule,
     HeaderActionComponent,
+    RouterModule,
   ],
   templateUrl: "./status.component.html",
   styleUrls: ["./status.component.scss"],
@@ -29,7 +31,9 @@ import { EntityDataService } from "../../services/entity-data.service";
 export class StatusComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<StatusComponent>,
-    private dataService: EntityDataService
+    private dataService: EntityDataService,
+    private router: Router,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
   headers: Header[] = [
     {
@@ -81,7 +85,10 @@ export class StatusComponent implements OnInit {
   }
   ngOnInit(): void {
     this.dataService.getStatus().subscribe((val: any) => {
-      console.log(val);
+      val = val.filter((value: any) => {
+        var entityName=value.entityName.substring(0, value.entityName.indexOf('_'))
+        return entityName == this.data.name;
+      }); 
       this.rows = [...val];
       this.totalElements = this.rows.length;
     });
@@ -91,7 +98,8 @@ export class StatusComponent implements OnInit {
   }
   viewError()
   {
-    window.open("/spriced-data/upload-error");
+    console.log('this.viewError')
+    this.dialogRef.close();
+    this.router.navigate(["/spriced-data/upload-error/"  + this.data.groupId + "/" +this.data.id ]);
   }
-  
 }

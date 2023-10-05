@@ -8,6 +8,7 @@
       ></sp-entity-select> -->
       <div class="grid-container grid-height bg-primary-dark rounded-t-md">
         <sp-data-grid
+          page="error"
           class="w-full h-full"
           #dataGrid
           [enableRowIndex]="false"
@@ -32,34 +33,11 @@
           *ngIf="!hide"
         >
           <ng-container>
-            <!-- <sp-header-action
-              [disabled]="!this.isFullScreen"
-              icon="add_box"
-              text="Add"
-              title="Add Entity"
-              (actionClick)="showAddPopup()"
-            ></sp-header-action> -->
-  
-            <!-- <sp-header-action
-              icon="edit"
-              text="Edit"
-              title="Edit Entity"
-              [disabled]="!selectedItem && !isFullScreen"
-              (actionClick)="onEdit()"
-            ></sp-header-action> -->
-            <sp-header-component-wrapper>
-              <sp-entity-select
-                (entitySelectionEvent)="onEntitySelectionChange($event)"
-                (modelSelectionEvent)="onModelSelectionChange()"
-              ></sp-entity-select>
-            </sp-header-component-wrapper>
-  
+          
             <div
-              class="text-white items-center font-medium flex justify-center w-full"
+              class="text-white items-center font-medium flex justify-start w-full"
             >
-              <span class="elipsis">
                 {{ this.currentSelectedEntity?.displayName || "" }}
-              </span>
             </div>
   
             <div class="flex">
@@ -69,22 +47,6 @@
                 title="Delete Member"
                 [disabled]="selectedItem == null || selectedItem == undefined || disableSubmit"
                 (actionClick)="onDelete()"
-              ></sp-header-action>
-  
-              <!-- <sp-header-action
-              [disabled]="!selectedItem"
-              icon="clear"
-              text="Clear"
-              title="Clear"
-              (actionClick)="onClear()"
-            ></sp-header-action> -->
-  
-              <sp-header-action
-                icon="add"
-                text="Add"
-                title="Add"
-                (click)="onClear()"
-                [disabled] ="disableSubmit"
               ></sp-header-action>
     
               <sp-header-action
@@ -113,13 +75,6 @@
                 (actionClick)="onClearFilter()"
               ></sp-header-action>
   
-              <!-- <sp-header-action
-                icon="cloud_upload"
-                text="Upload"
-                title="Bulk Upload"
-                (actionClick)="onUpload()"
-                [disabled]="this.headers.length === 0"
-              ></sp-header-action> -->
   
               <sp-header-action
                 [context]="true"
@@ -128,10 +83,7 @@
                 title="Export"
                 [disabled]="this.headers.length === 0"
               >
-                <!-- <button mat-menu-item (click)="onExport('csv')">
-                  <mat-icon class="mt-auto">insert_drive_file</mat-icon>
-                  <span class="text-xs self-end">csv</span>
-                </button> -->
+               
                 <button mat-menu-item (click)="onExport('xlsx')">
                   <mat-icon class="mt-auto">insert_drive_file</mat-icon>
                   <span class="text-xs self-end file-excel fontawesomeicon"
@@ -142,24 +94,13 @@
   
              
 
-              <sp-header-action
+              <!-- <sp-header-action
               icon="save"
               text="Save"
               title="Save"
               (actionClick)="onSave()"
-            ></sp-header-action>
+            ></sp-header-action> -->
 
-<!--   
-              <sp-header-action
-                icon="settings"
-                text="Settings"
-                title="Settings"
-                [disabled]="
-                  this.currentSelectedEntity == null ||
-                  this.currentSelectedEntity == undefined
-                "
-                (actionClick)="onSettings()"
-              ></sp-header-action> -->
             </div>
           </ng-container>
         </sp-data-grid>

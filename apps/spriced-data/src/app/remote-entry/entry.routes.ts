@@ -13,7 +13,7 @@ export const remoteRoutes: Route[] = [
       { path: "model-view", component: ModelListComponent },
       { path: ":modelId/:entityId", component: EntityDataComponent },
       { path: "lookup/:id", component: EntityDataComponent },
-      { path: "upload-error", component: UploadErrorComponent },
+      { path: "upload-error/:modelId/:entityId", component: UploadErrorComponent },
     ],
   },
 ];
