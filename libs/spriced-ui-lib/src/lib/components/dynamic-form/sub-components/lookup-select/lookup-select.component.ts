@@ -74,8 +74,6 @@ export class LookupSelectComponent
     this.onDestroy();
   }
   ngOnInit(): void {
-    const lookupControl = this._control as LookupSelectControl;
-    this.setDomainBasedEntity(lookupControl);
     this.setFormControl(this.injector);
     this.subscriptions.push(
       this.dataPopulation$.subscribe((items) => {
@@ -91,17 +89,6 @@ export class LookupSelectComponent
         }
       })
     );
-  }
-
-  public setDomainBasedEntity(lookupControl: any)
-  {
-    if(lookupControl.eventType === 'lookup')
-    {
-      this.entityService.load(lookupControl?.eventValue).subscribe((item: any) => {
-        const updatedField = {...lookupControl, domainBasedEntity: item.displayName};
-        this._control = updatedField;
-      });
-    }
   }
 
   onClearClick(): void {

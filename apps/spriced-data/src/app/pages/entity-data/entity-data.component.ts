@@ -45,7 +45,7 @@ import {
 } from "@spriced-frontend/spriced-common-lib";
 import { Validators } from "@angular/forms";
 import { EntityDataService } from "../../services/entity-data.service";
-import { Subscription } from "rxjs";
+import { Observable, Subscription, filter, forkJoin, map, of } from "rxjs";
 import * as moment from "moment";
 import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
 import { Router, RouterModule } from "@angular/router";
@@ -554,7 +554,53 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       }, false);
     }
 
-    this.setFormData("", formFields);
+    // this.setFormData("", formFields);
+    const lookupFields = formFields.filter((el: any) => el.eventType === 'lookup');
+    if (lookupFields.length > 0)
+    {
+      this.patchFormData(lookupFields).subscribe((lookupResponses: any[]) => {
+        lookupFields.forEach((lookupField: any) => {
+          const item = lookupResponses.find((responseItem: any) => responseItem.id === lookupField.eventValue);
+          if (item) {
+            lookupField.toolTipText = item.displayName;
+          }
+        });
+        this.setFormData("", formFields);
+      });
+    } else
+    {
+      this.setFormData("", formFields);
+    }
+  }
+
+  public patchFormData(formFields: any): Observable<any[]> {
+    const observables: Observable<any>[] = [];
+    let lookupContrl = formFields.filter((elm: any) => elm.eventType === 'lookup');
+    const uniqueEventValues: any[] = [];
+    // Remove duplicate eventValue items
+    lookupContrl = lookupContrl.filter((item: any) => {
+      const isDuplicate = uniqueEventValues.indexOf(item.eventValue) !== -1;
+      if (!isDuplicate) {
+        uniqueEventValues.push(item.eventValue);
+      }
+      return !isDuplicate;
+    });
+  
+    for (const item of lookupContrl) {
+      if (item.eventType === 'lookup') {
+        // Make API call if not cached
+        const observable = this.entityDataService.loadEntity(item.eventValue).pipe(
+          map((elm: any) => {
+            return elm;
+          })
+        );
+        observables.push(observable);
+      }
+    }
+    // Use forkJoin to wait for all observables to complete and then return the updated formFields array
+    return forkJoin(observables).pipe(
+      map((elm) => elm) // Return the updated formFields after all observables complete
+    );
   }
 
   private createDynamicGrid(

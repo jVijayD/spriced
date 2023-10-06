@@ -255,7 +255,7 @@ export type LookupSelectControl = {
   };
   eventValue: any;
   eventType: string;
-  domainBasedEntity?: string,
+  toolTipText?: string,
   data: IData;
   validations?: IValidator[];
   asyncValidations?: IValidator[];
