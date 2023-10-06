@@ -227,7 +227,7 @@ export class BusinessactionsComponent implements AfterViewInit {
     }
     if (['DECIMAL', 'FLOAT', 'LINK'].includes(this.dataType)) {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
-      this.actionForm?.get('operand')?.setValidators([Validators.pattern(pattern)]);
+      this.actionForm?.get('operand')?.setValidators([Validators.required,Validators.pattern(pattern)]);
     }
 
     this.handleValueChange(actionType, 'changeValue');
