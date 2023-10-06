@@ -112,7 +112,6 @@ export class ModelAccessComponent {
   }
 
   filterModelsSelection(text: any) {
-    debugger
     this.filteredModelList = this.modelList.filter((item: any) => {
       return (
         item.displayName
