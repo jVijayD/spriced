@@ -188,6 +188,12 @@ export class ElseactionComponent {
       valueControl?.enable();
       this.isFieldDisabled ? this.removeValidators(valueControl) : this.addValidators(valueControl);
     }
+    if (this.valueConstant) {
+      this.removeValidators(valueControl);
+    }
+    else {
+      this.addValidators(valueControl)
+    }
   }
 
   /**
@@ -229,7 +235,7 @@ export class ElseactionComponent {
     this.isFieldDisabled = event === 'BLANK';
     this.selectedOperand = '';
     this.actionForm?.get('a')
-    if(event === 'CONSTANT') {
+    if (event === 'CONSTANT') {
       this.actionForm.get('operand')?.removeValidators([Validators.required]);
     } else {
       this.actionForm.get('operand')?.addValidators([Validators.required]);
@@ -259,14 +265,12 @@ export class ElseactionComponent {
     });
   }
 
-  public removeValidators(valueControl: any)
-  {
+  public removeValidators(valueControl: any) {
     valueControl.clearValidators();
     valueControl.updateValueAndValidity();
   }
 
-  public addValidators(valueControl: any)
-  {
+  public addValidators(valueControl: any) {
     valueControl.setValidators(Validators.required);
     valueControl.updateValueAndValidity();
   }
@@ -309,18 +313,15 @@ export class ElseactionComponent {
     }
   }
 
-  public setAttributeNamesById(attributeId: any, operandAttribute: any)
-  {
+  public setAttributeNamesById(attributeId: any, operandAttribute: any) {
     const attribute = this.findAttributeById(attributeId);
     const operandAtt = this.findAttributeById(operandAttribute);
     // !!operandAtt ? this.actionForm?.get('operandType')?.setValue('ATTRIBUTE') : this.actionForm?.get('operandType')?.setValue('CONSTANT');
-    if(!!attribute)
-    {
+    if (!!attribute) {
       this.actionForm?.get('attributeDisplayName')?.setValue(attribute.displayName);
       this.actionForm?.get('attributeName')?.setValue(attribute.name);
     }
-    if(!!operandAtt)
-    {
+    if (!!operandAtt) {
       this.actionForm?.get('operandName')?.setValue(operandAtt.name);
       this.actionForm?.get('operandDisplayName')?.setValue(operandAtt.displayName);
     }
@@ -424,7 +425,7 @@ export class ElseactionComponent {
   private getValidationPatternForDataType(dataType: string, decimalSize?: number): RegExp {
     const number = decimalSize || 1; // Use decimalSize if provided, or default to 1
     let pattern = '';
-  
+
     switch (dataType) {
       case 'DECIMAL':
         pattern = `^\\d{1,9}\\.\\d{${number},}$`;
@@ -439,7 +440,7 @@ export class ElseactionComponent {
         pattern = '.';
         break;
     }
-  
+
     return new RegExp(pattern);
   }
 
