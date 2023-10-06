@@ -213,11 +213,11 @@ export class ElseactionComponent {
     this.dataType = attribute?.dataType ? attribute?.dataType : 'AUTO';
     const decimalValueSize = attribute?.size;
     this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern('')]);
-    this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
+    this.dynamicInputType = ['INTEGER', 'DECIMAL','DOUBLE'].includes(this.dataType) ? 'number' : 'text';
     if (text === 'changeAttribute') {
       this.actionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
     }
-    if (['DECIMAL', 'FLOAT', 'LINK'].includes(this.dataType)) {
+    if (['DECIMAL', 'FLOAT', 'LINK','DOUBLE'].includes(this.dataType)) {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
@@ -352,9 +352,9 @@ export class ElseactionComponent {
 
     this.dataType = attribute?.dataType || 'AUTO';
     const decimalValueSize = attribute?.size;
-    this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
+    this.dynamicInputType = ['INTEGER', 'DECIMAL','DOUBLE'].includes(this.dataType) ? 'number' : 'text';
 
-    if (['DECIMAL', 'FLOAT', 'LINK'].includes(this.dataType)) {
+    if (['DECIMAL', 'FLOAT', 'LINK','DOUBLE'].includes(this.dataType)) {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }

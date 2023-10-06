@@ -332,6 +332,7 @@ export class BusinessRuleListComponent {
    */
   public handleAttributes(id: any, text?: string) {
     let attribute = this.findAttributeInArray(id, this.dataRules?.attributes);
+    attribute= attribute.filter((item:any) => item.systemAttribute === true);
     const operatorType = this.getValue('operatorType');
     // If not found, search within nested attributes
     if (!attribute) {
@@ -343,11 +344,11 @@ export class BusinessRuleListComponent {
     this.dataType = attribute?.dataType ? attribute?.dataType : 'AUTO';
     const decimalValueSize = attribute?.size;
     this.conditionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern('')]);
-    this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
+    this.dynamicInputType = ['INTEGER', 'DECIMAL','DOUBLE'].includes(this.dataType) ? 'number' : 'text';
     if (text === 'changeAttribute') {
       this.conditionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
     }
-    if (['DECIMAL', 'FLOAT', 'LINK'].includes(this.dataType)) {
+    if (['DECIMAL', 'FLOAT', 'LINK','DOUBLE'].includes(this.dataType)) {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.conditionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
@@ -379,9 +380,9 @@ export class BusinessRuleListComponent {
 
     this.dataType = attribute?.dataType || 'AUTO';
     const decimalValueSize = attribute?.size;
-    this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
+    this.dynamicInputType = ['INTEGER', 'DECIMAL','DOUBLE'].includes(this.dataType) ? 'number' : 'text';
 
-    if (['DECIMAL', 'FLOAT', 'LINK'].includes(this.dataType)) {
+    if (['DECIMAL', 'FLOAT', 'LINK','DOUBLE'].includes(this.dataType)) {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.conditionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
