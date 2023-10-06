@@ -22,7 +22,6 @@ import {
   Entity,
   EntityService, Criteria,
   Model,
-  Attribute,
 } from "@spriced-frontend/spriced-common-lib";
 import { MatListModule } from "@angular/material/list";
 import { CommonModule, NgFor } from "@angular/common";
@@ -39,7 +38,6 @@ import {
   SnackBarService,
   SnackbarModule,
   VboxComponent,
-  sorter,
 } from "@spriced-frontend/spriced-ui-lib";
 import {
   ColumnMode,
@@ -127,8 +125,6 @@ export class HierarchyNewTabComponent implements OnInit {
   id: number = 0;
   name: string = "";
   description: string = "";
-  comboSorters: sorter[] = [{ property: "name", direction: Direction.ASC }];
-
   constructor(
     private cd: ChangeDetectorRef,
     private entityService: EntityService,

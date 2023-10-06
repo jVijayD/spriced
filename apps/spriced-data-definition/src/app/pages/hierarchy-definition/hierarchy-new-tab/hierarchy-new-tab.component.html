@@ -8,15 +8,15 @@
     </mat-form-field> -->
 
     <sp-select-search appearance="outline" [model]="selectedModel" placeholder="Model"
-      (selectionChange)="onModelChange($event)" [sorters]="[{property:'displayName',direction:dir}]"
-      [bindLabelKey]="'displayName'" [items]="modelList">
+      (selectionChange)="onModelChange($event)" [sorters]="[{property:'displayName'}]" [bindLabelKey]="'displayName'"
+      [items]="modelList">
     </sp-select-search>
 
     <!-- <mat-form-field appearance="outline" class="ml-5">
       <mat-label>Entity</mat-label> -->
-    <sp-select-search appearance="outline" class="ml-5" [sorters]="[{property:'displayName',direction:dir}]"
-      [model]="selectedEntity" placeholder="Entity" (selectionChange)="onEntityChange($event)"
-      [bindLabelKey]="'displayName'" [items]="entityList">
+    <sp-select-search appearance="outline" class="ml-5" [sorters]="[{property:'displayName'}]" [model]="selectedEntity"
+      placeholder="Entity" (selectionChange)="onEntityChange($event)" [bindLabelKey]="'displayName'"
+      [items]="entityList">
     </sp-select-search>
     <!-- <mat-select (selectionChange)="onEntityChange($event)" [(value)]="selectedEntity">
         <mat-option class="option" *ngFor="let item of entityList" [value]="item">{{ item.displayName }}</mat-option>

@@ -9,17 +9,17 @@ import {
 } from "@angular/core";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatTableModule } from "@angular/material/table";
-import { MatSelectChange, MatSelectModule } from "@angular/material/select";
+import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from "@angular/material/input";
 import { MatIconModule } from "@angular/material/icon";
 
 import {
   DataGridComponent,
   DialogService,
-  //FilterComponent,
   Header,
   HeaderActionComponent,
   HeaderComponentWrapperComponent,
+  SelectSearchComponent,
 } from "@spriced-frontend/spriced-ui-lib";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import * as moment from "moment";
@@ -37,6 +37,7 @@ import { HierarchyServiceService } from "../service/hierarchy-service.service";
     HeaderComponentWrapperComponent,
     MatIconModule,
     MatTabsModule,
+    SelectSearchComponent,
     MatTableModule,
     MatInputModule,
     MatSelectModule,
