@@ -11,6 +11,7 @@ import {
   Input,
   OnInit,
   Output,
+  ViewEncapsulation,
 } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
 import { MatSelectChange, MatSelectModule } from "@angular/material/select";
@@ -54,9 +55,10 @@ import { HierarchyServiceService } from "../service/hierarchy-service.service";
 @Component({
   selector: "app-hierarchy-new-tab",
   templateUrl: "./hierarchy-new-tab.component.html",
-  styleUrls: ["./hierarchy-new-tab.component.css"],
+  styleUrls: ["./hierarchy-new-tab.component.scss"],
   standalone: true,
   providers: [SnackBarService],
+  encapsulation: ViewEncapsulation.None,
   imports: [
     CommonModule,
     NgFor,
@@ -80,7 +82,7 @@ import { HierarchyServiceService } from "../service/hierarchy-service.service";
   ],
 })
 export class HierarchyNewTabComponent implements OnInit {
-  dir:Direction=Direction.ASC;
+  dir: Direction = Direction.ASC;
   @Input()
   selectedHierarchy!: Hierarchy | null;
   @Output() onSaveEventEmitter = new EventEmitter<any>();
@@ -164,6 +166,15 @@ export class HierarchyNewTabComponent implements OnInit {
     if (this.hierarchyDetails.length <= 1) {
       this.snackBarService.error("Please add grouping levels");
     }
+    if (this.name.length < 3) {
+      this.snackBarService.error("Name Min length is 3 characters");
+    }
+    if (this.name.length > 50) {
+      this.snackBarService.error("Name Max length is 50 characters");
+    }
+    if (this.description.length > 250) {
+      this.snackBarService.error("Description Max length is 250 characters");
+    }
   }
 
   onSaveClick() {
@@ -172,6 +183,9 @@ export class HierarchyNewTabComponent implements OnInit {
       !this.selectedModel ||
       !this.name ||
       !this.hierarchyDetails ||
+      this.name.length < 3 ||
+      this.name.length > 50 ||
+      this.description.length > 250 ||
       this.hierarchyDetails.length == 0 ||
       this.hierarchyDetails.length == 1
     ) {
@@ -284,7 +298,7 @@ export class HierarchyNewTabComponent implements OnInit {
           .sort((a, b) => a.groupLevel - b.groupLevel)
           .forEach((hieDtls): void => {
             hieDtls.entity = this.getEntityByTable(hieDtls.tablename);
-            hieDtls.tabledisplayname = this.getTableDisplayName(this.getLastHierarchyDtls()?.entity|| hieDtls.entity, this.getLastHierarchyDtls()?.refColumn, hieDtls.groupLevel);
+            hieDtls.tabledisplayname = this.getTableDisplayName(this.getLastHierarchyDtls()?.entity || hieDtls.entity, this.getLastHierarchyDtls()?.refColumn, hieDtls.groupLevel);
             hieDtls.tableId = (hieDtls.entity).id;
             this.hierarchyDetails.push(hieDtls);
           });
@@ -366,7 +380,7 @@ export class HierarchyNewTabComponent implements OnInit {
     if (row.treeStatus === 'collapsed') {
       row.treeStatus = 'loading';
 
-      if (!row.loaded && this.hierarchyDetails.length  != row.level) {
+      if (!row.loaded && this.hierarchyDetails.length != row.level) {
         var hie = this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1 - row.level)
         this.getChildNodes(row, (data: any) => {
           data = data.content.map((d: PreviewTreeNode) => {

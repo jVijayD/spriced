@@ -8,7 +8,8 @@
     </mat-form-field> -->
 
     <sp-select-search appearance="outline" [model]="selectedModel" placeholder="Model"
-      (selectionChange)="onModelChange($event)" [sorters]="[{property:'displayName',direction:dir}]" [bindLabelKey]="'displayName'" [items]="modelList">
+      (selectionChange)="onModelChange($event)" [sorters]="[{property:'displayName',direction:dir}]"
+      [bindLabelKey]="'displayName'" [items]="modelList">
     </sp-select-search>
 
     <!-- <mat-form-field appearance="outline" class="ml-5">
@@ -21,13 +22,17 @@
         <mat-option class="option" *ngFor="let item of entityList" [value]="item">{{ item.displayName }}</mat-option>
       </mat-select>
     </mat-form-field> -->
-    <mat-form-field appearance="outline" class="ml-5">
+    <mat-form-field appearance="outline" class="ml-5" hintLabel="Max 50, Min 3 characters">
       <mat-label>Name</mat-label>
-      <input matInput [(ngModel)]="name" />
+      <input matInput #nameInput [maxlength]="50" [(ngModel)]="name" />
+      <mat-hint align="end" style="display: block;">{{nameInput.value?.length ||
+        0}}/{{nameInput.maxLength}}</mat-hint>
     </mat-form-field>
-    <mat-form-field appearance="outline" class="ml-5">
+    <mat-form-field appearance="outline" class="ml-5" hintLabel="Max 250 characters">
       <mat-label>Description</mat-label>
-      <input matInput [(ngModel)]="description" />
+      <input matInput [maxlength]="250" #descInput [(ngModel)]="description" />
+      <mat-hint align="end" [ngStyle]="{'display': 'block'}">{{descInput.value?.length ||
+        0}}/{{descInput.maxLength}}</mat-hint>
     </mat-form-field>
     <button mat-raised-button color="accent" class="ml-5" (click)="onClearClick()">
       Clear
