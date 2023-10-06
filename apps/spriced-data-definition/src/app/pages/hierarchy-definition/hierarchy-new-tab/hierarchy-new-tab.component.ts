@@ -21,6 +21,7 @@ import {
   Entity,
   EntityService, Criteria,
   Model,
+  Attribute,
 } from "@spriced-frontend/spriced-common-lib";
 import { MatListModule } from "@angular/material/list";
 import { CommonModule, NgFor } from "@angular/common";
@@ -28,13 +29,16 @@ import { MatCardModule } from "@angular/material/card";
 import {
   DataGridComponent,
   DataGridTreeComponent,
+  Direction,
   Head,
   Header,
   HeaderActionComponent,
   HeaderComponentWrapperComponent,
+  SelectSearchComponent,
   SnackBarService,
   SnackbarModule,
   VboxComponent,
+  sorter,
 } from "@spriced-frontend/spriced-ui-lib";
 import {
   ColumnMode,
@@ -64,7 +68,7 @@ import { HierarchyServiceService } from "../service/hierarchy-service.service";
     HeaderComponentWrapperComponent,
     NgxDatatableModule,
     MatCardModule,
-    MatIconModule,
+    MatIconModule, SelectSearchComponent,
     MatTabsModule,
     MatFormFieldModule,
     HeaderActionComponent,
@@ -76,6 +80,7 @@ import { HierarchyServiceService } from "../service/hierarchy-service.service";
   ],
 })
 export class HierarchyNewTabComponent implements OnInit {
+  dir:Direction=Direction.ASC;
   @Input()
   selectedHierarchy!: Hierarchy | null;
   @Output() onSaveEventEmitter = new EventEmitter<any>();
@@ -120,6 +125,7 @@ export class HierarchyNewTabComponent implements OnInit {
   id: number = 0;
   name: string = "";
   description: string = "";
+  comboSorters: sorter[] = [{ property: "name", direction: Direction.ASC }];
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -141,6 +147,7 @@ export class HierarchyNewTabComponent implements OnInit {
     this.id = 0;
     this.description = "";
     this.selectedEntity = null;
+    // this.comboSorters 
   }
   validateBeforeSave() {
     if (!this.selectedEntity) {
@@ -191,10 +198,19 @@ export class HierarchyNewTabComponent implements OnInit {
   }
 
   getHierarchyDtlByLevel(level: number) {
-    return this.hierarchyDetails.find(h => h.groupLevel == level);
+    return this.hierarchyDetails.find(h => h.groupLevel == level) || this.hierarchyDetails[this.hierarchyDetails.length - 1];
   }
-
-  addToLevel(entity: Entity) {
+  getAttribDisplayNameByName(entity: Entity, name: string) {
+    return this.entityList.find(e => e.id == entity.id)
+      ?.attributes.find(a => a.name == name)
+      ?.displayName || "";
+  }
+  getLastHierarchyDtls() {
+    return this.hierarchyDetails.sort((a, b) => a.groupLevel - b.groupLevel)[this.hierarchyDetails.length - 1];
+  }
+  addToLevel(entity: Entity, attribName: string) {
+    let lastHierarchy = this.hierarchyDetails.length ? this.getLastHierarchyDtls() : null;
+    let lastHierarchyEntity = this.hierarchyDetails.length ? this.getLastHierarchyDtls().entity : entity
     let hDtl = {
       id: 0,
       hierarchyId: this.id,
@@ -203,15 +219,19 @@ export class HierarchyNewTabComponent implements OnInit {
       expanded: false,
       tablename: entity.name,
       tableId: entity.id,
-      tabledisplayname: entity.displayName,
+      tabledisplayname: this.getTableDisplayName(lastHierarchyEntity, attribName, this.hierarchyDetails.length),
       localColumn: "id",
       entity: entity,
-      refColumn: "",
+      refColumn: entity.comment ? entity.comment : attribName,
     } as HierarchyDetails;
-    if (this.hierarchyDetails.length - 1 >= 0) {
-      var hie = this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1)
-      hie && entity.comment ? hie.refColumn = entity.comment : "";
+    // if (this.hierarchyDetails.length - 1 >= 0) {
+    // var hie = this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1)
+    // hie && entity.comment ? hie.refColumn = entity.comment : "";
+    // }
+    if (lastHierarchy) {
+      lastHierarchy.refColumn = hDtl.refColumn;
     }
+    // lastHierarchyEntity.
     this.availableEntities = [];
     this.entityService.load(entity.id).forEach((a) => {
       let derAttrList = (a as Entity).attributes
@@ -222,7 +242,7 @@ export class HierarchyNewTabComponent implements OnInit {
             name: att.referencedTable,
             id: att.referencedTableId,
             comment: att.name,
-            updatedBy:att.displayName
+            updatedBy: att.displayName
           } as Entity;
         });
       this.availableEntities.push(...derAttrList);
@@ -242,9 +262,16 @@ export class HierarchyNewTabComponent implements OnInit {
   onModelChange(ev: MatSelectChange) {
     this.selectedModel = ev.value as Model;
     this.availableEntities = [];
-    this.getEntitiesByModel(this.selectedModel);
+    if (this.selectedModel) {
+      this.getEntitiesByModel(this.selectedModel);
+    }
   }
-
+  getTableDisplayName(e: Entity, attribName: string, groupLevel: number) {
+    return groupLevel == 0
+      ? e.displayName
+      : this.getAttribDisplayNameByName(e, attribName)
+      || "";
+  }
   getEntitiesByModel(model: Model, entityId?: number, hie?: Hierarchy, isOnBind: boolean = false) {
     this.entityList = [];
     this.entityService.loadEntityByModel(model.id).forEach((a) => {
@@ -253,14 +280,15 @@ export class HierarchyNewTabComponent implements OnInit {
         this.selectedEntity = this.getEntityById(entityId);
       }
       if (hie && hie.details) {
-        hie.details = hie.details
-          .map((e) => {
-            e.entity = this.getEntityByTable(e.tablename);
-            e.tableId = e.entity.id;
-            return e;
-          })
-          .sort((a, b) => b.groupLevel - a.groupLevel);
-        this.hierarchyDetails = hie.details;
+        hie.details
+          .sort((a, b) => a.groupLevel - b.groupLevel)
+          .forEach((hieDtls): void => {
+            hieDtls.entity = this.getEntityByTable(hieDtls.tablename);
+            hieDtls.tabledisplayname = this.getTableDisplayName(this.getLastHierarchyDtls()?.entity|| hieDtls.entity, this.getLastHierarchyDtls()?.refColumn, hieDtls.groupLevel);
+            hieDtls.tableId = (hieDtls.entity).id;
+            this.hierarchyDetails.push(hieDtls);
+          });
+        this.hierarchyDetails = this.hierarchyDetails.sort((a, b) => b.groupLevel - a.groupLevel);
         this.populateLevelTree();
         if (isOnBind) {
           this.setPreviewRootNode(this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1)?.entity);
@@ -279,7 +307,7 @@ export class HierarchyNewTabComponent implements OnInit {
           parentId: hdtl.groupLevel == 0 ? null : hdtl.groupLevel,
           tablename: hdtl.tablename,
           tableId: hdtl.tableId,
-          name: hdtl.tabledisplayname || hdtl.entity.displayName || hdtl.tablename,
+          name: hdtl.tabledisplayname,
           expanded: true
         } as HierarchyTreeNode;
       }),
@@ -290,9 +318,9 @@ export class HierarchyNewTabComponent implements OnInit {
     this.hierarchyDetails = this.hierarchyDetails.sort(
       (a, b) => a.groupLevel - b.groupLevel
     );
-    let dtl = this.hierarchyDetails.pop();
-    dtl = this.hierarchyDetails.pop();
-    this.addToLevel(dtl?.entity);
+    let dtl1 = this.hierarchyDetails.pop();
+    let dtl = this.hierarchyDetails.pop() || {} as HierarchyDetails;
+    this.addToLevel(dtl.entity, dtl.refColumn);
     this.hierarchyDetails = [
       ...this.hierarchyDetails.sort((a, b) => b.groupLevel - a.groupLevel),
     ];
@@ -303,7 +331,7 @@ export class HierarchyNewTabComponent implements OnInit {
     this.id = hie.id;
     this.name = hie.name;
     this.description = hie.description;
-    this.hierarchyDetails = hie.details ? hie.details : [];
+    this.hierarchyDetails = [];
     this.selectedModel = this.getModelById(hie.modelId);
     this.getEntitiesByModel(this.selectedModel, hie.entityId, hie, true);
   }
@@ -319,7 +347,7 @@ export class HierarchyNewTabComponent implements OnInit {
   onEntityChange(ev: MatSelectChange) {
     this.selectedEntity = ev.value as Entity;
     this.hierarchyDetails = [];
-    this.addToLevel(this.selectedEntity);
+    this.addToLevel(this.selectedEntity, "");
   }
 
   onTreeAction(event: any) {
@@ -338,14 +366,16 @@ export class HierarchyNewTabComponent implements OnInit {
     if (row.treeStatus === 'collapsed') {
       row.treeStatus = 'loading';
 
-      if (!row.loaded) {
+      if (!row.loaded && this.hierarchyDetails.length  != row.level) {
         var hie = this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1 - row.level)
         this.getChildNodes(row, (data: any) => {
           data = data.content.map((d: PreviewTreeNode) => {
             d.treeStatus = 'collapsed';
             d.parentGrpId = row.grpId;
-            d.column = hie ? hie.refColumn : "";
-            d.tableId = hie ? hie.tableId : 0;
+            d.column = hie.refColumn;
+            // d.column = hie ? hie.refColumn : "";
+            d.tableId = hie.tableId;
+            // d.tableId = hie ? hie.tableId : 0;
             d.name = d.code + (d.name && d.name.length ? `{${d.name}}` : "{}")
             d.grpId = row.grpId + "-" + d.id
             return d;
@@ -354,7 +384,7 @@ export class HierarchyNewTabComponent implements OnInit {
           row.loaded = true;
           this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes, ...data];
           this.cd.detectChanges();
-        });
+        }, hie);
         return;
       }
       row.treeStatus = 'expanded';
@@ -368,8 +398,8 @@ export class HierarchyNewTabComponent implements OnInit {
   }
 
 
-  getChildNodes(row: PreviewTreeNode, callBack: Function) {
-    const hie = this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1 - row.level);
+  getChildNodes(row: PreviewTreeNode, callBack: Function, hie: HierarchyDetails) {
+    // const hie = this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1 - row.level);
     if (hie) {
       let cr = {} as Criteria;
       if (row.id && hie?.refColumn) {

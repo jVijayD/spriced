@@ -1,17 +1,26 @@
 <div class="flex flex-col h-full p-2 overflow-auto">
   <div class="flex flex-row col-span-6  items-center p-2">
-    <mat-form-field appearance="outline">
+    <!-- <mat-form-field appearance="outline">
       <mat-label>Model</mat-label>
       <mat-select (selectionChange)="onModelChange($event)" [(value)]="selectedModel">
         <mat-option class="option" *ngFor="let item of modelList" [value]="item">{{ item.displayName }}</mat-option>
       </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="ml-5">
-      <mat-label>Entity</mat-label>
-      <mat-select (selectionChange)="onEntityChange($event)" [(value)]="selectedEntity">
+    </mat-form-field> -->
+
+    <sp-select-search appearance="outline" [model]="selectedModel" placeholder="Model"
+      (selectionChange)="onModelChange($event)" [sorters]="[{property:'displayName',direction:dir}]" [bindLabelKey]="'displayName'" [items]="modelList">
+    </sp-select-search>
+
+    <!-- <mat-form-field appearance="outline" class="ml-5">
+      <mat-label>Entity</mat-label> -->
+    <sp-select-search appearance="outline" class="ml-5" [sorters]="[{property:'displayName',direction:dir}]"
+      [model]="selectedEntity" placeholder="Entity" (selectionChange)="onEntityChange($event)"
+      [bindLabelKey]="'displayName'" [items]="entityList">
+    </sp-select-search>
+    <!-- <mat-select (selectionChange)="onEntityChange($event)" [(value)]="selectedEntity">
         <mat-option class="option" *ngFor="let item of entityList" [value]="item">{{ item.displayName }}</mat-option>
       </mat-select>
-    </mat-form-field>
+    </mat-form-field> -->
     <mat-form-field appearance="outline" class="ml-5">
       <mat-label>Name</mat-label>
       <input matInput [(ngModel)]="name" />
@@ -38,7 +47,8 @@
             <mat-list-item *ngFor="let entity of availableEntities" class="py-10">
               <div class="flex flex-row justify-between items-center">
                 <span>{{entity.updatedBy}}</span>
-                <button mat-icon-button aria-label="Add" color="primary" (click)="addToLevel(entity)">
+                <button mat-icon-button aria-label="Add" color="primary"
+                  (click)="addToLevel(entity,entity?.comment||'')">
                   <mat-icon>add</mat-icon>
                 </button>
               </div>
