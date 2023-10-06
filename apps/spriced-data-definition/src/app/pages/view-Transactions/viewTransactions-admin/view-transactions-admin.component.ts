@@ -121,6 +121,10 @@ export class ViewTransactionsAdminComponent {
     this.loadEntitiesById(this.selectedModel)
   }
   onPaginate(e: Paginate) {
+    if (this.currentCriteria.filters && this.currentCriteria.filters.length > 0 && this.currentCriteria.pager) {
+      this.currentCriteria.pager.pageNumber = e.offset;
+      this.loadTransactionsData(this.entityList);
+    }
   }
 
   onItemSelected(e: any) {
@@ -149,6 +153,7 @@ export class ViewTransactionsAdminComponent {
   }
 
   loadTransactionsData(entities: any) {
+    this.rows = [];
     const observables = entities.map((item: any) => {
       this.currentCriteria.filters=[];
       let newFilter = {
@@ -166,11 +171,15 @@ export class ViewTransactionsAdminComponent {
     forkJoin(observables).subscribe(
       (results:any) => {
        const combinedContent = [].concat(...results.map((item:any) => item.content));
+       this.totalElements = results[0].totalElements
         this.rows = combinedContent;
       },
       (error:any) => {
         
       }
     );
+  }
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((item) => item.unsubscribe());
   }
 }

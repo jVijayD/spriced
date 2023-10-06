@@ -21,6 +21,8 @@
           [selectionType]="selectionType"
           [count]="totalElements"
           [limit]="limit"
+          [isExternalPaging]="true"
+          [isExternalSorting]="true"
           [sortType]="sortType"
           [selected]="!!selectedItem?[selectedItem]:[]"
           (itemSelected)="onItemSelected($event)"
