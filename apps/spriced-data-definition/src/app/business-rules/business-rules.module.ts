@@ -49,6 +49,7 @@ import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from "@angular/material/core";
 import { DateAdapterService } from "@spriced-frontend/spriced-common-lib";
 import { headerInterceptor } from "libs/shared/spriced-shared-lib/src/lib/auth/header-interceptor";
 import { MessageService } from "./services/message.service";
+import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 
 const MY_DATE_FORMAT = {
   parse: {
@@ -105,7 +106,8 @@ const NGX_DATE_FORMAT = {
     SnackbarModule,
     BusinessRuleListComponent,
     BusinessactionsComponent,
-    ElseactionComponent
+    ElseactionComponent,
+    NgxMatSelectSearchModule
   ],
   providers: [
     HttpClient,

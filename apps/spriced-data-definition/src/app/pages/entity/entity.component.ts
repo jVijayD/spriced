@@ -23,6 +23,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatSelectModule } from "@angular/material/select";
 import { EntityAddComponent } from "./components/entity-add/entity-add.component";
 import * as moment from "moment";
+import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 @Component({
   selector: "sp-entity",
   standalone: true,
@@ -39,6 +40,7 @@ import * as moment from "moment";
     ReactiveFormsModule,
     FormsModule,
     MatSelectModule,
+    NgxMatSelectSearchModule
   ],
   templateUrl: "./entity.component.html",
   styleUrls: ["./entity.component.scss"],
@@ -107,6 +109,7 @@ export class EntityComponent {
   temp: any[] = [];
   filterData: any;
   query?: any;
+  filteredModelList: any;
   constructor(
     private dialogService: DialogService,
     private snackbarService: SnackBarService,
@@ -117,6 +120,7 @@ export class EntityComponent {
   ngOnInit(): void {
     this.modelService.loadAllModels().subscribe((result: any) => {
       this.modelList = result;
+      this.filteredModelList = this.modelList;
       this.groupId = result[0]?.id;
       this.load({ value: this.groupId });
     });
@@ -180,6 +184,17 @@ export class EntityComponent {
   onClear() {
     this.dataGrid.clearSelection();
     this.selectedItem = null;
+  }
+
+  filterModelsSelection(text: string) {
+    this.filteredModelList = this.modelList.filter((item: any) => {
+      return (
+        item.displayName
+          .trim()
+          .toLowerCase()
+          .indexOf(text.trim().toLowerCase()) != -1
+      );
+    });
   }
 
   onEdit() {

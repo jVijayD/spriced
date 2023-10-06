@@ -8,8 +8,16 @@
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Model</mat-label>
-      <mat-select (selectionChange)="onSelectModel($event)" [(value)]="selectedModel">
-        <mat-option *ngFor="let item of modelList" [value]="item">{{item.displayName}}</mat-option>
+      <mat-select matNativeControl (selectionChange)="onSelectModel($event)" [(value)]="selectedModel">
+        <mat-option>
+          <ngx-mat-select-search
+            placeholderLabel="Search"
+            ngModel
+            (ngModelChange)="filterModelsSelection($event)"
+          ></ngx-mat-select-search>
+        </mat-option>
+        <mat-option value="" class="option">--Select--</mat-option>
+        <mat-option *ngFor="let item of filteredModelList" [value]="item">{{item.displayName}}</mat-option>
       </mat-select>
     </mat-form-field>
     <button mat-raised-button color="accent" (click)="onClearClick()">
