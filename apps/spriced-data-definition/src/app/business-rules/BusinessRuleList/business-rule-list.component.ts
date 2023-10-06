@@ -332,7 +332,6 @@ export class BusinessRuleListComponent {
    */
   public handleAttributes(id: any, text?: string) {
     let attribute = this.findAttributeInArray(id, this.dataRules?.attributes);
-    attribute= attribute.filter((item:any) => item.systemAttribute === true);
     const operatorType = this.getValue('operatorType');
     // If not found, search within nested attributes
     if (!attribute) {
