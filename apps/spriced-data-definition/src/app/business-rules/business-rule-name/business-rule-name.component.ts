@@ -155,12 +155,14 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
               this.entities[`entity_${el.referencedTableId}`] = entityData;
             }
             this.entities[`entity_${el.referencedTableId}`].attributes = this.entities[`entity_${el.referencedTableId}`]?.attributes.filter((attr: any) => !attr.systemAttribute);
+            this.entities[`entity_${el.referencedTableId}`].attributes = this.entities[`entity_${el.referencedTableId}`]?.attributes.filter((attr: any) => attr.name !== 'id');
             await this.processNestedAttributes(this.entities[`entity_${el.referencedTableId}`].attributes, el);
           })
         )
       }
 
       attributeList = attributeList.filter((el: any) => !el.systemAttribute);
+      attributeList = attributeList.filter((el: any) => el.name !== 'id');
       this.conditionsData = {
         ...action,
         attributes: attributeList,
