@@ -51,7 +51,6 @@ export class DataGridComponent implements AfterViewInit {
   resizeTable = new Subject<any>();
   @Input()
   title = "";
-
   @Input()
   attributes: any;
 
@@ -109,6 +108,10 @@ export class DataGridComponent implements AfterViewInit {
   @Input()
   tooltipTemplate: any;
 
+  @Input()
+  page:any
+
+
   @Output()
   itemSelected: EventEmitter<any> = new EventEmitter<any>();
 
@@ -120,6 +123,9 @@ export class DataGridComponent implements AfterViewInit {
 
   @Output()
   checkbox: EventEmitter<any> = new EventEmitter<any>();
+
+  @Output()
+  uploadStatus: EventEmitter<any> = new EventEmitter<any>();
 
   @Output()
   sort: EventEmitter<any> = new EventEmitter<any>();
@@ -175,6 +181,7 @@ export class DataGridComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     //this.table.virtualization = false;
   }
+ 
 
   public renderData(data: any, itemHeader: Header) {
     if (itemHeader.pipe && itemHeader.pipe instanceof Function) {
@@ -193,6 +200,7 @@ export class DataGridComponent implements AfterViewInit {
             row[cur]
           )}`;
     }, "-##");
+
   }
 
   public openLink(linkUrl: string){
