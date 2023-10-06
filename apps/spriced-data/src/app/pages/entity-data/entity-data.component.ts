@@ -562,7 +562,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         lookupFields.forEach((lookupField: any) => {
           const item = lookupResponses.find((responseItem: any) => responseItem.id === lookupField.eventValue);
           if (item) {
-            lookupField.toolTipText = item.displayName;
+            lookupField.toolTipText = `Go to the "${item.displayName}" entity to view attribute value details`;
           }
         });
         this.setFormData("", formFields);

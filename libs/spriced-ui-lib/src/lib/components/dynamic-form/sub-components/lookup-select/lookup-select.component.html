@@ -82,11 +82,7 @@
         color="primary"
         class="square-button"
         matTooltipClass="custom-tooltip"
-        [matTooltip]="
-          'Go to the \'' +
-          control.toolTipText +
-          '\' entity to view attribute value details'
-        "
+        [matTooltip]="control.toolTipText!"
         (click)="onNavigateClick()"
         [disabled]="control.readOnly || disabled"
       >
