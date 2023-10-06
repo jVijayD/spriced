@@ -47,6 +47,7 @@ export class LookupSelectComponent
   filteredSource: any = [];
   dialogReference: any = null;
   subscriptions: Subscription[] = [];
+  totalcount!:number;
   @Input()
   set control(selectControl: GenericControl) {
     this._control = selectControl;
@@ -81,6 +82,9 @@ export class LookupSelectComponent
             total: this.count,
           });
         }
+        if(this.totalcount == undefined){
+          this.totalcount = this.count;
+        }
       })
     );
   }
@@ -106,12 +110,11 @@ export class LookupSelectComponent
       let retValue = false;
       props.forEach((name) => {
         if (item.hasOwnProperty(name)) {
+          let value = item[name] || "";
           retValue =
             retValue ||
-            item[name]
-              .toString()
-              .toLowerCase()
-              .indexOf(text.toLowerCase().trim()) != -1;
+            value.toString().toLowerCase().indexOf(text.toLowerCase().trim()) !=
+              -1;
         }
       });
       return retValue;
@@ -170,6 +173,7 @@ export class LookupSelectComponent
       data: { value: this.source, total: this.count, pageSize: this.pageSize },
       hasBackdrop: false,
     });
+    this.dialogReference = dialogRef;
 
     dialogRef.afterClosed().subscribe(({ data }: any) => {
       this.writeValue(data.id);
@@ -177,25 +181,17 @@ export class LookupSelectComponent
       this.displayValue = this.getDisplayProp(data, this.prop);
       this.dialogReference = null;
     });
-
-    dialogRef.componentInstance.dialogEvent$.subscribe((pageNumber: any) => {
-      this.nextPage(pageNumber, dialogRef, this.pageSize);
+     dialogRef.componentInstance.dialogEvent$.subscribe((event: any) => {
+      this.nextPage(event.pageNumber, dialogRef, this.pageSize,event.filters);
     });
   }
 
-  nextPage(pageNumber: number = 0, dialogRef: any, pageSize: number) {
+  nextPage(pageNumber: number = 0, dialogRef: any, pageSize: number,filters:any) {
     let controlData = this.control as DataControl;
     const [id] = controlData.data.api?.params;
     controlData.data.api &&
-      (controlData.data.api.params = [id, pageNumber, pageSize]);
+      (controlData.data.api.params = [id, pageNumber,pageSize,filters]);
     this.populateSource();
-    //TO DO: Why we need set timeout
-    // setTimeout(() => {
-    //   dialogRef.componentInstance.upDatedData({
-    //     value: this.source,
-    //     total: this.count,
-    //   });
-    // }, 100);
   }
 
   private renderDataWithCurlyBrace(data: any) {

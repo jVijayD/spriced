@@ -5,6 +5,7 @@
   <label class="text-secondary-dark m-2 font-bold text-lg">Upload Status</label>
   <div class="container">
     <sp-data-grid
+      page="status"
       class="w-full h-full"
       #dataGrid
       title="Upload Status"
@@ -23,7 +24,15 @@
       [isExternalSorting]="false"
       [sortType]="sortType"
       [count]="totalElements"
+      (itemSelected)="onItemSelected($event)"
+      (uploadStatus)="viewError()"
     >
+     <!-- <sp-header-action
+            [disabled]="!selectedItem"
+            icon="visibility"
+            (actionClick)="viewError()"
+          ></sp-header-action> -->
     </sp-data-grid>
+
   </div>
 </div>

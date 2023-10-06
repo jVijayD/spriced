@@ -3,8 +3,30 @@
         class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
         <span class="float-left text-white font-medium">Select Items</span>
         <div class="flex flex-row">
+          <button
+          title="Add Filter"
+          class="text-white h-full flex flex-row cursor-pointer pl-2 pr-1"
+          [disabled]="headers.length === 0"
+          (click)="onFilter()"
+          >
+            <mat-icon class="mt-auto">filter_list</mat-icon>
+        </button>
+
+        <button
+              title="Clear Filter"
+              class="text-white h-full flex flex-row cursor-pointer pl-2 pr-1"
+              [disabled]="
+              this.filters?.length == 0 ||
+              this.filters == undefined
+            "
+            (click)="onClearFilter()"
+            >
+            <mat-icon class="mt-auto">filter_list_off</mat-icon>
+          </button>
+           
         </div>
       </div>
+    
     <ngx-datatable class=" material w-full h-full overflow-y: auto" 
     #table
     style="height: calc(100% - 40px); width: 100%; overflow-y: hidden"
@@ -25,6 +47,7 @@
     (page)="onPage($event)"
     (select)='onItemSelected($event)'
     >
+   
     <ngx-datatable-column name="Id" prop="id"  [sortable]="true" [width]="100"></ngx-datatable-column>
     <ngx-datatable-column name="Code" prop="code" [sortable]="true" [width]="200"></ngx-datatable-column>
     <ngx-datatable-column name="Name" prop="name" [sortable]="true" [width]="200"></ngx-datatable-column>

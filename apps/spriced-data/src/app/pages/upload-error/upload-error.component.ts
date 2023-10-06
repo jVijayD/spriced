@@ -1,3 +1,4 @@
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -28,7 +29,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import { EntitySelectComponent } from "../../components/entity-select/entity-select.component";
-import { AddModelComponent } from "./add-model/add-model.component";
+import { AddModelComponent } from "../entity-data/add-model/add-model.component";
 import { MatDialog } from "@angular/material/dialog";
 import { UploadDialogeComponent } from "../../components/upload-dialoge/upload-dialoge.component";
 import { SettingsPopUpComponent } from "../../components/settingsPopUp/settings-pop-up.component";
@@ -44,16 +45,16 @@ import {
   EntityService,
 } from "@spriced-frontend/spriced-common-lib";
 import { Validators } from "@angular/forms";
-import { EntityDataService } from "../../services/entity-data.service";
+import { EntityDataStagingService } from "../../services/entity-data-staging.service";
 import { Subscription } from "rxjs";
 import * as moment from "moment";
 import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
-import { Router, RouterModule } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 
-import { AuditDataComponent } from "./audit-data/audit-data.component";
+import { AuditDataComponent } from "../entity-data/audit-data/audit-data.component";
 import { LookupPopupComponent } from "../../components/lookup-Popup/lookup-popup.component";
-import { EntityGridService } from "./entity-grid.service";
-import { EntityFormService } from "./entity-form.service";
+import { EntityGridService } from "../entity-data/entity-grid.service";
+import { EntityFormService } from "../entity-data/entity-form.service";
 import {
   AppDataService,
   ErrorTypes,
@@ -62,7 +63,7 @@ import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components
 import { CustomToolTipComponent } from "libs/spriced-ui-lib/src/lib/components/custom-tool-tip/custom-tool-tip.component";
 
 @Component({
-  selector: "sp-entity-data",
+  selector: "sp-upload-error",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Default,
   imports: [
@@ -87,18 +88,18 @@ import { CustomToolTipComponent } from "libs/spriced-ui-lib/src/lib/components/c
   providers: [
     EntityGridService,
     EntityFormService,
-    EntityDataService,
+    EntityDataStagingService,
     SettingsService,
     {
       provide: FORM_DATA_SERVICE,
-      useExisting: EntityDataService,
+      useExisting: EntityDataStagingService,
     },
     DynamicFormService,
   ],
-  templateUrl: "./entity-data.component.html",
-  styleUrls: ["./entity-data.component.scss"],
+  templateUrl: "./upload-error.component.html",
+  styleUrls: ["./upload-error.component.scss"],
 })
-export class EntityDataComponent implements OnDestroy, OnInit {
+export class UploadErrorComponent implements OnDestroy, OnInit {
   hide = false;
   limit: number = GridConstants.LIMIT;
   subscriptions: Subscription[] = [];
@@ -131,19 +132,27 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     private snackbarService: SnackBarService,
     private dialogService: DialogService,
     private dynamicFormService: DynamicFormService,
-    private entityDataService: EntityDataService,
+    private entityDataService: EntityDataStagingService,
     private dialog: MatDialog,
     private settings: SettingsService,
     private entityGridService: EntityGridService,
     private entityFormService: EntityFormService,
     private router: Router,
-    private statusPannelService: AppDataService
+    private statusPannelService: AppDataService,
+    private route: ActivatedRoute
   ) {
     this.globalSettings = this.settings.getGlobalSettings();
     this.setFormData("", []);
     this.subscribeToFormEvents();
   }
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    const entityId = Number(this.route.snapshot.paramMap.get("entityId"));
+
+      this.entityDataService.loadEntity(entityId).subscribe((item: any) => {
+     this.onEntitySelectionChange(item)
+      });
+
+   }
 
   subscribeToFormEvents() {
     this.subscriptions.push(
@@ -202,7 +211,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     });
 
     const criteria: Criteria = { ...this.currentCriteria, sorters: sorters };
-    this.loadEntityData(this.currentSelectedEntity as Entity, criteria, true);
+    this.loadEntityData(this.currentSelectedEntity as Entity, criteria);
   }
 
   onItemSelected(e: any) {
@@ -402,12 +411,13 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     });
   }
   onStatus() {
-    const dialogResult = this.dialog.open(StatusComponent, {data:this.currentSelectedEntity});
+    const dialogResult = this.dialog.open(StatusComponent, {});
 
     dialogResult.afterClosed().subscribe((val) => { });
   }
 
   onSettings() {
+
     const dialogResult = this.dialog.open(SettingsPopUpComponent, {
       data: this.currentSelectedEntity,
     });
@@ -462,19 +472,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.settings.getGlobalSettings()
     );
     this.createDynamicUIMapping(entity as Entity);
-    this.loadRelatedEntity();
   }
-  loadRelatedEntity() {
-    this.entityDataService
-      .getRelatedEntity(
-        this.currentSelectedEntity?.groupId,
-        this.currentSelectedEntity?.id
-      )
-      .subscribe((val) => {
-        this.relatedEntity = val;
-        this.query = null;
-      });
-  }
+
   onSubmitEntityData(data: any) {
     if (this.headers.length < 1) {
       this.snackbarService.warn("Please check whether user has permission.");
@@ -571,16 +570,12 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         showSystemAttributes,
         globalSettings?.displayFormat || this.defaultCodeSetting
       );
+      console.log(this.headers)
       this.loadEntityData(entity, criteria);
     }
   }
 
-  private loadEntityData(entity: Entity, criteria: Criteria, columnSort?: boolean) {
-    if(!columnSort)
-    {
-      const sort: any = {direction: "DESC", property: "updated_date"};
-      criteria.sorters = [sort];
-    }
+  private loadEntityData(entity: Entity, criteria: Criteria) {
     this.currentCriteria = criteria;
     if (entity) {
       this.applyEntitySettings(entity);
@@ -718,4 +713,22 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       asyncValidations: [],
     };
   }
+
+  onSave()
+  {
+    const dialogRef = this.dialogService.openConfirmDialoge({
+      message: "Total records uploaded:10000 \n Modified or new records:10000 /n Validation Passed:10000 /n Validation Failed:10000 /n ",
+      title: "Upload Confirmation",
+      icon: "save",
+    });
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result == true) {
+        this.rows = this.rows.filter((value: any) => {
+          return value.name != this.selectedItem.name;
+        });
+      }
+    })
+   
+  }
+
 }
