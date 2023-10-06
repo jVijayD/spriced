@@ -75,10 +75,11 @@ export class LookupDialogComponent {
   }
   onPage(e: any) {
     this.pageNumber = e.offset;
-    this.dialogEventSubject.next({ pageNumber:this.pageNumber,filters:'' });
+    this.dialogEventSubject.next({ pageNumber:this.pageNumber,filters:this.filters });
 }
    upDatedData(newData:any){
     this.rows = newData.value;
+    this.count = newData.total;
    }
    onFilter(){
     const dialogResult = this.dialogService.openFilterDialog({
