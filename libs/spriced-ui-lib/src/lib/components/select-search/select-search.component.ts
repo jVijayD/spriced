@@ -60,7 +60,7 @@ export class SelectSearchComponent {
     this.items = (!v || !v.length) ?
       this.currentStaticItems : 
       this.currentStaticItems.filter(i => i[this.bindLabelKey].toLowerCase().search(v.toLowerCase()) >= 0)
-  }
+  } 
 }
 export enum Direction { ASC = "ASC", DESC = "DESC" };
 export class sorter {
