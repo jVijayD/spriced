@@ -13,11 +13,20 @@ import { MatButtonModule } from "@angular/material/button";
 })
 export class UploadDialogeComponent {
   file!: any;
+  isDisabled=true
   constructor(public dialogRef: MatDialogRef<UploadDialogeComponent>) {}
   uploadFile(e: any) {
-    // let files: FileList = e.target.files;
-    // this.file = files[0];
     this.file = e.target.files[0];
+    console.log(this.file)
+    if(this.file==undefined)
+    {
+      this.isDisabled=true
+    }
+    else
+    {
+      this.isDisabled=false
+    }
+
   }
   doAction() {
     this.dialogRef.close({ data: this.file });
