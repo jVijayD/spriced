@@ -9,9 +9,16 @@
         <div class="mat_dropdown mt-4">
           <mat-form-field appearance="outline">
             <mat-label>Model:</mat-label>
-            <mat-select (valueChange)="handleEntityByModels($event, 'modelChange')" [(value)]="defaultModel"
+            <mat-select matNativeControl (valueChange)="handleEntityByModels($event, 'modelChange')" [(value)]="defaultModel"
               formControlName="model">
-              <mat-option *ngFor="let model of models" [value]="model.id">
+              <mat-option>
+                <ngx-mat-select-search
+                  placeholderLabel="Search"
+                  formControlName="modelFilter"
+                ></ngx-mat-select-search>
+              </mat-option>
+              <mat-option value="" class="option">--Select--</mat-option>
+              <mat-option *ngFor="let model of filteredModels" [value]="model.id">
                 {{model.displayName}}
               </mat-option>
             </mat-select>
@@ -26,7 +33,14 @@
               </ng-container>
 
               <ng-template #entityOptions>
-                <mat-option *ngFor="let entity of entities" [value]="entity.id">
+                <mat-option>
+                  <ngx-mat-select-search
+                    placeholderLabel="Search"
+                    formControlName="entityFilter"
+                  ></ngx-mat-select-search>
+                </mat-option>
+                <mat-option value="" class="option">--Select--</mat-option>
+                <mat-option *ngFor="let entity of filteredEntites" [value]="entity.id">
                   {{entity.displayName}}
                 </mat-option>
               </ng-template>
@@ -43,7 +57,14 @@
               </ng-container>
 
               <ng-template #attributeOptions>
-                <mat-option *ngFor="let attribute of attributes" [value]="attribute.id">
+                <mat-option>
+                  <ngx-mat-select-search
+                    placeholderLabel="Search"
+                    formControlName="attributeFilter"
+                  ></ngx-mat-select-search>
+                </mat-option>
+                <mat-option value="" class="option">--Select--</mat-option>
+                <mat-option *ngFor="let attribute of filteredAttributes" [value]="attribute.id">
                   {{attribute.name}}
                 </mat-option>
               </ng-template>

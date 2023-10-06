@@ -29,6 +29,7 @@ import {
 import { ColumnMode, SelectionType, SortType } from '@swimlane/ngx-datatable';
 import {
   Subject,
+  debounceTime,
   forkJoin,
   takeUntil
 } from 'rxjs';
@@ -62,6 +63,9 @@ export class ListComponent implements OnInit, OnDestroy {
   public defaultModel: any;
   public defaultEntity: any;
   public currentAttributeId: string = '';
+  public filteredModels: any;
+  public filteredAttributes: any;
+  public filteredEntites: any;
   displayedColumns: string[] = [
     'Priority',
     'Excluded',
@@ -198,6 +202,14 @@ export class ListComponent implements OnInit, OnDestroy {
       (error: any) => {
         console.error('Error occurred during API request:', error);
       })
+
+    this.listForm.valueChanges.pipe(
+      debounceTime(500)
+    ).subscribe((item: any) => {
+      this.filteredModels = this.filterItems(this.models, item.modelFilter);
+      this.filteredEntites = this.filterItems(this.entities, item.entityFilter);
+      this.filterAttributeSelection(item.attributeFilter);
+    })
   }
 
   // HANDLE FOR GETTING RULES AND MODEL DATA
@@ -217,6 +229,7 @@ export class ListComponent implements OnInit, OnDestroy {
     if (models) {
 
       this.models = models;
+      this.filteredModels = models;
       this.filterData = this.dataSource;
       // this.currentDataSource =  this.dataSource;
       this.currentDataSource = this.rows.slice(
@@ -235,8 +248,11 @@ export class ListComponent implements OnInit, OnDestroy {
   public formbuild() {
     this.listForm = this.fb.group({
       model: new FormControl('', [Validators.required]),
+      modelFilter: new FormControl(''),
       entity: new FormControl('', [Validators.required]),
+      entityFilter: new FormControl(''),
       attrubute: new FormControl('', [Validators.required]),
+      attributeFilter: new FormControl('')
     });
   }
 
@@ -471,6 +487,27 @@ export class ListComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Generic filtering function
+  filterItems(items: any[], searchText: string): any[] {
+    return items.filter((item: any) => {
+      return item.displayName
+        .trim()
+        .toLowerCase()
+        .includes(searchText.trim().toLowerCase());
+    });
+  }
+
+  filterAttributeSelection(text: string) {
+    this.filteredAttributes = this.attributes.filter((item: any) => {
+      return (
+        item.displayName
+          .trim()
+          .toLowerCase()
+          .indexOf(text?.trim().toLowerCase()) != -1
+      );
+    });
+  }
+
   onItemSelected(e: any) {
     console.log(e);
     this.selectedItem = e;
@@ -497,6 +534,7 @@ export class ListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.notifier$))
       .subscribe((res: any) => {
         this.entities = res;
+        this.filteredEntites = res;
         const entity = res.find((el: any) => el.groupId === this.defaultModel)
         this.defaultEntity = this.entityId && !text ? this.entityId : entity?.id;
         this.modelId = id;
@@ -538,6 +576,7 @@ export class ListComponent implements OnInit, OnDestroy {
         },
         ...this.domainAttributes,
       ];
+      this.filteredAttributes = this.attributes;
       this.defaultAttribute = this.attributeId ? this.attributeId : 'ALL';
       // this.attributes = entity.attributes;
       this.filterData = this.dataSource.filter((res: any) => res.entityId === id);
