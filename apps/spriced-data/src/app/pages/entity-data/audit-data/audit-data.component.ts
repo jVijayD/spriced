@@ -18,7 +18,11 @@ import { Criteria, Entity } from "@spriced-frontend/spriced-common-lib";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import { EntityDataService } from "../../../services/entity-data.service";
 import * as moment from "moment";
-import { MatFormField, MatFormFieldModule, MatLabel } from "@angular/material/form-field";
+import {
+  MatFormField,
+  MatFormFieldModule,
+  MatLabel,
+} from "@angular/material/form-field";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { SettingsService } from "../../../components/settingsPopUp/service/settings.service";
@@ -50,20 +54,20 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   /*
 
 */
-annotations:any[]=[
-  {
-  name:'team1',
-  message:"changes by team 1"
-},
-{
-  name:'team2',
-  message:"changes by team 1"
-},
-{
-  name:'team3',
-  message:"changes by team 1"
-}
-]
+  annotations: any[] = [
+    {
+      name: "team1",
+      message: "changes by team 1",
+    },
+    {
+      name: "team2",
+      message: "changes by team 1",
+    },
+    {
+      name: "team3",
+      message: "changes by team 1",
+    },
+  ];
   headers: Header[] = [
     {
       canAutoResize: true,
@@ -125,10 +129,10 @@ annotations:any[]=[
       pageSize: this.limit,
     },
   };
-  subscriptions :any[]= [];
+  subscriptions: any[] = [];
   defaultCodeSetting = "namecode";
   globalSettings!: any;
-  title="View Transactions for "
+  title = "View Transactions for ";
   constructor(
     public dialogRef: MatDialogRef<AuditDataComponent>,
     private entityDataService: EntityDataService,
@@ -137,26 +141,36 @@ annotations:any[]=[
   ) {
     this.currentSelectedEntity = dialogData.currentSelectedEntity as Entity;
     dialogRef.disableClose = true;
-    this.globalSettings =this.settings.getGlobalSettings()?.displayFormat || this.defaultCodeSetting;
-    switch(this.globalSettings)
-    {
-      case "namecode" : {
-        this.title=this.title + this.dialogData.selectedItem?.name + " {" + this.dialogData.selectedItem?.code + "}" 
+    this.globalSettings =
+      this.settings.getGlobalSettings()?.displayFormat ||
+      this.defaultCodeSetting;
+    switch (this.globalSettings) {
+      case "namecode": {
+        this.title =
+          this.title +
+          this.dialogData.selectedItem?.name +
+          " {" +
+          this.dialogData.selectedItem?.code +
+          "}";
         break;
       }
-      case "codename" : {
-        this.title=this.title + this.dialogData.selectedItem?.code+ " {" +this.dialogData.selectedItem?.name+ "}" 
+      case "codename": {
+        this.title =
+          this.title +
+          this.dialogData.selectedItem?.code +
+          " {" +
+          this.dialogData.selectedItem?.name +
+          "}";
         break;
       }
-      case "code":
-        {
-          this.title=this.title +  this.dialogData.selectedItem?.code
-          break;
-        }
-        default:{
-          this.title=this.title + " Data"
-          break;
-        }
+      case "code": {
+        this.title = this.title + this.dialogData.selectedItem?.code;
+        break;
+      }
+      default: {
+        this.title = this.title + " Data";
+        break;
+      }
     }
   }
   ngOnInit(): void {
@@ -166,13 +180,13 @@ annotations:any[]=[
       value: this.currentSelectedEntity.name,
       joinType: "NONE",
       operatorType: "EQUALS",
-      datatype:"string"
+      dataType: "string",
     });
     this.loadAuditData();
   }
 
   onPaginate(e: Paginate) {
-    debugger
+    debugger;
     this.currentCriteria = {
       ...this.currentCriteria,
       pager: {
@@ -182,8 +196,8 @@ annotations:any[]=[
     };
     this.loadAuditData();
   }
-  
-  onItemSelected(e:any){
+
+  onItemSelected(e: any) {
     this.selectedItem = e;
   }
 
@@ -195,8 +209,10 @@ annotations:any[]=[
     this.loadAuditData();
   }
   loadAuditData() {
-      this.subscriptions.push(
-        this.entityDataService.loadAuditData(this.currentSelectedEntity.name, this.currentCriteria).subscribe({
+    this.subscriptions.push(
+      this.entityDataService
+        .loadAuditData(this.currentSelectedEntity.name, this.currentCriteria)
+        .subscribe({
           next: (page: any) => {
             this.rows = page.content;
             this.totalElements = page.totalElements;
@@ -207,15 +223,15 @@ annotations:any[]=[
             console.error(err);
           },
         })
-      );
+    );
   }
 
   onClose(): void {
     this.dialogRef.close(null);
   }
-   onAdd(value:any){
-debugger
-   }
+  onAdd(value: any) {
+    debugger;
+  }
   onSubmit(data: FormGroup<any>) {
     if (data.valid) {
       this.dialogRef.close(data.value);
