@@ -1,6 +1,5 @@
 <div class="flex flex-col container p-5 h-fit">
-  <div class="page-header">Change Tracker</div>
-
+  <!-- <div class="page-header">Change Tracker</div> -->
   <!-- <button mat-icon-button color="transparent" class="close p-5" (click)="onClose()">
     <mat-icon>close</mat-icon>
   </button> -->
@@ -8,7 +7,7 @@
   <sp-data-grid
         #dataGrid
         class="w-full h-full"
-        [title]="this.currentSelectedEntity.displayName || 'Data'"
+        [title]="title"
         [enableRowIndex]="false"
         [isArray]="false"
         [headers]="headers"

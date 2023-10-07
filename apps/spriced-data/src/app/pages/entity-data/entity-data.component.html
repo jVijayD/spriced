@@ -89,11 +89,11 @@
 
             <sp-header-action
               icon="history"
-              text="Change Tracker"
-              title="Change Tracker"
+              text="View Transactions"
+              title="View Transactions"
               [disabled]="
-                this.currentSelectedEntity === null ||
-                this.currentSelectedEntity === undefined ||
+                this.selectedItem === null ||
+                this.selectedItem === undefined ||
                 this.headers.length === 0
               "
               (actionClick)="onAudit()"

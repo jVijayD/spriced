@@ -445,7 +445,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onAudit() {
     this.dialogService.openDialog(AuditDataComponent, {
-      data: this.currentSelectedEntity,
+      data:{currentSelectedEntity:this.currentSelectedEntity,selectedItem:this.selectedItem}
     });
   }
 
