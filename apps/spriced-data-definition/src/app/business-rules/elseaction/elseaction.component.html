@@ -65,10 +65,10 @@
 
         <ng-container *ngIf="valueConstant">
             <mat-form-field
-                *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)"
+                *ngIf="['AUTO', 'INTEGER', 'DECIMAL','DOUBLE', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)"
                 [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
                 <mat-label>Value</mat-label>
-                <input [disabled]="isFieldDisabled" [readonly]="preview" matInput placeholder="Add Value"
+                <input [disabled]="isFieldDisabled" [type]="dynamicInputType" [readonly]="preview" matInput placeholder="Add Value"
                     formControlName="operand">
             </mat-form-field>
 
@@ -164,7 +164,7 @@
 
     <div class="example-container mt-8 mr-5 flex flex-col" *ngIf="minValue">
         <mat-form-field
-            *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)"
+            *ngIf="['AUTO', 'INTEGER', 'DECIMAL','DOUBLE', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)"
             [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
             <mat-label>Min Value</mat-label>
             <input [readonly]="preview" matInput placeholder="Add Value" formControlName="min_value">
@@ -218,7 +218,7 @@
 
     <div class="example-container mt-8 mr-5 flex flex-col" *ngIf="maxValue">
         <mat-form-field
-            *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)"
+            *ngIf="['AUTO', 'INTEGER', 'DECIMAL','DOUBLE', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)"
             [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
             <mat-label>Max Value</mat-label>
             <input [readonly]="preview" matInput placeholder="Add Value" formControlName="max_value">

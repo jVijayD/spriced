@@ -7,6 +7,7 @@ export interface HierarchyDetails {
   // refId: number;
   groupLevel: number;
   tablename: string;
+  tableId: number;
   tabledisplayname: string;
   localColumn: string;
   refColumn: string;
@@ -18,8 +19,21 @@ export interface HierarchyTreeNode {
   parentId?: number | null;
   treeStatus: string;
   tablename: string;
+  tableId: number;
   name: string;
-  expanded: boolean;
+}
+export interface PreviewTreeNode {
+  id: number;
+  level: number;
+  grpId: string;
+  parentId?: number | null;
+  parentGrpId?: string | null;
+  treeStatus: string;
+  column: string;
+  tableId: number;
+  name: string;
+  code: string;
+  loaded: boolean;
 }
 
 export interface Hierarchy {

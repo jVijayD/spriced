@@ -264,10 +264,10 @@ export class BusinessRuleListComponent {
     const valueControl = this.conditionForm?.get('operand');
     const minValueControl = this.conditionForm?.get('min_value');
     const maxValueControl = this.conditionForm?.get('max_value');
-    this.selectedOperand = '';
     // HANDLE FOR EDIT BY CHANGE VALUE
     if (text === 'changeValue') {
       this.conditionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
+      this.selectedOperand = '';
     }
     if (['MUST_BE_BETWEEN', 'IS_BETWEEN', 'IS_NOT_BETWEEN'].includes(value)) {
       this.minValue = this.maxValue = true;
@@ -343,11 +343,11 @@ export class BusinessRuleListComponent {
     this.dataType = attribute?.dataType ? attribute?.dataType : 'AUTO';
     const decimalValueSize = attribute?.size;
     this.conditionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern('')]);
-    this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
+    this.dynamicInputType = ['INTEGER', 'DECIMAL','DOUBLE'].includes(this.dataType) ? 'number' : 'text';
     if (text === 'changeAttribute') {
       this.conditionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
     }
-    if (['DECIMAL', 'FLOAT', 'LINK'].includes(this.dataType)) {
+    if (['DECIMAL', 'FLOAT', 'LINK','DOUBLE'].includes(this.dataType)) {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.conditionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
@@ -379,9 +379,9 @@ export class BusinessRuleListComponent {
 
     this.dataType = attribute?.dataType || 'AUTO';
     const decimalValueSize = attribute?.size;
-    this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
+    this.dynamicInputType = ['INTEGER', 'DECIMAL','DOUBLE'].includes(this.dataType) ? 'number' : 'text';
 
-    if (['DECIMAL', 'FLOAT', 'LINK'].includes(this.dataType)) {
+    if (['DECIMAL', 'FLOAT', 'LINK','DOUBLE'].includes(this.dataType)) {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.conditionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }

@@ -25,6 +25,7 @@ import {
 } from "@angular/material/form-field";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
+import { SettingsService } from "../../../components/settingsPopUp/service/settings.service";
 // import { SettingsService } from "../../../components/settingsPopUp/service/settings.service";
 
 @Component({
@@ -129,14 +130,48 @@ export class AuditDataComponent implements OnInit, OnDestroy {
     },
   };
   subscriptions: any[] = [];
-
+  defaultCodeSetting = "namecode";
+  globalSettings!: any;
+  title = "View Transactions for ";
   constructor(
     public dialogRef: MatDialogRef<AuditDataComponent>,
     private entityDataService: EntityDataService,
+    private settings: SettingsService,
     @Inject(MAT_DIALOG_DATA) public dialogData: any
   ) {
-    this.currentSelectedEntity = dialogData as Entity;
+    this.currentSelectedEntity = dialogData.currentSelectedEntity as Entity;
     dialogRef.disableClose = true;
+    this.globalSettings =
+      this.settings.getGlobalSettings()?.displayFormat ||
+      this.defaultCodeSetting;
+    switch (this.globalSettings) {
+      case "namecode": {
+        this.title =
+          this.title +
+          this.dialogData.selectedItem?.name +
+          " {" +
+          this.dialogData.selectedItem?.code +
+          "}";
+        break;
+      }
+      case "codename": {
+        this.title =
+          this.title +
+          this.dialogData.selectedItem?.code +
+          " {" +
+          this.dialogData.selectedItem?.name +
+          "}";
+        break;
+      }
+      case "code": {
+        this.title = this.title + this.dialogData.selectedItem?.code;
+        break;
+      }
+      default: {
+        this.title = this.title + " Data";
+        break;
+      }
+    }
   }
   ngOnInit(): void {
     this.currentCriteria.filters?.push({

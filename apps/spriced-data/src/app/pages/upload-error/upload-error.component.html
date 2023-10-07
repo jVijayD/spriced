@@ -1,0 +1,153 @@
+<sp-two-col-three-forth [singleColumn]="isFullScreen">
+    <!--Left Section with Grid-->
+    <div class="flex flex-col w-full h-full" left>
+      <!-- <div class="page-header pb-0">Entity Data Management</div> -->
+      <!-- <sp-entity-select
+        (entitySelectionEvent)="onEntitySelectionChange($event)"
+        (modelSelectionEvent)="onModelSelectionChange()"
+      ></sp-entity-select> -->
+      <div class="grid-container grid-height bg-primary-dark rounded-t-md">
+        <sp-data-grid
+          page="error"
+          class="w-full h-full"
+          #dataGrid
+          [enableRowIndex]="false"
+          [isArray]="false"
+          [headers]="headers"
+          [rows]="rows"
+          [rowHeight]="30"
+          [headerHeight]="30"
+          [footerHeight]="30"
+          [columnMode]="columnMode"
+          [virtualScroll]="false"
+          [selectionType]="selectionType"
+          [count]="totalElements"
+          [limit]="limit"
+          [isExternalPaging]="true"
+          [isExternalSorting]="true"
+          [sortType]="sortType"
+          (paginate)="onPaginate($event)"
+          (itemSelected)="onItemSelected($event)"
+          [selected]="!!selectedItem ? [selectedItem] : []"
+          (sort)="onSort($event)"
+          *ngIf="!hide"
+        >
+          <ng-container>
+          
+            <div
+              class="text-white items-center font-medium flex justify-start w-full"
+            >
+                {{ this.currentSelectedEntity?.displayName || "" }}
+            </div>
+  
+            <div class="flex">
+              <!-- <sp-header-action
+                icon="delete"
+                text="Delete"
+                title="Delete Member"
+                [disabled]="selectedItem == null || selectedItem == undefined || disableSubmit"
+                (actionClick)="onDelete()"
+              ></sp-header-action> -->
+    
+              <!-- <sp-header-action
+                icon="filter_list"
+                [text]="!query ? 'Filter' : ''"
+                (actionClick)="onFilter()"
+                [disabled]="this.headers.length === 0"
+                spToolTipRenderer
+                [contentTemplate]="template"
+                [customPosition]="true"
+                [showToolTip]="!!query"
+              ></sp-header-action> -->
+  
+              <ng-template #template>
+                <div [innerHTML]="getToolTipTemplate(query)"></div>
+              </ng-template>
+<!--   
+              <sp-header-action
+                icon="filter_list_off"
+                text="Clear Filter"
+                title="Clear Filter"
+                [disabled]="
+                  this.currentCriteria?.filters?.length == 0 ||
+                  this.currentCriteria?.filters == undefined
+                "
+                (actionClick)="onClearFilter()"
+              ></sp-header-action> -->
+  
+  
+              <!-- <sp-header-action
+                [context]="true"
+                icon="insert_drive_file"
+                text="Export"
+                title="Export"
+                [disabled]="this.headers.length === 0"
+              >
+               
+                <button mat-menu-item (click)="onExport('xlsx')">
+                  <mat-icon class="mt-auto">insert_drive_file</mat-icon>
+                  <span class="text-xs self-end file-excel fontawesomeicon"
+                    >xslx</span
+                  >
+                </button>
+              </sp-header-action> -->
+  
+             
+
+              <!-- <sp-header-action
+              icon="save"
+              text="Save"
+              title="Save"
+              (actionClick)="onSave()"
+            ></sp-header-action> -->
+
+            </div>
+          </ng-container>
+        </sp-data-grid>
+      </div>
+    </div>
+  
+    <!--Right Section with Form-->
+    <div class="h-full flex flex-col" right>
+      <!-- <div
+        class="header bg-primary-default flex flex-row justify-between rounded-t-xl"
+      >
+        <div class="component-header-with-background">
+          {{ this.currentSelectedEntity?.displayName }}
+        </div>
+        <div class="flex flex-row justify-end text-white">
+  
+        </div>
+      </div> -->
+      <mat-accordion [multi]="false">
+        <mat-expansion-panel
+          [expanded]="this.currentSelectedEntity ? true : false"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <b> {{ this.currentSelectedEntity?.displayName }}</b>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div
+            style="
+              height: calc(100vh - 35px - 2rem - 35px - 70px);
+              overflow-y: auto;
+            "
+          >
+            <!-- 100vh-2rem(padding)-35px(footer)-35px(header)-70px(expanded/panel) -->
+            <sp-dynamic-form-container
+              *ngIf="appForm.groups[0].formFieldControls.length"
+              [appForm]="appForm"
+              reset="Reset"
+              save="Save"
+              [disableSubmit]="disableSubmit"
+              (submitEvent)="onSubmitEntityData($event)"
+              (resetEvent)="onReset()"
+            ></sp-dynamic-form-container>
+          </div>
+        </mat-expansion-panel>
+      
+      </mat-accordion>
+    </div>
+  </sp-two-col-three-forth>
+  
