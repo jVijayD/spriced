@@ -298,9 +298,11 @@
             <mat-form-field appearance="outline" class="mt-2">
               <mat-label>Decimals</mat-label
               ><input
+              spPositiveDigit
                 matInput
                 type="number"
                 min="0"
+                max="9"
                 [(ngModel)]="attDetails.size"
                 [disabled]="
                   attDetails?.onlyDisplayNameEditable && attAction === 'Update'

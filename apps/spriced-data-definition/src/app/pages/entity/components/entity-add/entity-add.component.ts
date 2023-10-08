@@ -35,6 +35,7 @@ import {
   OneColComponent,
   Paginate,
 } from "@spriced-frontend/spriced-ui-lib";
+import {PositiveDigitDirective} from "libs/spriced-ui-lib/src/lib/components/directive/positive-digit.directive";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 const DEFAULT_ATTRIBUTE_WIDTH = 100;
 export interface PeriodicElement {
@@ -69,6 +70,7 @@ export interface PeriodicElement {
     HeaderActionComponent,
     OneColComponent,
     DataGridComponent,
+    PositiveDigitDirective
   ],
   templateUrl: "./entity-add.component.html",
   styleUrls: ["./entity-add.component.scss"],
