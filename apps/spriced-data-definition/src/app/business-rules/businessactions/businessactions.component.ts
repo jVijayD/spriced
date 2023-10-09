@@ -181,7 +181,8 @@ export class BusinessactionsComponent implements AfterViewInit {
     else if (['IS_REQUIRED', 'IS_NOT_VALID', 'IS_NULL', 'IS_BLANK'].includes(value)) {
       this.Value = this.maxValue = this.minValue = false;
       // const operandType = this.actionForm?.get('operandType')?.value;
-      // this.actionForm?.get('operandType').setValue(operandType);
+      this.actionForm?.get('operandType').setValue('CONSTANT');
+      this.valueConstant = true;
       this.disableFormControl();
       this.removeValidators(valueControl);
 
@@ -193,15 +194,9 @@ export class BusinessactionsComponent implements AfterViewInit {
 
       minValueControl?.disable();
       maxValueControl?.disable();
-      valueControl?.enable();
       this.isFieldDisabled ? this.removeValidators(valueControl) : this.addValidators(valueControl);
+      this.disableOperandFormControl(this.valueConstant);
     } 
-    if (this.valueConstant) {
-      this.removeValidators(valueControl);
-    }
-    else {
-      this.addValidators(valueControl)
-    }
     this.cdr.detectChanges();
   }
   /**
@@ -227,7 +222,7 @@ export class BusinessactionsComponent implements AfterViewInit {
     }
     if (['DECIMAL', 'FLOAT', 'LINK','DOUBLE'].includes(this.dataType)) {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
-      this.actionForm?.get('operand')?.setValidators([Validators.required,Validators.pattern(pattern)]);
+      this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
 
     this.handleValueChange(actionType, 'changeValue');
@@ -241,21 +236,26 @@ export class BusinessactionsComponent implements AfterViewInit {
   public handleValue(event: any, text?: string) {
     this.valueConstant = ['CONSTANT', 'BLANK'].includes(event);
     const valueControl = this.actionForm?.get('operand');
-    this.addValidators(valueControl);
     this.isFieldDisabled = event === 'BLANK';
     this.selectedOperand = '';
-    this.actionForm?.get('a')
-    if (event === 'CONSTANT') {
-      this.actionForm?.get('operand')?.removeValidators([Validators.required]);
-    } else {
-      this.actionForm?.get('operand')?.addValidators([Validators.required]);
-    }
     if (text === 'editValue') {
       this.disableFormControl();
     }
-    if (this.isFieldDisabled) {
-      const valueControl = this.actionForm?.get('operand');
+    if (event === 'CONSTANT') {
       this.removeValidators(valueControl);
+    } else {
+      this.addValidators(valueControl);
+    }
+  }
+
+  public disableOperandFormControl(valueConstant: any)
+  {
+    const valueControl = this.actionForm?.get('operand');
+    if (valueConstant) {
+      this.removeValidators(valueControl);
+    }
+    else {
+      this.addValidators(valueControl)
     }
   }
 
@@ -366,7 +366,7 @@ export class BusinessactionsComponent implements AfterViewInit {
 
     if (['DECIMAL', 'FLOAT', 'LINK','DOUBLE'].includes(this.dataType)) {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
-      this.actionForm?.get('operand')?.setValidators([Validators.pattern(pattern)]);
+      this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
     this.cdr.detectChanges();
   }

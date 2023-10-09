@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatButtonModule } from '@angular/material/button';
@@ -97,28 +97,31 @@ const sToken = new ServiceTokens();
 export class ElseactionComponent {
   @Input() actionForm!: any;
   @Output() public remove: EventEmitter<any> = new EventEmitter<any>();
-  @Input() public dataRules: any;
-  @Input() public preview!: boolean;
   @Input() public actionType: any;
+  @Input() public preview!: boolean;
   public Value: boolean = false;
   public maxValue: boolean = false;
   public minValue: boolean = false;
-  public onChange: any = () => { };
-  public onTouch: any = () => { };
+  @Input() public dataRules: any;
   public dataType: any = 'AUTO';
-  public value = "";
   public dynamicInputType: any;
   public filteredAttributes: any;
+
+  public onChange: any = () => { }
+  public onTouch: any = () => { }
+  public value = "" // this is the updated value that the class accesses
   public valueConstant: boolean = true;
   public isFieldDisabled: boolean = false;
   public selectedAttribute: any = '';
   public selectedOperand: any = '';
 
 
-  constructor() { }
+  constructor(
+    private cdr: ChangeDetectorRef
+  ) { }
 
   /**
-   * Initialization tasks or data fetching can be done here
+   *  Initialization tasks or data fetching can be done here
    */
   ngOnInit(): void {
     // CURRENTLY HARD CODE FOR CHANGE THE NAME OF CONST TO VALUE
@@ -126,8 +129,8 @@ export class ElseactionComponent {
       el.name === 'const' ? el.name = 'value' : '';
       return
     });
-
     this.filteredAttributes = this.dataRules?.attributes.filter((el: any) => el.type !== 'LOOKUP');
+
     const value = this.getValue('actionType');
     const operandType = this.getValue('operandType');
     const attributeId = this.getValue('attributeId');
@@ -171,9 +174,10 @@ export class ElseactionComponent {
       valueControl?.disable();
     }
     else if (['IS_REQUIRED', 'IS_NOT_VALID', 'IS_NULL', 'IS_BLANK'].includes(value)) {
-      // const operandType = this.actionForm?.get('operandType')?.value;
-      // this.actionForm?.get('operandType').setValue(operandType);
       this.Value = this.maxValue = this.minValue = false;
+      // const operandType = this.actionForm?.get('operandType')?.value;
+      this.actionForm?.get('operandType').setValue('CONSTANT');
+      this.valueConstant = true;
       this.disableFormControl();
       this.removeValidators(valueControl);
 
@@ -185,21 +189,15 @@ export class ElseactionComponent {
 
       minValueControl?.disable();
       maxValueControl?.disable();
-      valueControl?.enable();
       this.isFieldDisabled ? this.removeValidators(valueControl) : this.addValidators(valueControl);
-    }
-    if (this.valueConstant) {
-      this.removeValidators(valueControl);
-    }
-    else {
-      this.addValidators(valueControl)
-    }
+      this.disableOperandFormControl(this.valueConstant);
+    } 
+    this.cdr.detectChanges();
   }
-
   /**
-   * HANDLE THIS FUNCTION FOR VALIDATION 
-   * @param value any
-   */
+     * HANDLE THIS FUNCTION FOR VALIDATION 
+     * @param value any
+     */
   public handleAttributes(id: any, text?: string) {
     let attribute = this.findAttributeInArray(id, this.dataRules?.attributes);
     const actionType = this.getValue('actionType');
@@ -212,7 +210,7 @@ export class ElseactionComponent {
     }
     this.dataType = attribute?.dataType ? attribute?.dataType : 'AUTO';
     const decimalValueSize = attribute?.size;
-    this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern('')]);
+    this.actionForm?.get('operand')?.setValidators([Validators.pattern('')]);
     this.dynamicInputType = ['INTEGER', 'DECIMAL','DOUBLE'].includes(this.dataType) ? 'number' : 'text';
     if (text === 'changeAttribute') {
       this.actionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
@@ -221,6 +219,7 @@ export class ElseactionComponent {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
+
     this.handleValueChange(actionType, 'changeValue');
   }
 
@@ -231,21 +230,27 @@ export class ElseactionComponent {
  */
   public handleValue(event: any, text?: string) {
     this.valueConstant = ['CONSTANT', 'BLANK'].includes(event);
-    this.actionForm?.get('operand')?.enable();
+    const valueControl = this.actionForm?.get('operand');
     this.isFieldDisabled = event === 'BLANK';
     this.selectedOperand = '';
-    this.actionForm?.get('a')
-    if (event === 'CONSTANT') {
-      this.actionForm.get('operand')?.removeValidators([Validators.required]);
-    } else {
-      this.actionForm.get('operand')?.addValidators([Validators.required]);
-    }
     if (text === 'editValue') {
       this.disableFormControl();
     }
-    if (this.isFieldDisabled) {
-      const valueControl = this.actionForm?.get('operand');
+    if (event === 'CONSTANT') {
       this.removeValidators(valueControl);
+    } else {
+      this.addValidators(valueControl);
+    }
+  }
+
+  public disableOperandFormControl(valueConstant: any)
+  {
+    const valueControl = this.actionForm?.get('operand');
+    if (valueConstant) {
+      this.removeValidators(valueControl);
+    }
+    else {
+      this.addValidators(valueControl)
     }
   }
 
@@ -358,6 +363,7 @@ export class ElseactionComponent {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
+    this.cdr.detectChanges();
   }
 
   /**
