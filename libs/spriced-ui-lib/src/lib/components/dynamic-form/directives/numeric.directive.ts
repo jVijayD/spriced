@@ -11,9 +11,9 @@ export class NumericDirective {
       return String(value).match(new RegExp(/^(-?\d*)$/));
     } else {
       const regExpString =
-        "^\\s*((\\d+(\\.\\d{0," +
+        "^\\s*((-?\\d*(\\.\\d{0," +
         this.decimals +
-        "})?)|((\\d*(\\.\\d{1," +
+        "})?)|((-?\\d*(\\.\\d{1," +
         this.decimals +
         "}))))\\s*$";
       return String(value).match(new RegExp(regExpString));
