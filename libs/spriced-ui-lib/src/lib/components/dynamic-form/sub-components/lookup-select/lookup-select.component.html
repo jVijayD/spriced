@@ -9,12 +9,14 @@
         class="flex-grow"
         appearance="outline"
         [ngClass]="frmControl.errors ? 'error' : ''"
+        [floatLabel]="value ? 'always' : 'auto'"
       >
+      
         <mat-label>{{ control.label }}</mat-label>
 
         <mat-select
           matNativeControl
-          *ngIf="count <= pageSize"
+          *ngIf="totalcount <= pageSize"
           (blur)="onTouched()"
           [(ngModel)]="value"
           [disabled]="control.readOnly || disabled"
@@ -45,9 +47,9 @@
             }}
           </mat-option>
         </mat-select>
-        <ng-container *ngIf="count > pageSize">
-          <div *ngIf="value">{{ getSelectedDisplayProp() }}</div>
-          <input [style.display]="'none'" matInput [(ngModel)]="value" />
+        <ng-container *ngIf="totalcount > pageSize">
+          <div>{{ getSelectedDisplayProp() }}</div>
+          <input [style.display]="'none'" matInput [(ngModel)]="value"/>
         </ng-container>
         <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
         <mat-hint align="start" *ngIf="control.hint">{{
@@ -56,7 +58,7 @@
       </mat-form-field>
       <button
         mat-raised-button
-        *ngIf="count > pageSize"
+        *ngIf="totalcount > pageSize"
         color="primary"
         title="Edit"
         class="square-button"
@@ -80,11 +82,7 @@
         color="primary"
         class="square-button"
         matTooltipClass="custom-tooltip"
-        [matTooltip]="
-          'Go to the \'' +
-          control.label +
-          '\' entity to view attribute value details'
-        "
+        [matTooltip]="control.toolTipText!"
         (click)="onNavigateClick()"
         [disabled]="control.readOnly || disabled"
       >

@@ -41,6 +41,29 @@
         {{ rowIndex + 1 }}
       </ng-template>
     </ngx-datatable-column>
+    
+    <ng-container *ngIf="page=='error'">
+    <ngx-datatable-column
+    name="Validation Status"
+    [width]="170"
+  >
+    <ng-template  ngx-datatable-cell-template>
+        <div class="flex  items-center">
+        <mat-icon class="mr-2" style="color: white;background-color: green;"
+          >check</mat-icon
+        > Validation Succeeded</div>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column
+  name="Input Status"
+>
+  <ng-template  ngx-datatable-cell-template>
+    New
+  </ng-template>
+</ngx-datatable-column>
+</ng-container>
+
     <ng-container *ngFor="let header of headers; let i = index">
       <ngx-datatable-column
         [name]="header.name"
@@ -60,6 +83,15 @@
           let-value="value"
           ngx-datatable-cell-template
         >
+
+        <ng-container *ngIf="header?.name=='Upload Status' && page=='status'" >
+          <div class="underline cursor-pointer" (click)="uploadStatus.emit()" >{{
+            isArray
+              ? this.renderData(row[i], header)
+              : this.renderData(getData(row, header), header)
+          }} </div>
+           </ng-container>
+
           <ng-container *ngIf="header?.isLink">
           <mat-icon
            class="cursor-pointer"
@@ -69,7 +101,7 @@
             >link</mat-icon>
 
           </ng-container>
-          <ng-container *ngIf="!header?.isLink">
+          <ng-container *ngIf="!header?.isLink && header?.name !=='Upload Status'">
             <ng-container *ngIf="!header?.checkbox"
               >{{
                 isArray
@@ -99,6 +131,9 @@
               >
               </mat-checkbox>
             </ng-container>
+
+           
+
           </ng-container>
         </ng-template>
       </ngx-datatable-column>

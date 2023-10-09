@@ -1,7 +1,18 @@
 import { Component, Inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { DataGridComponent, Header, HeaderActionComponent, HeaderComponentWrapperComponent, Paginate } from "@spriced-frontend/spriced-ui-lib";
-import { ColumnMode, Model, SelectionType, SortType } from "@swimlane/ngx-datatable";
+import {
+  DataGridComponent,
+  Header,
+  HeaderActionComponent,
+  HeaderComponentWrapperComponent,
+  Paginate,
+} from "@spriced-frontend/spriced-ui-lib";
+import {
+  ColumnMode,
+  Model,
+  SelectionType,
+  SortType,
+} from "@swimlane/ngx-datatable";
 import * as moment from "moment";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTabsModule } from "@angular/material/tabs";
@@ -11,13 +22,18 @@ import { MatInputModule } from "@angular/material/input";
 import { MatIconModule } from "@angular/material/icon";
 import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components/directive/tool-tip-renderer.directive";
 import { TransactionsService } from "./service/transactions.service";
-import { Criteria, Entity, EntityService,} from "@spriced-frontend/spriced-common-lib";
+import {
+  Criteria,
+  Entity,
+  EntityService,
+} from "@spriced-frontend/spriced-common-lib";
 import { ModelService } from "../../../services/model.service";
 import { forkJoin } from "rxjs";
 @Component({
   selector: "sp-view-transactions-admin",
   standalone: true,
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     DataGridComponent,
     HeaderComponentWrapperComponent,
     MatFormFieldModule,
@@ -33,7 +49,7 @@ import { forkJoin } from "rxjs";
   styleUrls: ["./view-transactions-admin.component.scss"],
 })
 export class ViewTransactionsAdminComponent {
-  selectedItem:any;
+  selectedItem: any;
   selectedModel: any;
   sortType = SortType.single;
   columnMode: ColumnMode = ColumnMode.force;
@@ -41,10 +57,10 @@ export class ViewTransactionsAdminComponent {
   totalElements = 0;
   rows: any[] = [];
   limit: number = 10;
-  modelList!:any[];
-  entityList!:any[];
+  modelList!: any[];
+  entityList!: any[];
   query?: any;
-  subscriptions :any[]= [];
+  subscriptions: any[] = [];
   currentCriteria: Criteria = {
     filters: [],
     pager: {
@@ -53,11 +69,10 @@ export class ViewTransactionsAdminComponent {
     },
   };
   constructor(
-    private modelService:ModelService,
-    private enitityService:EntityService,
-    private transactionService:TransactionsService
-    ){
-  }
+    private modelService: ModelService,
+    private enitityService: EntityService,
+    private transactionService: TransactionsService
+  ) {}
   headers: Header[] = [
     {
       canAutoResize: true,
@@ -66,7 +81,7 @@ export class ViewTransactionsAdminComponent {
       column: "entity_name",
       name: "Entity",
     },
-   
+
     {
       canAutoResize: true,
       isSortable: true,
@@ -114,13 +129,19 @@ export class ViewTransactionsAdminComponent {
     },
   ];
 
-   
-
   onModelChange(ev: MatSelectChange) {
     this.selectedModel = ev.value;
-    this.loadEntitiesById(this.selectedModel)
+    this.loadEntitiesById(this.selectedModel);
   }
   onPaginate(e: Paginate) {
+    if (
+      this.currentCriteria.filters &&
+      this.currentCriteria.filters.length > 0 &&
+      this.currentCriteria.pager
+    ) {
+      this.currentCriteria.pager.pageNumber = e.offset;
+      this.loadTransactionsData(this.entityList);
+    }
   }
 
   onItemSelected(e: any) {
@@ -136,41 +157,46 @@ export class ViewTransactionsAdminComponent {
       this.modelService.loadAllModels().subscribe((result: any) => {
         this.modelList = result;
         this.selectedModel = this.modelList[0].id;
-         this.loadEntitiesById(this.selectedModel);
+        this.loadEntitiesById(this.selectedModel);
       })
     );
   }
 
-  loadEntitiesById(modelId:number){
-    this.enitityService.loadEntityByModel(modelId).subscribe((entities)=>{
-     this.entityList = entities;
-      this.loadTransactionsData(entities)
-    })
+  loadEntitiesById(modelId: number) {
+    this.enitityService.loadEntityByModel(modelId).subscribe((entities) => {
+      this.entityList = entities;
+      this.loadTransactionsData(entities);
+    });
   }
 
   loadTransactionsData(entities: any) {
+    this.rows = [];
     const observables = entities.map((item: any) => {
-      this.currentCriteria.filters=[];
+      this.currentCriteria.filters = [];
       let newFilter = {
         filterType: "CONDITION",
         key: "entity_name",
         value: item.name,
         joinType: "NONE",
         operatorType: "EQUALS",
-        datatype: "string"
+        dataType: "string",
       };
       this.currentCriteria.filters?.push(newFilter);
       return this.transactionService.loadTransactionsData(this.currentCriteria);
     });
 
     forkJoin(observables).subscribe(
-      (results:any) => {
-       const combinedContent = [].concat(...results.map((item:any) => item.content));
+      (results: any) => {
+        const combinedContent = [].concat(
+          ...results.map((item: any) => item.content)
+        );
+        this.totalElements = results[0].totalElements;
         this.rows = combinedContent;
       },
-      (error:any) => {
-        
-      }
+      (error: any) => {}
     );
+  }
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((item) => item.unsubscribe());
   }
 }

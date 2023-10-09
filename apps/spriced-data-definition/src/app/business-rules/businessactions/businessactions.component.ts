@@ -142,7 +142,7 @@ export class BusinessactionsComponent implements AfterViewInit {
     const operand = this.getValue('operand');
     const parentAttributeId = this.getValue('parentAttributeId');
     const parentOperandId = this.getValue('parentOperandId');
-    
+
     this.setAttributeNamesById(attributeId, operand);
     this.handleValue(operandType);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
@@ -195,14 +195,19 @@ export class BusinessactionsComponent implements AfterViewInit {
       maxValueControl?.disable();
       valueControl?.enable();
       this.isFieldDisabled ? this.removeValidators(valueControl) : this.addValidators(valueControl);
+    } 
+    if (this.valueConstant) {
+      this.removeValidators(valueControl);
+    }
+    else {
+      this.addValidators(valueControl)
     }
     this.cdr.detectChanges();
   }
-
   /**
-   * HANDLE THIS FUNCTION FOR VALIDATION 
-   * @param value any
-   */
+     * HANDLE THIS FUNCTION FOR VALIDATION 
+     * @param value any
+     */
   public handleAttributes(id: any, text?: string) {
     let attribute = this.findAttributeInArray(id, this.dataRules?.attributes);
     const actionType = this.getValue('actionType');
@@ -216,14 +221,15 @@ export class BusinessactionsComponent implements AfterViewInit {
     this.dataType = attribute?.dataType ? attribute?.dataType : 'AUTO';
     const decimalValueSize = attribute?.size;
     this.actionForm?.get('operand')?.setValidators([Validators.pattern('')]);
-    this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
+    this.dynamicInputType = ['INTEGER', 'DECIMAL','DOUBLE'].includes(this.dataType) ? 'number' : 'text';
     if (text === 'changeAttribute') {
       this.actionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
     }
-    if (['DECIMAL', 'FLOAT', 'LINK'].includes(this.dataType)) {
+    if (['DECIMAL', 'FLOAT', 'LINK','DOUBLE'].includes(this.dataType)) {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
-      this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
+      this.actionForm?.get('operand')?.setValidators([Validators.required,Validators.pattern(pattern)]);
     }
+
     this.handleValueChange(actionType, 'changeValue');
   }
 
@@ -239,7 +245,7 @@ export class BusinessactionsComponent implements AfterViewInit {
     this.isFieldDisabled = event === 'BLANK';
     this.selectedOperand = '';
     this.actionForm?.get('a')
-    if(event === 'CONSTANT') {
+    if (event === 'CONSTANT') {
       this.actionForm?.get('operand')?.removeValidators([Validators.required]);
     } else {
       this.actionForm?.get('operand')?.addValidators([Validators.required]);
@@ -269,14 +275,12 @@ export class BusinessactionsComponent implements AfterViewInit {
     });
   }
 
-  public removeValidators(valueControl: any)
-  {
+  public removeValidators(valueControl: any) {
     valueControl.clearValidators();
     valueControl.updateValueAndValidity();
   }
 
-  public addValidators(valueControl: any)
-  {
+  public addValidators(valueControl: any) {
     valueControl.setValidators(Validators.required);
     valueControl.updateValueAndValidity();
   }
@@ -319,18 +323,15 @@ export class BusinessactionsComponent implements AfterViewInit {
     }
   }
 
-  public setAttributeNamesById(attributeId: any, operandAttribute: any)
-  {
+  public setAttributeNamesById(attributeId: any, operandAttribute: any) {
     const attribute = this.findAttributeById(attributeId);
     const operandAtt = this.findAttributeById(operandAttribute);
     // !!operandAtt ? this.actionForm?.get('operandType')?.setValue('ATTRIBUTE') : this.actionForm?.get('operandType')?.setValue('CONSTANT');
-    if(!!attribute)
-    {
+    if (!!attribute) {
       this.actionForm?.get('attributeDisplayName')?.setValue(attribute.displayName);
       this.actionForm?.get('attributeName')?.setValue(attribute.name);
     }
-    if(!!operandAtt)
-    {
+    if (!!operandAtt) {
       this.actionForm?.get('operandName')?.setValue(operandAtt.name);
       this.actionForm?.get('operandDisplayName')?.setValue(operandAtt.displayName);
     }
@@ -361,9 +362,9 @@ export class BusinessactionsComponent implements AfterViewInit {
 
     this.dataType = attribute?.dataType || 'AUTO';
     const decimalValueSize = attribute?.size;
-    this.dynamicInputType = ['INTEGER', 'DECIMAL'].includes(this.dataType) ? 'number' : 'text';
+    this.dynamicInputType = ['INTEGER', 'DECIMAL','DOUBLE'].includes(this.dataType) ? 'number' : 'text';
 
-    if (['DECIMAL', 'FLOAT', 'LINK'].includes(this.dataType)) {
+    if (['DECIMAL', 'FLOAT', 'LINK','DOUBLE'].includes(this.dataType)) {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.actionForm?.get('operand')?.setValidators([Validators.pattern(pattern)]);
     }
@@ -435,7 +436,7 @@ export class BusinessactionsComponent implements AfterViewInit {
   private getValidationPatternForDataType(dataType: string, decimalSize?: number): RegExp {
     const number = decimalSize || 1; // Use decimalSize if provided, or default to 1
     let pattern = '';
-  
+
     switch (dataType) {
       case 'DECIMAL':
         pattern = `^\\d{1,9}\\.\\d{${number},}$`;
@@ -450,7 +451,7 @@ export class BusinessactionsComponent implements AfterViewInit {
         pattern = '.';
         break;
     }
-  
+
     return new RegExp(pattern);
   }
 

@@ -9,7 +9,7 @@ import { Observable, map } from "rxjs";
 import { saveAs } from "file-saver";
 
 @Injectable({ providedIn: "root" })
-export class EntityDataService {
+export class EntityDataStagingService {
   api_url: string;
   def_url: string;
   constructor(
@@ -29,7 +29,7 @@ export class EntityDataService {
     criteria: Criteria
   ): Observable<PageData> {
     const url = this.requestUtility.addCriteria(
-      `${this.api_url}/entity/${id}/data`,
+      `${this.api_url}/entity/stage/${id}/data`,
       criteria
     );
     return this.http.get<PageData>(url);
@@ -97,13 +97,12 @@ export class EntityDataService {
     return this.http.get<PageData>(url);
   }
 
-  loadLookupData(id: string | number,pageNumber:number = 0,pageSize:number = 30,filters:any): Observable<PageData> {
+  loadLookupData(id: string | number,pageNumber:number = 0,pageSize:number =30): Observable<PageData> {
     const criteria: Criteria = {
       pager: {
         pageSize,
         pageNumber,
       },
-      filters:filters
     };
     const headers = new HttpHeaders().set("no-loader", "true");
 
@@ -118,12 +117,12 @@ export class EntityDataService {
   }
 
   createEntityData(id: string | number, data: any): Observable<any> {
-    return this.http.post(`${this.api_url}/entity/${id}/data`, {
+    return this.http.post(`${this.api_url}/entity/stage/${id}/data`, {
       data: [data],
     });
   }
   updateEntityData(id: string | number, data: any): Observable<any> {
-    return this.http.put(`${this.api_url}/entity/${id}/data`, { data: [data] });
+    return this.http.put(`${this.api_url}/entity/stage/${id}/data`, { data: [data] });
   }
   deleteEntityData(id: string | number, entityDataId: number): Observable<any> {
     return this.http.delete(

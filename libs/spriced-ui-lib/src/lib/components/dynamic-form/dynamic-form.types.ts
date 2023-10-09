@@ -255,6 +255,7 @@ export type LookupSelectControl = {
   };
   eventValue: any;
   eventType: string;
+  toolTipText?: string,
   data: IData;
   validations?: IValidator[];
   asyncValidations?: IValidator[];
