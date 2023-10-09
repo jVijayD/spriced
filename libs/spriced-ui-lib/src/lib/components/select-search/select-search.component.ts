@@ -27,6 +27,7 @@ export class SelectSearchComponent {
 
   @Input() appearance: 'fill' | 'outline' = 'outline';
   @Input() placeholder?: string;
+  @Input() required: boolean = false;
   @Input() items: any[] = [];
   @Input() model!: any;
   @Input() bindValueKey!: string;
@@ -40,7 +41,6 @@ export class SelectSearchComponent {
         let diff = 0
         let i = 1;
         this.sorters.forEach((srt) => {
-          // diff += srt.direction == Direction.ASC ?
           diff += a[srt.property] == b[srt.property] ? 0 :
             srt?.direction == Direction.DESC ?
               (b[srt.property] < a[srt.property] ? -1 : 1) :

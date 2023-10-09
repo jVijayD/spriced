@@ -42,9 +42,9 @@ export interface Hierarchy {
   modelId: number;
   name: string;
   description: string;
-  updatedBy: string;
-  updatedDate: Date;
+  updatedBy?: string;
+  updatedDate?: Date;
   details: HierarchyDetails[] | null;
-  model: Model | null;
-  entity: Entity | null;
+  model?: Model | null;
+  entity?: Entity | null;
 }
