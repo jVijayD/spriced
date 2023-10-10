@@ -198,7 +198,7 @@ export class HierarchyNewTabComponent {
       groupLevel: this.hierarchyDetails.length,
       treeStatus: "expanded",
       expanded: false,
-      tablename: entity.name,
+      tableName: entity.name,
       tableId: entity.id,
       tabledisplayname: this.getTableDisplayName(lastHierarchyEntity, attribName, this.hierarchyDetails.length == 0),
       localColumn: "id",
@@ -262,7 +262,7 @@ export class HierarchyNewTabComponent {
       hie.details.sort((a, b) => a.groupLevel - b.groupLevel)
         .forEach(hieDtls => {
           let lastHierarchyDtls = this.getLastHierarchyDtls();
-          hieDtls.entity = this.getEntityByTable(hieDtls.tablename);
+          hieDtls.entity = this.getEntityByTable(hieDtls.tableName);
           hieDtls.tableId = hieDtls.entity.id;
           hieDtls.tabledisplayname = this.getTableDisplayName(
             lastHierarchyDtls?.entity || hieDtls.entity,
@@ -293,7 +293,7 @@ export class HierarchyNewTabComponent {
           expandable: false,
           id: hdtl.groupLevel + 1,
           parentId: hdtl.groupLevel == 0 ? null : hdtl.groupLevel,
-          tablename: hdtl.tablename,
+          tablename: hdtl.tableName,
           tableId: hdtl.tableId,
           name: hdtl.tabledisplayname,
           expanded: true

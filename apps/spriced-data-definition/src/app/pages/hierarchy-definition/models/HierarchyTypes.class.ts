@@ -6,7 +6,7 @@ export interface HierarchyDetails {
   // parentRefId: number | null;
   // refId: number;
   groupLevel: number;
-  tablename: string;
+  tableName: string;
   tableId: number;
   tabledisplayname: string;
   localColumn: string;
