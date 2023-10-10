@@ -555,22 +555,15 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     }
 
     // this.setFormData("", formFields);
-    const lookupFields = formFields.filter((el: any) => el.eventType === 'lookup');
-    if (lookupFields.length > 0)
-    {
-      this.patchFormData(lookupFields).subscribe((lookupResponses: any[]) => {
-        lookupFields.forEach((lookupField: any) => {
-          const item = lookupResponses.find((responseItem: any) => responseItem.id === lookupField.eventValue);
-          if (item) {
-            lookupField.toolTipText = `Go to the "${item.displayName}" entity to view attribute value details`;
+   
+        formFields.forEach((item: any) => {
+          if (!!item?.eventValue) {
+            item.toolTipText = `Go to the "${item.referencedTableDisplayName}" entity to view attribute value details`;
           }
+          return
         });
+        console.log(formFields, '>>>??')
         this.setFormData("", formFields);
-      });
-    } else
-    {
-      this.setFormData("", formFields);
-    }
   }
 
   public patchFormData(formFields: any): Observable<any[]> {
