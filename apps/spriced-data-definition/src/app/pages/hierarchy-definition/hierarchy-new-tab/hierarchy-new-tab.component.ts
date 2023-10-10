@@ -9,7 +9,6 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnInit,
   Output,
 } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
@@ -21,7 +20,6 @@ import {
   Entity,
   EntityService, Criteria,
   Model,
-  Attribute,
 } from "@spriced-frontend/spriced-common-lib";
 import { MatListModule } from "@angular/material/list";
 import { CommonModule, NgFor } from "@angular/common";
@@ -29,7 +27,6 @@ import { MatCardModule } from "@angular/material/card";
 import {
   DataGridComponent,
   DataGridTreeComponent,
-  Direction,
   Head,
   Header,
   HeaderActionComponent,
@@ -38,7 +35,6 @@ import {
   SnackBarService,
   SnackbarModule,
   VboxComponent,
-  sorter,
 } from "@spriced-frontend/spriced-ui-lib";
 import {
   ColumnMode,
@@ -46,7 +42,13 @@ import {
   SelectionType,
   SortType,
 } from "@swimlane/ngx-datatable";
-import { FormsModule } from "@angular/forms";
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  Validators,
+  ReactiveFormsModule
+} from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -54,12 +56,13 @@ import { HierarchyServiceService } from "../service/hierarchy-service.service";
 @Component({
   selector: "app-hierarchy-new-tab",
   templateUrl: "./hierarchy-new-tab.component.html",
-  styleUrls: ["./hierarchy-new-tab.component.css"],
+  styleUrls: ["./hierarchy-new-tab.component.scss"],
   standalone: true,
   providers: [SnackBarService],
   imports: [
     CommonModule,
     NgFor,
+    ReactiveFormsModule,
     FormsModule,
     VboxComponent,
     DataGridTreeComponent,
@@ -68,7 +71,8 @@ import { HierarchyServiceService } from "../service/hierarchy-service.service";
     HeaderComponentWrapperComponent,
     NgxDatatableModule,
     MatCardModule,
-    MatIconModule, SelectSearchComponent,
+    MatIconModule,
+    SelectSearchComponent,
     MatTabsModule,
     MatFormFieldModule,
     HeaderActionComponent,
@@ -79,12 +83,15 @@ import { HierarchyServiceService } from "../service/hierarchy-service.service";
     SnackbarModule,
   ],
 })
-export class HierarchyNewTabComponent implements OnInit {
-  dir:Direction=Direction.ASC;
-  @Input()
-  selectedHierarchy!: Hierarchy | null;
+export class HierarchyNewTabComponent {
+  @Input() modelList!: Model[];
+  @Input() selectedHierarchy!: Hierarchy | null;
   @Output() onSaveEventEmitter = new EventEmitter<any>();
-
+  entityList!: Entity[];
+  availableEntities: Entity[] = [];
+  hierarchyDetails: HierarchyDetails[] = [];
+  hierarchyLevelNodes: HierarchyTreeNode[] = [];
+  hierarchyPreviewNodes: PreviewTreeNode[] = [];
   levelHeaders: Head[] = [
     {
       column: "tablename",
@@ -103,39 +110,34 @@ export class HierarchyNewTabComponent implements OnInit {
       flexGrow: 2,
     },
   ];
-  selectionType: SelectionType = SelectionType.single;
-  columnMode: ColumnMode = ColumnMode.flex;
-  sortType = SortType.single;
-  @Input()
-  modelList!: Model[];
-  ColumnMode = ColumnMode;
-  entityList!: Entity[];
-  // detailsList: HierarchyDetails[] = [];
-  availableEntities: Entity[] = [];
-
-  hierarchyDetails: HierarchyDetails[] = [];
-  hierarchyLevelNodes: HierarchyTreeNode[] = [];
-  hierarchyPreviewNodes: PreviewTreeNode[] = [];
-  // = [
-  //   { "id": 1, "treeStatus": "expanded", "tablename": "", "name": "ROOT", tableId: this.hierarchyDetails[this.hierarchyDetails.length - 1].tableId },
-  // ]
-
-  selectedModel!: Model | null;
-  selectedEntity!: Entity | null;
   id: number = 0;
   name: string = "";
   description: string = "";
-  comboSorters: sorter[] = [{ property: "name", direction: Direction.ASC }];
+  selectionType: SelectionType = SelectionType.single;
+  columnMode: ColumnMode = ColumnMode.flex;
+  sortType = SortType.single;
+  ColumnMode = ColumnMode;
+  hierarchyForm!: FormGroup;
+  selectedModel!: Model | null;
+  selectedEntity!: Entity | null;
 
   constructor(
     private cd: ChangeDetectorRef,
     private entityService: EntityService,
     private snackBarService: SnackBarService,
     private hierarchyService: HierarchyServiceService,
-  ) { }
-  ngOnInit() { }
-
-  loadEntities(model: Model) { }
+    private fb: FormBuilder,
+  ) {
+    this.onClearClick();
+  }
+  initForm() {
+    this.hierarchyForm = this.fb.group({
+      name: ["", [Validators.required, Validators.maxLength(50), Validators.minLength(3)]],
+      description: ["", Validators.maxLength(250)],
+      entityId: [0, Validators.required],
+      modelId: [0, Validators.required]
+    });
+  }
   onClearClick() {
     this.hierarchyDetails = [];
     this.availableEntities = [];
@@ -147,47 +149,26 @@ export class HierarchyNewTabComponent implements OnInit {
     this.id = 0;
     this.description = "";
     this.selectedEntity = null;
-    // this.comboSorters 
+    this.initForm();
   }
-  validateBeforeSave() {
-    if (!this.selectedEntity) {
-      this.snackBarService.error("Please select an entity");
+  onBind(hie: Hierarchy) {
+    this.onClearClick();
+    this.id = hie.id;
+    this.name = hie.name;
+    this.description = hie.description;
+    this.hierarchyDetails = [];
+    this.selectedModel = this.getModelById(hie.modelId);
+    this.getEntitiesByModel(this.selectedModel, hie.entityId, hie, true);
     }
-    if (!this.name) {
-      this.snackBarService.error(
-        "Please enter a name for the derived Hierarchy"
-      );
-    }
-    if (!this.selectedModel) {
-      this.snackBarService.error("Please select an entity");
-    }
-    if (this.hierarchyDetails.length <= 1) {
-      this.snackBarService.error("Please add grouping levels");
-    }
-  }
 
   onSaveClick() {
-    if (
-      !this.selectedEntity ||
-      !this.selectedModel ||
-      !this.name ||
-      !this.hierarchyDetails ||
-      this.hierarchyDetails.length == 0 ||
-      this.hierarchyDetails.length == 1
-    ) {
-      this.validateBeforeSave();
-      return;
-    }
+    if (!this.selectedEntity || !this.selectedModel) { return; }
     let hie: Hierarchy = {
-      name: this.name,
+      name: this.hierarchyForm.controls["name"].value,
       id: this.id,
-      entityId: this.selectedEntity?.id,
-      modelId: this.selectedModel?.id,
-      description: this.description,
-      updatedDate: new Date(),
-      updatedBy: "",
-      model: null,
-      entity: null,
+      entityId: this.selectedEntity.id,
+      modelId: this.selectedModel.id,
+      description: this.hierarchyForm.controls["description"].value,
       details: this.hierarchyDetails,
     };
     this.hierarchyService.saveHierarchy(hie).forEach((r) => {
@@ -206,11 +187,11 @@ export class HierarchyNewTabComponent implements OnInit {
       ?.displayName || "";
   }
   getLastHierarchyDtls() {
-    return this.hierarchyDetails.sort((a, b) => a.groupLevel - b.groupLevel)[this.hierarchyDetails.length - 1];
+    return this.hierarchyDetails.sort((a, b) => a.groupLevel - b.groupLevel)[this.hierarchyDetails.length - 1] || null;
   }
   addToLevel(entity: Entity, attribName: string) {
-    let lastHierarchy = this.hierarchyDetails.length ? this.getLastHierarchyDtls() : null;
-    let lastHierarchyEntity = this.hierarchyDetails.length ? this.getLastHierarchyDtls().entity : entity
+    const lastHierarchy = this.getLastHierarchyDtls();
+    const lastHierarchyEntity = lastHierarchy ? lastHierarchy.entity : entity
     let hDtl = {
       id: 0,
       hierarchyId: this.id,
@@ -219,21 +200,23 @@ export class HierarchyNewTabComponent implements OnInit {
       expanded: false,
       tablename: entity.name,
       tableId: entity.id,
-      tabledisplayname: this.getTableDisplayName(lastHierarchyEntity, attribName, this.hierarchyDetails.length),
+      tabledisplayname: this.getTableDisplayName(lastHierarchyEntity, attribName, this.hierarchyDetails.length == 0),
       localColumn: "id",
       entity: entity,
       refColumn: entity.comment ? entity.comment : attribName,
     } as HierarchyDetails;
-    // if (this.hierarchyDetails.length - 1 >= 0) {
-    // var hie = this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1)
-    // hie && entity.comment ? hie.refColumn = entity.comment : "";
-    // }
     if (lastHierarchy) {
       lastHierarchy.refColumn = hDtl.refColumn;
     }
-    // lastHierarchyEntity.
+    this.hierarchyDetails = [...this.hierarchyDetails, hDtl];
+    this.populateLevelTree();
+    this.populateAvailableEntities();
+    this.setPreviewRootNode(entity);
+  }
+
+  populateAvailableEntities() {
     this.availableEntities = [];
-    this.entityService.load(entity.id).forEach((a) => {
+    this.entityService.load(this.getLastHierarchyDtls().entity.id).forEach((a) => {
       let derAttrList = (a as Entity).attributes
         .filter((att) => att.type == "LOOKUP")
         .map((att) => {
@@ -247,11 +230,7 @@ export class HierarchyNewTabComponent implements OnInit {
         });
       this.availableEntities.push(...derAttrList);
     });
-    this.hierarchyDetails = [...this.hierarchyDetails, hDtl];
-    this.populateLevelTree();
-    this.setPreviewRootNode(entity);
   }
-
   setPreviewRootNode(entity: Entity) {
     this.hierarchyPreviewNodes = [];
     this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes, {
@@ -266,35 +245,44 @@ export class HierarchyNewTabComponent implements OnInit {
       this.getEntitiesByModel(this.selectedModel);
     }
   }
-  getTableDisplayName(e: Entity, attribName: string, groupLevel: number) {
-    return groupLevel == 0
-      ? e.displayName
-      : this.getAttribDisplayNameByName(e, attribName)
-      || "";
+  getTableDisplayName(e: Entity, attribName: string, isRootEntity: boolean) {
+    return isRootEntity ? e.displayName : this.getAttribDisplayNameByName(e, attribName) || "";
+  }
+  EntityListCallBack(entityId: number, hie: Hierarchy) {
+    if (entityId) {
+      this.selectedEntity = this.getEntityById(entityId);
+      this.hierarchyForm = this.fb.group({
+        name: [this.name, [Validators.required, Validators.maxLength(50), Validators.minLength(3)]],
+        description: [this.description, Validators.maxLength(250)],
+        entityId: [entityId, Validators.required],
+        modelId: [this.selectedModel?.id, Validators.required]
+      });
+    }
+    if (hie && hie.details) {
+      hie.details.sort((a, b) => a.groupLevel - b.groupLevel)
+        .forEach(hieDtls => {
+          let lastHierarchyDtls = this.getLastHierarchyDtls();
+          hieDtls.entity = this.getEntityByTable(hieDtls.tablename);
+          hieDtls.tableId = hieDtls.entity.id;
+          hieDtls.tabledisplayname = this.getTableDisplayName(
+            lastHierarchyDtls?.entity || hieDtls.entity,
+            lastHierarchyDtls?.refColumn,
+            hieDtls.groupLevel == 0
+          );
+          this.hierarchyDetails.push(hieDtls);
+        });
+      this.hierarchyDetails = this.hierarchyDetails.sort((a, b) => b.groupLevel - a.groupLevel);
+      this.populateLevelTree();
+      this.populateAvailableEntities();
+      this.setPreviewRootNode(this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1)?.entity);
+      this.cd.detectChanges();
+    }
   }
   getEntitiesByModel(model: Model, entityId?: number, hie?: Hierarchy, isOnBind: boolean = false) {
     this.entityList = [];
     this.entityService.loadEntityByModel(model.id).forEach((a) => {
       this.entityList.push(...a);
-      if (entityId) {
-        this.selectedEntity = this.getEntityById(entityId);
-      }
-      if (hie && hie.details) {
-        hie.details
-          .sort((a, b) => a.groupLevel - b.groupLevel)
-          .forEach((hieDtls): void => {
-            hieDtls.entity = this.getEntityByTable(hieDtls.tablename);
-            hieDtls.tabledisplayname = this.getTableDisplayName(this.getLastHierarchyDtls()?.entity|| hieDtls.entity, this.getLastHierarchyDtls()?.refColumn, hieDtls.groupLevel);
-            hieDtls.tableId = (hieDtls.entity).id;
-            this.hierarchyDetails.push(hieDtls);
-          });
-        this.hierarchyDetails = this.hierarchyDetails.sort((a, b) => b.groupLevel - a.groupLevel);
-        this.populateLevelTree();
-        if (isOnBind) {
-          this.setPreviewRootNode(this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1)?.entity);
-        }
-        this.cd.detectChanges();
-      }
+      this.EntityListCallBack(entityId ? entityId : 0, hie ? hie : {} as Hierarchy);
     });
   }
   populateLevelTree() {
@@ -318,38 +306,30 @@ export class HierarchyNewTabComponent implements OnInit {
     this.hierarchyDetails = this.hierarchyDetails.sort(
       (a, b) => a.groupLevel - b.groupLevel
     );
-    let dtl1 = this.hierarchyDetails.pop();
-    let dtl = this.hierarchyDetails.pop() || {} as HierarchyDetails;
-    this.addToLevel(dtl.entity, dtl.refColumn);
+    let dtl1 = this.hierarchyDetails.pop() || {} as HierarchyDetails;
+    // let dtl = this.hierarchyDetails.pop() || {} as HierarchyDetails;
+    // this.addToLevel(dtl.entity, dtl1.refColumn);
+    this.populateAvailableEntities();
     this.hierarchyDetails = [
       ...this.hierarchyDetails.sort((a, b) => b.groupLevel - a.groupLevel),
     ];
     this.populateLevelTree();
   }
-  onBind(hie: Hierarchy) {
-    this.onClearClick();
-    this.id = hie.id;
-    this.name = hie.name;
-    this.description = hie.description;
-    this.hierarchyDetails = [];
-    this.selectedModel = this.getModelById(hie.modelId);
-    this.getEntitiesByModel(this.selectedModel, hie.entityId, hie, true);
-  }
+
   getModelById(id: number) {
-    return this.modelList.filter((m) => m.id == id)[0];
+    return this.modelList.find((m) => m.id == id) || {} as Model;
   }
   getEntityById(id: number) {
-    return this.entityList.filter((m) => m.id == id)[0];
+    return this.entityList.find((m) => m.id == id) || {} as Entity;
   }
   getEntityByTable(table: string) {
-    return this.entityList.filter((m) => m.name == table)[0];
+    return this.entityList.find((m) => m.name == table) || {} as Entity;
   }
   onEntityChange(ev: MatSelectChange) {
     this.selectedEntity = ev.value as Entity;
     this.hierarchyDetails = [];
     this.addToLevel(this.selectedEntity, "");
   }
-
   onTreeAction(event: any) {
     const index = event.rowIndex;
     const row = event.row;
@@ -366,7 +346,7 @@ export class HierarchyNewTabComponent implements OnInit {
     if (row.treeStatus === 'collapsed') {
       row.treeStatus = 'loading';
 
-      if (!row.loaded && this.hierarchyDetails.length  != row.level) {
+      if (!row.loaded && this.hierarchyDetails.length != row.level) {
         var hie = this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1 - row.level)
         this.getChildNodes(row, (data: any) => {
           data = data.content.map((d: PreviewTreeNode) => {
@@ -396,14 +376,10 @@ export class HierarchyNewTabComponent implements OnInit {
       this.cd.detectChanges();
     }
   }
-
-
-  getChildNodes(row: PreviewTreeNode, callBack: Function, hie: HierarchyDetails) {
-    // const hie = this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1 - row.level);
+  getChildNodes(row: PreviewTreeNode, callBack: (v: any) => any, hie: HierarchyDetails) {
     if (hie) {
-      let cr = {} as Criteria;
-      if (row.id && hie?.refColumn) {
-        cr.filters = [{
+      let cr = {
+        filters: [{
           filterType: "CONDITION",
           key: hie.refColumn,
           value: row.id,
@@ -411,10 +387,11 @@ export class HierarchyNewTabComponent implements OnInit {
           operatorType: "EQUALS",
           dataType: "number"
         }]
+      } as Criteria;
+      if (!row.id) {
+        cr = {}
       }
-      this.hierarchyService.loadEntityData(hie.tableId, cr).forEach(element => {
-        callBack(element);
-      });
+      this.hierarchyService.loadEntityData(hie.tableId, cr).forEach(callBack);
     } else {
       row.treeStatus = "expanded";
       callBack([]);

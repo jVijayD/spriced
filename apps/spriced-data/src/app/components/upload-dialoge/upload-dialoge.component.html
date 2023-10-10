@@ -12,12 +12,17 @@
       <input
         class="bg-primary-default text-white"
         type="file"
-        multiple="true"
+        multiple="false"
         #file
         (change)="uploadFile($event)"
         accept=".xls,.xlsx,.csv"
         required
       />
+      <mat-error class="error"
+      *ngIf="errorMsg"
+      class="text-sm italic text-red-500"
+      >Selected file format is not supported</mat-error
+    >
     </div>
   </div>
 

@@ -26,11 +26,12 @@ import { MatOption } from '@angular/material/core';
 export class SelectSearchComponent {
 
   @Input() appearance: 'fill' | 'outline' = 'outline';
-  @Input() placeholder: string = "Select X";
+  @Input() placeholder?: string;
+  @Input() required: boolean = false;
   @Input() items: any[] = [];
   @Input() model!: any;
   @Input() bindValueKey!: string;
-  @Input() sorters: sorter[]=[];
+  @Input() sorters: sorter[] = [];
   @Input() bindLabelKey: string = "label";
   @Output() selectionChange: EventEmitter<any> = new EventEmitter<any>();
   currentStaticItems: Array<any> = this.items;
@@ -40,34 +41,29 @@ export class SelectSearchComponent {
         let diff = 0
         let i = 1;
         this.sorters.forEach((srt) => {
-          // diff += srt.direction == Direction.ASC ?
           diff += a[srt.property] == b[srt.property] ? 0 :
-          srt.direction == Direction.ASC?
-          (a[srt.property] < b[srt.property] ? -1 : 1):
-          (b[srt.property] < a[srt.property] ? -1 : 1)
+            srt?.direction == Direction.DESC ?
+              (b[srt.property] < a[srt.property] ? -1 : 1) :
+              (a[srt.property] < b[srt.property] ? -1 : 1)
         })
         return diff;
       }
       return 1;
     };
 
-  sortList(){
+  sortList() {
     this.currentStaticItems = (!this.currentStaticItems || !this.currentStaticItems.length) ? this.items : this.currentStaticItems;
     this.currentStaticItems = this.currentStaticItems?.sort(this.sortFunc);
-    
+
   }
   onFilterChange(v: any) {
     this.items = (!v || !v.length) ?
-      this.currentStaticItems : 
+      this.currentStaticItems :
       this.currentStaticItems.filter(i => i[this.bindLabelKey].toLowerCase().search(v.toLowerCase()) >= 0)
-  } 
+  }
 }
 export enum Direction { ASC = "ASC", DESC = "DESC" };
-export class sorter {
+export interface sorter {
   property: string;
-  direction: Direction = Direction.ASC;
-  constructor(property: string, direction: Direction) {
-    this.property = property;
-    this.direction = direction;
-  }
+  direction?: Direction;
 }

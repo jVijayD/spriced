@@ -1,109 +1,112 @@
-<div class="flex flex-col h-full p-2 overflow-auto">
-  <div class="flex flex-row col-span-6  items-center p-2">
-    <!-- <mat-form-field appearance="outline">
-      <mat-label>Model</mat-label>
-      <mat-select (selectionChange)="onModelChange($event)" [(value)]="selectedModel">
-        <mat-option class="option" *ngFor="let item of modelList" [value]="item">{{ item.displayName }}</mat-option>
-      </mat-select>
-    </mat-form-field> -->
-
-    <sp-select-search appearance="outline" [model]="selectedModel" placeholder="Model"
-      (selectionChange)="onModelChange($event)" [sorters]="[{property:'displayName',direction:dir}]" [bindLabelKey]="'displayName'" [items]="modelList">
-    </sp-select-search>
-
-    <!-- <mat-form-field appearance="outline" class="ml-5">
-      <mat-label>Entity</mat-label> -->
-    <sp-select-search appearance="outline" class="ml-5" [sorters]="[{property:'displayName',direction:dir}]"
-      [model]="selectedEntity" placeholder="Entity" (selectionChange)="onEntityChange($event)"
-      [bindLabelKey]="'displayName'" [items]="entityList">
-    </sp-select-search>
-    <!-- <mat-select (selectionChange)="onEntityChange($event)" [(value)]="selectedEntity">
-        <mat-option class="option" *ngFor="let item of entityList" [value]="item">{{ item.displayName }}</mat-option>
-      </mat-select>
-    </mat-form-field> -->
-    <mat-form-field appearance="outline" class="ml-5">
-      <mat-label>Name</mat-label>
-      <input matInput [(ngModel)]="name" />
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="ml-5">
-      <mat-label>Description</mat-label>
-      <input matInput [(ngModel)]="description" />
-    </mat-form-field>
-    <button mat-raised-button color="accent" class="ml-5" (click)="onClearClick()">
-      Clear
-    </button>
-    <button mat-raised-button color="primary" class="ml-5" (click)="onSaveClick()">
-      Save
-    </button>
-  </div>
-  <div class="flex flex-row gap-5 h-full p-2 overflow-hidden">
-    <mat-card style="min-width: 300px; height:100%">
-      <mat-card-content class="p-0 h-full">
-        <sp-vbox [noGap]="true" [hFull]="true" [marginX]="true" class="w-full bg-white h-full overflow-hidden">
-          <div class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
-            <span class="float-left text-white font-medium">Available Entities</span>
-          </div>
-          <mat-list class="col-span-2 h-full overflow-auto">
-            <mat-list-item *ngFor="let entity of availableEntities" class="py-10">
-              <div class="flex flex-row justify-between items-center">
-                <span>{{entity.updatedBy}}</span>
-                <button mat-icon-button aria-label="Add" color="primary"
-                  (click)="addToLevel(entity,entity?.comment||'')">
-                  <mat-icon>add</mat-icon>
-                </button>
-              </div>
-            </mat-list-item>
-          </mat-list>
-        </sp-vbox>
-      </mat-card-content>
-    </mat-card>
-    <mat-card class="flex flex-grow h-full" style="max-width: 500px; min-width: 300px;">
-      <mat-card-content class="p-0 h-full overflow-hidden">
-        <sp-vbox [noGap]="true" [marginX]="true" [hFull]="true" class="w-full bg-white h-full">
-          <div class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
-            <span class="float-left text-white font-medium">Current Levels</span>
-            <div class="flex flex-row">
-              <ng-container>
-                <sp-header-action icon="delete" text="Remove" title="Remove"
-                  [disabled]="this.hierarchyDetails.length <= 1" (actionClick)="onRemoveClick(null)"></sp-header-action>
-              </ng-container>
+<div class="flex flex-col p-2 overflow-auto">
+  <form [formGroup]="hierarchyForm">
+    <div class="flex flex-row col-span-6  items-center p-2">
+      <sp-select-search appearance="outline" [model]="selectedModel" placeholder="Model"
+        (selectionChange)="onModelChange($event)" [sorters]="[{property:'displayName'}]" [bindLabelKey]="'displayName'"
+        [items]="modelList" [required]="true">
+      </sp-select-search>
+      <sp-select-search appearance="outline" class="ml-5" [sorters]="[{property:'displayName'}]"
+        [model]="selectedEntity" placeholder="Entity" (selectionChange)="onEntityChange($event)"
+        [bindLabelKey]="'displayName'" [items]="entityList" [required]="true">
+      </sp-select-search>
+      <mat-form-field appearance="outline" class="ml-5">
+        <mat-label>Name</mat-label>
+        <input matInput #nameInput formControlName="name" required />
+        <mat-error class="error" class="text-sm italic text-red-500"
+          *ngIf="hierarchyForm.controls['name'].hasError('required')">
+          Name is mandatory</mat-error>
+        <mat-error class="error" class="text-sm italic text-red-500"
+          *ngIf="hierarchyForm.controls['name'].hasError('maxlength')">
+          Maximum length allowed 50</mat-error>
+        <mat-error class="error" class="text-sm italic text-red-500"
+          *ngIf="hierarchyForm.controls['name'].hasError('minlength')">
+          Minimum 3 charactors required</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="ml-5">
+        <mat-label>Description</mat-label>
+        <input matInput #descInput formControlName="description" />
+        <mat-error class="error" class="text-sm italic text-red-500"
+          *ngIf="hierarchyForm.controls['description'].hasError('maxlength')">
+          Maximum length allowed 250</mat-error>
+      </mat-form-field>
+      <button mat-raised-button color="accent" class="ml-5" type="button" (click)="onClearClick()">
+        Clear
+      </button>
+      <button mat-raised-button color="primary" class="ml-5" type="submit" (click)="onSaveClick()"
+        [disabled]="hierarchyForm.invalid || hierarchyDetails.length <= 1">
+        Save
+      </button>
+    </div>
+    <div class="flex flex-row gap-5 h-full p-2 overflow-hidden">
+      <mat-card style="min-width: 300px; height: calc(100vh - 17.5rem);">
+        <mat-card-content class="p-0 h-full">
+          <sp-vbox [noGap]="true" [hFull]="true" [marginX]="true" class="w-full bg-white h-full overflow-hidden">
+            <div class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
+              <span class="float-left text-white font-medium">Available Entities</span>
             </div>
-          </div>
-          <ngx-datatable style="min-width: 300px; max-width: 500px; min-height: calc(100vh - 20rem);"
-            class="material striped tableScroll" [columnMode]="ColumnMode.flex" [headerHeight]="50" [footerHeight]="0"
-            [rowHeight]="40" [rows]="hierarchyLevelNodes" [scrollbarV]="true" [scrollbarH]="true"
-            [treeFromRelation]="'id'" (treeAction)="onTreeAction($event)" [treeToRelation]="'parentId'">
-            <ngx-datatable-column name="Name" [flexGrow]="3" [isTreeColumn]="true">
-              <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                <span style="display: inline-flex" class="ml-5">
-                  <mat-icon>account_tree</mat-icon>
-                  <span class="ml-2"> {{ value }}</span></span>
-              </ng-template>
-            </ngx-datatable-column>
-          </ngx-datatable>
-        </sp-vbox>
-      </mat-card-content>
-    </mat-card>
-    <mat-card class="flex flex-grow h-full" style="min-width: 300px;">
-      <mat-card-content class="p-0 h-full overflow-hidden">
-        <sp-vbox [noGap]="true" [marginX]="true" [hFull]="true" class="w-full bg-white h-full">
-          <div class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
-            <span class="float-left text-white font-medium">Preview</span>
-          </div>
-          <ngx-datatable style="min-width: 300px; min-height: calc(100vh - 20rem);" class="material striped tableScroll"
-            [columnMode]="ColumnMode.flex" [headerHeight]="50" [footerHeight]="0" [rowHeight]="50"
-            [rows]="hierarchyPreviewNodes" [scrollbarV]="true" [scrollbarH]="true" [treeFromRelation]="'parentGrpId'"
-            (treeAction)="onTreeActionPreview($event)" [treeToRelation]="'grpId'">
-            <ngx-datatable-column name="Name" [flexGrow]="3" [isTreeColumn]="true">
-              <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                <span style="display: inline-flex" class="ml-5">
-                  <mat-icon>account_tree</mat-icon>
-                  <span class="ml-2"> {{ value }}</span></span>
-              </ng-template>
-            </ngx-datatable-column>
-          </ngx-datatable>
-        </sp-vbox>
-      </mat-card-content>
-    </mat-card>
-  </div>
+            <mat-list class="col-span-2 h-full overflow-auto">
+              <mat-list-item *ngFor="let entity of availableEntities" class="py-10">
+                <div class="flex flex-row justify-between items-center">
+                  <span>{{entity.updatedBy}}</span>
+                  <button mat-icon-button aria-label="Add" color="primary"
+                    (click)="addToLevel(entity,entity?.comment||'')">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </div>
+              </mat-list-item>
+            </mat-list>
+          </sp-vbox>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="flex flex-grow h-full" style="max-width: 500px; min-width: 300px;">
+        <mat-card-content class="p-0 h-full overflow-hidden">
+          <sp-vbox [noGap]="true" [marginX]="true" [hFull]="true" class="w-full bg-white h-full">
+            <div class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
+              <span class="float-left text-white font-medium">Current Levels</span>
+              <div class="flex flex-row">
+                <ng-container>
+                  <sp-header-action icon="delete" text="Remove" title="Remove"
+                    [disabled]="this.hierarchyDetails.length <= 1"
+                    (actionClick)="onRemoveClick(null)"></sp-header-action>
+                </ng-container>
+              </div>
+            </div>
+            <ngx-datatable style="min-width: 300px; max-width: 500px; min-height: calc(100vh - 20rem);"
+              class="material striped tableScroll" [columnMode]="ColumnMode.flex" [headerHeight]="50" [footerHeight]="0"
+              [rowHeight]="40" [rows]="hierarchyLevelNodes" [scrollbarV]="true" [scrollbarH]="true"
+              [treeFromRelation]="'id'" (treeAction)="onTreeAction($event)" [treeToRelation]="'parentId'">
+              <ngx-datatable-column name="Name" [flexGrow]="3" [isTreeColumn]="true">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                  <span style="display: inline-flex" class="ml-5">
+                    <mat-icon>account_tree</mat-icon>
+                    <span class="ml-2"> {{ value }}</span></span>
+                </ng-template>
+              </ngx-datatable-column>
+            </ngx-datatable>
+          </sp-vbox>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="flex flex-grow h-full" style="min-width: 300px;">
+        <mat-card-content class="p-0 h-full overflow-hidden">
+          <sp-vbox [noGap]="true" [marginX]="true" [hFull]="true" class="w-full bg-white h-full">
+            <div class="bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5">
+              <span class="float-left text-white font-medium">Preview</span>
+            </div>
+            <ngx-datatable style="min-width: 300px; min-height: calc(100vh - 20rem);"
+              class="material striped tableScroll" [columnMode]="ColumnMode.flex" [headerHeight]="50" [footerHeight]="0"
+              [rowHeight]="50" [rows]="hierarchyPreviewNodes" [scrollbarV]="true" [scrollbarH]="true"
+              [treeFromRelation]="'parentGrpId'" (treeAction)="onTreeActionPreview($event)" [treeToRelation]="'grpId'">
+              <ngx-datatable-column name="Name" [flexGrow]="3" [isTreeColumn]="true">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                  <span style="display: inline-flex" class="ml-5">
+                    <mat-icon>account_tree</mat-icon>
+                    <span class="ml-2"> {{ value }}</span></span>
+                </ng-template>
+              </ngx-datatable-column>
+            </ngx-datatable>
+          </sp-vbox>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </form>
 </div>
