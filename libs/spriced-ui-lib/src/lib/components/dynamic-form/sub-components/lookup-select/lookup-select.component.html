@@ -5,6 +5,7 @@
       *ngIf="count <= 100"
     > -->
     <div class="flex flex-row space-x-1 justify-between items-center">
+      <ng-container  *ngIf="totalcount <= pageSize">
       <mat-form-field
         class="flex-grow"
         appearance="outline"
@@ -16,7 +17,7 @@
 
         <mat-select
           matNativeControl
-          *ngIf="totalcount <= pageSize"
+         
           (blur)="onTouched()"
           [(ngModel)]="value"
           [disabled]="control.readOnly || disabled"
@@ -47,15 +48,29 @@
             }}
           </mat-option>
         </mat-select>
-        <ng-container *ngIf="totalcount > pageSize">
-          <div>{{ getSelectedDisplayProp() }}</div>
-          <input [style.display]="'none'" matInput [(ngModel)]="value"/>
-        </ng-container>
         <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
         <mat-hint align="start" *ngIf="control.hint">{{
           control.hint
         }}</mat-hint>
       </mat-form-field>
+    </ng-container>
+
+    <ng-container *ngIf="totalcount > pageSize">
+      <mat-form-field
+        class="flex-grow"
+        appearance="outline"
+        [ngClass]="frmControl.errors ? 'error' : ''"
+         [floatLabel]="value ? 'always' : 'auto'"
+      >
+      <mat-label>{{ control.label }}</mat-label>
+        <div>{{ getSelectedDisplayProp() }}</div>
+        <input [style.display]="'none'" matInput [(ngModel)]="value"/>
+      <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+      <mat-hint align="start" *ngIf="control.hint">
+        {{ control.hint}}</mat-hint>
+      </mat-form-field>
+      </ng-container>
+
       <button
         mat-raised-button
         *ngIf="totalcount > pageSize"
