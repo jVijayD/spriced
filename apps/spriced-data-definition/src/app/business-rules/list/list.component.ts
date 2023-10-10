@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, Output, OnDestroy, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, Output, OnDestroy, ViewChild, TemplateRef, ChangeDetectorRef } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -166,6 +166,7 @@ export class ListComponent implements OnInit, OnDestroy {
     private errorPanelService: ErrorPanelService,
     private msgSrv: SnackBarService,
     private activeRoute: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {
     this.entityId = +this.activeRoute?.snapshot?.queryParams?.['entity_id'];
     this.modelId = +this.activeRoute?.snapshot?.queryParams?.['model_id'];
@@ -663,7 +664,7 @@ export class ListComponent implements OnInit, OnDestroy {
   getExpressionTooltip(element: any): string {
     let tooltipText = `${this.getConditionTooltipText(element.condition, 3)}`;
     tooltipText += this.getActionTooltipText(element.conditionalAction);
-
+    this.cdr.detectChanges();
     return tooltipText;
   }
 
@@ -700,7 +701,7 @@ export class ListComponent implements OnInit, OnDestroy {
           );
           operand = operand?.name;
         } else if (
-          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute.dataType)
+          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute?.dataType) && condition.operandType === 'CONSTANT' && condition?.operand !== '' && !!condition?.operand
         ) {
           const dateTimes = condition?.operand.split(","); // Split the input string by commas
 
@@ -710,14 +711,14 @@ export class ListComponent implements OnInit, OnDestroy {
           const joinedString = formattedDates.join(" & ");
           const finalArray = [`${joinedString}`];
           operand = finalArray;
-        } else {
-          operand =
-            condition?.operand !== ""
-              ? condition?.operand
-              : condition?.operandType.toLowerCase();
         }
+        else{
+          operand = condition?.operand;
+        }
+        operand = !!condition?.operand && condition?.operand !== "" ? `to ${operand}` : '';
+
         tooltipConditionText += `${conditionType} ${attribute?.name.toLowerCase()}  
-      ${condition?.operatorType.toLowerCase()} to ${operand}`;
+        ${condition?.operatorType.toLowerCase()} ${operand}`;
 
         if (condition.subConditions && condition.subConditions.length > 0) {
           tooltipConditionText += ` ${subConditionType} (`;
@@ -765,7 +766,7 @@ export class ListComponent implements OnInit, OnDestroy {
           );
           operand = operand?.name;
         } else if (
-          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute.dataType)
+          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute?.dataType) && condition.operandType === 'CONSTANT' && condition?.operand !== '' && !!condition?.operand
         ) {
           const dateTimes = condition?.operand.split(","); // Split the input string by commas
 
@@ -775,15 +776,14 @@ export class ListComponent implements OnInit, OnDestroy {
           const joinedString = formattedDates.join(" & ");
           const finalArray = [`${joinedString}`];
           operand = finalArray;
-        } else {
-          operand =
-            condition?.operand !== ""
-              ? condition?.operand
-              : condition?.operandType.toLowerCase(1);
+        } 
+        else{
+          operand = condition?.operand;
         }
+        operand = !!condition?.operand && condition?.operand !== "" ? `to ${operand}` : '';
 
         subConditionText += `${conditionType} ${attribute.name
-          } ${condition?.operatorType.toLowerCase()} to ${operand}`;
+          } ${condition?.operatorType.toLowerCase()} ${operand}`;
         if (condition.subConditions && condition.subConditions.length > 0) {
           subConditionText += ` ${subConditionType} (`;
           subConditionText += this.getSubConditionText(
@@ -852,8 +852,14 @@ export class ListComponent implements OnInit, OnDestroy {
           attribute.name = attribute?.name.replace(/_/g, ' ');
           action.actionType = action?.actionType.replace(/_/g, ' ')
         }
-        if (
-          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute.dataType)
+        if (action.operandType === "ATTRIBUTE") {
+          operand = this.attributes.find(
+            (item: any) => item.id === action.operand
+          );
+          operand = operand?.name;
+        }
+        else if (
+          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute?.dataType) && action?.operandType === 'CONSTANT' && action?.operand !== '' && !!action?.operand
         ) {
           const dateTimes = action?.operand.split(","); // Split the input string by commas
 
@@ -864,6 +870,9 @@ export class ListComponent implements OnInit, OnDestroy {
           const finalArray = [`${joinedString}`];
           operand = finalArray;
         }
+        else{
+          operand = action?.operand;
+        }
         if (action.actionType.toLowerCase().trim().endsWith('to')) {
           const lastindex = action.actionType.toLowerCase().lastIndexOf('to');
           if (
@@ -872,8 +881,9 @@ export class ListComponent implements OnInit, OnDestroy {
             action.actionType = action.actionType.substring(0, lastindex)
           }
         };
+        operand = !!action?.operand && action?.operand !== "" ? `to ${operand}` : !['IS REQUIRED', 'IS NOT VALID'].includes(action?.actionType) ? ` " "` : '';
         tooltipActionConditionsText += `${attribute.name
-          } ${action.actionType.toLowerCase()} to ${operand}`;
+          } ${action.actionType.toLowerCase()} ${operand}`;
         const lastAction = actions.length - 1;
         lastAction != index ? (tooltipActionConditionsText += "<br>") : "";
       });
