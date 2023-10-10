@@ -553,17 +553,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         return prev || current.permission === "UPDATE";
       }, false);
     }
-
-    // this.setFormData("", formFields);
-   
-        formFields.forEach((item: any) => {
-          if (!!item?.eventValue) {
-            item.toolTipText = `Go to the "${item.referencedTableDisplayName}" entity to view attribute value details`;
-          }
-          return
-        });
-        console.log(formFields, '>>>??')
-        this.setFormData("", formFields);
+    this.setFormData("", formFields);
   }
 
   public patchFormData(formFields: any): Observable<any[]> {
