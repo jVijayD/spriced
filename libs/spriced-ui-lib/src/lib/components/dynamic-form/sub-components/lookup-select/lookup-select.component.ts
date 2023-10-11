@@ -81,7 +81,7 @@ export class LookupSelectComponent
         if (this.dialogReference) {
           this.dialogReference.componentInstance.upDatedData({
             value: items,
-            total: this.count,
+            total: this.totalcount,
           });
         }
         if (this.totalcount == undefined) {
@@ -172,7 +172,7 @@ export class LookupSelectComponent
     const dialogRef = this.dialog.open(LookupDialogComponent, {
       width: "700px",
       height: "620px",
-      data: { value: this.source, total: this.count, pageSize: this.pageSize },
+      data: { value: this.source, total: this.totalcount, pageSize: this.pageSize },
       hasBackdrop: false,
     });
     this.dialogReference = dialogRef;

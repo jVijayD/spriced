@@ -8,18 +8,22 @@ export class RequestUtilityService {
   constructor(private httpClient: HttpClient) {}
 
   public get(url: string, headers: any): Observable<any> {
-    if (!this.urlCache.get(url)) {
-      let urlSubject = new Subject<any>();
-      this.urlCache.set(url, urlSubject);
-      this.httpClient
-        .get(url, headers)
-        //.pipe(first())
-        .subscribe((item) => {
-          debugger;
+    //let data = this.urlCache.get(url);
+    //if (!data) {
+    let urlSubject = new Subject<any>();
+    this.urlCache.set(url, urlSubject);
+    this.httpClient
+      .get(url, headers)
+      .pipe(first())
+      .subscribe({
+        next: (item) => {
           urlSubject.next(item);
-        });
-    }
-    return this.urlCache.get(url) as Subject<any>;
+          this.urlCache.delete(url);
+        },
+      });
+    //}
+    //return this.urlCache.get(url) as Subject<any>;
+    return urlSubject.asObservable();
   }
 
   public addCriteria(

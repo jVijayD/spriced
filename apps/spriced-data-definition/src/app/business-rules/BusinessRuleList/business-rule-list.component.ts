@@ -227,15 +227,15 @@ export class BusinessRuleListComponent {
   public handleValue(event: any, text?: string) {
     this.valueConstant = ['CONSTANT', 'BLANK'].includes(event);
     this.conditionForm?.get('operand')?.enable();
-    this.isFieldDisabled = event === 'BLANK';
+    // this.isFieldDisabled = event === 'BLANK';
     this.selectedOperand = '';
     if (text === 'editValue') {
       this.disableFormControl();
     }
-    if (this.isFieldDisabled) {
-      const valueControl = this.conditionForm?.get('operand');
-      this.removeValidators(valueControl);
-    }
+    // if (this.isFieldDisabled) {
+    //   const valueControl = this.conditionForm?.get('operand');
+    //   this.removeValidators(valueControl);
+    // }
   }
 
   public disableFormControl()
@@ -279,8 +279,9 @@ export class BusinessRuleListComponent {
 
     }
     else if (['IS_NULL','IS_NOT_NULL', 'HAS_CHANGED'].includes(value)) {
-      const operandType = this.conditionForm?.get('operandType')?.value;
-      this.conditionForm?.get('operandType').setValue(operandType);
+      // const operandType = this.conditionForm?.get('operandType')?.value;
+      this.conditionForm?.get('operandType').setValue('CONSTANT');
+      this.valueConstant = true;
       this.disableFormControl();
       this.removeValidators(valueControl);
       this.value = this.maxValue = this.minValue = false;
@@ -293,7 +294,8 @@ export class BusinessRuleListComponent {
 
       minValueControl?.disable();
       maxValueControl?.disable();
-      this.isFieldDisabled ? this.removeValidators(valueControl) : this.addValidators(valueControl);
+
+      // this.isFieldDisabled ? this.removeValidators(valueControl) : this.addValidators(valueControl);
     }
   }
 

@@ -15,7 +15,6 @@ export class OrderByPipe implements PipeTransform {
         return b[field] > a[field] ? 1 : a[field] > b[field] ? -1 : 0;
       }
     });
-    debugger;
     return value;
   }
 }

@@ -5,20 +5,19 @@ import {
   PageData,
   RequestUtilityService,
 } from "@spriced-frontend/spriced-common-lib";
-import { Observable, Subject, first, map, of, tap } from "rxjs";
+import { Observable, map, of } from "rxjs";
 import { saveAs } from "file-saver";
 import { LRUCache } from "typescript-lru-cache";
 
 const cacheOptions = {
   maxSize: 500,
-  entryExpirationTimeInMS: 60 * 1000 * 60,
+  entryExpirationTimeInMS: 60 * 1000 * 30,
 };
 @Injectable({ providedIn: "root" })
 export class EntityDataService {
   api_url: string;
   def_url: string;
-  cache: LRUCache<String, any>;
-  lookupQueryUrlCache = new Map();
+  cache: LRUCache;
 
   constructor(
     private http: HttpClient,
@@ -126,35 +125,13 @@ export class EntityDataService {
       false
     );
 
-    if (!this.cache.get(url)) {
-      this.cache.set(url, this.requestUtility.get(url, { headers: headers }));
+    if (this.cache.has(url)) {
+      return of(this.cache.get(url));
+    } else {
+      return this.http.get<PageData>(url, {
+        headers: headers,
+      });
     }
-    debugger;
-    return this.cache.get(url);
-    // if (!this.lookupQueryUrlCache.get(url)) {
-    //   const dataFetcher = (url: string) => {
-    //     const cachedData = this.cache.get(url);
-    //     let lookupQuerySubject = new Subject();
-    //     if (cachedData) {
-    //       //this.lookupQueryUrlCache.delete(url);
-    //       lookupQuerySubject.next(cachedData);
-    //     } else {
-    //       this.cache.set(url, lookupQuerySubject);
-    //       this.http
-    //         .get<PageData>(url, {
-    //           headers: headers,
-    //         })
-    //         .pipe(first())
-    //         .subscribe((item) => {
-    //           //this.lookupQueryUrlCache.delete(url);
-    //           lookupQuerySubject.next(item);
-    //         });
-    //     }
-    //     return lookupQuerySubject;
-    //   };
-    //   this.lookupQueryUrlCache.set(url, dataFetcher(url));
-    // }
-    // return this.lookupQueryUrlCache.get(url);
 
     // return this.http.get<PageData>(url, {
     //   headers: headers,

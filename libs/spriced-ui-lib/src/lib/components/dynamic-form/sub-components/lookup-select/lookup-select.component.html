@@ -1,4 +1,169 @@
 <ng-container *ngIf="control.type === 'lookup-select' && visible">
+  <div style="position: relative">
+    <!-- <div
+      class="flex flex-row space-x-1 justify-between items-center"
+      *ngIf="count <= 100"
+    > -->
+    <div class="flex flex-row space-x-1 justify-between items-center">
+      <ng-container *ngIf="totalcount <= pageSize">
+        <mat-form-field
+          class="flex-grow"
+          appearance="outline"
+          [ngClass]="frmControl.errors ? 'error' : ''"
+          [floatLabel]="value ? 'always' : 'auto'"
+        >
+          <mat-label>{{ control.label }}</mat-label>
+
+          <mat-select
+            matNativeControl
+            (blur)="onTouched()"
+            [(ngModel)]="value"
+            [disabled]="control.readOnly || disabled"
+            (click)="onClick()"
+          >
+            <mat-option>
+              <ngx-mat-select-search
+                placeholderLabel="Search"
+                ngModel
+                (ngModelChange)="filterSource($event)"
+              ></ngx-mat-select-search>
+            </mat-option>
+            <mat-option
+              [value]="control.placeholder.value"
+              *ngIf="control.placeholder"
+            >
+              {{ control.placeholder.displayText }}
+            </mat-option>
+
+            <mat-option
+              *ngFor="let option of filteredSource"
+              [value]="control.valueProp ? option[control.valueProp] : option"
+            >
+              {{
+                control.displayProp
+                  ? getDisplayProp(option, control.displayProp)
+                  : option
+              }}
+            </mat-option>
+          </mat-select>
+          <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+          <mat-hint align="start" *ngIf="control.hint">{{
+            control.hint
+          }}</mat-hint>
+        </mat-form-field>
+      </ng-container>
+
+      <ng-container *ngIf="totalcount > pageSize">
+        <mat-form-field
+          class="flex-grow"
+          appearance="outline"
+          [ngClass]="frmControl.errors ? 'error' : ''"
+          [floatLabel]="value ? 'always' : 'auto'"
+        >
+          <mat-label>{{ control.label }}</mat-label>
+          <div>{{ getSelectedDisplayProp() }}</div>
+          <input [style.display]="'none'" matInput [(ngModel)]="value" />
+          <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+          <mat-hint align="start" *ngIf="control.hint">
+            {{ control.hint }}</mat-hint
+          >
+        </mat-form-field>
+      </ng-container>
+
+      <button
+        mat-raised-button
+        *ngIf="totalcount > pageSize"
+        color="primary"
+        title="Edit"
+        class="square-button"
+        title="selectItem"
+        (click)="openPopup()"
+      >
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        class="square-button"
+        title="Clear"
+        (click)="onClearClick()"
+        [disabled]="control.readOnly || disabled"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        class="square-button"
+        matTooltipClass="custom-tooltip"
+        [matTooltip]="control.toolTipText!"
+        (click)="onNavigateClick()"
+        [disabled]="control.readOnly || disabled"
+      >
+        <mat-icon>grid_on</mat-icon>
+      </button>
+    </div>
+    <!--if count > 100-->
+    <!-- <div
+      class="flex flex-row space-x-1 justify-between items-center"
+      *ngIf="count > 100"
+    >
+      <mat-form-field
+        class="flex-grow"
+        appearance="outline"
+        [ngClass]="frmControl.errors ? 'error' : ''"
+      >
+        <mat-label>{{ control.label }}</mat-label>
+
+        <input
+          matInput
+          [placeholder]="control.placeholder?.displayText || ''"
+          autocomplete="off"
+          [disabled]="control.readOnly || disabled"
+          [(ngModel)]="value"
+          (blur)="onTouched()"
+        />
+
+        <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+        <mat-hint align="start" *ngIf="control.hint">{{
+          control.hint
+        }}</mat-hint>
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        class="square-button"
+        (click)="onClearClick()"
+        [disabled]="control.readOnly || disabled"
+      >
+        <mat-icon>blur_on</mat-icon>
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        class="square-button"
+        (click)="onNavigateClick()"
+        [disabled]="control.readOnly || disabled"
+      >
+        <mat-icon>grid_on</mat-icon>
+      </button>
+    </div> -->
+
+    <div
+      *ngIf="source.length == 0"
+      class="bg-secondary-default opacity-40 top-0 bottom-0 left-0 right-0 absolute flex items-center justify-center"
+    >
+      <div
+        class="inline-block h-12 w-12 border-primary-dark animate-spin rounded-full border-4 border-solid m-16 border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+        role="status"
+      >
+        <span
+          class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+          >Loading...</span
+        >
+      </div>
+    </div>
+  </div>
   <ng-container>
     <sp-error
       *ngIf="frmControl.errors"
