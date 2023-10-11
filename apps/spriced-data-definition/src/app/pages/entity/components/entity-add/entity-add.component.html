@@ -303,6 +303,7 @@
                 type="number"
                 min="0"
                 max="9"
+                [SelectedValue]="1"
                 [(ngModel)]="attDetails.size"
                 [disabled]="
                   attDetails?.onlyDisplayNameEditable && attAction === 'Update'
