@@ -1,32 +1,25 @@
-import { Directive, HostListener } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 
 @Directive({
   selector: '[spPositiveDigit]',
   standalone:true
 })
 export class PositiveDigitDirective {
-
-  constructor() { }
-  allowedKeypress = [8,13,37,39,46,38,40]
+  constructor(private el:ElementRef) { }
+  allowedKeypress = [8,13,37,39,46,38,40];
+  @Input() public SelectedValue:number=1;
   @HostListener('keydown',['$event'])
+   
   onKeyDown(e:any){
- 
-      if(this.allowedKeypress.includes(e.which))
+      if ((this.allowedKeypress.includes(e.which))||(e.which > 47 && e.which < 58 && e.target.value.length < this.SelectedValue)) 
       {
-        return;
+          //if (e.target.value < 0 || e.target.value > 99) {
+               // e.preventDefault();
+              //}
+      } 
+      else {
+        e.preventDefault();
       }
-      else{
-        if (e.which > 47 && e.which < 58 && e.target.value.length < 1) 
-        {
-            if (e.target.value < 0 || e.target.value > 10) {
-                  e.preventDefault();
-            }
-        } 
-        else {
-          e.preventDefault();
-        }
-      }
- 
-  }
 
+    }
 }
