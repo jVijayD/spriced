@@ -5,19 +5,27 @@ import {
   PageData,
   RequestUtilityService,
 } from "@spriced-frontend/spriced-common-lib";
-import { Observable, map } from "rxjs";
+import { Observable, map, of } from "rxjs";
 import { saveAs } from "file-saver";
+import { LRUCache } from "typescript-lru-cache";
 
+const cacheOptions = {
+  maxSize: 500,
+  entryExpirationTimeInMS: 60 * 1000 * 30,
+};
 @Injectable({ providedIn: "root" })
 export class EntityDataService {
   api_url: string;
   def_url: string;
+  cache: LRUCache;
+
   constructor(
     private http: HttpClient,
     private requestUtility: RequestUtilityService
   ) {
     this.api_url = process.env["NX_API_DATA_URL"] as string;
     this.def_url = process.env["NX_API_DEFINITION_URL"] as string;
+    this.cache = new LRUCache(cacheOptions);
   }
 
   upload(file: any, fileDetails: any) {
@@ -97,24 +105,37 @@ export class EntityDataService {
     return this.http.get<PageData>(url);
   }
 
-  loadLookupData(id: string | number,pageNumber:number = 0,pageSize:number = 30,filters:any): Observable<PageData> {
+  loadLookupData(
+    id: string | number,
+    pageNumber: number = 0,
+    pageSize: number = 30,
+    filters: any
+  ): Observable<PageData> {
     const criteria: Criteria = {
       pager: {
         pageSize,
         pageNumber,
       },
-      filters:filters
+      filters: filters,
     };
     const headers = new HttpHeaders().set("no-loader", "true");
-
     const url = this.requestUtility.addCriteria(
       `${this.api_url}/entity/${id}/data?lookup=true`,
       criteria,
       false
     );
-    return this.http.get<PageData>(url, {
-      headers: headers,
-    });
+
+    if (this.cache.has(url)) {
+      return of(this.cache.get(url));
+    } else {
+      return this.http.get<PageData>(url, {
+        headers: headers,
+      });
+    }
+
+    // return this.http.get<PageData>(url, {
+    //   headers: headers,
+    // });
   }
 
   createEntityData(id: string | number, data: any): Observable<any> {
