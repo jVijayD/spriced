@@ -62,15 +62,15 @@ export class LookupPopupComponent {
     private dialogService: DialogService,
     private entityGridService: EntityGridService
   ) {
-    this.entityDataService.loadEntity(data).subscribe({
-      next: (result: any) => {
-        this.currentSelectedEntity = result;
-        this.createDynamicGrid(this.currentSelectedEntity);
-      },
-      error: (err) => {
-        console.error(err);
-      },
-    });
+    // this.entityDataService.loadEntity(data).subscribe({
+    //   next: (result: any) => {
+    //     this.currentSelectedEntity = result;
+    //     this.createDynamicGrid(this.currentSelectedEntity);
+    //   },
+    //   error: (err) => {
+    //     console.error(err);
+    //   },
+    // });
   }
 
   private createDynamicGrid(entity: Entity | undefined) {
@@ -202,5 +202,4 @@ export class LookupPopupComponent {
       this.hide = false;
     }, 100);
   }
-
 }

@@ -51,10 +51,16 @@ export abstract class BaseComponent implements ControlValueAccessor {
   }
 
   set value(val: unknown) {
-    if (val !== this._value) {
-      this._value = val;
-      this.onChange(val);
-      //this.onTouched(val);
+    try {
+      if (val !== this._value) {
+        this._value = val;
+        this.onChange(val);
+        //this.onTouched(val);
+      }
+    } catch (error) {
+      if (val !== null) {
+        throw error;
+      }
     }
   }
 

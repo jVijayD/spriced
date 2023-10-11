@@ -1,7 +1,27 @@
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { Observable, Subject, first } from "rxjs";
 
 @Injectable({ providedIn: "root" })
 export class RequestUtilityService {
+  private urlCache = new Map<string, Subject<any>>();
+  constructor(private httpClient: HttpClient) {}
+
+  public get(url: string, headers: any): Observable<any> {
+    if (!this.urlCache.get(url)) {
+      let urlSubject = new Subject<any>();
+      this.urlCache.set(url, urlSubject);
+      this.httpClient
+        .get(url, headers)
+        //.pipe(first())
+        .subscribe((item) => {
+          debugger;
+          urlSubject.next(item);
+        });
+    }
+    return this.urlCache.get(url) as Subject<any>;
+  }
+
   public addCriteria(
     url: string,
     criteria?: Criteria,
