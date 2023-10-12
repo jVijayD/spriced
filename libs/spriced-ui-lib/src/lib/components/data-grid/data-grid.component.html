@@ -149,7 +149,10 @@
         let-offset="offset"
       >
         <div style="padding: 5px 10px">
-          <div>
+          <div *ngIf="!isExternalPaging">
+            Rows: {{ rowCount !== "NaN" ? rowCount : 0 }}
+          </div>
+          <div *ngIf="isExternalPaging">
             Rows: {{ rowCount !== "NaN" ? rowCount : 0 }} | Page Size:
             {{ pageSize !== "NaN" ? pageSize : 0 }} | Current Page:
             {{ curPage !== "NaN" ? curPage : 0 }}
