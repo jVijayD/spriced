@@ -147,18 +147,13 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       // Handle for nested attribute
       if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
         this.entities = [];
-        // Use Promise.all to wait for all promises to resolve
-        await Promise.all(
-          relatedRefreneceTableEntity.map(async (el: any) => {
-            if (!(`entity_${el.referencedTableId}` in this.entities)) {
-              const { entityData } = await this.getEntityById(el.referencedTableId);
-              this.entities[`entity_${el.referencedTableId}`] = entityData;
-            }
-            this.entities[`entity_${el.referencedTableId}`].attributes = this.entities[`entity_${el.referencedTableId}`]?.attributes.filter((attr: any) => !attr.systemAttribute);
-            this.entities[`entity_${el.referencedTableId}`].attributes = this.entities[`entity_${el.referencedTableId}`]?.attributes.filter((attr: any) => attr.name !== 'id');
-            await this.processNestedAttributes(this.entities[`entity_${el.referencedTableId}`].attributes, el);
-          })
-        )
+        
+        for (const el of relatedRefreneceTableEntity) {
+          const { entityData } = await this.getEntityById(el.referencedTableId);
+          const filteredAttributes = entity?.attributes.filter((attr: any) => attr.name !== 'id');
+          entityData.attributes = filteredAttributes.filter((attr: any) => !attr.systemAttribute);
+          await this.processNestedAttributes(entityData.attributes, el);
+        }
       }
 
       attributeList = attributeList.filter((el: any) => !el.systemAttribute);
@@ -830,41 +825,41 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       : parentItem.subConditions.some((item: any) => this.hasBRChild(item, childItem));
   }
 
-      /**
-   * HANDLE THIS FUNCTION FOR FIND THE ATTRIBUTE ARRAY
+  /**
+* HANDLE THIS FUNCTION FOR FIND THE ATTRIBUTE ARRAY
+* @param id string
+* @param array any
+* @returns 
+*/
+  private findAttributeInArray(id: any, array: any[]): any {
+    return array ? array.find((elm: any) => elm.id === id) : null;
+  }
+
+  /**
+   * HANDLE THIS FUNCTION FOR FIND THE ATTRIBUTE BY ID
    * @param id string
-   * @param array any
    * @returns 
    */
-      private findAttributeInArray(id: any, array: any[]): any {
-        return array ? array.find((elm: any) => elm.id === id) : null;
-      }
-  
-    /**
-     * HANDLE THIS FUNCTION FOR FIND THE ATTRIBUTE BY ID
-     * @param id string
-     * @returns 
-     */
-    private findAttributeById(id: any): any {
-      if (id === '') {
-        return null;
-      }
-  
-      let attributeItem: any = null;
-  
-      // Look for the attribute directly in the attributes array
-      attributeItem = this.findAttributeInArray(id, this.conditionsData?.attributes);
-  
-      // If not found, search within nested attributes
-      if (!attributeItem) {
-        this.conditionsData?.attributes.some((el: any) => {
-          attributeItem = this.findAttributeInArray(id, el?.attributes);
-          return !!attributeItem;
-        });
-      }
-  
-      return attributeItem;
-    }  
+  private findAttributeById(id: any): any {
+    if (id === '') {
+      return null;
+    }
+
+    let attributeItem: any = null;
+
+    // Look for the attribute directly in the attributes array
+    attributeItem = this.findAttributeInArray(id, this.conditionsData?.attributes);
+
+    // If not found, search within nested attributes
+    if (!attributeItem) {
+      this.conditionsData?.attributes.some((el: any) => {
+        attributeItem = this.findAttributeInArray(id, el?.attributes);
+        return !!attributeItem;
+      });
+    }
+
+    return attributeItem;
+  }
 
   /**
    * HANDLE CONDITIONS AND SUBCONDITIONS VALUES
@@ -879,10 +874,9 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         condition.min_value = moment(condition.min_value).toISOString();
         condition.max_value = moment(condition.max_value).toISOString();
       }
-      if(['DECIMAL', 'INTEGER'].includes(attribute?.dataType) && condition?.operandType === 'CONSTANT' && !!condition?.operand && condition?.operand !== '')
-        {
-          condition.operand = +condition.operand;
-        }
+      if (['DECIMAL', 'INTEGER'].includes(attribute?.dataType) && condition?.operandType === 'CONSTANT' && !!condition?.operand && condition?.operand !== '') {
+        condition.operand = +condition.operand;
+      }
       if (['MUST_BE_BETWEEN', 'IS_BETWEEN', 'IS_NOT_BETWEEN'].includes(condition.operatorType) && condition?.operandType === 'CONSTANT') {
         condition.operand = `${condition.min_value},${condition.max_value}`;
       } else if (['NONE'].includes(condition?.operatorType)) {
@@ -931,8 +925,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
           item.min_value = moment(item.min_value).toISOString();
           item.max_value = moment(item.max_value).toISOString();
         }
-        if(['DECIMAL', 'INTEGER'].includes(attribute?.dataType) && item?.operandType === 'CONSTANT' && !!item?.operand && item?.operand !== '')
-        {
+        if (['DECIMAL', 'INTEGER'].includes(attribute?.dataType) && item?.operandType === 'CONSTANT' && !!item?.operand && item?.operand !== '') {
           item.operand = +item.operand;
         }
         if (item?.actionType === 'MUST_BE_BETWEEN' && item?.operandType === 'CONSTANT') {
