@@ -45,7 +45,17 @@ import {
 } from "@spriced-frontend/spriced-common-lib";
 import { Validators } from "@angular/forms";
 import { EntityDataService } from "../../services/entity-data.service";
-import { Observable, Subscription, filter, forkJoin, map, of } from "rxjs";
+import {
+  Observable,
+  Subject,
+  Subscription,
+  filter,
+  first,
+  forkJoin,
+  map,
+  of,
+  timer,
+} from "rxjs";
 import * as moment from "moment";
 import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
 import { Router, RouterModule } from "@angular/router";
@@ -61,6 +71,7 @@ import {
 import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components/directive/tool-tip-renderer.directive";
 import { CustomToolTipComponent } from "libs/spriced-ui-lib/src/lib/components/custom-tool-tip/custom-tool-tip.component";
 
+const TIMER_CONST = 300;
 @Component({
   selector: "sp-entity-data",
   standalone: true,
@@ -116,8 +127,9 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   appForm!: AppForm;
   currentCriteria!: Criteria;
   globalSettings!: any;
-
   query?: any;
+
+  entityDataLoadCompleted$ = new Subject();
 
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
@@ -143,7 +155,25 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.setFormData("", []);
     this.subscribeToFormEvents();
   }
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.subscribeToEntityDataLoadEvents();
+  }
+
+  subscribeToEntityDataLoadEvents() {
+    this.subscriptions.push(
+      this.entityDataLoadCompleted$.subscribe((page: any) => {
+        this.rows = page.content;
+        this.totalElements = page.totalElements;
+        const selectionTimer = timer(TIMER_CONST);
+        if (this.rows && this.rows?.length > 0) {
+          //Since the form not completely get loaded by the time data arrived.
+          selectionTimer.pipe(first()).subscribe(() => {
+            this.setSelectedRow(this.rows[0]);
+          });
+        }
+      })
+    );
+  }
 
   subscribeToFormEvents() {
     this.subscriptions.push(
@@ -206,20 +236,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   onItemSelected(e: any) {
-    this.selectedItem = e;
-    //this.dynamicFormService.parentForm?.setValue(this.selectedItem);
-    const extractedFormFields = this.entityFormService.extractFormFieldsOnly(
-      this.selectedItem,
-      this.dynamicFormService.getFormValues()
-    );
-
-    const extraData = this.entityFormService.extractExtraData(
-      this.selectedItem,
-      this.currentSelectedEntity as Entity
-    );
-
-    this.dynamicFormService.setFormValues(extraData, extractedFormFields);
-    debugger;
+    this.setSelectedRow(e);
   }
 
   onClear() {
@@ -288,14 +305,16 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   public addDisplayNameInFilter(query: any) {
     if (query.rules) {
       query.rules.forEach((el: any) => {
-        const item: any = this.headers.find((elm: any) => elm.column === el.field);
+        const item: any = this.headers.find(
+          (elm: any) => elm.column === el.field
+        );
         if (el?.rules && el?.rules.length > 0) {
           this.addDisplayNameInFilter(el); // Recursively process sub-rules
         }
         if (!!item) {
           el.displayName = item.name;
         }
-        return
+        return;
       });
     }
   }
@@ -343,7 +362,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           const condition = lastItem !== index ? items.condition : "";
           tooltipText += `<strong>${field}</strong> ${rule.operator} ${value} <strong>${condition}</strong>`;
           if (index < items.rules.length - 1) {
-            tooltipText += '<br>';
+            tooltipText += "<br>";
           }
         }
         if (!!rule.condition && !!rule.rules) {
@@ -402,9 +421,11 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     });
   }
   onStatus() {
-    const dialogResult = this.dialog.open(StatusComponent, {data:this.currentSelectedEntity});
+    const dialogResult = this.dialog.open(StatusComponent, {
+      data: this.currentSelectedEntity,
+    });
 
-    dialogResult.afterClosed().subscribe((val) => { });
+    dialogResult.afterClosed().subscribe((val) => {});
   }
 
   onSettings() {
@@ -445,7 +466,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onAudit() {
     this.dialogService.openDialog(AuditDataComponent, {
-      data:{currentSelectedEntity:this.currentSelectedEntity,selectedItem:this.selectedItem}
+      data: {
+        currentSelectedEntity: this.currentSelectedEntity,
+        selectedItem: this.selectedItem,
+      },
     });
   }
 
@@ -465,15 +489,17 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.loadRelatedEntity();
   }
   loadRelatedEntity() {
-    this.entityDataService
-      .getRelatedEntity(
-        this.currentSelectedEntity?.groupId,
-        this.currentSelectedEntity?.id
-      )
-      .subscribe((val) => {
-        this.relatedEntity = val;
-        this.query = null;
-      });
+    this.subscriptions.push(
+      this.entityDataService
+        .getRelatedEntity(
+          this.currentSelectedEntity?.groupId,
+          this.currentSelectedEntity?.id
+        )
+        .subscribe((val) => {
+          this.relatedEntity = val;
+          this.query = null;
+        })
+    );
   }
   onSubmitEntityData(data: any) {
     if (this.headers.length < 1) {
@@ -542,6 +568,21 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       });
   }
 
+  private setSelectedRow(row: any) {
+    this.selectedItem = row;
+    //this.dynamicFormService.parentForm?.setValue(this.selectedItem);
+    const extractedFormFields = this.entityFormService.extractFormFieldsOnly(
+      this.selectedItem,
+      this.dynamicFormService.getFormValues()
+    );
+
+    const extraData = this.entityFormService.extractExtraData(
+      this.selectedItem,
+      this.currentSelectedEntity as Entity
+    );
+    this.dynamicFormService.setFormValues(extraData, extractedFormFields);
+  }
+
   private createDynamicUIMapping(entity: Entity | undefined) {
     let formFields: FormFieldControls = [];
     if (entity) {
@@ -553,29 +594,14 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         return prev || current.permission === "UPDATE";
       }, false);
     }
-
-    // this.setFormData("", formFields);
-    const lookupFields = formFields.filter((el: any) => el.eventType === 'lookup');
-    if (lookupFields.length > 0)
-    {
-      this.patchFormData(lookupFields).subscribe((lookupResponses: any[]) => {
-        lookupFields.forEach((lookupField: any) => {
-          const item = lookupResponses.find((responseItem: any) => responseItem.id === lookupField.eventValue);
-          if (item) {
-            lookupField.toolTipText = `Go to the "${item.displayName}" entity to view attribute value details`;
-          }
-        });
-        this.setFormData("", formFields);
-      });
-    } else
-    {
-      this.setFormData("", formFields);
-    }
+    this.setFormData("", formFields);
   }
 
   public patchFormData(formFields: any): Observable<any[]> {
     const observables: Observable<any>[] = [];
-    let lookupContrl = formFields.filter((elm: any) => elm.eventType === 'lookup');
+    let lookupContrl = formFields.filter(
+      (elm: any) => elm.eventType === "lookup"
+    );
     const uniqueEventValues: any[] = [];
     // Remove duplicate eventValue items
     lookupContrl = lookupContrl.filter((item: any) => {
@@ -585,15 +611,17 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       }
       return !isDuplicate;
     });
-  
+
     for (const item of lookupContrl) {
-      if (item.eventType === 'lookup') {
+      if (item.eventType === "lookup") {
         // Make API call if not cached
-        const observable = this.entityDataService.loadEntity(item.eventValue).pipe(
-          map((elm: any) => {
-            return elm;
-          })
-        );
+        const observable = this.entityDataService
+          .loadEntity(item.eventValue)
+          .pipe(
+            map((elm: any) => {
+              return elm;
+            })
+          );
         observables.push(observable);
       }
     }
@@ -621,29 +649,31 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     }
   }
 
-  private loadEntityData(entity: Entity, criteria: Criteria, columnSort?: boolean) {
-    if(!columnSort)
-    {
-      const sort: any = {direction: "DESC", property: "updated_date"};
+  private loadEntityData(
+    entity: Entity,
+    criteria: Criteria,
+    columnSort?: boolean
+  ) {
+    if (!columnSort) {
+      const sort: any = { direction: "DESC", property: "updated_date" };
       criteria.sorters = [sort];
     }
     this.currentCriteria = criteria;
     if (entity) {
       this.applyEntitySettings(entity);
       this.subscriptions.push(
-        this.entityDataService.loadEntityData(entity.id, criteria).subscribe({
-          next: (page) => {
-            this.rows = page.content;
-            this.totalElements = page.totalElements;
-            if (this.rows && this.rows?.length > 0) {
-              this.onItemSelected(this.rows[0]);
-            }
-          },
-          error: (err) => {
-            this.rows = [];
-            console.error(err);
-          },
-        })
+        this.entityDataService
+          .loadEntityData(entity.id, criteria)
+          .pipe(first())
+          .subscribe({
+            next: (page) => {
+              this.entityDataLoadCompleted$.next(page);
+            },
+            error: (err) => {
+              this.rows = [];
+              console.error(err);
+            },
+          })
       );
     } else {
       this.rows = [];

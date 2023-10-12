@@ -22,14 +22,14 @@ export class TreeNode {
   icon: string = "schema";
   treeStatus: string = "collapsed";
   private _expanded: boolean = false;
-  private _permission: PERMISSIONS = PERMISSIONS.DENY;
+  permission: PERMISSIONS = PERMISSIONS.DENY;
 
-  public get permission(): PERMISSIONS {
-    return this._permission;
-  }
-  public set permission(value: PERMISSIONS) {
-    this._permission = value;
-  }
+  // public get permission(): PERMISSIONS {
+  //   return this._permission;
+  // }
+  // public set permission(value: PERMISSIONS) {
+  //   this._permission = value;
+  // }
   public parse(ob: Object) {
     let retObj: this = Object.create(this);
     Object.assign(retObj, ob);

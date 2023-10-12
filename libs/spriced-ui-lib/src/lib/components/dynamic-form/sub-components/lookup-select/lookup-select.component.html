@@ -5,57 +5,71 @@
       *ngIf="count <= 100"
     > -->
     <div class="flex flex-row space-x-1 justify-between items-center">
-      <mat-form-field
-        class="flex-grow"
-        appearance="outline"
-        [ngClass]="frmControl.errors ? 'error' : ''"
-        [floatLabel]="value ? 'always' : 'auto'"
-      >
-      
-        <mat-label>{{ control.label }}</mat-label>
-
-        <mat-select
-          matNativeControl
-          *ngIf="totalcount <= pageSize"
-          (blur)="onTouched()"
-          [(ngModel)]="value"
-          [disabled]="control.readOnly || disabled"
-          (click)="onClick()"
+      <ng-container *ngIf="totalcount <= pageSize">
+        <mat-form-field
+          class="flex-grow"
+          appearance="outline"
+          [ngClass]="frmControl.errors ? 'error' : ''"
+          [floatLabel]="value ? 'always' : 'auto'"
         >
-          <mat-option>
-            <ngx-mat-select-search
-              placeholderLabel="Search"
-              ngModel
-              (ngModelChange)="filterSource($event)"
-            ></ngx-mat-select-search>
-          </mat-option>
-          <mat-option
-            [value]="control.placeholder.value"
-            *ngIf="control.placeholder"
-          >
-            {{ control.placeholder.displayText }}
-          </mat-option>
+          <mat-label>{{ control.label }}</mat-label>
 
-          <mat-option
-            *ngFor="let option of filteredSource"
-            [value]="control.valueProp ? option[control.valueProp] : option"
+          <mat-select
+            matNativeControl
+            (blur)="onTouched()"
+            [(ngModel)]="value"
+            [disabled]="control.readOnly || disabled"
+            (click)="onClick()"
           >
-            {{
-              control.displayProp
-                ? getDisplayProp(option, control.displayProp)
-                : option
-            }}
-          </mat-option>
-        </mat-select>
-        <ng-container *ngIf="totalcount > pageSize">
+            <mat-option>
+              <ngx-mat-select-search
+                placeholderLabel="Search"
+                ngModel
+                (ngModelChange)="filterSource($event)"
+              ></ngx-mat-select-search>
+            </mat-option>
+            <mat-option
+              [value]="control.placeholder.value"
+              *ngIf="control.placeholder"
+            >
+              {{ control.placeholder.displayText }}
+            </mat-option>
+
+            <mat-option
+              *ngFor="let option of filteredSource"
+              [value]="control.valueProp ? option[control.valueProp] : option"
+            >
+              {{
+                control.displayProp
+                  ? getDisplayProp(option, control.displayProp)
+                  : option
+              }}
+            </mat-option>
+          </mat-select>
+          <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+          <mat-hint align="start" *ngIf="control.hint">{{
+            control.hint
+          }}</mat-hint>
+        </mat-form-field>
+      </ng-container>
+
+      <ng-container *ngIf="totalcount > pageSize">
+        <mat-form-field
+          class="flex-grow"
+          appearance="outline"
+          [ngClass]="frmControl.errors ? 'error' : ''"
+          [floatLabel]="value ? 'always' : 'auto'"
+        >
+          <mat-label>{{ control.label }}</mat-label>
           <div>{{ getSelectedDisplayProp() }}</div>
-          <input [style.display]="'none'" matInput [(ngModel)]="value"/>
-        </ng-container>
-        <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
-        <mat-hint align="start" *ngIf="control.hint">{{
-          control.hint
-        }}</mat-hint>
-      </mat-form-field>
+          <input [style.display]="'none'" matInput [(ngModel)]="value" />
+          <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+          <mat-hint align="start" *ngIf="control.hint">
+            {{ control.hint }}</mat-hint
+          >
+        </mat-form-field>
+      </ng-container>
+
       <button
         mat-raised-button
         *ngIf="totalcount > pageSize"

@@ -71,6 +71,7 @@ export class EntityFormService {
             : "name|code",
         valueProp: "id",
         eventValue: attr.referencedTableId,
+        toolTipText: `Go to the "${attr.referencedTableDisplayName}" entity to view attribute value details`,
         eventType: "lookup",
         placeholder: {
           value: "",
