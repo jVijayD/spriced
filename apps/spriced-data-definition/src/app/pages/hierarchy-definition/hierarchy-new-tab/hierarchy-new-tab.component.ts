@@ -198,8 +198,8 @@ export class HierarchyNewTabComponent {
       groupLevel: this.hierarchyDetails.length,
       treeStatus: "expanded",
       expanded: false,
-      tablename: entity.name,
-      tableId: entity.id,
+      entityName: entity.name,
+      entityId: entity.id,
       tabledisplayname: this.getTableDisplayName(lastHierarchyEntity, attribName, this.hierarchyDetails.length == 0),
       localColumn: "id",
       entity: entity,
@@ -262,8 +262,8 @@ export class HierarchyNewTabComponent {
       hie.details.sort((a, b) => a.groupLevel - b.groupLevel)
         .forEach(hieDtls => {
           let lastHierarchyDtls = this.getLastHierarchyDtls();
-          hieDtls.entity = this.getEntityByTable(hieDtls.tablename);
-          hieDtls.tableId = hieDtls.entity.id;
+          hieDtls.entity = this.getEntityByTable(hieDtls.entityName);
+          hieDtls.entityId = hieDtls.entity.id;
           hieDtls.tabledisplayname = this.getTableDisplayName(
             lastHierarchyDtls?.entity || hieDtls.entity,
             lastHierarchyDtls?.refColumn,
@@ -293,8 +293,8 @@ export class HierarchyNewTabComponent {
           expandable: false,
           id: hdtl.groupLevel + 1,
           parentId: hdtl.groupLevel == 0 ? null : hdtl.groupLevel,
-          tablename: hdtl.tablename,
-          tableId: hdtl.tableId,
+          tablename: hdtl.entityName,
+          tableId: hdtl.entityId,
           name: hdtl.tabledisplayname,
           expanded: true
         } as HierarchyTreeNode;
@@ -354,7 +354,7 @@ export class HierarchyNewTabComponent {
             d.parentGrpId = row.grpId;
             d.column = hie.refColumn;
             // d.column = hie ? hie.refColumn : "";
-            d.tableId = hie.tableId;
+            d.tableId = hie.entityId;
             // d.tableId = hie ? hie.tableId : 0;
             d.name = d.code + (d.name && d.name.length ? `{${d.name}}` : "{}")
             d.grpId = row.grpId + "-" + d.id
@@ -391,7 +391,7 @@ export class HierarchyNewTabComponent {
       if (!row.id) {
         cr = {}
       }
-      this.hierarchyService.loadEntityData(hie.tableId, cr).forEach(callBack);
+      this.hierarchyService.loadEntityData(hie.entityId, cr).forEach(callBack);
     } else {
       row.treeStatus = "expanded";
       callBack([]);
