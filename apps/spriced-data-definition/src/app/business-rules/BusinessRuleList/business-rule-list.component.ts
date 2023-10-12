@@ -142,8 +142,7 @@ export class BusinessRuleListComponent {
     this.allDropListsIds = [];
     this.itemDrop = new EventEmitter();
     this.businessruleservice.ruleChageDetection.subscribe((el: any) => {
-      if(el === true)
-      {
+      if (el === true) {
         this.disable = this.isConditionTypeNone();
         // this.cdRef.detectChanges();
       }
@@ -163,14 +162,14 @@ export class BusinessRuleListComponent {
     this.conditionForm = this.item?.controls?.id === 'parent' ? this.item.controls.subConditions.controls[0] : this.item;
 
     this.disable = this.isConditionTypeNone();
-    
+
     const value = this.getValue('operatorType');
     const operandType = this.getValue('operandType');
     const attributeId = this.getValue('attributeId');
     const operand = this.getValue('operand');
     const parentAttributeId = this.getValue('parentAttributeId');
     const parentOperandId = this.getValue('parentOperandId');
-    
+
     this.setAttributeNamesById(attributeId, operand);
     this.handleValue(operandType);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
@@ -209,7 +208,7 @@ export class BusinessRuleListComponent {
       this.conditionForm?.get('attributeId')?.setValue(item.id);
       this.conditionForm?.get('attributeDisplayName')?.setValue(item.displayName);
       this.conditionForm?.get('attributeName')?.setValue(item.name);
-      
+
       const parentAtt = parent ?? '';
       this.conditionForm?.get('parentAttributeId')?.setValue(parentAtt.id ?? '');
       this.conditionForm?.get('parentAttributeName')?.setValue(parentAtt.name ?? '');
@@ -226,7 +225,8 @@ export class BusinessRuleListComponent {
    */
   public handleValue(event: any, text?: string) {
     this.valueConstant = ['CONSTANT', 'BLANK'].includes(event);
-    this.conditionForm?.get('operand')?.enable();
+    const attributeId = this.conditionForm?.get('attributeId').value;
+    this.setValidatorsPattern(attributeId, this.dataType);
     // this.isFieldDisabled = event === 'BLANK';
     this.selectedOperand = '';
     if (text === 'editValue') {
@@ -238,8 +238,7 @@ export class BusinessRuleListComponent {
     // }
   }
 
-  public disableFormControl()
-  {
+  public disableFormControl() {
     const controlNames = [
       'operand',
       'operandName',
@@ -249,7 +248,7 @@ export class BusinessRuleListComponent {
       'parentOperandDisplayName',
       'operandTableName',
     ];
-  
+
     controlNames.forEach((controlName) => {
       this.conditionForm?.get(controlName)?.setValue('');
     });
@@ -278,7 +277,7 @@ export class BusinessRuleListComponent {
       this.removeValidators(valueControl);
 
     }
-    else if (['IS_NULL','IS_NOT_NULL', 'HAS_CHANGED'].includes(value)) {
+    else if (['IS_NULL', 'IS_NOT_NULL', 'HAS_CHANGED'].includes(value)) {
       // const operandType = this.conditionForm?.get('operandType')?.value;
       this.conditionForm?.get('operandType').setValue('CONSTANT');
       this.valueConstant = true;
@@ -299,30 +298,25 @@ export class BusinessRuleListComponent {
     }
   }
 
-  public removeValidators(valueControl: any)
-  {
+  public removeValidators(valueControl: any) {
     valueControl.clearValidators();
     valueControl.updateValueAndValidity();
   }
 
-  public addValidators(valueControl: any)
-  {
+  public addValidators(valueControl: any) {
     valueControl.setValidators(Validators.required);
     valueControl.updateValueAndValidity();
   }
 
-  public setAttributeNamesById(attributeId: any, operandAttribute: any)
-  {
+  public setAttributeNamesById(attributeId: any, operandAttribute: any) {
     const attribute = this.findAttributeById(attributeId);
     const operandAtt = this.findAttributeById(operandAttribute);
     // !!operandAtt ? this.conditionForm?.get('operandType')?.setValue('ATTRIBUTE') : this.conditionForm?.get('operandType')?.setValue('CONSTANT');
-    if(!!attribute)
-    {
+    if (!!attribute) {
       this.conditionForm?.get('attributeDisplayName')?.setValue(attribute.displayName);
       this.conditionForm?.get('attributeName')?.setValue(attribute.name);
     }
-    if(!!operandAtt)
-    {
+    if (!!operandAtt) {
       this.conditionForm?.get('operandName')?.setValue(operandAtt.name);
       this.conditionForm?.get('operandDisplayName')?.setValue(operandAtt.displayName);
     }
@@ -342,18 +336,23 @@ export class BusinessRuleListComponent {
         return !!attribute;
       });
     }
-    this.dataType = attribute?.dataType ? attribute?.dataType : 'AUTO';
+    this.dataType = attribute?.dataType || 'AUTO';
+    this.setValidatorsPattern(id, this.dataType);
+    this.handleValueChange(operatorType, 'changeValue');
+  }
+
+  public setValidatorsPattern(id: any, dataType: any) {
+    let attribute = this.findAttributeInArray(id, this.dataRules?.attributes);
     const decimalValueSize = attribute?.size;
     this.conditionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern('')]);
-    this.dynamicInputType = ['INTEGER', 'DECIMAL','DOUBLE'].includes(this.dataType) ? 'number' : 'text';
-    if (text === 'changeAttribute') {
-      this.conditionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
-    }
-    if (['DECIMAL', 'FLOAT', 'LINK','DOUBLE'].includes(this.dataType)) {
+    this.dynamicInputType = ['INTEGER', 'DECIMAL', 'DOUBLE'].includes(this.dataType) ? 'number' : 'text';
+    if (['DECIMAL', 'FLOAT', 'LINK', 'DOUBLE'].includes(this.dataType)) {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.conditionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
-    this.handleValueChange(operatorType, 'changeValue');
+    if (!this.valueConstant) {
+      this.conditionForm?.get('operand')?.setValidators(Validators.required, Validators.pattern(''));
+    }
   }
 
   /**
@@ -380,13 +379,7 @@ export class BusinessRuleListComponent {
     }
 
     this.dataType = attribute?.dataType || 'AUTO';
-    const decimalValueSize = attribute?.size;
-    this.dynamicInputType = ['INTEGER', 'DECIMAL','DOUBLE'].includes(this.dataType) ? 'number' : 'text';
-
-    if (['DECIMAL', 'FLOAT', 'LINK','DOUBLE'].includes(this.dataType)) {
-      const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
-      this.conditionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
-    }
+    this.setValidatorsPattern(attributeId, this.dataType);
   }
 
   /**
@@ -454,7 +447,7 @@ export class BusinessRuleListComponent {
   private getValidationPatternForDataType(dataType: string, decimalSize?: number): RegExp {
     const number = decimalSize || 1; // Use decimalSize if provided, or default to 1
     let pattern = '';
-  
+
     switch (dataType) {
       case 'DECIMAL':
         pattern = `^\\d{1,9}\\.\\d{${number},}$`;
@@ -469,7 +462,7 @@ export class BusinessRuleListComponent {
         pattern = '.';
         break;
     }
-  
+
     return new RegExp(pattern);
   }
 
