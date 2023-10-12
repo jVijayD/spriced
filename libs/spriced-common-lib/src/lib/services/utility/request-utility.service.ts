@@ -8,7 +8,7 @@ export class RequestUtilityService {
   constructor(private httpClient: HttpClient) {}
 
   public get(url: string, headers: any): Observable<any> {
-    //let data = this.urlCache.get(url);
+    let data = this.urlCache.get(url);
     //if (!data) {
     let urlSubject = new Subject<any>();
     this.urlCache.set(url, urlSubject);
