@@ -5,7 +5,7 @@ import {
   PageData,
   RequestUtilityService,
 } from "@spriced-frontend/spriced-common-lib";
-import { Observable, map, of } from "rxjs";
+import { Observable, map, of, tap } from "rxjs";
 import { saveAs } from "file-saver";
 import { LRUCache } from "typescript-lru-cache";
 
@@ -125,17 +125,24 @@ export class EntityDataService {
       false
     );
 
-    if (this.cache.has(url)) {
-      return of(this.cache.get(url));
-    } else {
-      return this.http.get<PageData>(url, {
-        headers: headers,
-      });
-    }
+    // if (this.cache.has(url)) {
+    //   return of(this.cache.get(url));
+    // } else {
+    //   return this.http
+    //     .get<PageData>(url, {
+    //       headers: headers,
+    //     })
+    //     .pipe(
+    //       tap((item) => {
+    //         debugger;
+    //         this.cache.set(url, item);
+    //       })
+    //     );
+    // }
 
-    // return this.http.get<PageData>(url, {
-    //   headers: headers,
-    // });
+    return this.http.get<PageData>(url, {
+      headers: headers,
+    });
   }
 
   createEntityData(id: string | number, data: any): Observable<any> {
