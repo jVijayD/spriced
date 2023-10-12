@@ -8,6 +8,7 @@ import { Subject, filter, forkJoin, takeUntil } from 'rxjs';
 import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import * as moment from 'moment';
 import { MessageService } from "./../services/message.service";
+import { SnackBarService } from '@spriced-frontend/spriced-ui-lib';
 
 @Component({
   selector: "sp-business-rule-name",
@@ -81,7 +82,8 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     private messageservice: MessageService,
     private renderer: Renderer2,
     private cdRef: ChangeDetectorRef,
-    private appStore: AppDataService
+    private appStore: AppDataService,
+    private snackbarService: SnackBarService
   ) {
     // HANDLE THIS FOR WHEN REMOVE THE SUBCONDITIONS
     this.appStore.subConditionForm.subscribe((res: any) => {
@@ -955,10 +957,10 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       // Handle the api error as needed
       (error: any) => {
         console.error('Error occurred during API request:', error);
-        this.messageservice.snackMessage.next('Error occurred during API request:')
-        this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
-          queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId },
-        });
+        this.snackbarService.error('Error occurred during API request:')
+        // this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
+        //   queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId },
+        // });
         this.saveButton = false;
       });
   }
