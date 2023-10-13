@@ -191,18 +191,7 @@ export class ListComponent implements OnInit, OnDestroy {
 
     // HANDLE THIS FOR GET RULES AND MODELS APIS
     this.getRulesAndModelsData();
-    this.businessRuleService.getAllRules().subscribe((rules: any) => {
-      if (rules) {
-        // Handling order by id
-        rules.sort((a: any, b: any) => {
-          return a.id - b.id;
-        });
-        this.dataSource = rules;
-      }
-    },
-      (error: any) => {
-        console.error('Error occurred during API request:', error);
-      })
+    this.handleRulesData();
 
     this.listForm.valueChanges.pipe(
       debounceTime(500)
@@ -211,6 +200,17 @@ export class ListComponent implements OnInit, OnDestroy {
       this.filteredEntites = this.filterItems(this.entities, item.entityFilter);
       this.filterAttributeSelection(item.attributeFilter);
     })
+  }
+
+  public async handleRulesData() {
+    const { rules } = await this.getAllRulesApi();
+    if (rules) {
+      //     // Handling order by id
+      rules.sort((a: any, b: any) => {
+        return a.id - b.id;
+      });
+      this.dataSource = rules;
+    }
   }
 
   // HANDLE FOR GETTING RULES AND MODEL DATA
@@ -260,7 +260,7 @@ export class ListComponent implements OnInit, OnDestroy {
   /**
  * HANDLE THIS FUNCTION FOR GET ALL THE RULES
  */
-  public getAllRules(): Promise<any> {
+  public getAllRulesApi(): Promise<any> {
     return new Promise((resolve, rejects) => {
       this.businessRuleService.getAllRules().subscribe(
         (rules: any) => {
@@ -417,13 +417,6 @@ export class ListComponent implements OnInit, OnDestroy {
                 this.loading = false;
                 this.errorPanelService.init();
                 this.msgSrv.success('Excluded is updated successfully!');
-                // this._snackBar.open(
-                //   'Excluded is updated successfully!',
-                //   'close',
-                //   {
-                //     duration: 3000,
-                //   }
-                // );
                 this.onRefresh();
               },
               (error: any) => {
@@ -712,7 +705,7 @@ export class ListComponent implements OnInit, OnDestroy {
           const finalArray = [`${joinedString}`];
           operand = finalArray;
         }
-        else{
+        else {
           operand = condition?.operand;
         }
         operand = !!condition?.operand && condition?.operand !== "" ? `to ${operand}` : '';
@@ -776,8 +769,8 @@ export class ListComponent implements OnInit, OnDestroy {
           const joinedString = formattedDates.join(" & ");
           const finalArray = [`${joinedString}`];
           operand = finalArray;
-        } 
-        else{
+        }
+        else {
           operand = condition?.operand;
         }
         operand = !!condition?.operand && condition?.operand !== "" ? `to ${operand}` : '';
@@ -870,7 +863,7 @@ export class ListComponent implements OnInit, OnDestroy {
           const finalArray = [`${joinedString}`];
           operand = finalArray;
         }
-        else{
+        else {
           operand = action?.operand;
         }
         if (action.actionType.toLowerCase().trim().endsWith('to')) {
@@ -919,6 +912,7 @@ export class ListComponent implements OnInit, OnDestroy {
    * HANDLE THIS FOR REFRESH THE TABLE
    */
   onRefresh() {
+    this.handleRulesData();
     this.getRulesAndModelsData();
     this.selectedItem = null;
     this.dataGrid.clearSelection();
