@@ -20,10 +20,6 @@ export class RequestUtilityService {
             urlSubject.next(item);
             this.urlCache.delete(url);
           },
-          error: (err) => {
-            console.log(err);
-            debugger;
-          },
         });
     }
     return this.urlCache.get(url) as Subject<any>;
