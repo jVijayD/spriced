@@ -79,6 +79,12 @@ export abstract class BaseDataComponent extends BaseComponent {
     }
   }
 
+  populateSelectedSourceOnly(selected: any) {
+    this.source = [selected];
+    this.count = 1;
+    this.dataPopulation$.next(this.source);
+  }
+
   override onDestroy(): void {
     this._dataSubscriptions.forEach((item) => item.unsubscribe());
     super.onDestroy();

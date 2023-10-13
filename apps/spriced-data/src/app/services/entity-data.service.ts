@@ -125,24 +125,31 @@ export class EntityDataService {
       false
     );
 
-    // if (this.cache.has(url)) {
-    //   return of(this.cache.get(url));
-    // } else {
-    //   return this.http
-    //     .get<PageData>(url, {
-    //       headers: headers,
-    //     })
-    //     .pipe(
-    //       tap((item) => {
-    //         debugger;
-    //         this.cache.set(url, item);
-    //       })
-    //     );
+    // return this.http.get<PageData>(url, {
+    //   headers: headers,
+    // });
+    // let data = this.cache.get(url);
+    // if (!data) {
+    //   data = this.requestUtility.get(url, headers);
+    //   this.cache.set(url, data);
     // }
 
-    return this.http.get<PageData>(url, {
-      headers: headers,
-    });
+    let data = this.cache.get(url);
+    if (data) {
+      return of(data);
+    } else {
+      return this.http
+        .get<PageData>(url, {
+          headers: headers,
+        })
+        .pipe(
+          tap((items) => {
+            this.cache.set(url, items);
+          })
+        );
+    }
+
+    //return this.requestUtility.get(url, headers);
   }
 
   createEntityData(id: string | number, data: any): Observable<any> {

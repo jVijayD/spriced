@@ -79,10 +79,10 @@ export class EntityFormService {
         },
         data: {
           api: {
-            onLoad: true,
+            onLoad: false,
             isFixed: true,
             method: "loadLookupData",
-            params: [attr.referencedTableId,0],
+            params: [attr.referencedTableId, 0],
             provider: FORM_DATA_SERVICE,
           },
         },

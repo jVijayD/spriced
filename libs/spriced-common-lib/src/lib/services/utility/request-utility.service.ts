@@ -9,21 +9,21 @@ export class RequestUtilityService {
 
   public get(url: string, headers: any): Observable<any> {
     let data = this.urlCache.get(url);
-    //if (!data) {
-    let urlSubject = new Subject<any>();
-    this.urlCache.set(url, urlSubject);
-    this.httpClient
-      .get(url, headers)
-      .pipe(first())
-      .subscribe({
-        next: (item) => {
-          urlSubject.next(item);
-          this.urlCache.delete(url);
-        },
-      });
-    //}
-    //return this.urlCache.get(url) as Subject<any>;
-    return urlSubject.asObservable();
+    if (!data) {
+      let urlSubject = new Subject<any>();
+      this.urlCache.set(url, urlSubject);
+      this.httpClient
+        .get(url, headers)
+        .pipe(first())
+        .subscribe({
+          next: (item) => {
+            urlSubject.next(item);
+            this.urlCache.delete(url);
+          },
+        });
+    }
+    return this.urlCache.get(url) as Subject<any>;
+    //return urlSubject.asObservable();
   }
 
   public addCriteria(
