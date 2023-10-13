@@ -149,7 +149,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       // Handle for nested attribute
       if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
         this.entities = [];
-        
+
         for (const el of relatedRefreneceTableEntity) {
           const { entityData } = await this.getEntityById(el.referencedTableId);
           const filteredAttributes = entity?.attributes.filter((attr: any) => attr.name !== 'id');
@@ -955,9 +955,14 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       });
     },
       // Handle the api error as needed
-      (error: any) => {
-        console.error('Error occurred during API request:', error);
-        this.snackbarService.error('Error occurred during API request:')
+      (err: any) => {
+        if (err.error.errorCode == "DB_UK-008") {
+          this.snackbarService.error('Rule Already Exists');
+        }
+        else {
+          console.log('Api error:', err);
+          this.snackbarService.error('Rule Creation Failed.');
+        }
         // this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
         //   queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId },
         // });
