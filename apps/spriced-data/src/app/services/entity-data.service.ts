@@ -140,9 +140,11 @@ export class EntityDataService {
     //     );
     // }
 
-    return this.http.get<PageData>(url, {
-      headers: headers,
-    });
+    // return this.http.get<PageData>(url, {
+    //   headers: headers,
+    // });
+
+    return this.requestUtility.get(url, headers);
   }
 
   createEntityData(id: string | number, data: any): Observable<any> {
