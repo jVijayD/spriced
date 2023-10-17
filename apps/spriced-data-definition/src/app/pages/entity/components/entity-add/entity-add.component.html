@@ -17,7 +17,7 @@
                 formControlName="name"
                 matInput
                 [pattern]="pattern"
-                max="100"
+                maxlength="50"
               />
             </mat-form-field>
               <mat-error class="error"
@@ -46,7 +46,7 @@
           <input
             matInput
             [(ngModel)]="local_data.displayName"
-            max="100"
+            maxlength="50"
             [pattern]="pattern"
             #uname="ngModel"
           />
@@ -150,9 +150,9 @@
               [disabled]="attAction === 'Update'"
               matInput
               [(ngModel)]="attDetails.name"
-              max="100"
               [pattern]="pattern"
               #aname="ngModel"
+              maxlength="50"
             />
           </mat-form-field>
             <mat-error class="error"
@@ -174,7 +174,7 @@
               [(ngModel)]="attDetails.displayName"
               [pattern]="pattern"
               #dname="ngModel"
-              max="100"
+              maxlength="50"
             />
           </mat-form-field>
             <mat-error class="error"
