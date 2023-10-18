@@ -8,7 +8,7 @@ import {
 import { Observable, map, of, tap } from "rxjs";
 import { saveAs } from "file-saver";
 import { LRUCache } from "typescript-lru-cache";
-
+const DEFAULT_LOOKUP_PAGE_SIZE = 50;
 const cacheOptions = {
   maxSize: 500,
   entryExpirationTimeInMS: 60 * 1000 * 30,
@@ -108,7 +108,7 @@ export class EntityDataService {
   loadLookupData(
     id: string | number,
     pageNumber: number = 0,
-    pageSize: number = 30,
+    pageSize: number = DEFAULT_LOOKUP_PAGE_SIZE,
     filters: any
   ): Observable<PageData> {
     const criteria: Criteria = {
@@ -125,28 +125,15 @@ export class EntityDataService {
       false
     );
 
-    // return this.http.get<PageData>(url, {
-    //   headers: headers,
-    // });
-    // let data = this.cache.get(url);
-    // if (!data) {
-    //   data = this.requestUtility.get(url, headers);
-    //   this.cache.set(url, data);
-    // }
-
     let data = this.cache.get(url);
     if (data) {
       return of(data);
     } else {
-      return this.http
-        .get<PageData>(url, {
-          headers: headers,
+      return this.requestUtility.get(url, headers).pipe(
+        tap((items) => {
+          this.cache.set(url, items);
         })
-        .pipe(
-          tap((items) => {
-            this.cache.set(url, items);
-          })
-        );
+      );
     }
 
     //return this.requestUtility.get(url, headers);

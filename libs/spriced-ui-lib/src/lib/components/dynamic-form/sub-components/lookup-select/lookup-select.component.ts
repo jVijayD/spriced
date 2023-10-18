@@ -23,6 +23,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { LookupDialogComponent } from "./lookup-dialog/lookup-dialog/lookup-dialog.component";
 import { Subscription } from "rxjs";
 
+const LOOKUP_PAGE_SIZE = 50;
 @Component({
   selector: "sp-lookup-select",
   templateUrl: "./lookup-select.component.html",
@@ -41,7 +42,7 @@ export class LookupSelectComponent
   implements OnInit, OnDestroy
 {
   //public prop: string = "code|name";
-  pageSize: number = 50;
+  pageSize: number = LOOKUP_PAGE_SIZE;
   displayValue: any = "";
   lookupDataId: any;
   filteredSource: any = [];
@@ -160,6 +161,10 @@ export class LookupSelectComponent
   }
 
   private _initControlData(selectControl: GenericControl) {
+    const lookupControl = selectControl as LookupSelectControl;
+    this.pageSize = lookupControl.pageSize
+      ? lookupControl.pageSize
+      : this.pageSize;
     this.populateSource();
     this.addRule(selectControl.rule);
     this.setControlAccess();
