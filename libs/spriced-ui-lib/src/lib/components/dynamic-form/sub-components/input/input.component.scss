@@ -1,3 +1,16 @@
 .full-width {
   @apply w-full;
 }
+.label-input-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  margin-left: 20px; 
+  padding-left: 30px;
+}
+
+.mat-label {
+  width: 120px; 
+  text-align: right;
+  margin-right: 15px;
+}
