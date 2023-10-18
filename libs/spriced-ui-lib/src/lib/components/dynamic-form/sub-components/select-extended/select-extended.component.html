@@ -1,10 +1,13 @@
 <ng-container *ngIf="control.type === 'select-extended' && visible">
+  <div class="flex items-center grid grid-cols-3">
+    <div class="col-span-1 ">
+     <mat-label class="text-xs">{{ control.label }}</mat-label>
+   </div>
   <mat-form-field
     appearance="outline"
     [ngClass]="frmControl.errors ? 'error' : ''"
     class="full-width"
   >
-    <mat-label>{{ control.label }}</mat-label>
     <!-- <mat-select (blur)="onTouched()" [(ngModel)]="value" [disabled]="disabled"> -->
     <select
       matNativeControl
@@ -28,11 +31,18 @@
   </mat-form-field>
 
   <ng-container>
+    <div class="grid grid-cols-3">
+      <div class="col-span-1">
+      </div>
+      <div class="col-span-2">
     <sp-error
       *ngIf="frmControl.errors"
       [validations]="control.validations || []"
       [errors]="frmControl.errors"
     ></sp-error>
+     </div>
+    </div>
     <!-- <div *ngIf="!frmControl.errors" style="visibility: hidden">*</div> -->
   </ng-container>
+  </div>
 </ng-container>

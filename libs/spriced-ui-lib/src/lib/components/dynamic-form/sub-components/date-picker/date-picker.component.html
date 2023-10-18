@@ -1,271 +1,128 @@
 <ng-container *ngIf="control.type === 'date' && visible">
-  
-  <mat-form-field
-    *ngIf="control.format == 'MM/DD/YY'"
-    appearance="outline"
-    [ngClass]="frmControl.errors ? 'error' : ''"
-    class="full-width"
-    spDateFormatMMDDYY
-  >
-    <mat-label>{{ control.label }}</mat-label>
-    <input
-      matInput
-      [matDatepicker]="picker"
-      [placeholder]="control.placeholder || ''"
-      [disabled]="control.readOnly || disabled"
-      [(ngModel)]="value"
-      (blur)="onTouched()"
-    />
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker
-      #picker
-      [startView]="control.startView"
-      [startAt]="control.startDate"
-    ></mat-datepicker>
-    <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
-    <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
-  </mat-form-field>
-
-  <mat-form-field
-    *ngIf="control.format == 'MM/DD/YYYY'"
-    appearance="outline"
-    [ngClass]="frmControl.errors ? 'error' : ''"
-    class="full-width"
-    spDateFormatMMDDYYYY
-  >
-    <mat-label>{{ control.label }}</mat-label>
-    <input
-      matInput
-      [matDatepicker]="picker"
-      [placeholder]="control.placeholder || ''"
-      [disabled]="control.readOnly || disabled"
-      [(ngModel)]="value"
-      (blur)="onTouched()"
-    />
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker
-      #picker
-      [startView]="control.startView"
-      [startAt]="control.startDate"
-    ></mat-datepicker>
-    <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
-    <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
-  </mat-form-field>
-
-  <mat-form-field
-    *ngIf="control.format == 'DD/MM/YY'"
-    appearance="outline"
-    [ngClass]="frmControl.errors ? 'error' : ''"
-    class="full-width"
-    spDateFormatDDMMYY
-  >
-    <mat-label>{{ control.label }}</mat-label>
-    <input
-      matInput
-      [matDatepicker]="picker"
-      [placeholder]="control.placeholder || ''"
-      [disabled]="control.readOnly || disabled"
-      [(ngModel)]="value"
-      (blur)="onTouched()"
-    />
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker
-      #picker
-      [startView]="control.startView"
-      [startAt]="control.startDate"
-    ></mat-datepicker>
-    <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
-    <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
-  </mat-form-field>
-
-  <mat-form-field
-    *ngIf="control.format == 'DD/MM/YYYY'"
-    appearance="outline"
-    [ngClass]="frmControl.errors ? 'error' : ''"
-    class="full-width"
-    spDateFormatDDMMYYYY
-  >
-    <mat-label>{{ control.label }}</mat-label>
-    <input
-      matInput
-      [matDatepicker]="picker"
-      [placeholder]="control.placeholder || ''"
-      [disabled]="control.readOnly || disabled"
-      [(ngModel)]="value"
-      (blur)="onTouched()"
-    />
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker
-      #picker
-      [startView]="control.startView"
-      [startAt]="control.startDate"
-    ></mat-datepicker>
-    <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
-    <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
-  </mat-form-field>
-
-  <mat-form-field
-    *ngIf="control.format == 'YY/MM/DD'"
-    appearance="outline"
-    [ngClass]="frmControl.errors ? 'error' : ''"
-    class="full-width"
-    spDateFormatYYMMDD
-  >
-    <mat-label>{{ control.label }}</mat-label>
-    <input
-      matInput
-      [matDatepicker]="picker"
-      [placeholder]="control.placeholder || ''"
-      [disabled]="control.readOnly || disabled"
-      [(ngModel)]="value"
-      (blur)="onTouched()"
-    />
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker
-      #picker
-      [startView]="control.startView"
-      [startAt]="control.startDate"
-    ></mat-datepicker>
-    <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
-    <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
-  </mat-form-field>
-
-  <mat-form-field
-    *ngIf="control.format == 'DD-MM-YY'"
-    appearance="outline"
-    [ngClass]="frmControl.errors ? 'error' : ''"
-    class="full-width"
-    spDateFormatDD__MM__YY
-  >
-    <mat-label>{{ control.label }}</mat-label>
-    <input
-      matInput
-      [matDatepicker]="picker"
-      [placeholder]="control.placeholder || ''"
-      [disabled]="control.readOnly || disabled"
-      [(ngModel)]="value"
-      (blur)="onTouched()"
-    />
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker
-      #picker
-      [startView]="control.startView"
-      [startAt]="control.startDate"
-    ></mat-datepicker>
-    <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
-    <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
-  </mat-form-field>
-
-  <mat-form-field
-    *ngIf="control.format == 'DD-MM-YYYY'"
-    appearance="outline"
-    [ngClass]="frmControl.errors ? 'error' : ''"
-    class="full-width"
-    spDateFormatDD__MM__YYYY
-  >
-    <mat-label>{{ control.label }}</mat-label>
-    <input
-      matInput
-      [matDatepicker]="picker"
-      [placeholder]="control.placeholder || ''"
-      [disabled]="control.readOnly || disabled"
-      [(ngModel)]="value"
-      (blur)="onTouched()"
-    />
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker
-      #picker
-      [startView]="control.startView"
-      [startAt]="control.startDate"
-    ></mat-datepicker>
-    <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
-    <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
-  </mat-form-field>
-
-  <mat-form-field
-    *ngIf="control.format == 'YYYY/MM/DD'"
-    appearance="outline"
-    [ngClass]="frmControl.errors ? 'error' : ''"
-    class="full-width"
-    spDateformatYYYYMMDD
-  >
-    <mat-label>{{ control.label }}</mat-label>
-    <input
-      matInput
-      [matDatepicker]="picker"
-      [placeholder]="control.placeholder || ''"
-      [disabled]="control.readOnly || disabled"
-      [(ngModel)]="value"
-      (blur)="onTouched()"
-    />
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker
-      #picker
-      [startView]="control.startView"
-      [startAt]="control.startDate"
-    ></mat-datepicker>
-    <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
-    <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
-  </mat-form-field>
-
-  <mat-form-field
-    *ngIf="control.format == 'YY-MM-DD'"
-    appearance="outline"
-    [ngClass]="frmControl.errors ? 'error' : ''"
-    class="full-width"
-    spDateFormatYY__MM__DD
-  >
-    <mat-label>{{ control.label }}</mat-label>
-    <input
-      matInput
-      [matDatepicker]="picker"
-      [placeholder]="control.placeholder || ''"
-      [disabled]="control.readOnly || disabled"
-      [(ngModel)]="value"
-      (blur)="onTouched()"
-    />
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker
-      #picker
-      [startView]="control.startView"
-      [startAt]="control.startDate"
-    ></mat-datepicker>
-    <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
-    <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
-  </mat-form-field>
-
-  <mat-form-field
-    *ngIf="control.format == 'YYYY-MM-DD'"
-    appearance="outline"
-    [ngClass]="frmControl.errors ? 'error' : ''"
-    class="full-width"
-    spDateFormatYYYY__MM__DD
-  >
-    <mat-label>{{ control.label }}</mat-label>
-    <input
-      matInput
-      [matDatepicker]="picker"
-      [placeholder]="control.placeholder || ''"
-      [disabled]="control.readOnly || disabled"
-      [(ngModel)]="value"
-      (blur)="onTouched()"
-    />
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker
-      #picker
-      [startView]="control.startView"
-      [startAt]="control.startDate"
-    ></mat-datepicker>
-    <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
-    <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
-  </mat-form-field>
-
-  <ng-container>
-    <sp-error
-      *ngIf="frmControl.errors"
-      [validations]="control.validations || []"
-      [errors]="frmControl.errors"
-    ></sp-error>
-    <!-- <div *ngIf="!frmControl.errors" style="visibility: hidden">*</div> -->
-  </ng-container>
+  <div class="flex items-center grid grid-cols-4 gap-1 ">
+    <div class="col-span-1 ">
+      <mat-label class="text-xs">{{ control.label }}</mat-label>
+    </div>
+    <div class="col-span-3" *ngIf="control.format == 'MM/DD/YY'">
+      <mat-form-field  appearance="outline"
+        [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatMMDDYY>
+        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+          [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
+        <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+        <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="col-span-3" *ngIf="control.format == 'MM/DD/YYYY'">
+      <mat-form-field  appearance="outline"
+        [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatMMDDYYYY>
+        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+          [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
+        <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+        <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="col-span-3" *ngIf="control.format == 'DD/MM/YY'">
+      <mat-form-field  appearance="outline"
+        [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatDDMMYY>
+        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+          [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
+        <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+        <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="col-span-3" *ngIf="control.format == 'DD/MM/YYYY'">
+      <mat-form-field  appearance="outline"
+        [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatDDMMYYYY>
+        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+          [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
+        <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+        <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="col-span-3" *ngIf="control.format == 'YY/MM/DD'">
+      <mat-form-field  appearance="outline"
+        [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatYYMMDD>
+        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+          [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
+        <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+        <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="col-span-3" *ngIf="control.format == 'DD-MM-YY'">
+      <mat-form-field  appearance="outline"
+        [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatDD__MM__YY>
+        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+          [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
+        <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+        <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="col-span-3" *ngIf="control.format == 'DD-MM-YYYY'">
+      <mat-form-field  appearance="outline"
+        [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatDD__MM__YYYY>
+        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+          [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
+        <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+        <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="col-span-3" *ngIf="control.format == 'YYYY/MM/DD'">
+      <mat-form-field  appearance="outline"
+        [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateformatYYYYMMDD>
+        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+          [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
+        <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+        <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="col-span-3" *ngIf="control.format == 'YY-MM-DD'">
+      <mat-form-field  appearance="outline"
+        [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatYY__MM__DD>
+        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+          [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
+        <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+        <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="col-span-3" *ngIf="control.format == 'YYYY-MM-DD'">
+      <mat-form-field  appearance="outline"
+        [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatYYYY__MM__DD>
+        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+          [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
+        <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
+        <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
+      </mat-form-field>
+    </div>
+    <ng-container>
+      <div class="grid grid-cols-4">
+        <div class="col-span-1">
+        </div>
+        <div class="col-span-3">
+          <sp-error *ngIf="frmControl.errors" [validations]="control.validations || []"
+            [errors]="frmControl.errors"></sp-error>
+        </div>
+      </div>
+      <!-- <div *ngIf="!frmControl.errors" style="visibility: hidden">*</div> -->
+    </ng-container>
+  </div>
 </ng-container>
