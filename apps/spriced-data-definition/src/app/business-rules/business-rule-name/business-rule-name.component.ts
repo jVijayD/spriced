@@ -391,6 +391,12 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     await res.condition.forEach((condition: any) => {
       this.conditions.push(this.patchConditionAndActionForm('condition', condition));
     });
+
+    const lastIndex = this.conditions.controls.length - 1;
+    const conditionTypeControl = this.conditions.controls[lastIndex].get('conditionType');
+    if (conditionTypeControl?.value !== 'NONE') {
+      conditionTypeControl?.patchValue('NONE');
+    }
     /**
      * PUSH DATA IN ACTIONS FORM ARRAY
      */
