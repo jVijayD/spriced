@@ -152,7 +152,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
 
         for (const el of relatedRefreneceTableEntity) {
           const { entityData } = await this.getEntityById(el.referencedTableId);
-          const filteredAttributes = entity?.attributes.filter((attr: any) => attr.name !== 'id');
+          const filteredAttributes = entityData?.attributes.filter((attr: any) => attr.name !== 'id');
           entityData.attributes = filteredAttributes.filter((attr: any) => !attr.systemAttribute);
           await this.processNestedAttributes(entityData.attributes, el);
         }
