@@ -132,7 +132,7 @@ export class DateAdapterService extends NgxMatDateAdapter<Moment> {
       throw Error(`Invalid date "${date}". Date has to be greater than 0.`);
     }
 
-    const result = this._createMoment({ year, month, date }).locale(this.locale);
+    const result = this._createMoment({ year, month, date }).utc().locale(this.locale);
     if (!result.isValid()) {
       throw Error(`Invalid date "${date}" for month with index "${month}".`);
     }
@@ -142,14 +142,14 @@ export class DateAdapterService extends NgxMatDateAdapter<Moment> {
 
   today(): Moment {
     // @ts-ignore
-    return this._createMoment().locale(this.locale);
+    return this._createMoment().utc().locale(this.locale);
   }
 
   parse(value: any, parseFormat: string | string[]): Moment | null {
     if (value && typeof value === 'string') {
-      return this._createMoment(value, parseFormat, this.locale);
+      return this._createMoment(value, parseFormat, this.locale).utc();
     }
-    return value ? this._createMoment(value).locale(this.locale) : null;
+    return value ? this._createMoment(value).utc().locale(this.locale) : null;
   }
 
   format(date: Moment, displayFormat: string): string {
@@ -179,7 +179,7 @@ export class DateAdapterService extends NgxMatDateAdapter<Moment> {
   override deserialize(value: any): Moment | null {
     let date;
     if (value instanceof Date) {
-      date = this._createMoment(value).locale(this.locale);
+      date = this._createMoment(value).utc().locale(this.locale);
     } else if (this.isDateInstance(value)) {
       return this.clone(value);
     }
@@ -187,10 +187,10 @@ export class DateAdapterService extends NgxMatDateAdapter<Moment> {
       if (!value) {
         return null;
       }
-      date = this._createMoment(value, moment.ISO_8601).locale(this.locale);
+      date = this._createMoment(value, moment.ISO_8601).utc().locale(this.locale);
     }
     if (date && this.isValid(date)) {
-      return this._createMoment(date).locale(this.locale);
+      return this._createMoment(date).utc().locale(this.locale);
     }
     return super.deserialize(value);
   }
