@@ -210,7 +210,7 @@ export class ElseactionComponent {
     }
     this.dataType = attribute?.dataType ? attribute?.dataType : 'AUTO';
     const decimalValueSize = attribute?.size;
-    this.actionForm?.get('operand')?.setValidators([Validators.pattern('')]);
+    this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern('')]);
     this.dynamicInputType = ['INTEGER', 'DECIMAL','DOUBLE'].includes(this.dataType) ? 'number' : 'text';
     if (text === 'changeAttribute') {
       this.actionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
