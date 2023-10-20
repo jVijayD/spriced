@@ -62,10 +62,16 @@ export class EntityDataService {
     );
   }
 
-  exportToExcel(id: string | number, filename: string, criteria: Criteria) {
+  exportToExcel(
+    id: string | number,
+    filename: string,
+    displayFormat: string,
+    criteria: Criteria
+  ) {
     const url = this.requestUtility.addCriteria(
-      `${this.api_url}/entity/${id}/export/excel`,
-      criteria
+      `${this.api_url}/entity/${id}/export/excel?displayFormat=${displayFormat}`,
+      criteria,
+      false
     );
 
     return this.http
