@@ -88,7 +88,7 @@ export class LookupSelectComponent
         }
         this.totalCount = this.count;
         this.loading = false;
-        if (this.totalCount > this.pageSize) {
+        if (this.totalCount > this.pageSize && !this.dialogReference) {
           this.openPopup();
         }
       })
@@ -240,7 +240,8 @@ export class LookupSelectComponent
     const [id] = controlData.data.api?.params;
     controlData.data.api &&
       (controlData.data.api.params = [id, pageNumber, pageSize, filters]);
-    this.populateSource();
+      this.source = [];
+      this.populateSourceOnDemand();
   }
 
   private renderDataWithCurlyBrace(data: any) {
