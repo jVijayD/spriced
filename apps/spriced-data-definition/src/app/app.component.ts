@@ -51,6 +51,11 @@ export class AppComponent {
       active: false,
       path: "/spriced-data-definition/hierarchy-definition",
     },
+    {
+      name: "Hierarchy",
+      active: false,
+      path: "/spriced-data-definition/derived-hierarchy",
+    },
   ];
   constructor(private appDataService: AppDataService) {
     this.appDataService.setMenuData(this.menuDItems);

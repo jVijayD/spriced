@@ -5,6 +5,7 @@ export * from "./lib/components/data-grid-tree/data-grid-tree.component";
 
 export * from "./lib/components/header-action/header-action.component";
 export * from "./lib/layouts/two-col-three-forth/two-col-three-forth.component";
+export * from "./lib/layouts/three-col/three-col.component";
 export * from "./lib/components/snackbar/snackbar.module";
 export * from "./lib/components/snackbar/snackbar.service";
 export * from "./lib/components/snackbar/snackbar-success/snackbar-success.component";
