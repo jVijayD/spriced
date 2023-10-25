@@ -1,3 +1,4 @@
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -28,7 +29,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import { EntitySelectComponent } from "../../components/entity-select/entity-select.component";
-import { AddModelComponent } from "./add-model/add-model.component";
+import { AddModelComponent } from "../entity-data/add-model/add-model.component";
 import { MatDialog } from "@angular/material/dialog";
 import { UploadDialogeComponent } from "../../components/upload-dialoge/upload-dialoge.component";
 import { SettingsPopUpComponent } from "../../components/settingsPopUp/settings-pop-up.component";
@@ -44,26 +45,16 @@ import {
   EntityService,
 } from "@spriced-frontend/spriced-common-lib";
 import { Validators } from "@angular/forms";
-import { EntityDataService } from "../../services/entity-data.service";
-import {
-  Observable,
-  Subject,
-  Subscription,
-  filter,
-  first,
-  forkJoin,
-  map,
-  of,
-  timer,
-} from "rxjs";
+import { EntityDataStagingService } from "../../services/entity-data-staging.service";
+import { Subscription } from "rxjs";
 import * as moment from "moment";
 import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
-import { Router, RouterModule } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 
-import { AuditDataComponent } from "./audit-data/audit-data.component";
+import { AuditDataComponent } from "../entity-data/audit-data/audit-data.component";
 import { LookupPopupComponent } from "../../components/lookup-Popup/lookup-popup.component";
-import { EntityGridService } from "./entity-grid.service";
-import { EntityFormService } from "./entity-form.service";
+import { EntityGridService } from "../entity-data/entity-grid.service";
+import { EntityFormService } from "../entity-data/entity-form.service";
 import {
   AppDataService,
   ErrorTypes,
@@ -71,9 +62,8 @@ import {
 import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components/directive/tool-tip-renderer.directive";
 import { CustomToolTipComponent } from "libs/spriced-ui-lib/src/lib/components/custom-tool-tip/custom-tool-tip.component";
 
-const TIMER_CONST = 300;
 @Component({
-  selector: "sp-entity-data",
+  selector: "sp-upload-error",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Default,
   imports: [
@@ -98,18 +88,18 @@ const TIMER_CONST = 300;
   providers: [
     EntityGridService,
     EntityFormService,
-    EntityDataService,
+    EntityDataStagingService,
     SettingsService,
     {
       provide: FORM_DATA_SERVICE,
-      useExisting: EntityDataService,
+      useExisting: EntityDataStagingService,
     },
     DynamicFormService,
   ],
-  templateUrl: "./entity-data.component.html",
-  styleUrls: ["./entity-data.component.scss"],
+  templateUrl: "./upload-error.component.html",
+  styleUrls: ["./upload-error.component.scss"],
 })
-export class EntityDataComponent implements OnDestroy, OnInit {
+export class UploadErrorComponent implements OnDestroy, OnInit {
   hide = false;
   limit: number = GridConstants.LIMIT;
   subscriptions: Subscription[] = [];
@@ -127,9 +117,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   appForm!: AppForm;
   currentCriteria!: Criteria;
   globalSettings!: any;
-  query?: any;
 
-  entityDataLoadCompleted$ = new Subject();
+  query?: any;
 
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
@@ -143,37 +132,27 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     private snackbarService: SnackBarService,
     private dialogService: DialogService,
     private dynamicFormService: DynamicFormService,
-    private entityDataService: EntityDataService,
+    private entityDataService: EntityDataStagingService,
     private dialog: MatDialog,
     private settings: SettingsService,
     private entityGridService: EntityGridService,
     private entityFormService: EntityFormService,
     private router: Router,
-    private statusPannelService: AppDataService
+    private statusPannelService: AppDataService,
+    private route: ActivatedRoute
   ) {
     this.globalSettings = this.settings.getGlobalSettings();
     this.setFormData("", []);
     this.subscribeToFormEvents();
   }
   ngOnInit(): void {
-    this.subscribeToEntityDataLoadEvents();
-  }
+    const entityId = Number(this.route.snapshot.paramMap.get("entityId"));
 
-  subscribeToEntityDataLoadEvents() {
-    this.subscriptions.push(
-      this.entityDataLoadCompleted$.subscribe((page: any) => {
-        this.rows = page.content;
-        this.totalElements = page.totalElements;
-        const selectionTimer = timer(TIMER_CONST);
-        if (this.rows && this.rows?.length > 0) {
-          //Since the form not completely get loaded by the time data arrived.
-          selectionTimer.pipe(first()).subscribe(() => {
-            this.setSelectedRow(this.rows[0]);
-          });
-        }
-      })
-    );
-  }
+      this.entityDataService.loadEntity(entityId).subscribe((item: any) => {
+     this.onEntitySelectionChange(item)
+      });
+
+   }
 
   subscribeToFormEvents() {
     this.subscriptions.push(
@@ -232,11 +211,24 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     });
 
     const criteria: Criteria = { ...this.currentCriteria, sorters: sorters };
-    this.loadEntityData(this.currentSelectedEntity as Entity, criteria, true);
+    this.loadEntityData(this.currentSelectedEntity as Entity, criteria);
   }
 
   onItemSelected(e: any) {
-    this.setSelectedRow(e);
+    this.selectedItem = e;
+    //this.dynamicFormService.parentForm?.setValue(this.selectedItem);
+    const extractedFormFields = this.entityFormService.extractFormFieldsOnly(
+      this.selectedItem,
+      this.dynamicFormService.getFormValues()
+    );
+
+    const extraData = this.entityFormService.extractExtraData(
+      this.selectedItem,
+      this.currentSelectedEntity as Entity
+    );
+
+    this.dynamicFormService.setFormValues(extraData, extractedFormFields);
+    debugger;
   }
 
   onClear() {
@@ -305,16 +297,14 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   public addDisplayNameInFilter(query: any) {
     if (query.rules) {
       query.rules.forEach((el: any) => {
-        const item: any = this.headers.find(
-          (elm: any) => elm.column === el.field
-        );
+        const item: any = this.headers.find((elm: any) => elm.column === el.field);
         if (el?.rules && el?.rules.length > 0) {
           this.addDisplayNameInFilter(el); // Recursively process sub-rules
         }
         if (!!item) {
           el.displayName = item.name;
         }
-        return;
+        return
       });
     }
   }
@@ -362,7 +352,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           const condition = lastItem !== index ? items.condition : "";
           tooltipText += `<strong>${field}</strong> ${rule.operator} ${value} <strong>${condition}</strong>`;
           if (index < items.rules.length - 1) {
-            tooltipText += "<br>";
+            tooltipText += '<br>';
           }
         }
         if (!!rule.condition && !!rule.rules) {
@@ -421,14 +411,13 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     });
   }
   onStatus() {
-    const dialogResult = this.dialog.open(StatusComponent, {
-      data: this.currentSelectedEntity,
-    });
+    const dialogResult = this.dialog.open(StatusComponent, {});
 
-    dialogResult.afterClosed().subscribe((val) => {});
+    dialogResult.afterClosed().subscribe((val) => { });
   }
 
   onSettings() {
+
     const dialogResult = this.dialog.open(SettingsPopUpComponent, {
       data: this.currentSelectedEntity,
     });
@@ -466,10 +455,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onAudit() {
     this.dialogService.openDialog(AuditDataComponent, {
-      data: {
-        currentSelectedEntity: this.currentSelectedEntity,
-        selectedItem: this.selectedItem,
-      },
+      data: this.currentSelectedEntity,
     });
   }
 
@@ -486,21 +472,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.settings.getGlobalSettings()
     );
     this.createDynamicUIMapping(entity as Entity);
-    this.loadRelatedEntity();
   }
-  loadRelatedEntity() {
-    this.subscriptions.push(
-      this.entityDataService
-        .getRelatedEntity(
-          this.currentSelectedEntity?.groupId,
-          this.currentSelectedEntity?.id
-        )
-        .subscribe((val) => {
-          this.relatedEntity = val;
-          this.query = null;
-        })
-    );
-  }
+
   onSubmitEntityData(data: any) {
     if (this.headers.length < 1) {
       this.snackbarService.warn("Please check whether user has permission.");
@@ -531,7 +504,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.entityDataService.exportToExcel(
       this.currentSelectedEntity?.id as number,
       `${this.currentSelectedEntity?.displayName}.xlsx`,
-      this.globalSettings?.displayFormat || this.defaultCodeSetting,
       this.currentCriteria
     );
   }
@@ -569,21 +541,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       });
   }
 
-  private setSelectedRow(row: any) {
-    this.selectedItem = row;
-    //this.dynamicFormService.parentForm?.setValue(this.selectedItem);
-    const extractedFormFields = this.entityFormService.extractFormFieldsOnly(
-      this.selectedItem,
-      this.dynamicFormService.getFormValues()
-    );
-
-    const extraData = this.entityFormService.extractExtraData(
-      this.selectedItem,
-      this.currentSelectedEntity as Entity
-    );
-    this.dynamicFormService.setFormValues(extraData, extractedFormFields);
-  }
-
   private createDynamicUIMapping(entity: Entity | undefined) {
     let formFields: FormFieldControls = [];
     if (entity) {
@@ -595,41 +552,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         return prev || current.permission === "UPDATE";
       }, false);
     }
+
     this.setFormData("", formFields);
-  }
-
-  public patchFormData(formFields: any): Observable<any[]> {
-    const observables: Observable<any>[] = [];
-    let lookupContrl = formFields.filter(
-      (elm: any) => elm.eventType === "lookup"
-    );
-    const uniqueEventValues: any[] = [];
-    // Remove duplicate eventValue items
-    lookupContrl = lookupContrl.filter((item: any) => {
-      const isDuplicate = uniqueEventValues.indexOf(item.eventValue) !== -1;
-      if (!isDuplicate) {
-        uniqueEventValues.push(item.eventValue);
-      }
-      return !isDuplicate;
-    });
-
-    for (const item of lookupContrl) {
-      if (item.eventType === "lookup") {
-        // Make API call if not cached
-        const observable = this.entityDataService
-          .loadEntity(item.eventValue)
-          .pipe(
-            map((elm: any) => {
-              return elm;
-            })
-          );
-        observables.push(observable);
-      }
-    }
-    // Use forkJoin to wait for all observables to complete and then return the updated formFields array
-    return forkJoin(observables).pipe(
-      map((elm) => elm) // Return the updated formFields after all observables complete
-    );
   }
 
   private createDynamicGrid(
@@ -646,35 +570,29 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         showSystemAttributes,
         globalSettings?.displayFormat || this.defaultCodeSetting
       );
+      console.log(this.headers)
       this.loadEntityData(entity, criteria);
     }
   }
 
-  private loadEntityData(
-    entity: Entity,
-    criteria: Criteria,
-    columnSort?: boolean
-  ) {
-    if (!columnSort) {
-      const sort: any = { direction: "DESC", property: "updated_date" };
-      criteria.sorters = [sort];
-    }
+  private loadEntityData(entity: Entity, criteria: Criteria) {
     this.currentCriteria = criteria;
     if (entity) {
       this.applyEntitySettings(entity);
       this.subscriptions.push(
-        this.entityDataService
-          .loadEntityData(entity.id, criteria)
-          .pipe(first())
-          .subscribe({
-            next: (page) => {
-              this.entityDataLoadCompleted$.next(page);
-            },
-            error: (err) => {
-              this.rows = [];
-              console.error(err);
-            },
-          })
+        this.entityDataService.loadEntityData(entity.id, criteria).subscribe({
+          next: (page) => {
+            this.rows = page.content;
+            this.totalElements = page.totalElements;
+            if (this.rows && this.rows?.length > 0) {
+              this.onItemSelected(this.rows[0]);
+            }
+          },
+          error: (err) => {
+            this.rows = [];
+            console.error(err);
+          },
+        })
       );
     } else {
       this.rows = [];
@@ -795,4 +713,22 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       asyncValidations: [],
     };
   }
+
+  onSave()
+  {
+    const dialogRef = this.dialogService.openConfirmDialoge({
+      message: "Total records uploaded:10000 \n Modified or new records:10000 /n Validation Passed:10000 /n Validation Failed:10000 /n ",
+      title: "Upload Confirmation",
+      icon: "save",
+    });
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result == true) {
+        this.rows = this.rows.filter((value: any) => {
+          return value.name != this.selectedItem.name;
+        });
+      }
+    })
+   
+  }
+
 }

@@ -55,9 +55,8 @@ export * from "./lib/layouts/one-col/one-col.component";
 export * from "./lib/layouts/hbox/hbox.component";
 export * from "./lib/layouts/vbox/vbox.component";
 export * from "./lib/components/dialogbox/dialogbox.component";
-
+export * from "./lib/components/select-search/select-search.component";
 //export * from "./lib/spriced-ui-lib/components/filter/filter.component";
-
 export * from "./lib/components/dynamic-form/sub-components/checkbox/checkbox.component";
-
 export * from "./lib/components/header-component-wrapper/header-component-wrapper.component";
+export * from "./lib/pipes/order-by.pipe";

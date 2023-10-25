@@ -6,8 +6,8 @@ export interface HierarchyDetails {
   // parentRefId: number | null;
   // refId: number;
   groupLevel: number;
-  tablename: string;
-  tableId: number;
+  entityName: string;
+  entityId: number;
   tabledisplayname: string;
   localColumn: string;
   refColumn: string;
@@ -42,9 +42,9 @@ export interface Hierarchy {
   modelId: number;
   name: string;
   description: string;
-  updatedBy: string;
-  updatedDate: Date;
+  updatedBy?: string;
+  updatedDate?: Date;
   details: HierarchyDetails[] | null;
-  model: Model | null;
-  entity: Entity | null;
+  model?: Model | null;
+  entity?: Entity | null;
 }

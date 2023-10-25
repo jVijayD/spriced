@@ -34,7 +34,9 @@ import {
   HeaderActionComponent,
   OneColComponent,
   Paginate,
+  SnackBarService,
 } from "@spriced-frontend/spriced-ui-lib";
+import {PositiveDigitDirective} from "libs/spriced-ui-lib/src/lib/components/directive/positive-digit.directive";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 const DEFAULT_ATTRIBUTE_WIDTH = 100;
 export interface PeriodicElement {
@@ -69,6 +71,7 @@ export interface PeriodicElement {
     HeaderActionComponent,
     OneColComponent,
     DataGridComponent,
+    PositiveDigitDirective
   ],
   templateUrl: "./entity-add.component.html",
   styleUrls: ["./entity-add.component.scss"],
@@ -130,6 +133,7 @@ export class EntityAddComponent implements OnInit {
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
+    private snackbarService:SnackBarService
   ) {
     this.attDetails.dataType = "STRING_VAR";
     this.attDetails.type = "FREE_FORM";
@@ -161,14 +165,6 @@ export class EntityAddComponent implements OnInit {
       this.local_data.enableAuditTrial = true;
       this.local_data.autoNumberCode = false;
     }
-    console.log(this.local_data.attributes)
-    // const showInFormAttributes: any = this.local_data?.attributes?.filter((item: any) => item.showInForm === true);
-    // this.local_data?.attributes?.forEach((value: any) => {
-    //       if(value.name=='id')
-    //       {
-    //         this.systemAtt=value
-    //       }
-    //     });
 
     this.systemAtt = this.local_data?.attributes?.filter(
       (value: any) => {
@@ -189,6 +185,11 @@ export class EntityAddComponent implements OnInit {
     //   });
     // }
     // this.local_data.attributes = showInFormAttributes;
+    this.local_data.attributes = this.local_data?.attributes?.filter(
+      (value: any) => {
+        return !value.systemAttribute;
+      }
+    );
     this.rows = this.local_data?.attributes || [];
     this.totalElements = this.rows.length;
   }
@@ -293,6 +294,21 @@ export class EntityAddComponent implements OnInit {
       row_obj.dataType = "DECIMAL";
     }
     if (this.attAction == "Update") {
+      var update=true;
+      this.local_data?.attributes?.forEach((value: any) => {
+        if(value.name.toLowerCase()==row_obj.name.toLowerCase() && this.selectedItem.name!==value.name)
+        {
+          this.snackbarService.error(value.name+ " Already Exists.");
+          update=false
+        }
+        if(value.displayName.toLowerCase()==row_obj.displayName.toLowerCase() && this.selectedItem.name!==value.name)
+        {
+          this.snackbarService.error(value.displayName+ " Already Exists.");
+          update=false
+        }
+      });
+if(update)
+{
       if (row_obj.type !== "FREE_FORM")
      { 
       row_obj.referencedTableDisplayName=this.referencedTableDisplayName
@@ -307,7 +323,23 @@ export class EntityAddComponent implements OnInit {
       });
       this.rows = [...this.rows];
     }
+  }
     if (this.attAction == "Add") {
+      var add=true;
+      this.local_data?.attributes?.forEach((value: any) => {
+        if(value.name.toLowerCase()==row_obj.name.toLowerCase())
+        {
+          this.snackbarService.error(value.name+ " Already Exists.");
+          add=false
+        }
+        if(value.displayName.toLowerCase()==row_obj.displayName.toLowerCase())
+        {
+          this.snackbarService.error(value.displayName+ " Already Exists.");
+          add=false
+        }
+      });
+if(add)
+{
       if (row_obj.type == "FREE_FORM") {
         this.rows.push({
           id: row_obj.id,
@@ -342,6 +374,7 @@ export class EntityAddComponent implements OnInit {
     this.isChangedValue = this.areObjectsEqual(this.previousEntityData.attributes, this.rows);
     this.clear();
   }
+}
 
   initForm() {
     if (this.action == "Edit") {

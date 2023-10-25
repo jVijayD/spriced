@@ -17,7 +17,7 @@
                 formControlName="name"
                 matInput
                 [pattern]="pattern"
-                max="100"
+                maxlength="50"
               />
             </mat-form-field>
               <mat-error class="error"
@@ -110,12 +110,12 @@
             [rows]="rows"
             [rowHeight]="20"
             [headerHeight]="30"
-            [footerHeight]="0"
+            [footerHeight]="20"
             [columnMode]="columnMode"
             [virtualScroll]="true"
             [selectionType]="selectionType"
             [limit]="10"
-            [isExternalPaging]="true"
+            [isExternalPaging]="false"
             [isExternalSorting]="false"
             [sortType]="sortType"
             [count]="totalElements"
@@ -153,9 +153,9 @@
               [disabled]="attAction === 'Update'"
               matInput
               [(ngModel)]="attDetails.name"
-              max="100"
               [pattern]="pattern"
               #aname="ngModel"
+              maxlength="50"
             />
           </mat-form-field>
             <mat-error class="error"
@@ -177,7 +177,7 @@
               [(ngModel)]="attDetails.displayName"
               [pattern]="pattern"
               #dname="ngModel"
-              max="100"
+              maxlength="50"
             />
           </mat-form-field>
             <mat-error class="error"
@@ -301,9 +301,12 @@
             <mat-form-field appearance="outline" class="mt-2">
               <mat-label>Decimals</mat-label
               ><input
+              spPositiveDigit
                 matInput
                 type="number"
                 min="0"
+                max="9"
+                [SelectedValue]="1"
                 [(ngModel)]="attDetails.size"
                 [disabled]="
                   attDetails?.onlyDisplayNameEditable && attAction === 'Update'

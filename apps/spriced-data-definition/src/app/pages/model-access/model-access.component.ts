@@ -38,6 +38,8 @@ import {
 } from "@spriced-frontend/shared/spriced-shared-lib";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { UserAccessService } from "@spriced-frontend/spriced-common-lib";
+import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 const POPULATE_ATTRIBUTES = false;
 @Component({
   selector: "sp-model-access",
@@ -55,6 +57,9 @@ const POPULATE_ATTRIBUTES = false;
     SnackbarModule,
     CommonModule,
     DialogueModule,
+    NgxMatSelectSearchModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [HttpClient, UserAccessService, DialogService, SnackBarService],
   templateUrl: "./model-access.component.html",
@@ -63,6 +68,7 @@ const POPULATE_ATTRIBUTES = false;
 export class ModelAccessComponent {
   ColumnMode = ColumnMode;
   SelectionType = SelectionType;
+  filteredModelList: any;
 
   treeStore: TreeStore = new TreeStore();
   selectedRole!: RoleDTO | null;
@@ -89,6 +95,7 @@ export class ModelAccessComponent {
         // this.modelListBkp.push(mdl.parse(m));
         return mdl;
       });
+      this.filteredModelList = this.modelList;
     });
     this.userAccessService
     .loadAllRoles()
@@ -102,6 +109,17 @@ export class ModelAccessComponent {
 
   getPermissions() {
     return Object.keys(PERMISSIONS);
+  }
+
+  filterModelsSelection(text: any) {
+    this.filteredModelList = this.modelList.filter((item: any) => {
+      return (
+        item.displayName
+          .trim()
+          .toLowerCase()
+          .indexOf(text.trim().toLowerCase()) != -1
+      );
+    });
   }
 
   onSaveClick() {
@@ -156,6 +174,7 @@ export class ModelAccessComponent {
     this.selectedModel = null;
     this.treeStore.data = [];
     this.modelList.forEach((m) => (m.expandedOnce = false));
+    this.filteredModelList = this.modelList;
   }
 
   onSelectRole(event: MatSelectChange) {

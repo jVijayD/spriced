@@ -1,0 +1,13 @@
+<mat-form-field [appearance]="appearance">
+    <mat-label *ngIf="placeholder && placeholder.length">{{placeholder}}</mat-label>
+    <mat-select [(value)]="model" (openedChange)="sortList()" (selectionChange)="selectionChange.emit($event)"
+        [required]="required">
+        <mat-option>
+            <ngx-mat-select-search noEntriesFoundLabel="No matching records found!" placeholderLabel="Search" ngModel (ngModelChange)="onFilterChange($event)">
+            </ngx-mat-select-search>
+        </mat-option>
+        <mat-option *ngFor="let item of items" [value]="bindValueKey?item[bindValueKey]:item">
+            <span>{{item[bindLabelKey]}}</span>
+        </mat-option>
+    </mat-select>
+</mat-form-field>

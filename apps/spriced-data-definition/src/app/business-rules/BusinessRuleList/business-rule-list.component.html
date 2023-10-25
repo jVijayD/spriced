@@ -14,7 +14,7 @@
               <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-auto" appearance="outline">
                 <mat-label>Attribute</mat-label>
                 <div class="flex attribute-input" [ngClass]="preview ? 'disableMenu' : ''"
-                  [matMenuTriggerFor]="attributeMenu">
+                  [matMenuTriggerFor]="!preview ? attributeMenu : null">
                   <input style="display: none;" [readonly]="true" [readonly]="preview" matInput placeholder="Add Value"
                     formControlName="attributeId" [disabled]="isFieldDisabled">
                   <input [readonly]="true" [readonly]="preview" matInput placeholder="Add Value" required
@@ -76,7 +76,7 @@
               <ng-container *ngIf="valueConstant">
                 <!-- WHEN DATATYPE IS EQUAL TO STRING -->
                 <mat-form-field
-                  *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)"
+                  *ngIf="['AUTO', 'INTEGER', 'DECIMAL','DOUBLE', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)"
                   [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
                   <mat-label>Value</mat-label>
                   <input [readonly]="preview" [type]="dynamicInputType" [readonly]="preview" matInput
@@ -125,7 +125,7 @@
                 *ngIf="!valueConstant">
                 <mat-label>Attribute</mat-label>
                 <div class="flex attribute-input" [ngClass]="preview ? 'disableMenu' : ''"
-                  [matMenuTriggerFor]="operandMenu">
+                  [matMenuTriggerFor]="!preview ? operandMenu : null">
                   <input style="display: none;" [readonly]="true" [readonly]="preview" matInput placeholder="Add Value"
                     formControlName="operand" [disabled]="isFieldDisabled">
                   <input [readonly]="true" [readonly]="preview" matInput placeholder="Add Value" required
@@ -164,7 +164,7 @@
 
             <div class="example-container mt-8 mr-5 flex flex-col" *ngIf="minValue">
               <mat-form-field
-                *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)"
+                *ngIf="['AUTO', 'INTEGER', 'DECIMAL','DOUBLE','STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)"
                 [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
                 <mat-label>Min Value</mat-label>
                 <input [readonly]="preview" matInput placeholder="Add Value" formControlName="min_value">
@@ -218,7 +218,7 @@
 
             <div class="example-container mt-8 mr-5 flex flex-col" *ngIf="maxValue">
               <mat-form-field
-                *ngIf="['AUTO', 'INTEGER', 'DECIMAL', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)"
+                *ngIf="['AUTO', 'INTEGER', 'DECIMAL','DOUBLE', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)"
                 [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
                 <mat-label>Max Value</mat-label>
                 <input [readonly]="preview" matInput placeholder="Add Value" formControlName="max_value">

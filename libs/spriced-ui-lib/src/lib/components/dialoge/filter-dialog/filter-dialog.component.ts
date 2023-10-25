@@ -60,6 +60,11 @@ export class FilterDialogComponent {
     let filters: Filter[] = [];
     //debugger;
     query.rules.forEach((item: any, index: number) => {
+      const field = item.field.split(',');
+      if(field.length > 1)
+      {
+        item.field = field.find((el: any) => el.endsWith('_code'));
+      }
       const operatorType = this.getOperatorType(item.operator);
       const dataTypeType = this.getDataType(this.data.columns, item.field);
 

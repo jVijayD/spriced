@@ -23,6 +23,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { LookupDialogComponent } from "./lookup-dialog/lookup-dialog/lookup-dialog.component";
 import { Subscription } from "rxjs";
 
+const LOOKUP_PAGE_SIZE = 50;
 @Component({
   selector: "sp-lookup-select",
   templateUrl: "./lookup-select.component.html",
@@ -40,13 +41,16 @@ export class LookupSelectComponent
   extends BaseDataComponent
   implements OnInit, OnDestroy
 {
-  public prop: string = "code|name";
-  pageSize: number = 30;
+  //public prop: string = "code|name";
+  pageSize: number = LOOKUP_PAGE_SIZE;
   displayValue: any = "";
   lookupDataId: any;
   filteredSource: any = [];
   dialogReference: any = null;
   subscriptions: Subscription[] = [];
+  totalCount: number = 0;
+  initialClick = false;
+  loading = false;
   @Input()
   set control(selectControl: GenericControl) {
     this._control = selectControl;
@@ -72,14 +76,43 @@ export class LookupSelectComponent
   }
   ngOnInit(): void {
     this.setFormControl(this.injector);
+    this.onValueChange();
     this.subscriptions.push(
       this.dataPopulation$.subscribe((items) => {
         this.filteredSource = items;
         if (this.dialogReference) {
           this.dialogReference.componentInstance.upDatedData({
             value: items,
-            total: this.count,
+            total: this.totalCount,
           });
+        }
+        this.totalCount = this.count;
+        this.loading = false;
+        if (this.totalCount > this.pageSize && !this.dialogReference) {
+          this.openPopup();
+        }
+      })
+    );
+  }
+
+  onValueChange() {
+    const lookupControl = this._control as LookupSelectControl;
+    this.subscriptions.push(
+      this.getValueChangedObservable().subscribe((value) => {
+        if (
+          lookupControl.data.api &&
+          !lookupControl.data.api?.onLoad &&
+          value &&
+          !this.initialClick
+        ) {
+          let option = { [lookupControl.valueProp as string]: value };
+          for (let key of this.dynamicFormService.getExtraData().keys()) {
+            if (key.startsWith(this._control.name)) {
+              option[key.replace(`${this._control.name}_`, "")] =
+                this.dynamicFormService.getExtraData().get(key);
+            }
+          }
+          this.populateSelectedSourceOnly(option);
         }
       })
     );
@@ -88,6 +121,7 @@ export class LookupSelectComponent
   onClearClick(): void {
     this.value = "";
   }
+
   onNavigateClick(): void {
     const lookupControl = this._control as LookupSelectControl;
 
@@ -118,10 +152,19 @@ export class LookupSelectComponent
   }
 
   onClick() {
-    //this.populateSourceOnDemand();
+    if (!this.initialClick) {
+      this.loading = true;
+      this.initialClick = true;
+      this.source = [];
+      this.populateSourceOnDemand();
+    }
   }
 
   private _initControlData(selectControl: GenericControl) {
+    const lookupControl = selectControl as LookupSelectControl;
+    this.pageSize = lookupControl.pageSize
+      ? lookupControl.pageSize
+      : this.pageSize;
     this.populateSource();
     this.addRule(selectControl.rule);
     this.setControlAccess();
@@ -151,7 +194,7 @@ export class LookupSelectComponent
     }
   }
 
-  public getDisplayProp(option: any, prop: string) {
+  public getDisplayProp(option: any) {
     const lookupControl = this._control as LookupSelectControl;
     const props = lookupControl.displayProp?.split("|") || [];
     return props.reduce((prev, cur) => {
@@ -166,28 +209,39 @@ export class LookupSelectComponent
     const dialogRef = this.dialog.open(LookupDialogComponent, {
       width: "700px",
       height: "620px",
-      data: { value: this.source, total: this.count, pageSize: this.pageSize },
+      data: {
+        value: this.source,
+        total: this.totalCount,
+        pageSize: this.pageSize,
+      },
       hasBackdrop: false,
     });
     this.dialogReference = dialogRef;
 
     dialogRef.afterClosed().subscribe(({ data }: any) => {
+      const lookupControl = this._control as LookupSelectControl;
       this.writeValue(data.id);
       this.lookupDataId = data.id;
-      this.displayValue = this.getDisplayProp(data, this.prop);
+      this.displayValue = this.getDisplayProp(data);
       this.dialogReference = null;
     });
-     dialogRef.componentInstance.dialogEvent$.subscribe((event: any) => {
-      this.nextPage(event.pageNumber, dialogRef, this.pageSize,event.filters);
+    dialogRef.componentInstance.dialogEvent$.subscribe((event: any) => {
+      this.nextPage(event.pageNumber, dialogRef, this.pageSize, event.filters);
     });
   }
 
-  nextPage(pageNumber: number = 0, dialogRef: any, pageSize: number,filters:any) {
+  nextPage(
+    pageNumber: number = 0,
+    dialogRef: any,
+    pageSize: number,
+    filters: any
+  ) {
     let controlData = this.control as DataControl;
     const [id] = controlData.data.api?.params;
     controlData.data.api &&
-      (controlData.data.api.params = [id, pageNumber,pageSize,filters]);
-    this.populateSource();
+      (controlData.data.api.params = [id, pageNumber, pageSize, filters]);
+      this.source = [];
+      this.populateSourceOnDemand();
   }
 
   private renderDataWithCurlyBrace(data: any) {

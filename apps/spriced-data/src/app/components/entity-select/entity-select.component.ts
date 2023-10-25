@@ -20,6 +20,7 @@ import {
   Entity,
 } from "@spriced-frontend/spriced-common-lib";
 import { Subscription } from "rxjs";
+import { OrderByPipe } from "@spriced-frontend/spriced-ui-lib";
 
 @Component({
   selector: "sp-entity-select",
@@ -31,6 +32,7 @@ import { Subscription } from "rxjs";
     MatIconModule,
     MatSelectModule,
     NgxMatSelectSearchModule,
+    OrderByPipe,
   ],
   templateUrl: "./entity-select.component.html",
   styleUrls: ["./entity-select.component.scss"],

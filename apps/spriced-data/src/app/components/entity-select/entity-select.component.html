@@ -14,7 +14,9 @@
       </mat-option>
       <mat-option value="" class="option">--Select--</mat-option>
       <mat-option
-        *ngFor="let item of this.filteredModels"
+        *ngFor="
+          let item of this.filteredModels | orderBy : 'displayName' : 'asc'
+        "
         [value]="item.id"
         class="option"
       >
@@ -38,7 +40,9 @@
       </mat-option>
       <mat-option value="" class="option">--Select--</mat-option>
       <mat-option
-        *ngFor="let item of this.filteredEntities"
+        *ngFor="
+          let item of this.filteredEntities | orderBy : 'displayName' : 'asc'
+        "
         [value]="item"
         class="option"
       >

@@ -5,27 +5,19 @@ import {
   PageData,
   RequestUtilityService,
 } from "@spriced-frontend/spriced-common-lib";
-import { Observable, map, of, tap } from "rxjs";
+import { Observable, map } from "rxjs";
 import { saveAs } from "file-saver";
-import { LRUCache } from "typescript-lru-cache";
-const DEFAULT_LOOKUP_PAGE_SIZE = 50;
-const cacheOptions = {
-  maxSize: 500,
-  entryExpirationTimeInMS: 60 * 1000 * 30,
-};
+
 @Injectable({ providedIn: "root" })
-export class EntityDataService {
+export class EntityDataStagingService {
   api_url: string;
   def_url: string;
-  cache: LRUCache;
-
   constructor(
     private http: HttpClient,
     private requestUtility: RequestUtilityService
   ) {
     this.api_url = process.env["NX_API_DATA_URL"] as string;
     this.def_url = process.env["NX_API_DEFINITION_URL"] as string;
-    this.cache = new LRUCache(cacheOptions);
   }
 
   upload(file: any, fileDetails: any) {
@@ -37,7 +29,7 @@ export class EntityDataService {
     criteria: Criteria
   ): Observable<PageData> {
     const url = this.requestUtility.addCriteria(
-      `${this.api_url}/entity/${id}/data`,
+      `${this.api_url}/entity/stage/${id}/data`,
       criteria
     );
     return this.http.get<PageData>(url);
@@ -62,16 +54,10 @@ export class EntityDataService {
     );
   }
 
-  exportToExcel(
-    id: string | number,
-    filename: string,
-    displayFormat: string,
-    criteria: Criteria
-  ) {
+  exportToExcel(id: string | number, filename: string, criteria: Criteria) {
     const url = this.requestUtility.addCriteria(
-      `${this.api_url}/entity/${id}/export/excel?displayFormat=${displayFormat}`,
-      criteria,
-      false
+      `${this.api_url}/entity/${id}/export/excel`,
+      criteria
     );
 
     return this.http
@@ -111,47 +97,32 @@ export class EntityDataService {
     return this.http.get<PageData>(url);
   }
 
-  loadLookupData(
-    id: string | number,
-    pageNumber: number = 0,
-    pageSize: number = DEFAULT_LOOKUP_PAGE_SIZE,
-    filters: any
-  ): Observable<PageData> {
+  loadLookupData(id: string | number,pageNumber:number = 0,pageSize:number =30): Observable<PageData> {
     const criteria: Criteria = {
       pager: {
         pageSize,
         pageNumber,
       },
-      filters: filters,
     };
     const headers = new HttpHeaders().set("no-loader", "true");
+
     const url = this.requestUtility.addCriteria(
       `${this.api_url}/entity/${id}/data?lookup=true`,
       criteria,
       false
     );
-
-    let data = this.cache.get(url);
-    if (data) {
-      return of(data);
-    } else {
-      return this.requestUtility.get(url, headers).pipe(
-        tap((items) => {
-          this.cache.set(url, items);
-        })
-      );
-    }
-
-    //return this.requestUtility.get(url, headers);
+    return this.http.get<PageData>(url, {
+      headers: headers,
+    });
   }
 
   createEntityData(id: string | number, data: any): Observable<any> {
-    return this.http.post(`${this.api_url}/entity/${id}/data`, {
+    return this.http.post(`${this.api_url}/entity/stage/${id}/data`, {
       data: [data],
     });
   }
   updateEntityData(id: string | number, data: any): Observable<any> {
-    return this.http.put(`${this.api_url}/entity/${id}/data`, { data: [data] });
+    return this.http.put(`${this.api_url}/entity/stage/${id}/data`, { data: [data] });
   }
   deleteEntityData(id: string | number, entityDataId: number): Observable<any> {
     return this.http.delete(

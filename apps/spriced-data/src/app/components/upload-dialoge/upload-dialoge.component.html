@@ -1,20 +1,28 @@
 <div class="container">
-  <h1 mat-dialog-title>Upload</h1>
+  <label  class="text-secondary-dark m-2 font-bold text-lg">
+    <mat-icon
+    style="height: 29px; width: 30px; font-size: 28px;padding-top: 6px;"
+    class="text-primary-dark justify-self-center"
+    >upload</mat-icon
+  > Upload
+  </label>
 
   <div mat-dialog-content>
-    <div class="grid grid-flow-row">
-      <mat-icon
-        style="height: 40px; width: 40px; font-size: 40px; margin-bottom: 1rem;"
-        class="text-primary-dark justify-self-center"
-        >upload</mat-icon
-      >
+    <div class="grid grid-flow-row ">
       <input
+        class="bg-primary-default text-white"
         type="file"
-        multiple="true"
+        multiple="false"
         #file
         (change)="uploadFile($event)"
         accept=".xls,.xlsx,.csv"
+        required
       />
+      <mat-error class="error"
+      *ngIf="errorMsg"
+      class="text-sm italic text-red-500"
+      >Selected file format is not supported</mat-error
+    >
     </div>
   </div>
 
@@ -22,7 +30,7 @@
     <button mat-raised-button color="accent" (click)="closeDialog()">
       Cancel
     </button>
-    <button mat-raised-button color="primary" (click)="doAction()">
+    <button mat-raised-button color="primary" (click)="doAction()" [disabled]="isDisabled">
       Upload
     </button>
   </div>

@@ -1,17 +1,15 @@
 <!-- <mat-tab label="View"> -->
 <div class="flex flex-grow h-full overflow-hidden p-5">
-  <sp-data-grid  class="w-full h-full" #dataGrid title="Derived Hierarchies"
+  <sp-data-grid class="w-full h-full" #dataGrid title="Derived Hierarchies" style="min-height: calc(100vh - 12rem);"
     [enableRowIndex]="false" [isArray]="false" [headers]="headers" [rows]="rows" [rowHeight]="30" [headerHeight]="30"
     [footerHeight]="0" [columnMode]="columnMode" [virtualScroll]="true" [selectionType]="selectionType" [limit]="10"
     [isExternalPaging]="false" [isExternalSorting]="false" [sortType]="sortType" [count]="totalElements"
     (itemSelected)="onItemSelected($event)" [selected]="!!selectedHierarchy ? [selectedHierarchy] : []">
     <ng-container>
       <sp-header-component-wrapper title="Model">
-        <mat-form-field>
-          <mat-select (selectionChange)="onModelChange($event)" [(value)]="selectedModel">
-            <mat-option class="option" *ngFor="let item of modelList" [value]="item">{{ item.displayName}}</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <sp-select-search [model]="selectedModel" [appearance]="'fill'" (selectionChange)="onModelChange($event)"
+          [sorters]="[{property:'displayName'}]" [bindLabelKey]="'displayName'" [items]="modelList">
+        </sp-select-search>
       </sp-header-component-wrapper>
       <sp-header-action icon="edit" text="View/Edit" title="View/Edit Derived Hierarchy"
         [disabled]="selectedHierarchy == null" (actionClick)="onEdit()"></sp-header-action>

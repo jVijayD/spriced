@@ -19,6 +19,7 @@ export abstract class BaseComponent implements ControlValueAccessor {
   private _hasRule = false;
   private _visible = true;
   private _subscriptions: Subscription[] = [];
+  private _valueChanged$: Subject<any> = new Subject();
 
   protected _control!: GenericControl;
   protected ruleExecution$ = new Subject<{
@@ -51,15 +52,26 @@ export abstract class BaseComponent implements ControlValueAccessor {
   }
 
   set value(val: unknown) {
-    if (val !== this._value) {
-      this._value = val;
-      this.onChange(val);
-      //this.onTouched(val);
+    try {
+      if (val !== this._value) {
+        this._value = val;
+        this.onChange(val);
+        this._valueChanged$.next(val);
+        //this.onTouched(val);
+      }
+    } catch (error) {
+      if (val !== null) {
+        throw error;
+      }
     }
   }
 
   get value() {
     return this._value;
+  }
+
+  protected getValueChangedObservable() {
+    return this._valueChanged$.asObservable();
   }
 
   constructor(protected dynamicFormService: DynamicFormService) {

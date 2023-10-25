@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, Output, OnDestroy, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, Output, OnDestroy, ViewChild, TemplateRef, ChangeDetectorRef } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -29,6 +29,7 @@ import {
 import { ColumnMode, SelectionType, SortType } from '@swimlane/ngx-datatable';
 import {
   Subject,
+  debounceTime,
   forkJoin,
   takeUntil
 } from 'rxjs';
@@ -62,6 +63,9 @@ export class ListComponent implements OnInit, OnDestroy {
   public defaultModel: any;
   public defaultEntity: any;
   public currentAttributeId: string = '';
+  public filteredModels: any;
+  public filteredAttributes: any;
+  public filteredEntites: any;
   displayedColumns: string[] = [
     'Priority',
     'Excluded',
@@ -162,6 +166,7 @@ export class ListComponent implements OnInit, OnDestroy {
     private errorPanelService: ErrorPanelService,
     private msgSrv: SnackBarService,
     private activeRoute: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {
     this.entityId = +this.activeRoute?.snapshot?.queryParams?.['entity_id'];
     this.modelId = +this.activeRoute?.snapshot?.queryParams?.['model_id'];
@@ -186,18 +191,26 @@ export class ListComponent implements OnInit, OnDestroy {
 
     // HANDLE THIS FOR GET RULES AND MODELS APIS
     this.getRulesAndModelsData();
-    this.businessRuleService.getAllRules().subscribe((rules: any) => {
-      if (rules) {
-        // Handling order by id
-        rules.sort((a: any, b: any) => {
-          return a.id - b.id;
-        });
-        this.dataSource = rules;
-      }
-    },
-      (error: any) => {
-        console.error('Error occurred during API request:', error);
-      })
+    this.handleRulesData();
+
+    this.listForm.valueChanges.pipe(
+      debounceTime(500)
+    ).subscribe((item: any) => {
+      this.filteredModels = this.filterItems(this.models, item.modelFilter);
+      this.filteredEntites = this.filterItems(this.entities, item.entityFilter);
+      this.filterAttributeSelection(item.attributeFilter);
+    })
+  }
+
+  public async handleRulesData() {
+    const { rules } = await this.getAllRulesApi();
+    if (rules) {
+      //     // Handling order by id
+      rules.sort((a: any, b: any) => {
+        return a.id - b.id;
+      });
+      this.dataSource = rules;
+    }
   }
 
   // HANDLE FOR GETTING RULES AND MODEL DATA
@@ -217,6 +230,7 @@ export class ListComponent implements OnInit, OnDestroy {
     if (models) {
 
       this.models = models;
+      this.filteredModels = models;
       this.filterData = this.dataSource;
       // this.currentDataSource =  this.dataSource;
       this.currentDataSource = this.rows.slice(
@@ -235,15 +249,18 @@ export class ListComponent implements OnInit, OnDestroy {
   public formbuild() {
     this.listForm = this.fb.group({
       model: new FormControl('', [Validators.required]),
+      modelFilter: new FormControl(''),
       entity: new FormControl('', [Validators.required]),
+      entityFilter: new FormControl(''),
       attrubute: new FormControl('', [Validators.required]),
+      attributeFilter: new FormControl('')
     });
   }
 
   /**
  * HANDLE THIS FUNCTION FOR GET ALL THE RULES
  */
-  public getAllRules(): Promise<any> {
+  public getAllRulesApi(): Promise<any> {
     return new Promise((resolve, rejects) => {
       this.businessRuleService.getAllRules().subscribe(
         (rules: any) => {
@@ -400,13 +417,6 @@ export class ListComponent implements OnInit, OnDestroy {
                 this.loading = false;
                 this.errorPanelService.init();
                 this.msgSrv.success('Excluded is updated successfully!');
-                // this._snackBar.open(
-                //   'Excluded is updated successfully!',
-                //   'close',
-                //   {
-                //     duration: 3000,
-                //   }
-                // );
                 this.onRefresh();
               },
               (error: any) => {
@@ -471,6 +481,27 @@ export class ListComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Generic filtering function
+  filterItems(items: any[], searchText: string): any[] {
+    return items.filter((item: any) => {
+      return item.displayName
+        .trim()
+        .toLowerCase()
+        .includes(searchText.trim().toLowerCase());
+    });
+  }
+
+  filterAttributeSelection(text: string) {
+    this.filteredAttributes = this.attributes.filter((item: any) => {
+      return (
+        item.displayName
+          .trim()
+          .toLowerCase()
+          .indexOf(text?.trim().toLowerCase()) != -1
+      );
+    });
+  }
+
   onItemSelected(e: any) {
     console.log(e);
     this.selectedItem = e;
@@ -497,6 +528,7 @@ export class ListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.notifier$))
       .subscribe((res: any) => {
         this.entities = res;
+        this.filteredEntites = res;
         const entity = res.find((el: any) => el.groupId === this.defaultModel)
         this.defaultEntity = this.entityId && !text ? this.entityId : entity?.id;
         this.modelId = id;
@@ -538,6 +570,7 @@ export class ListComponent implements OnInit, OnDestroy {
         },
         ...this.domainAttributes,
       ];
+      this.filteredAttributes = this.attributes;
       this.defaultAttribute = this.attributeId ? this.attributeId : 'ALL';
       // this.attributes = entity.attributes;
       this.filterData = this.dataSource.filter((res: any) => res.entityId === id);
@@ -624,7 +657,7 @@ export class ListComponent implements OnInit, OnDestroy {
   getExpressionTooltip(element: any): string {
     let tooltipText = `${this.getConditionTooltipText(element.condition, 3)}`;
     tooltipText += this.getActionTooltipText(element.conditionalAction);
-
+    this.cdr.detectChanges();
     return tooltipText;
   }
 
@@ -661,7 +694,7 @@ export class ListComponent implements OnInit, OnDestroy {
           );
           operand = operand?.name;
         } else if (
-          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute.dataType)
+          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute?.dataType) && condition.operandType === 'CONSTANT' && condition?.operand !== '' && !!condition?.operand
         ) {
           const dateTimes = condition?.operand.split(","); // Split the input string by commas
 
@@ -671,14 +704,14 @@ export class ListComponent implements OnInit, OnDestroy {
           const joinedString = formattedDates.join(" & ");
           const finalArray = [`${joinedString}`];
           operand = finalArray;
-        } else {
-          operand =
-            condition?.operand !== ""
-              ? condition?.operand
-              : condition?.operandType.toLowerCase();
         }
+        else {
+          operand = condition?.operand;
+        }
+        operand = !!condition?.operand && condition?.operand !== "" ? `to ${operand}` : '';
+
         tooltipConditionText += `${conditionType} ${attribute?.name.toLowerCase()}  
-      ${condition?.operatorType.toLowerCase()} to ${operand}`;
+        ${condition?.operatorType.toLowerCase()} ${operand}`;
 
         if (condition.subConditions && condition.subConditions.length > 0) {
           tooltipConditionText += ` ${subConditionType} (`;
@@ -726,7 +759,7 @@ export class ListComponent implements OnInit, OnDestroy {
           );
           operand = operand?.name;
         } else if (
-          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute.dataType)
+          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute?.dataType) && condition.operandType === 'CONSTANT' && condition?.operand !== '' && !!condition?.operand
         ) {
           const dateTimes = condition?.operand.split(","); // Split the input string by commas
 
@@ -736,15 +769,14 @@ export class ListComponent implements OnInit, OnDestroy {
           const joinedString = formattedDates.join(" & ");
           const finalArray = [`${joinedString}`];
           operand = finalArray;
-        } else {
-          operand =
-            condition?.operand !== ""
-              ? condition?.operand
-              : condition?.operandType.toLowerCase(1);
         }
+        else {
+          operand = condition?.operand;
+        }
+        operand = !!condition?.operand && condition?.operand !== "" ? `to ${operand}` : '';
 
         subConditionText += `${conditionType} ${attribute.name
-          } ${condition?.operatorType.toLowerCase()} to ${operand}`;
+          } ${condition?.operatorType.toLowerCase()} ${operand}`;
         if (condition.subConditions && condition.subConditions.length > 0) {
           subConditionText += ` ${subConditionType} (`;
           subConditionText += this.getSubConditionText(
@@ -813,8 +845,14 @@ export class ListComponent implements OnInit, OnDestroy {
           attribute.name = attribute?.name.replace(/_/g, ' ');
           action.actionType = action?.actionType.replace(/_/g, ' ')
         }
-        if (
-          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute.dataType)
+        if (action.operandType === "ATTRIBUTE") {
+          operand = this.attributes.find(
+            (item: any) => item.id === action.operand
+          );
+          operand = operand?.name;
+        }
+        else if (
+          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute?.dataType) && action?.operandType === 'CONSTANT' && action?.operand !== '' && !!action?.operand
         ) {
           const dateTimes = action?.operand.split(","); // Split the input string by commas
 
@@ -825,6 +863,9 @@ export class ListComponent implements OnInit, OnDestroy {
           const finalArray = [`${joinedString}`];
           operand = finalArray;
         }
+        else {
+          operand = action?.operand;
+        }
         if (action.actionType.toLowerCase().trim().endsWith('to')) {
           const lastindex = action.actionType.toLowerCase().lastIndexOf('to');
           if (
@@ -833,8 +874,9 @@ export class ListComponent implements OnInit, OnDestroy {
             action.actionType = action.actionType.substring(0, lastindex)
           }
         };
+        operand = !!action?.operand && action?.operand !== "" ? `to ${operand}` : !['IS REQUIRED', 'IS NOT VALID'].includes(action?.actionType) ? ` " "` : '';
         tooltipActionConditionsText += `${attribute.name
-          } ${action.actionType.toLowerCase()} to ${operand}`;
+          } ${action.actionType.toLowerCase()} ${operand}`;
         const lastAction = actions.length - 1;
         lastAction != index ? (tooltipActionConditionsText += "<br>") : "";
       });
@@ -870,6 +912,7 @@ export class ListComponent implements OnInit, OnDestroy {
    * HANDLE THIS FOR REFRESH THE TABLE
    */
   onRefresh() {
+    this.handleRulesData();
     this.getRulesAndModelsData();
     this.selectedItem = null;
     this.dataGrid.clearSelection();

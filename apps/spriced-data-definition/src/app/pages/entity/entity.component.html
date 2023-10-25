@@ -34,9 +34,17 @@
       <sp-header-component-wrapper title="Model">
         <mat-form-field>
           <mat-select (selectionChange)="load($event)" [(value)]="groupId">
+            <mat-option>
+              <ngx-mat-select-search
+                placeholderLabel="Search"
+                ngModel
+                (ngModelChange)="filterModelsSelection($event)"
+              ></ngx-mat-select-search>
+            </mat-option>
+            <mat-option value="" class="option">--Select--</mat-option>
             <mat-option
               class="option"
-              *ngFor="let item of modelList"
+              *ngFor="let item of filteredModelList"
               [value]="item.id"
               >{{ item.displayName }}</mat-option
             >
