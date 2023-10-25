@@ -185,11 +185,6 @@ export class EntityAddComponent implements OnInit {
     //   });
     // }
     // this.local_data.attributes = showInFormAttributes;
-    this.local_data.attributes = this.local_data?.attributes?.filter(
-      (value: any) => {
-        return !value.systemAttribute;
-      }
-    );
     this.rows = this.local_data?.attributes || [];
     this.totalElements = this.rows.length;
   }
@@ -322,6 +317,7 @@ if(update)
         return true;
       });
       this.rows = [...this.rows];
+      this.isChangedValue = this.areObjectsEqual(this.previousEntityData.attributes, this.rows);
     }
   }
     if (this.attAction == "Add") {
