@@ -1,7 +1,10 @@
 button:disabled {
   @apply cursor-default text-primary-disabled;
 }
-
+.selected
+{
+ background-color: #f70d1a;
+}
 .parent-header-action-menu {
   padding: 0px;
   .mat-mdc-menu-content {
