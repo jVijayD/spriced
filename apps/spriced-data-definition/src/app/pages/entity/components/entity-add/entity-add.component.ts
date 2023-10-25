@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  HostListener,
   Inject,
   OnInit,
   Optional,
@@ -133,6 +134,7 @@ export class EntityAddComponent implements OnInit {
     private dialogService: DialogService,
     private snackbarService:SnackBarService
   ) {
+    this.dialogRef.disableClose = true;
     this.attDetails.dataType = "STRING_VAR";
     this.attDetails.type = "FREE_FORM";
     this.attDetails.width = DEFAULT_ATTRIBUTE_WIDTH;
@@ -177,6 +179,40 @@ export class EntityAddComponent implements OnInit {
     this.rows = this.local_data?.attributes || [];
     this.totalElements = this.rows.length;
   }
+  @HostListener('window:keyup.esc',['$event'])
+  onKeyUp(){
+    if(this.action == 'Add'){
+      if(this.local_data.displayName){
+        this.showSaveDialog();
+      }else{
+        this.dialogRef.close({event:"Cancel"});
+       }
+  }
+  else if(this.action == 'Edit'){
+   if(this.data.row.displayName !== this.local_data.displayName){
+      this.showSaveDialog();
+   }else{
+    this.dialogRef.close({event:"Cancel"});
+   }
+  }    
+  } 
+  showSaveDialog(){
+    const dialogResult = this.dialogService.openConfirmDialoge({
+      title: "Confirm",
+      icon: "public",
+      message:
+        "All the unsaved changes will be lost. Do you want to save the changes ?",
+      maxWidth: 400,
+    });
+  
+    dialogResult.afterClosed().subscribe((val) => {
+      if (val) {
+        
+      }else{
+        this.dialogRef.close({event:"Cancel"});
+      } 
+    });
+  }
   ngOnInit(): void {
     this.initForm();
   }
@@ -193,7 +229,20 @@ export class EntityAddComponent implements OnInit {
   }
 
   closeDialog() {
-    this.dialogRef.close({ event: "Cancel" });
+    if(this.action == 'Add'){
+      if(this.local_data.displayName){
+        this.showSaveDialog();
+      }else{
+        this.dialogRef.close({event:"Cancel"});
+       }
+  }
+  else if(this.action == 'Edit'){
+   if(this.data.row.displayName !== this.local_data.displayName){
+      this.showSaveDialog();
+   }else{
+    this.dialogRef.close({event:"Cancel"});
+   }
+  }    
   }
 
   radioButtonChanged(event: any) {

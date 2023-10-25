@@ -15,6 +15,7 @@ import {
   FORM_DATA_SERVICE,
   FormFieldControls,
   SnackBarService,
+  DialogService
 } from "@spriced-frontend/spriced-ui-lib";
 import { FormGroup, Validators } from "@angular/forms";
 import { MatIconModule } from "@angular/material/icon";
@@ -43,9 +44,10 @@ export class ModelAddComponent {
     public dialogRef: MatDialogRef<ModelAddComponent>,
     private modelService: ModelService,
     private snackbarService: SnackBarService,
+    private dialogService:DialogService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.dialogRef.disableClose = false;
+    this.dialogRef.disableClose = true;
   
     this.appForm = {
       title: this.data.action === "Edit" ? "Edit Model" : "Add Model",
@@ -143,7 +145,36 @@ export class ModelAddComponent {
     this.dialogRef.close(data);
   }
   onReset(event: any) {
-    this.dialogRef.close(null);
+      if(this.data.action == 'Add'){
+      if(event.displayName){
+        this.showSaveDialog();
+      }else{
+        this.dialogRef.close({event:"Cancel"});
+       }
+  }
+  else if(this.data.action == 'Edit'){
+    if(this.data.value.displayName !== event.displayName){
+      this.showSaveDialog();
+    }else{
+      this.dialogRef.close({event:"Cancel"});
+    }
+  }    
+  }
+  showSaveDialog(){
+    const dialogResult = this.dialogService.openConfirmDialoge({
+      title: "Confirm",
+      icon: "public",
+      message:
+      "All the unsaved changes will be lost. Do you want to save the changes ?",
+      maxWidth: 400,
+    });
+    dialogResult.afterClosed().subscribe((val) => {
+      if (val) {
+              
+      }else{
+        this.dialogRef.close({event:"Cancel"});
+      }
+    });
   }
   onSubmit(data: FormGroup<any>) {
     if (data.valid) {
