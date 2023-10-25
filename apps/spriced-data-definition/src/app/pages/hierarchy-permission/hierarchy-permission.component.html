@@ -1,0 +1,81 @@
+<div style="margin-bottom: 55px;">
+    <form [formGroup]="listForm">
+        <div class="flex items-center grid grid-cols-7 mb-2">
+            <div class="col-span-1">
+                <mat-label class="text-sm"> Model: </mat-label>
+            </div>
+            <div class="col-span-6">
+                <mat-form-field [appearance]="'outline'" class="full-width ">
+                    <mat-select matNativeControl (valueChange)="handleEntityByModels($event)" [(value)]="defaultModelId">
+                        <mat-option>
+                            <ngx-mat-select-search placeholderLabel="Search"
+                                formControlName="modelFilter"></ngx-mat-select-search>
+                        </mat-option>
+                        <mat-option value="" class="option">--Select--</mat-option>
+                        <mat-option *ngFor="let model of filteredModels" [value]="model.id">
+                            {{model.displayName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="flex items-center grid grid-cols-7 mb-2">
+            <div class="col-span-1">
+                <mat-label class="text-sm"> Entity: </mat-label>
+            </div>
+            <div class="col-span-6">
+                <mat-form-field [appearance]="'outline'" class="full-width ">
+                    <mat-select matNativeControl (valueChange)="handleHierarchyByEntity($event)"
+                        [(value)]="defaultEntity">
+                        <mat-option>
+                            <ngx-mat-select-search placeholderLabel="Search"
+                                formControlName="entityFilter"></ngx-mat-select-search>
+                        </mat-option>
+                        <mat-option value="" class="option">--Select--</mat-option>
+                        <mat-option *ngFor="let entity of filteredEntities" [value]="entity.id">
+                            {{entity.displayName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="flex items-center grid grid-cols-7 mb-2">
+            <div class="col-span-1">
+                <mat-label class="text-sm"> Hierarchy: </mat-label>
+            </div>
+            <div class="col-span-6">
+                <mat-form-field [appearance]="'outline'" class="full-width ">
+                    <mat-select matNativeControl (valueChange)="handleHierarchy($event)" [(value)]="defaultHierarchy">
+                        <mat-option>
+                            <ngx-mat-select-search placeholderLabel="Search"
+                                formControlName="hierarchyFilter"></ngx-mat-select-search>
+                        </mat-option>
+                        <mat-option value="" class="option">--Select--</mat-option>
+                        <mat-option *ngFor="let hierarchy of filteredHierarchy" [value]="hierarchy.id">
+                            {{hierarchy.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<div class="flex grid grid-cols-5 gap-4">
+    <div class="col-span-2">
+        <sp-data-grid #dataGrid class="w-full h-full" [title]="'Hierarchy member permission'" [columnMode]="columnMode"
+            [enableRowIndex]="false" [isArray]="false" [headers]="permissionHeaders" [rows]="hierarchyPreviewNodes"
+            [rowHeight]="40" [headerHeight]="40" [footerHeight]="30" [virtualScroll]="false"
+            [selectionType]="selectionType"></sp-data-grid>
+    </div>
+
+    <div class="col-span-3">
+        <sp-data-grid #dataGrid class="w-full h-full" [title]="'Hierarchy member summary'" [columnMode]="columnMode"
+            [enableRowIndex]="false" [isArray]="false" [headers]="headers" [rows]="row" [rowHeight]="40"
+            [headerHeight]="40" [footerHeight]="30" [virtualScroll]="false"
+            [selectionType]="selectionType"></sp-data-grid>
+    </div>
+</div>
