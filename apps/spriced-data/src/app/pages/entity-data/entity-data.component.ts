@@ -531,6 +531,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.entityDataService.exportToExcel(
       this.currentSelectedEntity?.id as number,
       `${this.currentSelectedEntity?.displayName}.xlsx`,
+      this.globalSettings?.displayFormat || this.defaultCodeSetting,
       this.currentCriteria
     );
   }
