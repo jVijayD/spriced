@@ -425,7 +425,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       data: this.currentSelectedEntity,
     });
 
-    dialogResult.afterClosed().subscribe((val) => {});
+    dialogResult.afterClosed().subscribe((val) => { });
   }
 
   onSettings() {
@@ -759,10 +759,19 @@ export class EntityDataComponent implements OnDestroy, OnInit {
               errorMessage += rulResult.message;
             });
           });
-          const errMsg = errorMessage.split('{SEP}');
-           // Get the first message
-          const firstMessage = errMsg[0] ? errMsg[0] : errorMessage;
-          this.snackbarService.error(firstMessage);
+          const sepStart = '{SEP}';
+          const sepEnd = '{/SEP}';
+
+          let firstMessage = "";
+          const startIndex = errorMessage.indexOf(sepStart);
+          const endIndex = errorMessage.indexOf(sepEnd);
+
+          if (startIndex !== -1 && endIndex !== -1 && startIndex < endIndex) {
+            firstMessage = errorMessage.substring(startIndex + sepStart.length, endIndex).trim();
+            this.snackbarService.error(firstMessage);
+          } else {
+            this.snackbarService.error(errorMessage);
+          }
           this.statusPannelService.setErrors([
             {
               type: ErrorTypes.ERROR,
