@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  HostListener,
   Input,
   Output,
 } from "@angular/core";
@@ -60,6 +61,15 @@ export class DynamicFormContainerComponent {
     this.setCurrentFormData();
   }
 
+  @HostListener('window:keyup.esc',['$event'])
+  onKeyUp(e:KeyboardEvent){
+    if(this.reset === "Cancel"){
+      const val = { ...this.currentFormData?.form.value };
+    this.formSubmitAttempt = false;
+    this.resetEvent.emit(val);
+    }    
+  }
+
   onFormSubmit() {
     this.formSubmitAttempt = true;
     if (this.currentFormData?.form?.valid) {
@@ -68,10 +78,16 @@ export class DynamicFormContainerComponent {
   }
 
   onFormReset() {
-    const val = { ...this.currentFormData?.form.value };
+    if(this.reset === "Cancel"){
+      const val = { ...this.currentFormData?.form.value };
+    this.formSubmitAttempt = false;
+    this.resetEvent.emit(val);
+    }else{
+      const val = { ...this.currentFormData?.form.value };
     this.formSubmitAttempt = false;
     this.currentFormData?.form?.reset({ ...this.itemsNotReset() });
     this.resetEvent.emit(val);
+    }  
   }
 
   private dispatchSubmitEvent(form: FormGroup) {
