@@ -759,7 +759,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
               errorMessage += rulResult.message;
             });
           });
-          this.snackbarService.error(errorMessage);
+          const errMsg = errorMessage.split('{SEP}');
+           // Get the first message
+          const firstMessage = errMsg[0] ? errMsg[0] : errorMessage;
+          this.snackbarService.error(firstMessage);
           this.statusPannelService.setErrors([
             {
               type: ErrorTypes.ERROR,
