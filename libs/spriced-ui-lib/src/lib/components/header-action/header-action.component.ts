@@ -35,6 +35,9 @@ export class HeaderActionComponent {
   disabled = false;
 
   @Input()
+  selected = false;
+
+  @Input()
   showText = false;
 
   @Output()

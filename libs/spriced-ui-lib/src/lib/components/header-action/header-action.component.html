@@ -1,7 +1,7 @@
 <button
   *ngIf="!context"
   style="border-right-width: 1px"
-  class="text-white h-full flex flex-row cursor-pointer pl-2 pr-1 border-r-primary-light border-solid"
+  class="text-white h-full flex flex-row cursor-pointer pl-2 pr-1 border-r-primary-light border-solid {{ selected ? 'selected' : '' }}"
   (click)="onClick()"
   [title]="title || text"
   [disabled]="disabled"
