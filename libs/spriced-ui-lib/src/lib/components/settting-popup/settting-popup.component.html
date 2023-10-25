@@ -1,0 +1,55 @@
+<label class="text-secondary-dark m-2 font-bold text-lg">Settings</label>
+
+<div mat-dialog-content class="grid">
+  <mat-card style="padding: 20px" class="drop-shadow">
+    <mat-label class="mb-2"
+      ><strong>{{ data.displayName || data.name }}</strong></mat-label
+    >
+    <mat-form-field appearance="outline" class="mb-4">
+      <mat-label> Records per page</mat-label>
+      <input
+        [(ngModel)]="noOfRecords"
+        matInput
+        type="number"
+        min="1"
+        oninput="validity.valid||(value='');"
+      />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Freeze columns</mat-label>
+      <input
+        [(ngModel)]="freeze"
+        matInput
+        type="number"
+        min="0"
+        oninput="validity.valid||(value='');"
+      />
+    </mat-form-field>
+  </mat-card>
+  <mat-card style="padding: 20px; margin-top: 4px" class="drop-shadow">
+    <mat-label class="mb-2"><strong>All Entity</strong></mat-label>
+    <mat-form-field appearance="outline" class="mb-4">
+      <mat-label> Display format</mat-label>
+      <mat-select [(ngModel)]="displayFormat">
+        <mat-option value="code">Code</mat-option>
+        <mat-option value="codename">Code&lcub;Name&rcub;</mat-option>
+        <mat-option value="namecode">Name&lcub;Code&rcub;</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-checkbox color="primary" [(ngModel)]="showSystem"
+      >Show System Attribute</mat-checkbox
+    >
+  </mat-card>
+</div>
+<div class="button-container">
+  <button
+    mat-button
+    (click)="closeDialog()"
+    mat-raised-button
+    color="accent"
+    type="button"
+  >
+    Cancel
+  </button>
+  <button mat-raised-button color="primary" (click)="save()">Ok</button>
+</div>

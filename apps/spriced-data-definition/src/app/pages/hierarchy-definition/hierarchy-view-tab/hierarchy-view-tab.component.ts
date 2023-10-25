@@ -26,6 +26,7 @@ import * as moment from "moment";
 import { NgFor } from "@angular/common";
 import { Model } from "@spriced-frontend/spriced-common-lib";
 import { HierarchyServiceService } from "../service/hierarchy-service.service";
+import { Router } from "@angular/router";
 @Component({
   selector: "app-hierarchy-view-tab",
   templateUrl: "./hierarchy-view-tab.component.html",
@@ -99,11 +100,16 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
 
   constructor(
     private hierarchyService: HierarchyServiceService,
-    private dialogService: DialogService) { }
+    private dialogService: DialogService,
+    private router: Router) { }
   ngOnDestroy() { }
   ngOnInit() { }
   onItemSelected(e: any) {
     this.selectedHierarchy = e;
+    const groupId = e.modelId;
+    const id = e.entityId;
+    const hierarchyId = e.id;
+    this.router.navigate(["/spriced-data-definition/derived-hierarchy/" + hierarchyId + "/" + groupId + "/", id]);
   }
 
   loadAllHierarchies(model: Model) {
