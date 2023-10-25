@@ -1,0 +1,9 @@
+.grid {
+    display: grid;
+    grid-template-columns: auto;
+  }
+  .button-container {
+    @apply flex flex-row justify-center gap-5;
+    margin-bottom: 1rem;
+  }
+  

@@ -20,6 +20,7 @@ import {
   HeaderActionComponent,
   FORM_DATA_SERVICE,
   DynamicFormModule,
+  SetttingPopupComponent,
 } from "@spriced-frontend/spriced-ui-lib";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import {
@@ -105,6 +106,7 @@ export class DerivedHierarchyComponent {
   public showTooltip: boolean = false;
 
   defaultCodeSetting = "namecode";
+  hierarchyData: any;
 
 
   constructor(
@@ -137,9 +139,9 @@ export class DerivedHierarchyComponent {
     this.hierarchyId = this.aroute.snapshot.paramMap.get("hierarchyId") ? Number(this.aroute.snapshot.paramMap.get("hierarchyId")) : null;
     if (this.hierarchyId) {
       this.entityDataService.loadHierarchy(this.hierarchyId).subscribe((e: any) => {
-        // this.hierarchyData = e;
+        this.hierarchyData = e;
         if (!!this.hierarchyId) {
-          this.derivedHierarchy.onBind(e, '')
+          this.derivedHierarchy.onBind(e, this.globalSettings?.displayFormat)
         }
       });
     }
@@ -415,24 +417,25 @@ export class DerivedHierarchyComponent {
   //   dialogResult.afterClosed().subscribe((val) => {});
   // }
 
-  // onSettings() {
-  //   const dialogResult = this.dialog.open(SettingsPopUpComponent, {
-  //     data: this.currentSelectedEntity,
-  //   });
+  onSettings() {
+    const dialogResult = this.dialog.open(SetttingPopupComponent, {
+      data: this.currentSelectedEntity,
+    });
 
-  //   dialogResult.afterClosed().subscribe((val) => {
-  //     if (val === "ok") {
-  //       this.globalSettings = this.settings.getGlobalSettings();
-  //       this.createDynamicGrid(
-  //         this.currentSelectedEntity as Entity,
-  //         this.currentCriteria,
-  //         this.globalSettings
-  //       );
-
-  //       this.createDynamicUIMapping(this.currentSelectedEntity);
-  //     }
-  //   });
-  // }
+    dialogResult.afterClosed().subscribe((val) => {
+      if (val === "ok") {
+        this.globalSettings = this.settings.getGlobalSettings();
+        this.createDynamicGrid(
+          this.currentSelectedEntity as Entity,
+          this.currentCriteria,
+          this.globalSettings
+        );
+        debugger
+        this.createDynamicUIMapping(this.currentSelectedEntity);
+        this.derivedHierarchy.onBind(this.hierarchyData,this.globalSettings?.displayFormat);
+      }
+    });
+  }
 
   // showAddPopup() {
   //   this.dialogService.openDialog(AddModelComponent, {
