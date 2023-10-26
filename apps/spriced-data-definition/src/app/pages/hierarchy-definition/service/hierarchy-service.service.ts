@@ -19,6 +19,10 @@ export class HierarchyServiceService {
       .get(`${this.api_url}/hierarchy/model/${model.id}`)
       .pipe(map((h) => h as Hierarchy[]));
   }
+  loadHeirarchysummaryByModelId(model:Model,role:any){
+   return this.http.get(`/getPermissionSummary/${model}}/${role}`)
+   .pipe(map((h) => h as Hierarchy[]));
+  }
   loadHierarchy(hierarchy: Hierarchy) {
     return this.http
       .get(`${this.api_url}/hierarchy/${hierarchy.id}`)
