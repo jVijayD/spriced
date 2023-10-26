@@ -4,7 +4,7 @@ import {
   Criteria,
   PageData,
   RequestUtilityService,
-} from "@spriced-frontend/spriced-common-lib";
+} from "../../index";
 import { BehaviorSubject, Observable, map, of, tap } from "rxjs";
 import { saveAs } from "file-saver";
 import { LRUCache } from "typescript-lru-cache";
