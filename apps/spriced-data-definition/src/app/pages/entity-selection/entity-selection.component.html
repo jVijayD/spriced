@@ -1,0 +1,54 @@
+<div class="flex flex-row space-x-2 items-center">
+    <label>Model</label>
+    <mat-form-field class="flex-grow w-[8.5rem]">
+      <mat-select
+        [value]="selectedModelValue"
+        (selectionChange)="onModelSelectionChange($event)"
+      >
+        <mat-option>
+          <ngx-mat-select-search
+            placeholderLabel="Search"
+            ngModel
+            (ngModelChange)="filterModelSelection($event)"
+          ></ngx-mat-select-search>
+        </mat-option>
+        <mat-option value="" class="option">--Select--</mat-option>
+        <mat-option
+          *ngFor="
+            let item of this.filteredModels | orderBy : 'displayName' : 'asc'
+          "
+          [value]="item.id"
+          class="option"
+        >
+          {{ item.displayName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <label>Entity</label>
+    <mat-form-field class="flex-grow w-[8.5rem]">
+      <mat-select
+        matNativeControl
+        [value]="selectedEntity"
+        (selectionChange)="onEntitySelectionChange($event)"
+      >
+        <mat-option>
+          <ngx-mat-select-search
+            placeholderLabel="Search"
+            ngModel
+            (ngModelChange)="filterEntitySelection($event)"
+          ></ngx-mat-select-search>
+        </mat-option>
+        <mat-option value="" class="option">--Select--</mat-option>
+        <mat-option
+          *ngFor="
+            let item of this.filteredEntities | orderBy : 'displayName' : 'asc'
+          "
+          [value]="item"
+          class="option"
+        >
+          {{ item.displayName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  

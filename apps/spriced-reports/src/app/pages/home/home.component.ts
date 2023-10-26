@@ -107,6 +107,46 @@ export class HomeComponent implements OnInit {
         name: "Suggested Transit Unique Parts",
         id: "73682193-2d83-4baf-8f62-9fe9c9fdb481",
       },
+      {
+        name: "PC1.2_APM837_Job Failure List",
+        id: "0f55ca12-e5a4-4e4e-9567-45700b572341",
+      },
+      {
+        name: "CC3.3_APM837_System Data Change Listing",
+        id: "e7db046e-154c-41d3-9a05-cc12a40dc99c",
+      },
+      {
+        name: "MDS USER LIST",
+        id: "21b45a63-2b5f-4d75-92d9-180d4f7a6f22",
+      },
+      {
+        name: "CC33_323",
+        id: "abc9bb46-26ba-487f-87a4-7907612df9d1",
+      },
+      {
+        name: "MDS Transaction Log",
+        id: "2453b852-5128-4e13-8085-726f26e20af5",
+      },
+      {
+        name: "IMS (CPIF) Kit Components Prices and Costs",
+        id: "b6bd64ec-2d06-4034-985c-e9922a17053e",
+      },
+      {
+        name: "Core xRef",
+        id: "e2b2f162-328a-46b6-9526-1a9d4c49d40b",
+      },
+      {
+        name: "Resulting Cost History",
+        id: "0fa29ccd-25e6-49e1-aab7-3d201d0ba4d6",
+      },
+      {
+        name: "Part Entity Audit Report",
+        id: "3f03816c-f38d-43ca-9f13-7774613e84e2",
+      },
+      {
+        name: "Price List Outbound",
+        id: "e61dae3b-1650-48f7-88e0-bc96a5672c0e",
+      },
     ];
   }
 }

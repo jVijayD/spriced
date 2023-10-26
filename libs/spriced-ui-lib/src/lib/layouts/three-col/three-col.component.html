@@ -1,0 +1,16 @@
+<div class="col-height">
+    <div class="col-left" *ngIf="!singleColumn">
+      <ng-content select="[left]"></ng-content>
+    </div>
+
+    <div
+      class="col-center"
+      [ngClass]="{ 'w-11/12': !singleColumn, 'w-full': singleColumn }"
+    >
+      <ng-content select="[center]"></ng-content>
+    </div>
+
+    <div class="col-right" *ngIf="!singleColumn">
+      <ng-content select="[right]"></ng-content>
+    </div>
+  </div>

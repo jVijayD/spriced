@@ -1,119 +1,87 @@
 import {
-  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
-  OnDestroy,
-  OnInit,
   ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   AppForm,
   DataGridComponent,
-  DialogueModule,
-  DynamicFormModule,
-  DynamicFormService,
-  DialogService,
-  SnackBarService,
   SnackbarModule,
-  FORM_DATA_SERVICE,
-  FormFieldControls,
   Header,
-  HeaderActionComponent,
-  Paginate,
-  TwoColThreeForthComponent,
   HeaderComponentWrapperComponent,
   GridConstants,
+  ThreeColComponent,
+  SnackBarService,
+  DialogService,
+  DynamicFormService,
+  Paginate,
+  FormFieldControls,
+  HeaderActionComponent,
+  FORM_DATA_SERVICE,
+  DynamicFormModule,
+  SetttingPopupComponent,
 } from "@spriced-frontend/spriced-ui-lib";
-import { MatButtonModule } from "@angular/material/button";
-import { MatIconModule } from "@angular/material/icon";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
-import { EntitySelectComponent } from "../../components/entity-select/entity-select.component";
-import { AddModelComponent } from "./add-model/add-model.component";
-import { MatDialog } from "@angular/material/dialog";
-import { UploadDialogeComponent } from "../../components/upload-dialoge/upload-dialoge.component";
-import { SettingsPopUpComponent } from "../../components/settingsPopUp/settings-pop-up.component";
-import { StatusComponent } from "../../components/status/status.component";
 import {
-  MatExpansionModule,
-  MatExpansionPanel,
+  MatExpansionModule, MatExpansionPanel,
 } from "@angular/material/expansion";
 import {
-  Attribute,
   Criteria,
+  DataEntityService,
   Entity,
   EntityService,
+  FormEntityService,
+  GlobalSettingService,
+  GridEntityService,
 } from "@spriced-frontend/spriced-common-lib";
-import { Validators } from "@angular/forms";
-import { EntityDataService } from "../../services/entity-data.service";
 import {
   Observable,
   Subject,
   Subscription,
-  filter,
   first,
   forkJoin,
   map,
-  of,
   timer,
 } from "rxjs";
-import * as moment from "moment";
-import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
-import { Router, RouterModule } from "@angular/router";
-
-import { AuditDataComponent } from "./audit-data/audit-data.component";
-import { LookupPopupComponent } from "../../components/lookup-Popup/lookup-popup.component";
-import { EntityGridService } from "./entity-grid.service";
-import { EntityFormService } from "./entity-form.service";
-import {
-  AppDataService,
-  ErrorTypes,
-} from "@spriced-frontend/shared/spriced-shared-lib";
-import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components/directive/tool-tip-renderer.directive";
+import { HierarchyTreeviewComponent } from "../hierarchy-treeview/hierarchy-treeview.component";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { ActivatedRoute, Router } from "@angular/router";
+import { AppDataService, ErrorTypes } from "@spriced-frontend/shared/spriced-shared-lib";
+import { MatIconModule } from "@angular/material/icon";
 import { CustomToolTipComponent } from "libs/spriced-ui-lib/src/lib/components/custom-tool-tip/custom-tool-tip.component";
+import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components/directive/tool-tip-renderer.directive";
+import { EntitySelectionComponent } from "../entity-selection/entity-selection.component";
 
 const TIMER_CONST = 300;
+
 @Component({
-  selector: "sp-entity-data",
+  selector: "sp-derived-hierarchy",
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.Default,
-  imports: [
-    CommonModule,
-    DialogueModule,
-    DynamicFormModule,
-    DataGridComponent,
-    HeaderActionComponent,
-    MatButtonModule,
-    MatIconModule,
-    TwoColThreeForthComponent,
-    SnackbarModule,
-    EntitySelectComponent,
-    MatExpansionModule,
-    RouterModule,
-    LookupPopupComponent,
-    HeaderComponentWrapperComponent,
-    CustomToolTipComponent,
-    ToolTipRendererDirective,
-  ],
+  imports: [CommonModule, ThreeColComponent, MatExpansionModule, DataGridComponent, HeaderComponentWrapperComponent, HierarchyTreeviewComponent, SnackbarModule, MatDialogModule, HeaderComponentWrapperComponent, HeaderActionComponent, MatIconModule, CustomToolTipComponent, ToolTipRendererDirective, DynamicFormModule, EntitySelectionComponent],
   viewProviders: [MatExpansionPanel],
   providers: [
-    EntityGridService,
-    EntityFormService,
-    EntityDataService,
-    SettingsService,
+    GridEntityService,
+    FormEntityService,
+    DataEntityService,
+    GlobalSettingService,
     {
       provide: FORM_DATA_SERVICE,
-      useExisting: EntityDataService,
+      useExisting: DataEntityService,
     },
     DynamicFormService,
+    DialogService
   ],
-  templateUrl: "./entity-data.component.html",
-  styleUrls: ["./entity-data.component.scss"],
+  templateUrl: "./derived-hierarchy.component.html",
+  styleUrls: ["./derived-hierarchy.component.scss"],
 })
-export class EntityDataComponent implements OnDestroy, OnInit {
+export class DerivedHierarchyComponent {
+  @ViewChild(HierarchyTreeviewComponent) public derivedHierarchy!: HierarchyTreeviewComponent;
+  isFullScreen = false;
   hide = false;
+  hierarchyId: any;
   limit: number = GridConstants.LIMIT;
   subscriptions: Subscription[] = [];
-  isFullScreen = false;
   headers: Header[] = [];
   columnMode: ColumnMode = ColumnMode.force;
   selectionType: SelectionType = SelectionType.single;
@@ -138,24 +106,45 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   public showTooltip: boolean = false;
 
   defaultCodeSetting = "namecode";
+  hierarchyData: any;
+
 
   constructor(
     private snackbarService: SnackBarService,
     private dialogService: DialogService,
     private dynamicFormService: DynamicFormService,
-    private entityDataService: EntityDataService,
+    private entityDataService: DataEntityService,
     private dialog: MatDialog,
-    private settings: SettingsService,
-    private entityGridService: EntityGridService,
-    private entityFormService: EntityFormService,
+    private settings: GlobalSettingService,
+    private entityGridService: GridEntityService,
+    private entityFormService: FormEntityService,
     private router: Router,
-    private statusPannelService: AppDataService
+    private aroute: ActivatedRoute,
+    private statusPannelService: AppDataService,
+    private entityService: EntityService,
   ) {
     this.globalSettings = this.settings.getGlobalSettings();
     this.setFormData("", []);
     this.subscribeToFormEvents();
+    this.entityDataService.filterDataByHierarchy.subscribe((res: any) => {
+      this.currentCriteria.filters = res;
+      this.createDynamicUIMapping(this.currentSelectedEntity);
+      this.loadEntityData(
+        this.currentSelectedEntity as Entity,
+        this.currentCriteria
+      );
+    })
   }
   ngOnInit(): void {
+    this.hierarchyId = this.aroute.snapshot.paramMap.get("hierarchyId") ? Number(this.aroute.snapshot.paramMap.get("hierarchyId")) : null;
+    if (this.hierarchyId) {
+      this.entityDataService.loadHierarchy(this.hierarchyId).subscribe((e: any) => {
+        this.hierarchyData = e;
+        if (!!this.hierarchyId) {
+          this.derivedHierarchy.onBind(e, this.globalSettings?.displayFormat)
+        }
+      });
+    }
     this.subscribeToEntityDataLoadEvents();
   }
 
@@ -383,53 +372,53 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.currentCriteria
     );
   }
-  onEdit() {
-    if (this.selectedItem) {
-      this.dialogService.openDialog(AddModelComponent, {
-        data: {
-          appForm: this.appForm,
-          entity: this.currentSelectedEntity,
-          selectedItem: this.selectedItem,
-        },
-      });
-    }
-  }
+  // onEdit() {
+  //   if (this.selectedItem) {
+  //     this.dialogService.openDialog(AddModelComponent, {
+  //       data: {
+  //         appForm: this.appForm,
+  //         entity: this.currentSelectedEntity,
+  //         selectedItem: this.selectedItem,
+  //       },
+  //     });
+  //   }
+  // }
 
-  onUpload() {
-    const dialogResult = this.dialog.open(UploadDialogeComponent, {});
+  // onUpload() {
+  //   const dialogResult = this.dialog.open(UploadDialogeComponent, {});
 
-    dialogResult.afterClosed().subscribe((val) => {
-      if (val) {
-        const fileDetails = {
-          source: "web",
-          entityName: this.currentSelectedEntity?.name,
-        };
-        const formData = new FormData();
+  //   dialogResult.afterClosed().subscribe((val) => {
+  //     if (val) {
+  //       const fileDetails = {
+  //         source: "web",
+  //         entityName: this.currentSelectedEntity?.name,
+  //       };
+  //       const formData = new FormData();
 
-        formData.append("file", val.data, val.data.name);
-        formData.append(
-          "fileDetails",
-          new Blob([JSON.stringify(fileDetails)], { type: "application/json" })
-        );
-        // formData.append("fileDetails", JSON.stringify(fileDetails));
-        this.entityDataService
-          .upload(formData, fileDetails)
-          .subscribe((val) => {
-            this.snackbarService.success("Uploaded Successfully");
-          });
-      }
-    });
-  }
-  onStatus() {
-    const dialogResult = this.dialog.open(StatusComponent, {
-      data: this.currentSelectedEntity,
-    });
+  //       formData.append("file", val.data, val.data.name);
+  //       formData.append(
+  //         "fileDetails",
+  //         new Blob([JSON.stringify(fileDetails)], { type: "application/json" })
+  //       );
+  //       // formData.append("fileDetails", JSON.stringify(fileDetails));
+  //       this.entityDataService
+  //         .upload(formData, fileDetails)
+  //         .subscribe((val) => {
+  //           this.snackbarService.success("Uploaded Successfully");
+  //         });
+  //     }
+  //   });
+  // }
+  // onStatus() {
+  //   const dialogResult = this.dialog.open(StatusComponent, {
+  //     data: this.currentSelectedEntity,
+  //   });
 
-    dialogResult.afterClosed().subscribe((val) => { });
-  }
+  //   dialogResult.afterClosed().subscribe((val) => {});
+  // }
 
   onSettings() {
-    const dialogResult = this.dialog.open(SettingsPopUpComponent, {
+    const dialogResult = this.dialog.open(SetttingPopupComponent, {
       data: this.currentSelectedEntity,
     });
 
@@ -441,21 +430,22 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           this.currentCriteria,
           this.globalSettings
         );
-
+        debugger
         this.createDynamicUIMapping(this.currentSelectedEntity);
+        this.derivedHierarchy.onBind(this.hierarchyData,this.globalSettings?.displayFormat);
       }
     });
   }
 
-  showAddPopup() {
-    this.dialogService.openDialog(AddModelComponent, {
-      data: {
-        appForm: this.appForm,
-        entity: this.currentSelectedEntity,
-        selectedItem: this.selectedItem,
-      },
-    });
-  }
+  // showAddPopup() {
+  //   this.dialogService.openDialog(AddModelComponent, {
+  //     data: {
+  //       appForm: this.appForm,
+  //       entity: this.currentSelectedEntity,
+  //       selectedItem: this.selectedItem,
+  //     },
+  //   });
+  // }
   onModelSelectionChange() {
     this.currentSelectedEntity = undefined;
     // this.headers = [{ name: "", column: "" }];
@@ -464,14 +454,14 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.setFormData("", []);
   }
 
-  onAudit() {
-    this.dialogService.openDialog(AuditDataComponent, {
-      data: {
-        currentSelectedEntity: this.currentSelectedEntity,
-        selectedItem: this.selectedItem,
-      },
-    });
-  }
+  // onAudit() {
+  //   this.dialogService.openDialog(AuditDataComponent, {
+  //     data: {
+  //       currentSelectedEntity: this.currentSelectedEntity,
+  //       selectedItem: this.selectedItem,
+  //     },
+  //   });
+  // }
 
   onEntitySelectionChange(entity: Entity | string) {
     this.selectedItem = null;
@@ -531,7 +521,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.entityDataService.exportToExcel(
       this.currentSelectedEntity?.id as number,
       `${this.currentSelectedEntity?.displayName}.xlsx`,
-      this.globalSettings?.displayFormat || this.defaultCodeSetting,
       this.currentCriteria
     );
   }
@@ -759,20 +748,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
               errorMessage += rulResult.message;
             });
           });
-          const sepStart = '{SEP}';
-          const sepEnd = '{/SEP}';
-
-          let firstMessage = "";
-          const startIndex = errorMessage.indexOf(sepStart);
-          const endIndex = errorMessage.indexOf(sepEnd);
-
-          if (startIndex !== -1 && endIndex !== -1 && startIndex < endIndex) {
-            firstMessage = errorMessage.substring(startIndex + sepStart.length, endIndex).trim();
-            const formattedMsg = firstMessage.replace(/:\s/g, ":\n").replace(/\b(IF|THEN|ELSE)\b\s/g, "\n$1 ");
-            this.snackbarService.error(formattedMsg);
-          } else {
-            this.snackbarService.error(errorMessage);
-          }
+          this.snackbarService.error(errorMessage);
           this.statusPannelService.setErrors([
             {
               type: ErrorTypes.ERROR,
