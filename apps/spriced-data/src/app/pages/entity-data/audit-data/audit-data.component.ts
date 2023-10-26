@@ -54,33 +54,19 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   /*
 
 */
-  annotations: any[] = [
-    {
-      name: "team1",
-      message: "changes by team 1",
-    },
-    {
-      name: "team2",
-      message: "changes by team 1",
-    },
-    {
-      name: "team3",
-      message: "changes by team 1",
-    },
-  ];
   headers: Header[] = [
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "column_name",
+      column: "columnName",
       name: "Attribute",
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "updated_date",
+      column: "updatedDate",
       name: "Last Updated On",
       pipe: (data: any) => {
         return moment(data).format("MM/DD/YYYY HH:mm:ss");
@@ -90,28 +76,28 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "prior_value",
+      column: "priorValue",
       name: "Prior Value",
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "new_value",
+      column: "newValue",
       name: "New value",
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "updated_by",
+      column: "updatedBy",
       name: "User",
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "transaction_type",
+      column: "transactionType",
       name: "Transaction",
     },
   ];
@@ -121,6 +107,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   selectedItem: any;
   totalElements = 0;
   rows: any[] = [];
+  annotations:any[] = [];
   limit: number = 10;
   currentCriteria: Criteria = {
     filters: [],
@@ -182,11 +169,10 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       operatorType: "EQUALS",
       dataType: "string",
     });
-    this.loadAuditData();
+    // this.loadAuditData();
   }
 
   onPaginate(e: Paginate) {
-    debugger;
     this.currentCriteria = {
       ...this.currentCriteria,
       pager: {
@@ -199,6 +185,24 @@ export class AuditDataComponent implements OnInit, OnDestroy {
 
   onItemSelected(e: any) {
     this.selectedItem = e;
+    this.currentCriteria.filters=[];
+    this.currentCriteria.filters?.push({
+      filterType: "CONDITION",
+      key:'id',
+      value: this.selectedItem.id,
+      joinType: "NONE",
+      operatorType: "EQUALS",
+      dataType: "number",
+    });
+    this.entityDataService.loadAnnotations(this.selectedItem.id,this.currentCriteria).subscribe({
+      next:(res:any)=>{
+        this.annotations = res.content[0].annotations.annotations;
+      },
+      error:(error:any)=>{
+        this.annotations = [];
+        console.log(error);
+      }
+    })
   }
 
   onSort(e: any) {
