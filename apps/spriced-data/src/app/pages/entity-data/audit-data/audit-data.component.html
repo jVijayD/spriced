@@ -35,20 +35,20 @@
   </div>
 <mat-label class="mt-4 "><span class="text-lg">Annotations</span></mat-label>
   <div class="annotations px-2 w-full border-4 overflow-auto">
-    <div *ngFor="let item of rows" class="w-full flex bg-primary-dark h-16 bg-slate-50 mb-4 mt-2">
+    <div *ngFor="let item of annotations" class="w-full flex bg-primary-dark h-16 bg-slate-50 mb-4 mt-2">
     <div
       class="annotations-data  w-10/12 w-full  flex-col mx-2 my-2  items-center"
     > 
     <div>
-      <span>{{item.id}}</span>
+      <span>{{item.userid}}</span>
       </div>
       <div>
-        <span class="text-lg" >{{ item.updated_by }}</span>
+        <span class="text-lg" >{{ item.comment }}</span>
       </div>
       
     </div>
     <div class="flex justify-center p-2 w-3/12">
-    <span class="font-bold">{{item.updated_date}}</span>
+    <span class="font-bold">{{ item.createdatetime | date: 'MM/dd/yyyy HH:mm:ss' }}</span>
     </div>
   </div>
   </div>
