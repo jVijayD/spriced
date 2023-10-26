@@ -17,7 +17,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { NgxIndexedDBService } from "ngx-indexed-db";
 import { GridConstants } from "../data-grid/data-grid.component";
-import { GlobalSettingService } from "libs/spriced-common-lib/src/lib/services/global-setting.service";
+import { GlobalSettingService } from "./global-setting.service";
 
 @Component({
   selector: "sp-settting-popup",
@@ -50,8 +50,6 @@ export class SetttingPopupComponent {
     private settings: GlobalSettingService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    debugger
-    console.log(this.settings)
     let result = this.settings.getGlobalSettings();
     console.log(result);
     if (result) {

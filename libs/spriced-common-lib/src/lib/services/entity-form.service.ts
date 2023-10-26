@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
 import { Validators } from "@angular/forms";
-import { Attribute, Entity } from "@spriced-frontend/spriced-common-lib";
+import { Attribute, Entity } from "../../index";
 import {
   FORM_DATA_SERVICE,
   FormFieldControls,
   GenericControl,
   IValidator,
-} from "@spriced-frontend/spriced-ui-lib";
+} from "./dynamic-form.types";
 import * as moment from "moment";
 const LOOKUP_PAGE_SIZE = 50;
 @Injectable()
