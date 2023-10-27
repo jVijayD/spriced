@@ -48,3 +48,11 @@ export interface Hierarchy {
   model?: Model | null;
   entity?: Entity | null;
 }
+
+export interface permissions {
+  id:number;
+  hierarchyDtlId:number,
+  permission:string,
+  value:number,
+  role:string
+}

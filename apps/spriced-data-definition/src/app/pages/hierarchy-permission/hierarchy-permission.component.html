@@ -75,16 +75,14 @@
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                     <span style="display: inline-flex" class="ml-5">
                         <mat-icon>account_tree</mat-icon>
-                        <span class="ml-2" (click)="addDropDown(row)"> {{ value }}</span>
-                        <ng-container *ngIf="row.dropDown">
-                            <mat-form-field class="flex-grow w-[8.5rem]">
-                            <mat-select (selectionChange)="onSelect($event.value,row)">
-                                <mat-option *ngFor="let item of dropDownItems" [value]="item">
-                                    {{ item }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                        </ng-container>
+                        <span class="ml-2" mat-button [matMenuTriggerFor]="menu"> {{ value }}</span>
+                              <mat-menu #menu="matMenu">
+                                <ng-container >
+                                  <button mat-menu-item *ngFor="let item of dropDownItems" (click)="onSelect(item.value, row)">
+                                    {{ item.name }}
+                                  </button>
+                                </ng-container>
+                              </mat-menu>
                     </span>
                 </ng-template>
             </ngx-datatable-column>
@@ -93,8 +91,13 @@
 
     <div class="col-span-3">
         <sp-data-grid #dataGrid class="w-full h-full" [title]="'Hierarchy member summary'" [columnMode]="columnMode"
-            [enableRowIndex]="false" [isArray]="false" [headers]="headers" [rows]="row" [rowHeight]="40"
+            [enableRowIndex]="false" [isArray]="false" [headers]="headers" [rows]="rows" [rowHeight]="40"
             [headerHeight]="40" [footerHeight]="30" [virtualScroll]="false"
-            [selectionType]="selectionType"></sp-data-grid>
+            [limit]="pageSize" [count]="totalElement"
+            [selectionType]="selectionType" [isExternalPaging]="true" [isExternalSorting]="true"
+            (itemSelected)="onItemSelected($event)"
+            (paginate)="onPaginate($event)"
+            (sort)="onSort($event)"
+            ></sp-data-grid>
     </div>
 </div>

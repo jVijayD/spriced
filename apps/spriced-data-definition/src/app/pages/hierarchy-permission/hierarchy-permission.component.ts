@@ -10,14 +10,15 @@ import { Criteria, Entity, EntityService, ModelService,Model } from "@spriced-fr
 import { HierarchyServiceService } from "../hierarchy-definition/service/hierarchy-service.service";
 import { Subject, debounceTime } from "rxjs";
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
-import { Hierarchy, HierarchyDetails, HierarchyTreeNode, PreviewTreeNode } from "../hierarchy-definition/models/HierarchyTypes.class";
+import { Hierarchy, HierarchyDetails, HierarchyTreeNode, PreviewTreeNode, permissions } from "../hierarchy-definition/models/HierarchyTypes.class";
 import { MatIconModule } from "@angular/material/icon";
 import { KeycloakService } from "keycloak-angular";
+import { MatMenuModule } from "@angular/material/menu";
 
 @Component({
   selector: "sp-hierarchy-permission",
   standalone: true,
-  imports: [CommonModule, MatFormFieldModule, MatSelectModule, MatOptionModule, NgxMatSelectSearchModule, DataGridComponent, FormsModule, ReactiveFormsModule,NgxDatatableModule,MatIconModule],
+  imports: [CommonModule, MatFormFieldModule, MatSelectModule, MatOptionModule, NgxMatSelectSearchModule, DataGridComponent, FormsModule, ReactiveFormsModule,NgxDatatableModule,MatIconModule,MatMenuModule],
   templateUrl: "./hierarchy-permission.component.html",
   styleUrls: ["./hierarchy-permission.component.scss"],
 })
@@ -27,6 +28,14 @@ export class HierarchyPermissionComponent implements OnInit {
   public modelList: any;
   public hierarchyList: any;
   public entityList: any;
+  pageSize:number = 10;
+  currentCriteria: Criteria = {
+    filters: [],
+    pager: {
+      pageNumber: 0,
+      pageSize: this.pageSize,
+    },
+  };
   public filteredEntities: any = [
     {
       displayName: 'All',
@@ -47,8 +56,9 @@ export class HierarchyPermissionComponent implements OnInit {
   public defaultModelId: any;
   public defaultEntity: any = 'ALL';
   public defaultHierarchy: any = 'ALL';
-  public row: any = [];
+  public rows: any = [];
   public role:any = [];
+  public totalElement!:number;
   selectionType: SelectionType = SelectionType.single;
   sortType = SortType.single;
   columnMode: ColumnMode = ColumnMode.force;
@@ -61,7 +71,7 @@ export class HierarchyPermissionComponent implements OnInit {
   hierarchyForm!: FormGroup;
   selectedModel!: Model | null;
   selectedEntity!: Entity | null;
-  dropDownItems:any[]=['Admin','Manager','Viewer']
+  dropDownItems:any[]=[{name:'Read-only',value:'READ'},{name:'Update',value:'UPDATE'},{name:'deny',value:'DENY'}]
 
   permissionHeaders: any[] = [
     {
@@ -115,7 +125,6 @@ export class HierarchyPermissionComponent implements OnInit {
   ngOnInit(): void {
     this.role =
     this.keycloak.getKeycloakInstance().tokenParsed?.realm_access?.roles;
-    console.log(this.role,">>>>>>>");
     this.getAllModels();
 
     this.listForm.valueChanges.pipe(
@@ -144,6 +153,7 @@ export class HierarchyPermissionComponent implements OnInit {
       this.defaultModelId = res ? res[0].id : '';
       this.getEntityByGroupId(this.defaultModelId);
       this.getAllHierarchyByModelId(res[0]);
+      this.loadHeirarchysummaryByModelId(res[0],this.role,this.currentCriteria)
     })
   }
 
@@ -172,17 +182,18 @@ export class HierarchyPermissionComponent implements OnInit {
     debugger
     const model = this.modelList.find((res: any) => res.id === id)
     this.getEntityByGroupId(id);
-    this.loadHeirarchysummaryByModelId(id,this.role[0]);
+    this.loadHeirarchysummaryByModelId(model,this.role[0],this.currentCriteria);
     this.getAllHierarchyByModelId(model);
   }
 
   public handleHierarchyByEntity(item: any) {
 
   }
-  public loadHeirarchysummaryByModelId(id:any,role:any){
-    this.HierarchyService.loadHeirarchysummaryByModelId(id,role).subscribe({
+  public loadHeirarchysummaryByModelId(model:Model,role:any,criteria:Criteria){
+    this.HierarchyService.loadHeirarchysummaryByModelId(model,role,criteria).subscribe({
       next:((res)=>{
-        debugger
+        this.rows = res.content;
+        this.totalElement = res.totalElements;
       }),
       error:((error)=>{
         console.log(error)
@@ -200,6 +211,7 @@ export class HierarchyPermissionComponent implements OnInit {
   }
 
   onTreeActionPreview(event: any) {
+    debugger
     const index = event.rowIndex;
     const row = event.row;
     if (row.treeStatus === 'collapsed') {
@@ -385,19 +397,45 @@ export class HierarchyPermissionComponent implements OnInit {
         this.availableEntities.push(...derAttrList);
       });
     }
+    onItemSelected(event:any){
 
-    public addDropDown(data:any){
-    debugger
-      this.hierarchyPreviewNodes = this.hierarchyPreviewNodes.map(item => {
-        if (item.grpId === data.grpId) {
-          return { ...item, dropDown: true };
-        }
-        return {...item,dropDown: false};
-      });
-      console.log(this.hierarchyPreviewNodes,">>>??????<<<<")
     }
+    onPaginate(event:any){
+
+    }
+    onSort(event:any){
+
+    }
+    // public addDropDown(data:any){
+    //   this.hierarchyPreviewNodes = this.hierarchyPreviewNodes.map(item => {
+    //     if (item.grpId === data.grpId) {
+    //       return { ...item, dropDown: true };
+    //     }
+    //     return {...item,dropDown: false};
+    //   });
+    // }
     onSelect(value:any,row:any){
-      debugger
+      this.setPermissions(value,row);
+    }
+    
+    public setPermissions(value:string,data:any){
+      const hierarchyDtlId = this.hierarchyDetails[0].hierarchyId;
+      const params:permissions = {
+        id: 0,
+        hierarchyDtlId:hierarchyDtlId,
+        permission:value,
+        role:this.role[0],
+        value: data.id
+      }
+      this.HierarchyService.loadHierarchyByPermissions(params).subscribe({
+        next:(res:any)=>{
+         this.rows = res.content;
+        },
+        error:(err:any)=>{
+          this.rows = [];
+          console.log(err)
+        }
+      })
     }
     getEntityById(id: number) {
       return this.entityList.find((m:any) => m.id == id) || {} as Entity;

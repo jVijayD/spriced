@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Hierarchy } from "../models/HierarchyTypes.class";
+import { Hierarchy, permissions } from "../models/HierarchyTypes.class";
 import { Observable, map } from "rxjs";
 import { Criteria, Model, PageData, RequestUtilityService } from "@spriced-frontend/spriced-common-lib";
 
@@ -19,14 +19,20 @@ export class HierarchyServiceService {
       .get(`${this.api_url}/hierarchy/model/${model.id}`)
       .pipe(map((h) => h as Hierarchy[]));
   }
-  loadHeirarchysummaryByModelId(model:Model,role:any){
-   return this.http.get(`/getPermissionSummary/${model}}/${role}`)
-   .pipe(map((h) => h as Hierarchy[]));
+  loadHeirarchysummaryByModelId(model:Model,role:any,criteria:Criteria){
+    const url = this.requestUtility.addCriteria(`${this.api_url}/hierarchy/getPermissionSummary/${model.id}/${role}`,criteria)
+     return this.http.get<PageData>(url);
+   
   }
   loadHierarchy(hierarchy: Hierarchy) {
     return this.http
       .get(`${this.api_url}/hierarchy/${hierarchy.id}`)
       .pipe(map((h) => h as Hierarchy[]));
+  }
+  
+  loadHierarchyByPermissions(params:permissions){
+    const url = `${this.api_url}/hierarchy/setPermission`
+    return this.http.post<PageData>(url,params)
   }
 
   saveHierarchy(hierarchy: Hierarchy) {
