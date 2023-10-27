@@ -110,6 +110,13 @@ export class EntityDataService {
     );
     return this.http.get<PageData>(url);
   }
+  
+  loadAnnotations(id:number,criteria:Criteria):Observable<PageData>{
+    const url = this.requestUtility.addCriteria(`${this.api_url}/audit-trial/annotation`,
+    criteria
+    );
+    return this.http.get<PageData>(url);
+  }
 
   loadLookupData(
     id: string | number,

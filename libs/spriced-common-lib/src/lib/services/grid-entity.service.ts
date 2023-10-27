@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { Attribute, Entity } from "@spriced-frontend/spriced-common-lib";
-import { Header, QueryColumns } from "@spriced-frontend/spriced-ui-lib";
+import { Attribute, Entity } from "../../index";
+import { Header, QueryColumns } from "./dynamic-form.types";
 import * as moment from "moment";
 
 @Injectable({
