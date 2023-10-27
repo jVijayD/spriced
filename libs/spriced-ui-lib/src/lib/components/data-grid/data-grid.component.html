@@ -122,6 +122,14 @@
               </ng-template>
             </ng-container>
 
+            <ng-container *ngIf="header?.action">
+              <img 
+              class="w-7 h-7 cursor-pointer"
+              [src]="header?.imgsrc" 
+              (click)="action.emit(row)"
+              style="cursor: pointer;">
+            </ng-container>
+
             <ng-container *ngIf="header?.checkbox">
               <mat-checkbox
                 color="primary"
