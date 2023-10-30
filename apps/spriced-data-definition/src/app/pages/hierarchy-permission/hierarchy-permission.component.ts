@@ -89,7 +89,7 @@ export class HierarchyPermissionComponent implements OnInit {
       isSortable: false,
     },
     {
-      column: "member",
+      column: "coalesce",
       name: "Member",
       canAutoResize: true,
       isSortable: false,
@@ -169,7 +169,6 @@ export class HierarchyPermissionComponent implements OnInit {
 
   public getAllHierarchyByModelId(model: any) {
     this.HierarchyService.loadAllHierarchies(model).subscribe((el: any) => {
-      debugger
       this.filteredHierarchy = [{
         name: 'All',
         id: 'ALL'
@@ -179,8 +178,8 @@ export class HierarchyPermissionComponent implements OnInit {
   }
 
   public handleEntityByModels(id: any) {
-    debugger
     const model = this.modelList.find((res: any) => res.id === id)
+     this.resetDatatable()
     this.getEntityByGroupId(id);
     this.loadHeirarchysummaryByModelId(model,this.role[0],this.currentCriteria);
     this.getAllHierarchyByModelId(model);
@@ -202,7 +201,6 @@ export class HierarchyPermissionComponent implements OnInit {
   }
 
   public handleHierarchy(id: any) {
-    debugger
     const hierarchy = this.hierarchyList.find((el: any) => el.id === id);
     this.HierarchyService.loadHierarchy(hierarchy).subscribe((res: any) => {
       console.log(res, '>????');
@@ -211,7 +209,6 @@ export class HierarchyPermissionComponent implements OnInit {
   }
 
   onTreeActionPreview(event: any) {
-    debugger
     const index = event.rowIndex;
     const row = event.row;
     if (row.treeStatus === 'collapsed') {
@@ -246,6 +243,9 @@ export class HierarchyPermissionComponent implements OnInit {
       this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes];
       this.cd.detectChanges();
     }
+  }
+  resetDatatable() {
+    this.hierarchyPreviewNodes = [];
   }
 
   getHierarchyDtlByLevel(level: number) {
@@ -286,7 +286,6 @@ export class HierarchyPermissionComponent implements OnInit {
   }
 
   onBind(hie: Hierarchy) {
-    debugger
     this.onClearClick();
     this.id = hie.id;
     this.name = hie.name;
@@ -456,7 +455,6 @@ export class HierarchyPermissionComponent implements OnInit {
     }
     @HostListener("window:resize", ["$event"])
     resize(event: any) {
-      debugger
       this.resizeTable.next(true);
     }
 }
