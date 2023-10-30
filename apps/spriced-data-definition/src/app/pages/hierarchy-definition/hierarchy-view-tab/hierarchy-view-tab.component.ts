@@ -85,6 +85,15 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
         return moment(data).format("MM/DD/YYYY HH:mm:ss");
       },
     },
+    {
+      column: "action",
+      name: "Action",
+      canAutoResize: true,
+      isSortable: true,
+      action: true,
+      imgsrc: 'assets/images/eye.png',
+      width: 100
+    },
   ];
   // displayedColumns = ["name", "description", "view"];
   rows: Hierarchy[] = [];
@@ -109,9 +118,18 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
     const groupId = e.modelId;
     const id = e.entityId;
     const hierarchyId = e.id;
-    this.router.navigate(["/spriced-data-definition/derived-hierarchy/" + hierarchyId + "/" + groupId + "/", id]);
+    // setTimeout(()=>{
+    //   this.router.navigate(["/spriced-data-definition/derived-hierarchy/" + hierarchyId + "/" + groupId + "/", id]);
+    // },300)
   }
 
+  navigate(e:any){
+    this.selectedHierarchy = e;
+    const groupId = e.modelId;
+    const id = e.entityId;
+    const hierarchyId = e.id;
+    this.router.navigate(["/spriced-data-definition/derived-hierarchy/" + hierarchyId + "/" + groupId + "/", id]);
+  }
   loadAllHierarchies(model: Model) {
     this.hierarchyService
       .loadAllHierarchies(model)
