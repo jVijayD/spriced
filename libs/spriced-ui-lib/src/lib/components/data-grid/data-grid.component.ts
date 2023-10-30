@@ -111,7 +111,9 @@ export class DataGridComponent implements AfterViewInit {
   @Input()
   page:any
 
-
+  @Output() 
+  action:EventEmitter<any> = new EventEmitter<any>();
+     
   @Output()
   itemSelected: EventEmitter<any> = new EventEmitter<any>();
 
@@ -233,6 +235,7 @@ export interface Header {
   checkbox?: boolean;
   tooltip?: boolean;
   tooltipTemplate?: any;
+  action?:any;
   imgsrc?: any;
   disableCheckbox?: any;
   isLink?: boolean;
