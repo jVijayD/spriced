@@ -34,7 +34,7 @@
                 <!-- <mat-icon>account_tree</mat-icon> -->
                 <mat-checkbox class="hierarchy-checkbox" [checked]="isRowSelected(row)"
                     color="primary" (change)="handleCheckBox($event, row)"></mat-checkbox>
-                <span class="ml-2 flex items-center" (click)="handleSelectItem(row)"> {{ value
+                <span class="ml-2 flex items-center" [ngStyle]="{'opacity': row.id === disableRowId ? 0.5 : 1}" (click)="handleSelectItem(row)"> {{ value
                     }}</span></span>
         </ng-template>
     </ngx-datatable-column>

@@ -104,7 +104,7 @@ export class DerivedHierarchyComponent {
   pageNumber: number = 0;
   relatedEntity: any;
   public showTooltip: boolean = false;
-
+  public entity:any;
   defaultCodeSetting = "namecode";
   hierarchyData: any;
 
@@ -127,7 +127,7 @@ export class DerivedHierarchyComponent {
     this.setFormData("", []);
     this.subscribeToFormEvents();
     this.entityDataService.filterDataByHierarchy.subscribe((res: any) => {
-      this.currentCriteria.filters = res;
+      this.currentCriteria.filters = res ? res : '';
       this.createDynamicUIMapping(this.currentSelectedEntity);
       this.loadEntityData(
         this.currentSelectedEntity as Entity,
@@ -430,7 +430,6 @@ export class DerivedHierarchyComponent {
           this.currentCriteria,
           this.globalSettings
         );
-        debugger
         this.createDynamicUIMapping(this.currentSelectedEntity);
         this.derivedHierarchy.onBind(this.hierarchyData,this.globalSettings?.displayFormat);
       }
@@ -453,6 +452,9 @@ export class DerivedHierarchyComponent {
     this.rows = [...[]];
     this.setFormData("", []);
   }
+  getEntityName(event:any){
+   this.entity = event;
+  }
 
   // onAudit() {
   //   this.dialogService.openDialog(AuditDataComponent, {
@@ -463,16 +465,17 @@ export class DerivedHierarchyComponent {
   //   });
   // }
 
-  onEntitySelectionChange(entity: Entity | string) {
+  onEntitySelectionChange(entity: Entity | any) {
     this.selectedItem = null;
+    this.currentCriteria.filters = entity?.filter ? entity?.filter : [];
+    this.currentCriteria.sorters = [];
+    this.currentCriteria.pager = { pageNumber: 0, pageSize: this.limit };
     this.currentSelectedEntity = undefined;
     this.dataGrid.table._internalColumns = [...[]];
     this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);
     this.createDynamicGrid(
       this.currentSelectedEntity,
-      {
-        pager: { pageNumber: 0, pageSize: this.limit },
-      },
+      this.currentCriteria,
       this.settings.getGlobalSettings()
     );
     this.createDynamicUIMapping(entity as Entity);

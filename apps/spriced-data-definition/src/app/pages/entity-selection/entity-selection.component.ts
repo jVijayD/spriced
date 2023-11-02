@@ -5,6 +5,8 @@ import {
   Output,
   EventEmitter,
   ViewEncapsulation,
+  Input,
+  SimpleChanges,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
@@ -52,6 +54,8 @@ export class EntitySelectionComponent {
 
   @Output()
   modelSelectionEvent: EventEmitter<Entity | string> = new EventEmitter();
+  
+  @Input()  public entity:any;
 
   constructor(
     private modelService: ModelService,
@@ -88,7 +92,7 @@ export class EntitySelectionComponent {
   //onTouched() {}
   loadEntities(modelId: number, entityId?: number) {
     this.subscriptions.push(
-      this.entityService.loadEntityByModelWithOutAttributes(modelId).subscribe({
+      this.entityService.loadEntityByModel(modelId).subscribe({
         next: (items) => {
           if (items) {
             this.entities = items;
@@ -153,5 +157,15 @@ export class EntitySelectionComponent {
       this.selectedEntity = curSelectedEntity;
       this.entitySelectionEvent.emit(this.selectedEntity);
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes["entity"]) {
+      const currentValue = changes["entity"].currentValue;
+      let entity:any = this.entities.filter((item:any)=>item.id === currentValue.entity[0].entityId)
+      this.selectedEntity = entity[0];
+      entity = {...entity[0], 'filter': currentValue?.filter ? currentValue?.filter : '' };
+      this.entitySelectionEvent.emit(entity);
+    }
   }
 }
