@@ -468,7 +468,6 @@ export class DerivedHierarchyComponent {
   onEntitySelectionChange(entity: Entity | any) {
     this.selectedItem = null;
     this.currentCriteria.filters = entity?.filter ? entity?.filter : [];
-    this.currentCriteria.sorters = [];
     this.currentCriteria.pager = { pageNumber: 0, pageSize: this.limit };
     this.currentSelectedEntity = undefined;
     this.dataGrid.table._internalColumns = [...[]];

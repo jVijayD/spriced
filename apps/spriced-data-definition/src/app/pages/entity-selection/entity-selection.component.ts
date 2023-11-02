@@ -92,7 +92,7 @@ export class EntitySelectionComponent {
   //onTouched() {}
   loadEntities(modelId: number, entityId?: number) {
     this.subscriptions.push(
-      this.entityService.loadEntityByModel(modelId).subscribe({
+      this.entityService.loadEntityByModelWithOutAttributes(modelId).subscribe({
         next: (items) => {
           if (items) {
             this.entities = items;
@@ -162,10 +162,10 @@ export class EntitySelectionComponent {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes["entity"]) {
       const currentValue = changes["entity"].currentValue;
-      let entity:any = this.entities.filter((item:any)=>item.id === currentValue.entity[0].entityId)
+      let entity: any = this.entities.filter((item:any)=>item.id === currentValue.entity[0].entityId)
       this.selectedEntity = entity[0];
       entity = {...entity[0], 'filter': currentValue?.filter ? currentValue?.filter : '' };
-      this.entitySelectionEvent.emit(entity);
+      this.loadEntityWithId(entity);
     }
   }
 }
