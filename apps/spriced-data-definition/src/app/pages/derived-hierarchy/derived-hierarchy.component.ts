@@ -453,7 +453,8 @@ export class DerivedHierarchyComponent {
     this.setFormData("", []);
   }
   getEntityName(event:any){
-   this.entity = event;
+   this.entity = event as Entity;
+   this.onEntitySelectionChange(event);
   }
 
   // onAudit() {

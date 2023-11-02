@@ -29,6 +29,7 @@
       <mat-select
         matNativeControl
         [value]="selectedEntity"
+        [compareWith]="compareObjects"
         (selectionChange)="onEntitySelectionChange($event)"
       >
         <mat-option>

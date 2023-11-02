@@ -47,15 +47,13 @@ export class EntitySelectionComponent {
   filteredEntities: Entity[] = [];
 
   selectedModelValue: string | number = "";
-  selectedEntity: string | Entity = "";
+  @Input() selectedEntity: string | Entity = "";
 
   @Output()
   entitySelectionEvent: EventEmitter<Entity | string> = new EventEmitter();
 
   @Output()
   modelSelectionEvent: EventEmitter<Entity | string> = new EventEmitter();
-  
-  @Input()  public entity:any;
 
   constructor(
     private modelService: ModelService,
@@ -159,13 +157,10 @@ export class EntitySelectionComponent {
     });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes["entity"]) {
-      const currentValue = changes["entity"].currentValue;
-      let entity: any = this.entities.filter((item:any)=>item.id === currentValue.entity[0].entityId)
-      this.selectedEntity = entity[0];
-      entity = {...entity[0], 'filter': currentValue?.filter ? currentValue?.filter : '' };
-      this.loadEntityWithId(entity);
-    }
+  // Comapare object to show the entity form hierarchy to entity selection dropdown. 
+  compareObjects(o1: any, o2: any) {
+    if (o1.id == o2.id)
+      return true;
+    else return false
   }
 }

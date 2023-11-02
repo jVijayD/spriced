@@ -342,9 +342,10 @@ export class HierarchyTreeviewComponent {
     if(row.id !== this.currentRowId)
     {
       this.currentRowId = row.id;
-      const entity:any = this.hierarchyDetails.filter((item:any)=>item.entityId == row.tableId);
+      let entity:any = this.entityList.filter((item:any)=>item.id == row.tableId);
       const filter = row.name !== 'ROOT' ? [{ "filterType": "CONDITION", "joinType": "NONE", "operatorType": "EQUALS", "key": 'code', "value": row?.code, "dataType": "string" }] : [];
-      this.getEntity.emit({entity, filter});
+      entity = {...entity[0], 'filter': filter ? filter : '' };
+      this.getEntity.emit(entity);
     }
     // this.onItemSelected({ selected: [row] });
   }
