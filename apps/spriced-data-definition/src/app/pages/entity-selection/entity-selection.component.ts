@@ -5,6 +5,8 @@ import {
   Output,
   EventEmitter,
   ViewEncapsulation,
+  Input,
+  SimpleChanges,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
@@ -45,7 +47,7 @@ export class EntitySelectionComponent {
   filteredEntities: Entity[] = [];
 
   selectedModelValue: string | number = "";
-  selectedEntity: string | Entity = "";
+  @Input() selectedEntity: string | Entity = "";
 
   @Output()
   entitySelectionEvent: EventEmitter<Entity | string> = new EventEmitter();
@@ -153,5 +155,12 @@ export class EntitySelectionComponent {
       this.selectedEntity = curSelectedEntity;
       this.entitySelectionEvent.emit(this.selectedEntity);
     });
+  }
+
+  // Comapare object to show the entity form hierarchy to entity selection dropdown. 
+  compareObjects(o1: any, o2: any) {
+    if (o1.id == o2.id)
+      return true;
+    else return false
   }
 }
