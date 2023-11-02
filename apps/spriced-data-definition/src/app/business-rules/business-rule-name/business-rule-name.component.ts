@@ -393,7 +393,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     });
 
     const lastIndex = this.conditions.controls.length - 1;
-    const conditionTypeControl = this.conditions.controls[lastIndex].get('conditionType');
+    const conditionTypeControl = this.conditions?.controls.length > 0 && lastIndex ? this.conditions?.controls[lastIndex].get('conditionType') : null;
     if (conditionTypeControl?.value !== 'NONE') {
       conditionTypeControl?.patchValue('NONE');
     }
