@@ -5,8 +5,7 @@
     [footerHeight]="0" [columnMode]="columnMode" [virtualScroll]="true" [selectionType]="selectionType" [limit]="10"
     [isExternalPaging]="false" [isExternalSorting]="false" [sortType]="sortType" [count]="totalElements"
     (itemSelected)="onItemSelected($event)" [selected]="!!selectedHierarchy ? [selectedHierarchy] : []"
-    (action)="navigate($event)"
-    >
+    (action)="navigate($event)">
     <ng-container>
       <sp-header-component-wrapper title="Model">
         <sp-select-search [model]="selectedModel" [appearance]="'fill'" (selectionChange)="onModelChange($event)"

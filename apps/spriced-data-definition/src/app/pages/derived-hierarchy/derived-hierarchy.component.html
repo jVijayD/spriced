@@ -13,7 +13,7 @@
                 height: calc(100vh - 0px - 2rem - 35px - 70px);
                 overflow-y: auto;
               ">
-                    <sp-hierarchy-treeview></sp-hierarchy-treeview>
+                    <sp-hierarchy-treeview (getEntity)="getEntityName($event)"></sp-hierarchy-treeview>
                 </div>
             </mat-expansion-panel>
         </mat-accordion>
@@ -63,6 +63,7 @@
                     ></sp-header-action> -->
                     <sp-header-component-wrapper>
                       <sp-entity-selection
+                        [entity]="entity"
                         (entitySelectionEvent)="onEntitySelectionChange($event)"
                         (modelSelectionEvent)="onModelSelectionChange()"
                       ></sp-entity-selection>
