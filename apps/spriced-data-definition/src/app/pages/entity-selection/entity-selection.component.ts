@@ -54,6 +54,8 @@ export class EntitySelectionComponent {
 
   @Output()
   modelSelectionEvent: EventEmitter<Entity | string> = new EventEmitter();
+  
+  @Input()  public entity:any;
 
   constructor(
     private modelService: ModelService,
