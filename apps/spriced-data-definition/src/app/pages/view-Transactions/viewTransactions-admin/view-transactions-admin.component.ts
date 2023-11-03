@@ -78,7 +78,7 @@ export class ViewTransactionsAdminComponent {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "entity_name",
+      column: "entityName",
       name: "Entity",
     },
 
@@ -86,14 +86,14 @@ export class ViewTransactionsAdminComponent {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "column_name",
+      column: "columnName",
       name: "Attribute",
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "updated_date",
+      column: "updatedDate",
       name: "Last Updated On",
       pipe: (data: any) => {
         return moment(data).format("MM/DD/YYYY HH:mm:ss");
@@ -103,28 +103,28 @@ export class ViewTransactionsAdminComponent {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "prior_value",
+      column: "priorValue",
       name: "Prior Value",
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "new_value",
+      column: "newValue",
       name: "New value",
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "updated_by",
+      column: "updatedBy",
       name: "User",
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "transaction_type",
+      column: "transactionType",
       name: "Transaction",
     },
   ];
