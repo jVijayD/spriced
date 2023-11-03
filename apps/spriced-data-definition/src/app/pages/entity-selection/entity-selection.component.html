@@ -1,6 +1,6 @@
 <div class="flex flex-row space-x-2 items-center">
     <label>Model</label>
-    <mat-form-field class="flex-grow w-[8.5rem]">
+    <mat-form-field style="pointer-events: none;" class="flex-grow w-[8.5rem]">
       <mat-select
         [value]="selectedModelValue"
         (selectionChange)="onModelSelectionChange($event)"
@@ -25,7 +25,7 @@
       </mat-select>
     </mat-form-field>
     <label>Entity</label>
-    <mat-form-field class="flex-grow w-[8.5rem]">
+    <mat-form-field style="pointer-events: none;" class="flex-grow w-[8.5rem]">
       <mat-select
         matNativeControl
         [value]="selectedEntity"

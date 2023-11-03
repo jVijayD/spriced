@@ -46,7 +46,7 @@ export class HierarchyTreeviewComponent {
     },
   ];
   selectionType: SelectionType = SelectionType.single;
-  @Output() getEntity = new EventEmitter();
+  @Output() getEntityByHierarchyItem = new EventEmitter();
   columnMode: ColumnMode = ColumnMode.flex;
   sortType = SortType.single;
   modelList!: any[];
@@ -73,6 +73,7 @@ export class HierarchyTreeviewComponent {
   searchInputSubject = new Subject<string>();
   currentRowId!: number;
   disableRowId: any;
+  selected: any;
 
 
   constructor(
@@ -342,6 +343,7 @@ export class HierarchyTreeviewComponent {
 
   public handleSelectItem(row: any) {
     let hierarchyRow = {...row};
+    this.table.selected = [row];
     const level = this.hierarchyDetails.length - (row.level + 1);
     row = this.hierarchyDetails.find(elm => elm.groupLevel === level);
     if(!!row.id)
@@ -350,7 +352,7 @@ export class HierarchyTreeviewComponent {
       let entity:any = this.entityList.find((item:any)=>item.id == row.entityId);
       const filter = row.groupLevel !== (this.hierarchyDetails.length -1) ? [{ "filterType": "CONDITION", "joinType": "NONE", "operatorType": "EQUALS", "key": row?.refColumn, "value": hierarchyRow?.id, "dataType": "string" }] : [];
       entity = {...entity, 'filter': filter ? filter : '' };
-      this.getEntity.emit(entity);
+      this.getEntityByHierarchyItem.emit(entity);
     }
   }
 

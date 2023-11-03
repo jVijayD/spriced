@@ -127,14 +127,6 @@ export class DerivedHierarchyComponent {
     this.globalSettings = this.settings.getGlobalSettings();
     this.setFormData("", []);
     this.subscribeToFormEvents();
-    this.entityDataService.filterDataByHierarchy.subscribe((res: any) => {
-      this.currentCriteria.filters = res ? res : '';
-      this.createDynamicUIMapping(this.currentSelectedEntity);
-      this.loadEntityData(
-        this.currentSelectedEntity as Entity,
-        this.currentCriteria
-      );
-    })
   }
   ngOnInit(): void {
     this.hierarchyId = this.aroute.snapshot.paramMap.get("hierarchyId") ? Number(this.aroute.snapshot.paramMap.get("hierarchyId")) : null;
@@ -453,9 +445,12 @@ export class DerivedHierarchyComponent {
     this.rows = [...[]];
     this.setFormData("", []);
   }
-  getEntityName(event:any){
-   this.entity = event as Entity;
-   this.onEntitySelectionChange(event);
+
+  getEntityFormHierarchyItem(event:any){
+    setTimeout(() => {
+      this.entity = event as Entity;
+      this.onEntitySelectionChange(event);
+    }, 500);
   }
 
   // onAudit() {
