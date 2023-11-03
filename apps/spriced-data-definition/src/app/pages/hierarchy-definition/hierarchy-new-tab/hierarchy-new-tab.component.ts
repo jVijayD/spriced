@@ -153,7 +153,6 @@ export class HierarchyNewTabComponent {
     this.initForm();
   }
   onBind(hie: Hierarchy) {
-    debugger
     this.onClearClick();
     this.id = hie.id;
     this.name = hie.name;
@@ -251,7 +250,6 @@ export class HierarchyNewTabComponent {
     return isRootEntity ? e.displayName : this.getAttribDisplayNameByName(e, attribName) || "";
   }
   EntityListCallBack(entityId: number, hie: Hierarchy) {
-    debugger
     if (entityId) {
       this.selectedEntity = this.getEntityById(entityId);
       this.hierarchyForm = this.fb.group({
@@ -282,7 +280,6 @@ export class HierarchyNewTabComponent {
     }
   }
   getEntitiesByModel(model: Model, entityId?: number, hie?: Hierarchy, isOnBind: boolean = false) {
-    debugger
     this.entityList = [];
     this.entityService.loadEntityByModel(model.id).forEach((a) => {
       this.entityList.push(...a);
