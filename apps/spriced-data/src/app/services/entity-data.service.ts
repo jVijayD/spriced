@@ -118,6 +118,11 @@ export class EntityDataService {
     return this.http.get<PageData>(url);
   }
 
+  addAnnotations(id: string | number, annotation: any): Observable<any> {
+    let annotations={"annotations":annotation}
+    return this.http.put(`${this.api_url}/audit-trial/annotation/${id}`,{annotations:annotations});
+  }
+
   loadLookupData(
     id: string | number,
     pageNumber: number = 0,
