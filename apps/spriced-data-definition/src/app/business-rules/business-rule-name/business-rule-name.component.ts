@@ -709,6 +709,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         this.conditionsPatchValue(element.get('subConditions'));
       }
     });
+    this.businessRuleService.ruleChageDetection.next(true);
   }
 
   public addControlSubConditionType(conditions: any) {
@@ -778,12 +779,15 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       });
     }
     // WHEN CONDITION LENGTH ONLY ONE THEN CONDITIONTYPE IS NONE
-    if (this.conditions.length === 1) {
-      const conditionTypeControl = this.conditions.controls[0].get('conditionType');
+    let lastIndex = this.conditions.controls.length - 1;
+    lastIndex = lastIndex ? lastIndex : 0;
+    if (lastIndex >= 0) {
+      const conditionTypeControl = this.conditions.controls[lastIndex].get('conditionType');
       if (conditionTypeControl?.value !== 'NONE') {
         conditionTypeControl?.patchValue('NONE');
       }
     }
+    this.businessRuleService.ruleChageDetection.next(true);
   }
 
   /**
