@@ -173,8 +173,17 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   }
 
   onPaginate(e: Paginate) {
+   
     this.currentCriteria = {
-      ...this.currentCriteria,
+      filters:[{
+        filterType: "CONDITION",
+        key: "entity_name",
+        value: this.currentSelectedEntity.name,
+        joinType: "NONE",
+        operatorType: "EQUALS",
+        dataType: "string",
+      }
+      ],
       pager: {
         pageNumber: e.offset,
         pageSize: this.limit,
@@ -196,7 +205,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
     });
     this.entityDataService.loadAnnotations(this.selectedItem.id,this.currentCriteria).subscribe({
       next:(res:any)=>{
-        this.annotations = res.content[0].annotations.annotations;
+        this.annotations = res.content[0]?.annotations.annotations || [];
       },
       error:(error:any)=>{
         this.annotations = [];
@@ -230,11 +239,27 @@ export class AuditDataComponent implements OnInit, OnDestroy {
     );
   }
 
+  
+
   onClose(): void {
     this.dialogRef.close(null);
   }
   onAdd(value: any) {
-    debugger;
+    let newAnnotation=
+      {
+        "userid": this.selectedItem.id,
+        "comment": value,
+        "code":this.dialogData.selectedItem.code
+    }
+    this.annotations.push(newAnnotation)
+    this.entityDataService.addAnnotations(this.selectedItem.id,this.annotations).subscribe({
+      next:(res:any)=>{
+        this.onItemSelected(this.selectedItem)
+      },
+      error:(error:any)=>{
+        console.log(error);
+      }
+    })
   }
   onSubmit(data: FormGroup<any>) {
     if (data.valid) {
