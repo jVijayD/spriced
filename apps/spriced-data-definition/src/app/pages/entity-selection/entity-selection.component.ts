@@ -54,6 +54,8 @@ export class EntitySelectionComponent {
 
   @Output()
   modelSelectionEvent: EventEmitter<Entity | string> = new EventEmitter();
+  
+  @Input()  public entity:any;
 
   constructor(
     private modelService: ModelService,
@@ -90,7 +92,7 @@ export class EntitySelectionComponent {
   //onTouched() {}
   loadEntities(modelId: number, entityId?: number) {
     this.subscriptions.push(
-      this.entityService.loadEntityByModelWithOutAttributes(modelId).subscribe({
+      this.entityService.loadEntityByModel(modelId).subscribe({
         next: (items) => {
           if (items) {
             this.entities = items;
