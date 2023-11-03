@@ -92,7 +92,7 @@ export class EntitySelectionComponent {
   //onTouched() {}
   loadEntities(modelId: number, entityId?: number) {
     this.subscriptions.push(
-      this.entityService.loadEntityByModelWithOutAttributes(modelId).subscribe({
+      this.entityService.loadEntityByModel(modelId).subscribe({
         next: (items) => {
           if (items) {
             this.entities = items;
