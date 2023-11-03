@@ -27,7 +27,7 @@
             </div>
             <div class="col-span-6">
                 <mat-form-field [appearance]="'outline'" class="full-width ">
-                    <mat-select matNativeControl (valueChange)="handleHierarchyByEntity($event)"
+                    <mat-select matNativeControl
                         [(value)]="defaultEntity">
                         <mat-option>
                             <ngx-mat-select-search placeholderLabel="Search"
@@ -61,16 +61,46 @@
                 </mat-form-field>
             </div>
         </div>
+
+        <div class="flex items-center grid grid-cols-7 mb-2">
+            <div class="col-span-1">
+                <mat-label class="text-sm"> Role: </mat-label>
+            </div>
+            <div class="col-span-6">
+                <mat-form-field [appearance]="'outline'" class="full-width ">
+                    <mat-select matNativeControl (selectionChange)="onSelectRole($event)" [(value)]="selectedRole">
+                        <!-- <mat-option>
+                            <ngx-mat-select-search placeholderLabel="Search"
+                                formControlName="hierarchyFilter"></ngx-mat-select-search>
+                        </mat-option> -->
+                        <!-- <mat-option value="" class="option">--Select--</mat-option> -->
+                        <mat-option *ngFor="let role of roleList" [value]="role.name">
+                            {{role.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
     </form>
 </div>
 
 
 <div class="flex grid grid-cols-5 gap-4">
     <div class="col-span-2">
-        <ngx-datatable #table style="min-width: 300px; min-height: calc(100vh - 20rem);" class="material striped tableScroll"
-            [columnMode]="ColumnMode.flex" [headerHeight]="50" [footerHeight]="0" [rowHeight]="50"
-            [rows]="hierarchyPreviewNodes" [scrollbarV]="true" [scrollbarH]="true" [treeFromRelation]="'parentGrpId'"
-            (treeAction)="onTreeActionPreview($event)" [treeToRelation]="'grpId'">
+        <ngx-datatable
+         #table 
+        style="min-width: 300px; min-height: calc(100vh - 20rem);"              class="material striped tableScroll"
+            [columnMode]="ColumnMode.flex"  
+            [headerHeight]="50" 
+            [footerHeight]="0" 
+            [rowHeight]="50"
+            [rows]="hierarchyPreviewNodes" 
+            [scrollbarV]="true" 
+            [scrollbarH]="true" 
+            [treeFromRelation]="'parentGrpId'"
+            (treeAction)="onTreeActionPreview($event)" 
+            [treeToRelation]="'grpId'">
             <ngx-datatable-column name="Name" [flexGrow]="3" [isTreeColumn]="true">
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                     <span style="display: inline-flex" class="ml-5">
@@ -90,14 +120,28 @@
     </div>
 
     <div class="col-span-3">
-        <sp-data-grid #dataGrid class="w-full h-full" [title]="'Hierarchy member summary'" [columnMode]="columnMode"
-            [enableRowIndex]="false" [isArray]="false" [headers]="headers" [rows]="rows" [rowHeight]="40"
-            [headerHeight]="40" [footerHeight]="30" [virtualScroll]="false"
-            [limit]="pageSize" [count]="totalElement"
-            [selectionType]="selectionType" [isExternalPaging]="true" [isExternalSorting]="true"
+        <sp-data-grid 
+            #dataGrid 
+            class="w-full h-full" 
+            [title]="'Hierarchy member summary'" 
+            [columnMode]="columnMode"
+            [enableRowIndex]="false" 
+            [isArray]="false" 
+            [headers]="headers"
+            [rows]="rows" 
+            [rowHeight]="40"
+            [headerHeight]="40"
+            [footerHeight]="30" 
+            [virtualScroll]="false"
+            [limit]="pageSize" 
+            [count]="totalElement"
+            [selectionType]="selectionType"
+            [isExternalPaging]="true" 
+            [isExternalSorting]="true"
             (itemSelected)="onItemSelected($event)"
             (paginate)="onPaginate($event)"
             (sort)="onSort($event)"
-            ></sp-data-grid>
+            >
+        </sp-data-grid>
     </div>
 </div>

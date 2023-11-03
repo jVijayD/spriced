@@ -4,9 +4,9 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatOptionModule } from "@angular/material/core";
 import { MatSelectSearchComponent, NgxMatSelectSearchModule } from "ngx-mat-select-search";
-import { ColumnMode,DatatableComponent,NgxDatatableModule, SelectionType, SortType } from "@swimlane/ngx-datatable";
+import { ColumnMode, DatatableComponent, NgxDatatableModule, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import { DataGridComponent } from "@spriced-frontend/spriced-ui-lib";
-import { Criteria, Entity, EntityService, ModelService,Model } from "@spriced-frontend/spriced-common-lib";
+import { Criteria, Entity, EntityService, ModelService, Model, UserAccessService } from "@spriced-frontend/spriced-common-lib";
 import { HierarchyServiceService } from "../hierarchy-definition/service/hierarchy-service.service";
 import { Subject, debounceTime } from "rxjs";
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
@@ -14,11 +14,12 @@ import { Hierarchy, HierarchyDetails, HierarchyTreeNode, PreviewTreeNode, permis
 import { MatIconModule } from "@angular/material/icon";
 import { KeycloakService } from "keycloak-angular";
 import { MatMenuModule } from "@angular/material/menu";
+import { RoleDTO } from "../model-access/models/ModelAccesTypes.class";
 
 @Component({
   selector: "sp-hierarchy-permission",
   standalone: true,
-  imports: [CommonModule, MatFormFieldModule, MatSelectModule, MatOptionModule, NgxMatSelectSearchModule, DataGridComponent, FormsModule, ReactiveFormsModule,NgxDatatableModule,MatIconModule,MatMenuModule],
+  imports: [CommonModule, MatFormFieldModule, MatSelectModule, MatOptionModule, NgxMatSelectSearchModule, DataGridComponent, FormsModule, ReactiveFormsModule, NgxDatatableModule, MatIconModule, MatMenuModule],
   templateUrl: "./hierarchy-permission.component.html",
   styleUrls: ["./hierarchy-permission.component.scss"],
 })
@@ -28,7 +29,7 @@ export class HierarchyPermissionComponent implements OnInit {
   public modelList: any;
   public hierarchyList: any;
   public entityList: any;
-  pageSize:number = 10;
+  pageSize: number = 10;
   currentCriteria: Criteria = {
     filters: [],
     pager: {
@@ -53,12 +54,12 @@ export class HierarchyPermissionComponent implements OnInit {
   description: string = "";
   @ViewChild(DatatableComponent)
   table!: DatatableComponent;
+  public model!: Model;
   public defaultModelId: any;
   public defaultEntity: any = 'ALL';
   public defaultHierarchy: any = 'ALL';
   public rows: any = [];
-  public role:any = [];
-  public totalElement!:number;
+  public totalElement!: number;
   selectionType: SelectionType = SelectionType.single;
   sortType = SortType.single;
   columnMode: ColumnMode = ColumnMode.force;
@@ -71,7 +72,9 @@ export class HierarchyPermissionComponent implements OnInit {
   hierarchyForm!: FormGroup;
   selectedModel!: Model | null;
   selectedEntity!: Entity | null;
-  dropDownItems:any[]=[{name:'Read-only',value:'READ'},{name:'Update',value:'UPDATE'},{name:'deny',value:'DENY'}]
+  dropDownItems: any[] = [{ name: 'Read-only', value: 'READ' }, { name: 'Update', value: 'UPDATE' }, { name: 'deny', value: 'DENY' }]
+  roleList: any;
+  selectedRole: any;
 
   permissionHeaders: any[] = [
     {
@@ -108,10 +111,11 @@ export class HierarchyPermissionComponent implements OnInit {
     private entityService: EntityService,
     private HierarchyService: HierarchyServiceService,
     private fb: FormBuilder,
-    private hierarchyService:HierarchyServiceService,
+    private hierarchyService: HierarchyServiceService,
     protected readonly keycloak: KeycloakService,
+    private userAccessService: UserAccessService,
 
-  ) { 
+  ) {
     this.resizeTable.pipe(debounceTime(400)).subscribe(() => {
       this.table.recalculate();
     });
@@ -123,8 +127,8 @@ export class HierarchyPermissionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.role =
-    this.keycloak.getKeycloakInstance().tokenParsed?.realm_access?.roles;
+    // this.role =
+    //   this.keycloak.getKeycloakInstance().tokenParsed?.realm_access?.roles;
     this.getAllModels();
 
     this.listForm.valueChanges.pipe(
@@ -134,6 +138,14 @@ export class HierarchyPermissionComponent implements OnInit {
       this.filteredEntities = this.filterItems(this.entityList, item.entityFilter);
       this.filteredHierarchy = this.filterItems(this.hierarchyList, item.hierarchyFilter);
     })
+    this.userAccessService
+      .loadAllRoles()
+      .subscribe((roles: string[]) => {
+        this.roleList = roles.map((m) => {
+          return { name: m } as RoleDTO;
+        });
+        this.selectedRole = this.roleList[0].name;
+      });
   }
 
   // Generic filtering function
@@ -153,7 +165,7 @@ export class HierarchyPermissionComponent implements OnInit {
       this.defaultModelId = res ? res[0].id : '';
       this.getEntityByGroupId(this.defaultModelId);
       this.getAllHierarchyByModelId(res[0]);
-      this.loadHeirarchysummaryByModelId(res[0],this.role,this.currentCriteria)
+      this.loadHeirarchysummaryByModelId(res[0], this.selectedRole, this.currentCriteria)
     })
   }
 
@@ -178,26 +190,29 @@ export class HierarchyPermissionComponent implements OnInit {
   }
 
   public handleEntityByModels(id: any) {
-    const model = this.modelList.find((res: any) => res.id === id)
-     this.resetDatatable()
+    this.defaultEntity = 'ALL';
+    this.defaultHierarchy = 'ALL';
+    this.model = this.modelList.find((res: any) => res.id === id)
+    this.resetDatatable()
     this.getEntityByGroupId(id);
-    this.loadHeirarchysummaryByModelId(model,this.role[0],this.currentCriteria);
-    this.getAllHierarchyByModelId(model);
+    this.loadHeirarchysummaryByModelId(this.model, this.selectedRole, this.currentCriteria);
+    this.getAllHierarchyByModelId(this.model);
   }
 
-  public handleHierarchyByEntity(item: any) {
-
-  }
-  public loadHeirarchysummaryByModelId(model:Model,role:any,criteria:Criteria){
-    this.HierarchyService.loadHeirarchysummaryByModelId(model,role,criteria).subscribe({
-      next:((res)=>{
+  public loadHeirarchysummaryByModelId(model: Model, role: any, criteria: Criteria) {
+    this.HierarchyService.loadHeirarchysummaryByModelId(model, role, criteria).subscribe({
+      next: ((res) => {
         this.rows = res.content;
         this.totalElement = res.totalElements;
       }),
-      error:((error)=>{
+      error: ((error) => {
         console.log(error)
       })
     })
+  }
+
+  public onSelectRole(role: any) {
+    this.selectedRole = role.value;
   }
 
   public handleHierarchy(id: any) {
@@ -254,7 +269,7 @@ export class HierarchyPermissionComponent implements OnInit {
 
   getChildNodes(row: PreviewTreeNode, callBack: (v: any) => any, hie: HierarchyDetails) {
     if (hie) {
-      let cr = { 
+      let cr = {
         filters: [{
           filterType: "CONDITION",
           key: hie.refColumn,
@@ -293,168 +308,177 @@ export class HierarchyPermissionComponent implements OnInit {
     this.hierarchyDetails = [];
     this.selectedModel = this.getModelById(hie.modelId);
     this.getEntitiesByModel(this.selectedModel, hie.entityId, hie, true);
-    }
-    onClearClick() {
-      this.hierarchyDetails = [];
-      this.availableEntities = [];
-      this.hierarchyLevelNodes = [];
-      this.hierarchyPreviewNodes = [];
-      this.entityList = [];
-      this.selectedModel = null;
-      this.name = "";
-      this.id = 0;
-      this.description = "";
-      this.selectedEntity = null;
-      this.initForm();
-    }
-    getModelById(id: number) {
-      return this.modelList.find((m:any) => m.id == id) || {} as Model;
-    }
-    getEntitiesByModel(model:any, entityId?: number, hie?: Hierarchy, isOnBind: boolean = false) {
-      this.entityList = [];
-      this.entityService.loadEntityByModel(model.id).forEach((a) => {
-        this.entityList.push(...a);
-        this.EntityListCallBack(entityId ? entityId : 0, hie ? hie : {} as Hierarchy);
-      });
-    }
-    initForm() {
+  }
+  onClearClick() {
+    this.hierarchyDetails = [];
+    this.availableEntities = [];
+    this.hierarchyLevelNodes = [];
+    this.hierarchyPreviewNodes = [];
+    this.entityList = [];
+    this.selectedModel = null;
+    this.name = "";
+    this.id = 0;
+    this.description = "";
+    this.selectedEntity = null;
+    this.initForm();
+  }
+  getModelById(id: number) {
+    return this.modelList.find((m: any) => m.id == id) || {} as Model;
+  }
+  getEntitiesByModel(model: any, entityId?: number, hie?: Hierarchy, isOnBind: boolean = false) {
+    this.entityList = [];
+    this.entityService.loadEntityByModel(model.id).forEach((a) => {
+      this.entityList.push(...a);
+      this.EntityListCallBack(entityId ? entityId : 0, hie ? hie : {} as Hierarchy);
+    });
+  }
+  initForm() {
+    this.hierarchyForm = this.fb.group({
+      name: ["", [Validators.required, Validators.maxLength(50), Validators.minLength(3)]],
+      description: ["", Validators.maxLength(250)],
+      entityId: [0, Validators.required],
+      modelId: [0, Validators.required]
+    });
+  }
+  populateLevelTree() {
+    this.hierarchyLevelNodes = [
+      ...this.hierarchyDetails.map((hdtl) => {
+        return {
+          treeStatus: "expanded",
+          expandable: false,
+          id: hdtl.groupLevel + 1,
+          parentId: hdtl.groupLevel == 0 ? null : hdtl.groupLevel,
+          tablename: hdtl.entityName,
+          tableId: hdtl.entityId,
+          name: hdtl.tabledisplayname,
+          expanded: true
+        } as HierarchyTreeNode;
+      }),
+    ];
+    this.cd.detectChanges();
+  }
+  EntityListCallBack(entityId: number, hie: Hierarchy) {
+    if (entityId) {
+      this.selectedEntity = this.getEntityById(entityId);
       this.hierarchyForm = this.fb.group({
-        name: ["", [Validators.required, Validators.maxLength(50), Validators.minLength(3)]],
-        description: ["", Validators.maxLength(250)],
-        entityId: [0, Validators.required],
-        modelId: [0, Validators.required]
+        name: [this.name, [Validators.required, Validators.maxLength(50), Validators.minLength(3)]],
+        description: [this.description, Validators.maxLength(250)],
+        entityId: [entityId, Validators.required],
+        modelId: [this.selectedModel?.id, Validators.required]
       });
     }
-    populateLevelTree() {
-      this.hierarchyLevelNodes = [
-        ...this.hierarchyDetails.map((hdtl) => {
-          return {
-            treeStatus: "expanded",
-            expandable: false,
-            id: hdtl.groupLevel + 1,
-            parentId: hdtl.groupLevel == 0 ? null : hdtl.groupLevel,
-            tablename: hdtl.entityName,
-            tableId: hdtl.entityId,
-            name: hdtl.tabledisplayname,
-            expanded: true
-          } as HierarchyTreeNode;
-        }),
-      ];
+    if (hie && hie.details) {
+      hie.details.sort((a, b) => a.groupLevel - b.groupLevel)
+        .forEach(hieDtls => {
+          let lastHierarchyDtls = this.getLastHierarchyDtls();
+          hieDtls.entity = this.getEntityByTable(hieDtls.entityName);
+          hieDtls.entityId = hieDtls.entity.id;
+          hieDtls.tabledisplayname = this.getTableDisplayName(
+            lastHierarchyDtls?.entity || hieDtls.entity,
+            lastHierarchyDtls?.refColumn,
+            hieDtls.groupLevel == 0
+          );
+          this.hierarchyDetails.push(hieDtls);
+        });
+      this.hierarchyDetails = this.hierarchyDetails.sort((a, b) => b.groupLevel - a.groupLevel);
+      this.populateLevelTree();
+      this.populateAvailableEntities();
+      this.setPreviewRootNode(this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1)?.entity);
       this.cd.detectChanges();
     }
-    EntityListCallBack(entityId: number, hie: Hierarchy) {
-      if (entityId) {
-        this.selectedEntity = this.getEntityById(entityId);
-        this.hierarchyForm = this.fb.group({
-          name: [this.name, [Validators.required, Validators.maxLength(50), Validators.minLength(3)]],
-          description: [this.description, Validators.maxLength(250)],
-          entityId: [entityId, Validators.required],
-          modelId: [this.selectedModel?.id, Validators.required]
+  }
+  setPreviewRootNode(entity: Entity) {
+    this.hierarchyPreviewNodes = [];
+    this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes, {
+      "id": 0, "treeStatus": "collapsed", "column": "", loaded: false, "name": "ROOT", level: 0, code: "", grpId: this.hierarchyDetails.length + "",
+      tableId: entity.id
+    }];
+  }
+  populateAvailableEntities() {
+    this.availableEntities = [];
+    this.entityService.load(this.getLastHierarchyDtls().entity.id).forEach((a) => {
+      let derAttrList = (a as Entity).attributes
+        .filter((att) => att.type == "LOOKUP")
+        .map((att) => {
+          return {
+            displayName: att.referencedTableDisplayName,
+            name: att.referencedTable,
+            id: att.referencedTableId,
+            comment: att.name,
+            updatedBy: att.displayName
+          } as Entity;
         });
-      }
-      if (hie && hie.details) {
-        hie.details.sort((a, b) => a.groupLevel - b.groupLevel)
-          .forEach(hieDtls => {
-            let lastHierarchyDtls = this.getLastHierarchyDtls();
-            hieDtls.entity = this.getEntityByTable(hieDtls.entityName);
-            hieDtls.entityId = hieDtls.entity.id;
-            hieDtls.tabledisplayname = this.getTableDisplayName(
-              lastHierarchyDtls?.entity || hieDtls.entity,
-              lastHierarchyDtls?.refColumn,
-              hieDtls.groupLevel == 0
-            );
-            this.hierarchyDetails.push(hieDtls);
-          });
-        this.hierarchyDetails = this.hierarchyDetails.sort((a, b) => b.groupLevel - a.groupLevel);
-        this.populateLevelTree();
-        this.populateAvailableEntities();
-        this.setPreviewRootNode(this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1)?.entity);
-        this.cd.detectChanges();
-      }
-    }
-    setPreviewRootNode(entity: Entity) {
-      this.hierarchyPreviewNodes = [];
-      this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes, {
-        "id": 0, "treeStatus": "collapsed", "column": "", loaded: false, "name": "ROOT", level: 0, code: "", grpId: this.hierarchyDetails.length + "",
-        tableId: entity.id
-      }];
-    }
-    populateAvailableEntities() {
-      this.availableEntities = [];
-      this.entityService.load(this.getLastHierarchyDtls().entity.id).forEach((a) => {
-        let derAttrList = (a as Entity).attributes
-          .filter((att) => att.type == "LOOKUP")
-          .map((att) => {
-            return {
-              displayName: att.referencedTableDisplayName,
-              name: att.referencedTable,
-              id: att.referencedTableId,
-              comment: att.name,
-              updatedBy: att.displayName
-            } as Entity;
-          });
-        this.availableEntities.push(...derAttrList);
-      });
-    }
-    onItemSelected(event:any){
+      this.availableEntities.push(...derAttrList);
+    });
+  }
+  onItemSelected(event: any) {
 
-    }
-    onPaginate(event:any){
+  }
+  onPaginate(event: any) {
+    this.currentCriteria.pager = {
+      ...(this.currentCriteria.pager || {}),
+      pageNumber: event.offset,
+      pageSize: this.pageSize
+    };
+    this.loadHeirarchysummaryByModelId(this.model, this.selectedRole, this.currentCriteria);
+  }
+  onSort(event: any) {
 
-    }
-    onSort(event:any){
+  }
+  // public addDropDown(data:any){
+  //   this.hierarchyPreviewNodes = this.hierarchyPreviewNodes.map(item => {
+  //     if (item.grpId === data.grpId) {
+  //       return { ...item, dropDown: true };
+  //     }
+  //     return {...item,dropDown: false};
+  //   });
+  // }
+  onSelect(value: any, row: any) {
+    this.setPermissions(value, row);
+  }
 
+  public setPermissions(value: string, data: any) {
+    const hierarchyDtlId = this.hierarchyDetails[0].id;
+    const params: permissions = {
+      id: 0,
+      hierarchyDtlId: hierarchyDtlId,
+      permission: value,
+      role: this.selectedRole,
+      value: data.id
     }
-    // public addDropDown(data:any){
-    //   this.hierarchyPreviewNodes = this.hierarchyPreviewNodes.map(item => {
-    //     if (item.grpId === data.grpId) {
-    //       return { ...item, dropDown: true };
-    //     }
-    //     return {...item,dropDown: false};
-    //   });
-    // }
-    onSelect(value:any,row:any){
-      this.setPermissions(value,row);
-    }
-    
-    public setPermissions(value:string,data:any){
-      const hierarchyDtlId = this.hierarchyDetails[0].hierarchyId;
-      const params:permissions = {
-        id: 0,
-        hierarchyDtlId:hierarchyDtlId,
-        permission:value,
-        role:this.role[0],
-        value: data.id
-      }
-      this.HierarchyService.loadHierarchyByPermissions(params).subscribe({
-        next:(res:any)=>{
-         this.rows = res.content;
-        },
-        error:(err:any)=>{
-          this.rows = [];
-          console.log(err)
+    this.HierarchyService.loadHierarchyByPermissions(params).subscribe({
+      next: (res: any) => {
+        // this.rows = res.content;
+        if(res)
+        {
+          this.loadHeirarchysummaryByModelId(this.model, this.selectedRole, this.currentCriteria);
         }
-      })
-    }
-    getEntityById(id: number) {
-      return this.entityList.find((m:any) => m.id == id) || {} as Entity;
-    }
-    getLastHierarchyDtls() {
-      return this.hierarchyDetails.sort((a, b) => a.groupLevel - b.groupLevel)[this.hierarchyDetails.length - 1] || null;
-    }
-    getEntityByTable(table: string) {
-      return this.entityList.find((m:any) => m.name == table) || {} as Entity;
-    }
-    getTableDisplayName(e: Entity, attribName: string, isRootEntity: boolean) {
-      return isRootEntity ? e.displayName : this.getAttribDisplayNameByName(e, attribName) || "";
-    }
-    getAttribDisplayNameByName(entity: Entity, name: string) {
-      return this.entityList.find((e:any) => e.id == entity.id)
-        ?.attributes.find((a:any) => a.name == name)
-        ?.displayName || "";
-    }
-    @HostListener("window:resize", ["$event"])
-    resize(event: any) {
-      this.resizeTable.next(true);
-    }
+      },
+      error: (err: any) => {
+        this.rows = [];
+        console.log(err)
+      }
+    })
+  }
+  getEntityById(id: number) {
+    return this.entityList.find((m: any) => m.id == id) || {} as Entity;
+  }
+  getLastHierarchyDtls() {
+    return this.hierarchyDetails.sort((a, b) => a.groupLevel - b.groupLevel)[this.hierarchyDetails.length - 1] || null;
+  }
+  getEntityByTable(table: string) {
+    return this.entityList.find((m: any) => m.name == table) || {} as Entity;
+  }
+  getTableDisplayName(e: Entity, attribName: string, isRootEntity: boolean) {
+    return isRootEntity ? e.displayName : this.getAttribDisplayNameByName(e, attribName) || "";
+  }
+  getAttribDisplayNameByName(entity: Entity, name: string) {
+    return this.entityList.find((e: any) => e.id == entity.id)
+      ?.attributes.find((a: any) => a.name == name)
+      ?.displayName || "";
+  }
+  @HostListener("window:resize", ["$event"])
+  resize(event: any) {
+    this.resizeTable.next(true);
+  }
 }
