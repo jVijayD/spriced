@@ -19,6 +19,7 @@ import { EntityService } from "../../services/entity.service";
 import { ModelService } from "../../services/model.service";
 import { Model } from "@spriced-frontend/spriced-common-lib";
 import { MatSelectChange } from "@angular/material/select";
+import { KeycloakService } from "keycloak-angular";
 @Component({
   selector: "app-hierarchy-definition",
   templateUrl: "./hierarchy-definition.component.html",
@@ -51,7 +52,8 @@ export class HierarchyDefinitionComponent
 
   constructor(
     private entityService: EntityService,
-    private modelService: ModelService
+    private modelService: ModelService,
+    protected readonly keycloak: KeycloakService,
   ) {}
 
   ngOnDestroy(): void {

@@ -128,6 +128,7 @@ export class HierarchyNewTabComponent {
     private hierarchyService: HierarchyServiceService,
     private fb: FormBuilder,
   ) {
+    
     this.onClearClick();
   }
   initForm() {
