@@ -173,7 +173,7 @@ export class HierarchyTreeviewComponent {
     const entityData: any = this.hierarchyDetails.filter((el: any) => el.groupLevel === 0);
     this.filterHierarchyPreviewNodes = [...previewNodes, {
       "id": 0, "treeStatus": status, "column": "", loaded: true, "name": "ROOT", level: 0, code: "", grpId: this.hierarchyDetails.length + "",
-      tableId: entityData[0].entityId
+      tableId: entity.id
     }];
   }
 
@@ -184,9 +184,12 @@ export class HierarchyTreeviewComponent {
     const entityData: any = this.hierarchyDetails.filter((el: any) => el.groupLevel === 0);
     this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes, {
       "id": 0, "treeStatus": "collapsed", "column": "", loaded: false, "name": "ROOT", level: 0, code: "", grpId: this.hierarchyDetails.length + "",
-      tableId: entityData[0].entityId
+      tableId: entity.id
     }];
     this.filterHierarchyPreviewNodes = this.hierarchyPreviewNodes;
+    const hierarchyNodes = {row: this.filterHierarchyPreviewNodes[0]};
+    this.onTreeActionPreview(hierarchyNodes, this.displayFormat);
+    this.handleSelectItem(this.filterHierarchyPreviewNodes[0]);
   }
 
   getAttribDisplayNameByName(entity: any, name: string) {
@@ -338,28 +341,17 @@ export class HierarchyTreeviewComponent {
   }
 
   public handleSelectItem(row: any) {
-    console.log(this.hierarchyDetails,'>>>>');
-    if(row.id !== this.currentRowId)
+    let hierarchyRow = {...row};
+    const level = this.hierarchyDetails.length - (row.level + 1);
+    row = this.hierarchyDetails.find(elm => elm.groupLevel === level);
+    if(!!row.id)
     {
-      this.currentRowId = row.id;
-      let entity:any = this.entityList.filter((item:any)=>item.id == row.tableId);
-      const filter = row.name !== 'ROOT' ? [{ "filterType": "CONDITION", "joinType": "NONE", "operatorType": "EQUALS", "key": 'code', "value": row?.code, "dataType": "string" }] : [];
-      entity = {...entity[0], 'filter': filter ? filter : '' };
+      this.currentRowId = row.entityId;
+      let entity:any = this.entityList.find((item:any)=>item.id == row.entityId);
+      const filter = row.groupLevel !== (this.hierarchyDetails.length -1) ? [{ "filterType": "CONDITION", "joinType": "NONE", "operatorType": "EQUALS", "key": row?.refColumn, "value": hierarchyRow?.id, "dataType": "string" }] : [];
+      entity = {...entity, 'filter': filter ? filter : '' };
       this.getEntity.emit(entity);
     }
-    // this.onItemSelected({ selected: [row] });
-  }
-
-  public onItemSelected(event: any) {
-    const item = event.selected[0];
-    if (item.name !== 'ROOT') {
-      const filter = [{ "filterType": "CONDITION", "joinType": "NONE", "operatorType": "EQUALS", "key": 'code', "value": item.id, "dataType": "number" }]
-      this.entityDataService.filterDataByHierarchy.next(filter);
-    }
-    else {
-      this.entityDataService.filterDataByHierarchy.next([]);
-    }
-
   }
 
   public filterDatatable(nodes: any, item: any) {

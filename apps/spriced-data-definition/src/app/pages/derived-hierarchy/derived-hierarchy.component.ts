@@ -1,6 +1,7 @@
 import {
   ChangeDetectorRef,
   Component,
+  Input,
   ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -141,7 +142,7 @@ export class DerivedHierarchyComponent {
       this.entityDataService.loadHierarchy(this.hierarchyId).subscribe((e: any) => {
         this.hierarchyData = e;
         if (!!this.hierarchyId) {
-          this.derivedHierarchy.onBind(e, this.globalSettings?.displayFormat)
+          this.derivedHierarchy.onBind(e, this.globalSettings?.displayFormat);
         }
       });
     }
