@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Output, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Head, Header, HeaderActionComponent, HeaderComponentWrapperComponent, ThreeColComponent } from "@spriced-frontend/spriced-ui-lib";
+import { Head, Header, HeaderActionComponent, HeaderComponentWrapperComponent, SnackBarService, ThreeColComponent } from "@spriced-frontend/spriced-ui-lib";
 import { ColumnMode, DatatableComponent, NgxDatatableModule, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import {
@@ -71,8 +71,8 @@ export class HierarchyTreeviewComponent {
   selectedItems: any;
   removeBufferItems: any;
   searchInputSubject = new Subject<string>();
-  currentRowId!: number;
-  disableRowId: any;
+  currentRowId: any = undefined;
+  disableRowId: any = null;
   selected: any;
 
 
@@ -80,8 +80,9 @@ export class HierarchyTreeviewComponent {
     private cd: ChangeDetectorRef,
     private entityService: EntityService,
     private aroute: ActivatedRoute,
-    private entityDataService: DataEntityService
-  ){}
+    private entityDataService: DataEntityService,
+    private snackbarService: SnackBarService,
+  ) { }
 
   ngOnInit() {
     this.hierarchyId = this.aroute.snapshot.paramMap.get("hierarchyId") ? Number(this.aroute.snapshot.paramMap.get("hierarchyId")) : null;
@@ -188,7 +189,7 @@ export class HierarchyTreeviewComponent {
       tableId: entity.id
     }];
     this.filterHierarchyPreviewNodes = this.hierarchyPreviewNodes;
-    const hierarchyNodes = {row: this.filterHierarchyPreviewNodes[0]};
+    const hierarchyNodes = { row: this.filterHierarchyPreviewNodes[0] };
     this.onTreeActionPreview(hierarchyNodes, this.displayFormat);
     this.handleSelectItem(this.filterHierarchyPreviewNodes[0]);
   }
@@ -314,6 +315,9 @@ export class HierarchyTreeviewComponent {
       this.cd.detectChanges();
     } else {
       row.treeStatus = 'collapsed';
+      if (row.treeStatus === 'collapsed') {
+        this.filterHierarchyPreviewNodes.map((item: any) => row.level === 0 ? item.treeStatus = 'collapsed' : (item.level !== 0 && item.parentGrpId === row.grpId && (item.treeStatus = 'collapsed')));
+      }
       this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes];
       this.filterHierarchyPreviewNodes = [...this.filterHierarchyPreviewNodes];
       this.cd.detectChanges();
@@ -342,17 +346,18 @@ export class HierarchyTreeviewComponent {
   }
 
   public handleSelectItem(row: any) {
-    let hierarchyRow = {...row};
-    this.table.selected = [row];
-    const level = this.hierarchyDetails.length - (row.level + 1);
-    row = this.hierarchyDetails.find(elm => elm.groupLevel === level);
-    if(!!row.id)
-    {
-      this.currentRowId = row.entityId;
-      let entity:any = this.entityList.find((item:any)=>item.id == row.entityId);
-      const filter = row.groupLevel !== (this.hierarchyDetails.length -1) ? [{ "filterType": "CONDITION", "joinType": "NONE", "operatorType": "EQUALS", "key": row?.refColumn, "value": hierarchyRow?.id, "dataType": "string" }] : [];
-      entity = {...entity, 'filter': filter ? filter : '' };
-      this.getEntityByHierarchyItem.emit(entity);
+    if ([undefined, null].includes(this.currentRowId) || row.id !== this.currentRowId) {
+      this.currentRowId = row.id;
+      let hierarchyRow = { ...row };
+      this.table.selected = [row];
+      const level = this.hierarchyDetails.length - (row.level + 1);
+      row = this.hierarchyDetails.find(elm => elm.groupLevel === level);
+      if (!!row.id) {
+        let entity: any = this.entityList.find((item: any) => item.id == row.entityId);
+        const filter = row.groupLevel !== (this.hierarchyDetails.length - 1) ? [{ "filterType": "CONDITION", "joinType": "NONE", "operatorType": "EQUALS", "key": row?.refColumn, "value": hierarchyRow?.id, "dataType": "string" }] : [];
+        entity = { ...entity, 'filter': filter ? filter : '' };
+        this.getEntityByHierarchyItem.emit(entity);
+      }
     }
   }
 
@@ -398,7 +403,7 @@ export class HierarchyTreeviewComponent {
   public removeHierarchyData() {
     console.log(this.selectedItems, this.table);
     this.removeBufferItems = this.selectedItems;
-    this.disableRowId = this.selectedItems.id;
+    this.disableRowId = this.selectedItems.grpId;
     this.selectedItems = null;
     // this.filterHierarchyPreviewNodes = this.filterHierarchyPreviewNodes;
     // const ids = this.selectedItems.map((el: any) => el.id);
@@ -412,14 +417,28 @@ export class HierarchyTreeviewComponent {
   public updateHierarchyData() {
     console.log(this.selectedItems);
     const item = this.selectedItems;
+    let row: any = this.hierarchyDetails.length - (item.level + 1);
+    row = this.hierarchyDetails.find(elm => elm.groupLevel === row);
+    const currentEntity = this.getEntityById(row.entityId);
     const param = {
-      "entityName": this.currentEntity.name,
+      "entityName": currentEntity.name,
       "refColumn": item.column,
-      "memberId": item.id,
-      "newParentId": item.parentGrpId
+      "memberId": +this.removeBufferItems.id,
+      "newParentId": +item.id
     }
     this.entityDataService.updateHierarchy(param).subscribe((res: any) => {
       console.log(res);
+      if (this.hierarchyId && res) {
+        this.entityDataService.loadHierarchy(this.hierarchyId).subscribe((e: any) => {
+          console.log(e, '>??');
+          this.populateLevelTree();
+          this.populateAvailableEntities();
+          this.setPreviewRootNode(this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1)?.entity);
+        });
+      }
+      else {
+        this.snackbarService.error("Hierarchy record updated failed");
+      }
     })
     this.selectedItems = null;
     this.removeBufferItems = null;

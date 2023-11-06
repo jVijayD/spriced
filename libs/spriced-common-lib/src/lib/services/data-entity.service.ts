@@ -177,6 +177,6 @@ export class DataEntityService {
 
   updateHierarchy(param: any) {
     return this.http.patch(
-      `${this.api_url}/hierarchy/updateParent`, param);
+      `${this.def_url}/hierarchy/updateParent`, param);
   }
 }
