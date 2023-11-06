@@ -103,12 +103,12 @@
             <mat-form-field *ngIf="['TIME_STAMP', 'DATE_TIME'].includes(dataType)"
                 [ngClass]="preview ? 'not-allow' : ''" class="w-52" appearance="outline">
                 <mat-label>DateTime</mat-label>
-                <input matInput [readonly]="preview" [ngxMatDatetimePicker]="mindatetimepicker1"
+                <input matInput [readonly]="preview" [matDatepicker]="mindatetimepicker1"
                     formControlName="operand">
                 <mat-datepicker-toggle [disabled]="preview" matSuffix
                     [for]="$any(mindatetimepicker1)"></mat-datepicker-toggle>
-                <ngx-mat-datetime-picker [hideTime]="true" #mindatetimepicker1
-                    [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
+                <mat-datepicker #mindatetimepicker1
+                    [panelClass]="'matDatePopup'"></mat-datepicker>
             </mat-form-field>
 
             <mat-error class="text-sm italic text-red-500"
@@ -202,12 +202,12 @@
         <mat-form-field *ngIf="['TIME_STAMP', 'DATE_TIME'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''"
             class="w-52" appearance="outline">
             <mat-label>DateTime</mat-label>
-            <input matInput [readonly]="preview" [ngxMatDatetimePicker]="mindatetimepicker1"
+            <input matInput [readonly]="preview" [matDatepicker]="mindatetimepicker1"
                 formControlName="min_value">
             <mat-datepicker-toggle [disabled]="preview" matSuffix
                 [for]="$any(mindatetimepicker1)"></mat-datepicker-toggle>
-            <ngx-mat-datetime-picker [hideTime]="true" #mindatetimepicker1
-                [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
+            <mat-datepicker  #mindatetimepicker1
+                [panelClass]="'matDatePopup'"></mat-datepicker>
         </mat-form-field>
 
 
@@ -256,12 +256,12 @@
         <mat-form-field *ngIf="['TIME_STAMP', 'DATE_TIME'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''"
             class="w-52" appearance="outline">
             <mat-label>DateTime</mat-label>
-            <input matInput [readonly]="preview" [ngxMatDatetimePicker]="maxdatetimepicker1"
+            <input matInput [readonly]="preview" [matDatepicker]="maxdatetimepicker1"
                 formControlName="max_value">
             <mat-datepicker-toggle [disabled]="preview" matSuffix
                 [for]="$any(maxdatetimepicker1)"></mat-datepicker-toggle>
-            <ngx-mat-datetime-picker [hideTime]="true" #maxdatetimepicker1
-                [panelClass]="'matDatePopup'"></ngx-mat-datetime-picker>
+            <mat-datepicker  #maxdatetimepicker1
+                [panelClass]="'matDatePopup'"></mat-datepicker>
         </mat-form-field>
 
         <mat-error class="text-sm italic text-red-500"
