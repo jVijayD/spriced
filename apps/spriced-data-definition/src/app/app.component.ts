@@ -51,11 +51,11 @@ export class AppComponent {
       active: false,
       path: "/spriced-data-definition/hierarchy-definition",
     },
-    // {
-    //   name: "Hierarchy Permission",
-    //   active: false,
-    //   path: "/spriced-data-definition/hierarchy-permission",
-    // },
+    {
+      name: "Hierarchy Permission",
+      active: false,
+      path: "/spriced-data-definition/hierarchy-permission",
+    },
   ];
   constructor(private appDataService: AppDataService) {
     this.appDataService.setMenuData(this.menuDItems);
