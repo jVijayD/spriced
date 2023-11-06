@@ -768,8 +768,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
           if (startIndex !== -1 && endIndex !== -1 && startIndex < endIndex) {
             firstMessage = errorMessage.substring(startIndex + sepStart.length, endIndex).trim();
-            const formattedMsg = firstMessage.replace(/:\s/g, ":\n").replace(/\b(IF|THEN|ELSE)\b\s/g, "\n$1 ");
-            this.snackbarService.error(formattedMsg);
+            errorMessage = firstMessage.replace(/:\s/g, ":\n").replace(/\b(IF|THEN|ELSE)\b\s/g, "\n$1 ");
+            this.snackbarService.error(errorMessage);
           } else {
             this.snackbarService.error(errorMessage);
           }
