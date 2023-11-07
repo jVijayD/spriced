@@ -163,6 +163,7 @@ export class HierarchyPermissionComponent implements OnInit {
       this.filteredModels = res;
       this.modelList = res;
       this.defaultModelId = res ? res[0].id : '';
+      this.model = res ? res[0] : '';
       this.getEntityByGroupId(this.defaultModelId);
       this.getAllHierarchyByModelId(res[0]);
       this.loadHeirarchysummaryByModelId(res[0], this.selectedRole, this.currentCriteria)
@@ -213,6 +214,7 @@ export class HierarchyPermissionComponent implements OnInit {
 
   public onSelectRole(role: any) {
     this.selectedRole = role.value;
+    this.loadHeirarchysummaryByModelId(this.model, this.selectedRole, this.currentCriteria);
   }
 
   public handleHierarchy(id: any) {
@@ -438,10 +440,11 @@ export class HierarchyPermissionComponent implements OnInit {
   }
 
   public setPermissions(value: string, data: any) {
-    const hierarchyDtlId = this.hierarchyDetails[0].id;
+    const hierarchyDtlId: any = this.hierarchyDetails.find((el: any) => el.groupLevel === data.level);
+    const summaryData: any = this.rows.find((el: any) => el.hierarchy_dtl_id === hierarchyDtlId.id);
     const params: permissions = {
-      id: 0,
-      hierarchyDtlId: hierarchyDtlId,
+      id: summaryData ? summaryData.id : 0,
+      hierarchyDtlId: hierarchyDtlId.id,
       permission: value,
       role: this.selectedRole,
       value: data.id
@@ -449,8 +452,7 @@ export class HierarchyPermissionComponent implements OnInit {
     this.HierarchyService.loadHierarchyByPermissions(params).subscribe({
       next: (res: any) => {
         // this.rows = res.content;
-        if(res)
-        {
+        if (res) {
           this.loadHeirarchysummaryByModelId(this.model, this.selectedRole, this.currentCriteria);
         }
       },

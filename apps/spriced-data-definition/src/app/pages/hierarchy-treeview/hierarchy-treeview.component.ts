@@ -442,6 +442,7 @@ export class HierarchyTreeviewComponent {
     })
     this.selectedItems = null;
     this.removeBufferItems = null;
+    this.disableRowId = null;
   }
 
   public getDisplayProp(option: any, prop: any) {
