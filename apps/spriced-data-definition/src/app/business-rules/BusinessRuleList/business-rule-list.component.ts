@@ -18,6 +18,7 @@ import { NGX_MAT_DATE_FORMATS, NgxMatDateAdapter, NgxMatDatetimePickerModule, Ng
 import { MatRadioModule } from '@angular/material/radio';
 import { RouterModule } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
+import { Subscription } from "rxjs";
 
 const MY_DATE_FORMAT = {
   parse: {
@@ -94,7 +95,9 @@ const sToken = new ServiceTokens();
   templateUrl: './business-rule-list.component.html',
   styleUrls: ['./business-rule-list.component.scss'],
 })
-export class BusinessRuleListComponent {
+export class BusinessRuleListComponent
+// extends BaseDataComponent  
+{
   // DEMO LIST CODE
   @Input() item?: any;
   @Input() parentItem?: any;
@@ -103,6 +106,11 @@ export class BusinessRuleListComponent {
   @Input() index: any;
   @Input() length: any;
   public conditionForm?: any;
+  public lookupInput: boolean = false;
+  public lookupAllAttributeData: any = [];
+  public lookupSourceData: any = [];
+  public prop: string = "code|name";
+  subscriptions: Subscription[] = [];
   @Input() public set connectedDropListsIds(ids: string[]) {
     this.allDropListsIds = ids;
   }
@@ -158,7 +166,6 @@ export class BusinessRuleListComponent {
       el.name === 'const' ? el.name = 'value' : '';
       return
     });
-
     this.conditionForm = this.item?.controls?.id === 'parent' ? this.item.controls.subConditions.controls[0] : this.item;
 
     this.disable = this.isConditionTypeNone();
@@ -186,7 +193,24 @@ export class BusinessRuleListComponent {
     return this.conditionForm?.get('conditionType')?.value === 'NONE';
   }
 
+  /**
+   * 
+   * @param id number
+   */
+  public loadLookupData(id: number) {
+    this.businessruleservice.loadLookupData(id).subscribe({
+      next: (res: any) => {
+        this.lookupAllAttributeData.push(res.content);
+        this.lookupSourceData = res.content;
+      },
+      error: (err) => {
+        console.log(err)
+      }
+    })
+  }
+
   public selectAttribute(item: any, parent?: any, type?: string) {
+    this.lookupInput = false;
     if (type === 'operand') {
       const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
       this.selectedOperand = value;
@@ -200,20 +224,32 @@ export class BusinessRuleListComponent {
       this.conditionForm?.get('operandTableName')?.setValue(parentAtt.referencedTable ?? '');
     }
     else {
-      const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
+      let parentAtt = parent ?? '';
+      if (!parent && item.type === 'LOOKUP') {
+        this.lookupInput = true;
+        this.loadLookupData(item?.referencedTableId)
+        parentAtt = item;
+        item = {
+          displayName: 'Code',
+          name: 'code',
+          id: '1234'
+        }
+      }
+      const value = parentAtt && parentAtt !== '' && !this.lookupInput ? `${parentAtt?.displayName.trim()}.${item.displayName}` : parentAtt && parentAtt !== '' && this.lookupInput ? `${parentAtt?.displayName.trim()}` : item?.displayName;
       this.selectedAttribute = value;
       this.selectedOperand = '';
       this.disableFormControl();
 
-      this.conditionForm?.get('attributeId')?.setValue(item.id);
-      this.conditionForm?.get('attributeDisplayName')?.setValue(item.displayName);
-      this.conditionForm?.get('attributeName')?.setValue(item.name);
+      this.conditionForm?.get('attributeId')?.setValue(item?.id);
+      this.conditionForm?.get('attributeDisplayName')?.setValue(item?.displayName);
+      this.conditionForm?.get('attributeName')?.setValue(item?.name);
+      // const parentAtt = (!parent && item.type) === 'Lookup'?item:parent;
+      // const parentAtt = parent ?? '';
 
-      const parentAtt = parent ?? '';
-      this.conditionForm?.get('parentAttributeId')?.setValue(parentAtt.id ?? '');
-      this.conditionForm?.get('parentAttributeName')?.setValue(parentAtt.name ?? '');
-      this.conditionForm?.get('parentAttributeDisplayName')?.setValue(parentAtt.displayName ?? '');
-      this.conditionForm?.get('attributeTableName')?.setValue(parentAtt.referencedTable ?? '');
+      this.conditionForm?.get('parentAttributeId')?.setValue(parentAtt?.id ?? '');
+      this.conditionForm?.get('parentAttributeName')?.setValue(parentAtt?.name ?? '');
+      this.conditionForm?.get('parentAttributeDisplayName')?.setValue(parentAtt?.displayName ?? '');
+      this.conditionForm?.get('attributeTableName')?.setValue(parentAtt?.referencedTable ?? '');
       this.handleAttributes(item.id, 'changeAttribute');
     }
   }
@@ -363,13 +399,21 @@ export class BusinessRuleListComponent {
    * @param operand string
    */
   public handleParentAttributes(attributeId: string, parentAttributeId?: string, parentOperandId?: string, operand?: string) {
-    const attribute = this.findAttributeById(attributeId);
+    let attribute: any = this.findAttributeById(attributeId);
     const parentAttribute = this.findAttributeById(parentAttributeId);
     const operend = this.findAttributeById(operand);
     const parentOperand = this.findAttributeById(parentOperandId);
+    if (attribute?.name === 'code' || !attribute) {
+      this.lookupInput = true;
+      this.loadLookupData(parentAttribute?.referencedTableId);
+      attribute = {
+        name: 'code',
+        displayName: 'Code',
+        id: '1234'
+      }
+    }
 
     const checkValue = [attributeId, parentAttributeId, parentOperandId, operand].every(element => element === '');
-
     if (checkValue) {
       this.selectedAttribute = '';
       this.selectedOperand = '';
@@ -425,7 +469,7 @@ export class BusinessRuleListComponent {
    * @returns 
    */
   private buildSelectedAttribute(attribute: any, parentAttribute: any): string {
-    return !!parentAttribute && !!attribute ? `${parentAttribute?.displayName.trim()}.${attribute.displayName}` : !parentAttribute ? attribute?.displayName.trim() : '';
+    return !!parentAttribute && !!attribute && !this.lookupInput ? `${parentAttribute?.displayName.trim()}.${attribute.displayName}` : !parentAttribute ? attribute?.displayName.trim() : !!parentAttribute && !!attribute && this.lookupInput ? `${parentAttribute?.displayName.trim()}` : '';
   }
 
   /**
@@ -465,8 +509,6 @@ export class BusinessRuleListComponent {
 
     return new RegExp(pattern);
   }
-
-
   /**
    * HANDLE THIS FOR EMIT THE DROP ITEM
    * @param event 

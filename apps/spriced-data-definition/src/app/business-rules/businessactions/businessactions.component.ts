@@ -13,7 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ServiceTokens, FormDataFetchService } from '@spriced-frontend/shared/spriced-shared-lib';
-import { DateAdapterService } from '@spriced-frontend/spriced-common-lib';
+import { DateAdapterService,BusinessruleService } from '@spriced-frontend/spriced-common-lib';
 import { DynamicFormService, FORM_DATA_SERVICE, SnackBarService } from '@spriced-frontend/spriced-ui-lib';
 import { RouterModule } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
@@ -119,10 +119,13 @@ export class BusinessactionsComponent implements AfterViewInit {
   public isFieldDisabled: boolean = false;
   public selectedAttribute: any = '';
   public selectedOperand: any = '';
-
+  public lookupInput: boolean = false;
+  public lookupSourceData: any = [];
+  public prop: string = "code|name";
 
   constructor(
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private businessruleservice: BusinessruleService,
   ) { }
 
   /**
@@ -291,7 +294,19 @@ export class BusinessactionsComponent implements AfterViewInit {
     });
   }
 
+  public loadLookupData(id: number) {
+    this.businessruleservice.loadLookupData(id).subscribe({
+      next: (res: any) => {
+        this.lookupSourceData = res.content;
+      },
+      error: (err) => {
+        console.log(err)
+      }
+    })
+  }
+
   public selectAttribute(item: any, parent?: any, type?: string) {
+    this.lookupInput = false;
     if (type === 'operand') {
       const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
       this.selectedOperand = value;
@@ -305,7 +320,18 @@ export class BusinessactionsComponent implements AfterViewInit {
       this.actionForm?.get('operandTableName')?.setValue(parentAtt.referencedTable ?? '');
     }
     else {
-      const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
+      let parentAtt:any = parent ?? '';
+      if (!parent && item.type === 'LOOKUP') {
+        this.lookupInput = true;
+        this.loadLookupData(item?.referencedTableId)
+        parentAtt = item;
+        item = {
+          displayName: 'Code',
+          name: 'code',
+          id: '1234'
+        }
+      }
+      const value = parentAtt && parentAtt !== '' && !this.lookupInput ? `${parentAtt?.displayName.trim()}.${item.displayName}` : parentAtt && parentAtt !== '' && this.lookupInput ? parentAtt?.displayName.trim() : item?.displayName;
       this.selectedAttribute = value;
       this.selectedOperand = '';
       this.disableFormControl();
@@ -314,7 +340,7 @@ export class BusinessactionsComponent implements AfterViewInit {
       this.actionForm?.get('attributeDisplayName')?.setValue(item.displayName);
       this.actionForm?.get('attributeName')?.setValue(item.name);
 
-      const parentAtt = parent ?? '';
+      // const parentAtt = parent ?? '';
       this.actionForm?.get('parentAttributeId')?.setValue(parentAtt.id ?? '');
       this.actionForm?.get('parentAttributeName')?.setValue(parentAtt.name ?? '');
       this.actionForm?.get('parentAttributeDisplayName')?.setValue(parentAtt.displayName ?? '');
@@ -345,10 +371,20 @@ export class BusinessactionsComponent implements AfterViewInit {
   * @param operand string
   */
   public handleParentAttributes(attributeId: string, parentAttributeId?: string, parentOperandId?: string, operand?: string) {
-    const attribute = this.findAttributeById(attributeId);
+    let attribute = this.findAttributeById(attributeId);
     const parentAttribute = this.findAttributeById(parentAttributeId);
     const operend = this.findAttributeById(operand);
     const parentOperand = this.findAttributeById(parentOperandId);
+
+    if (attribute?.name === 'code' || !attribute) {
+      this.lookupInput = true;
+      this.loadLookupData(parentAttribute?.referencedTableId);
+      attribute = {
+        name: 'code',
+        displayName: 'Code',
+        id: '1234'
+      }
+    }
 
     const checkValue = [attributeId, parentAttributeId, parentOperandId, operand].every(element => element === '');
 
@@ -414,7 +450,7 @@ export class BusinessactionsComponent implements AfterViewInit {
    * @returns 
    */
   private buildSelectedAttribute(attribute: any, parentAttribute: any): string {
-    return !parentAttribute && !attribute ? '' : !parentAttribute ? attribute?.displayName.trim() : `${parentAttribute?.displayName.trim()}.${attribute.displayName}`;
+    return !parentAttribute && !attribute ? '' : !parentAttribute ? attribute?.displayName.trim() : !!parentAttribute && !!attribute && this.lookupInput ? parentAttribute?.displayName.trim() : `${parentAttribute?.displayName.trim()}.${attribute.displayName}`;
   }
 
   /**
@@ -454,5 +490,4 @@ export class BusinessactionsComponent implements AfterViewInit {
 
     return new RegExp(pattern);
   }
-
 }
