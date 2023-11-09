@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit } from "@angular/core";
+import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   MAT_DIALOG_DATA,
@@ -59,14 +59,14 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "columnName",
+      column: "column_name",
       name: "Attribute",
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "updatedDate",
+      column: "updated_date",
       name: "Last Updated On",
       pipe: (data: any) => {
         return moment(data).format("MM/DD/YYYY HH:mm:ss");
@@ -76,31 +76,32 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "priorValue",
+      column: "prior_value",
       name: "Prior Value",
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "newValue",
+      column: "new_value",
       name: "New value",
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "updatedBy",
+      column: "updated_by",
       name: "User",
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "transactionType",
+      column: "transaction_type",
       name: "Transaction",
     },
   ];
+  @ViewChild('inputField') inputField!:ElementRef;
   columnMode: ColumnMode = ColumnMode.force;
   selectionType: SelectionType = SelectionType.single;
   sortType = SortType.single;
@@ -115,6 +116,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       pageNumber: 0,
       pageSize: this.limit,
     },
+    sorters:[{direction:"DESC",property:"updated_date"}]
   };
   subscriptions: any[] = [];
   defaultCodeSetting = "namecode";
@@ -126,6 +128,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
     private settings: SettingsService,
     @Inject(MAT_DIALOG_DATA) public dialogData: any
   ) {
+    debugger
     this.currentSelectedEntity = dialogData.currentSelectedEntity as Entity;
     dialogRef.disableClose = true;
     this.globalSettings =
@@ -161,51 +164,33 @@ export class AuditDataComponent implements OnInit, OnDestroy {
     }
   }
   ngOnInit(): void {
-    this.currentCriteria.filters?.push({
-      filterType: "CONDITION",
-      key: "entity_name",
-      value: this.currentSelectedEntity.name,
-      joinType: "NONE",
-      operatorType: "EQUALS",
-      dataType: "string",
-    });
-    // this.loadAuditData();
+    const filters = this.createFilters("entity_name",this.currentSelectedEntity.name,"string");
+    this.currentCriteria.filters?.push(filters);
   }
 
   onPaginate(e: Paginate) {
-   
-    this.currentCriteria = {
-      filters:[{
-        filterType: "CONDITION",
-        key: "entity_name",
-        value: this.currentSelectedEntity.name,
-        joinType: "NONE",
-        operatorType: "EQUALS",
-        dataType: "string",
-      }
-      ],
+    this.currentCriteria.filters=[];
+    const filters = this.createFilters("entity_name",this.currentSelectedEntity.name,"string");
+    this.currentCriteria.filters?.push(filters);
+    this.currentCriteria={
+      ...this.currentCriteria,
       pager: {
         pageNumber: e.offset,
         pageSize: this.limit,
       },
-    };
+    }
     this.loadAuditData();
   }
 
   onItemSelected(e: any) {
     this.selectedItem = e;
     this.currentCriteria.filters=[];
-    this.currentCriteria.filters?.push({
-      filterType: "CONDITION",
-      key:'id',
-      value: this.selectedItem.id,
-      joinType: "NONE",
-      operatorType: "EQUALS",
-      dataType: "number",
-    });
+    const filters = this.createFilters("entity_name",this.currentSelectedEntity.name,"string");
+    this.currentCriteria.filters?.push(filters);
     this.entityDataService.loadAnnotations(this.selectedItem.id,this.currentCriteria).subscribe({
       next:(res:any)=>{
-        this.annotations = res.content[0]?.annotations.annotations || [];
+      const result = res.content.find((item:any)=>item.id===this.selectedItem.id);
+      this.annotations = result?.annotations.annotations || [];
       },
       error:(error:any)=>{
         this.annotations = [];
@@ -215,6 +200,8 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   }
 
   onSort(e: any) {
+    const filters = this.createFilters("entity_name",this.currentSelectedEntity.name,"string");
+    this.currentCriteria.filters?.push(filters);
     const sorters = e.sorts.map((sort: any) => {
       return { direction: sort.dir.toUpperCase(), property: sort.prop };
     });
@@ -239,7 +226,16 @@ export class AuditDataComponent implements OnInit, OnDestroy {
     );
   }
 
-  
+  createFilters(key:string,value:any,dataType:string){
+    return {
+      filterType: "CONDITION",
+      key:key,
+      value:value,
+      joinType: "NONE",
+      operatorType: "EQUALS",
+      dataType:dataType,
+    }
+  }  
 
   onClose(): void {
     this.dialogRef.close(null);
@@ -255,6 +251,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
     this.entityDataService.addAnnotations(this.selectedItem.id,this.annotations).subscribe({
       next:(res:any)=>{
         this.onItemSelected(this.selectedItem)
+        this.inputField.nativeElement.value = '';
       },
       error:(error:any)=>{
         console.log(error);
