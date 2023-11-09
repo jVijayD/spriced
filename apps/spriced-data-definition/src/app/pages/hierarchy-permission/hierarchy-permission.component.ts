@@ -231,15 +231,16 @@ export class HierarchyPermissionComponent implements OnInit {
   }
 
   public handleHierarchyByEntityId(item: any) {
+    this.defaultHierarchy = 'ALL';
     this.hierarchyList = this.allHierarchyList;
+    this.hierarchyPreviewNodes = [];
     if (item.value !== 'ALL') {
       this.currentCriteria = {
         ...this.currentCriteria,
         filters: [{ "filterType": "CONDITION", "joinType": "NONE", "operatorType": "EQUALS", "key": "entity_id", "value": item.value, "dataType": "number" }]
       }
       this.hierarchyService.loadHierarchiesByEntityId(this.model.id, this.currentCriteria).subscribe((res: any) => {
-        this.defaultHierarchy = 'ALL';
-        this.hierarchyPreviewNodes = [];
+        this.loadHeirarchysummaryByModelId(this.model, this.selectedRole, this.currentCriteria);
         this.filteredHierarchy = [{
           name: 'All',
           id: 'ALL'
