@@ -56,7 +56,7 @@ export class ViewTransactionsAdminComponent {
   selectionType: SelectionType = SelectionType.single;
   totalElements = 0;
   rows: any[] = [];
-  limit: number = 10;
+  limit: number = 15;
   modelList!: any[];
   entityList!: any[];
   query?: any;
@@ -67,6 +67,7 @@ export class ViewTransactionsAdminComponent {
       pageNumber: 0,
       pageSize: this.limit,
     },
+    sorters:[{ direction:"DESC" ,property: "updated_date" }]
   };
   constructor(
     private modelService: ModelService,
@@ -78,7 +79,7 @@ export class ViewTransactionsAdminComponent {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "entityName",
+      column: "entity_name",
       name: "Entity",
     },
 
@@ -86,14 +87,14 @@ export class ViewTransactionsAdminComponent {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "columnName",
+      column: "column_name",
       name: "Attribute",
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "updatedDate",
+      column: "updated_date",
       name: "Last Updated On",
       pipe: (data: any) => {
         return moment(data).format("MM/DD/YYYY HH:mm:ss");
@@ -103,35 +104,35 @@ export class ViewTransactionsAdminComponent {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "priorValue",
+      column: "prior_value",
       name: "Prior Value",
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "newValue",
+      column: "new_value",
       name: "New value",
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "updatedBy",
+      column: "updated_by",
       name: "User",
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "transactionType",
+      column: "transaction_type",
       name: "Transaction",
     },
   ];
 
   onModelChange(ev: MatSelectChange) {
     this.selectedModel = ev.value;
-    this.loadEntitiesById(this.selectedModel);
+    this.loadTransactionsData(this.selectedModel);
   }
   onPaginate(e: Paginate) {
     if (
@@ -140,7 +141,7 @@ export class ViewTransactionsAdminComponent {
       this.currentCriteria.pager
     ) {
       this.currentCriteria.pager.pageNumber = e.offset;
-      this.loadTransactionsData(this.entityList);
+      this.loadTransactionsData(this.selectedModel);
     }
   }
 
@@ -149,7 +150,11 @@ export class ViewTransactionsAdminComponent {
   }
 
   onSort(e: any) {
-    console.log(e);
+    const sorters = e.sorts.map((sort: any) => {
+      return { direction: sort.dir.toUpperCase(), property: sort.prop };
+    });
+    this.currentCriteria = { ...this.currentCriteria, sorters: sorters };
+    this.loadTransactionsData(this.selectedModel);
   }
 
   ngOnInit() {
@@ -157,44 +162,31 @@ export class ViewTransactionsAdminComponent {
       this.modelService.loadAllModels().subscribe((result: any) => {
         this.modelList = result;
         this.selectedModel = this.modelList[0].id;
-        this.loadEntitiesById(this.selectedModel);
+        this.loadTransactionsData(this.selectedModel);
       })
     );
   }
-
-  loadEntitiesById(modelId: number) {
-    this.enitityService.loadEntityByModel(modelId).subscribe((entities) => {
-      this.entityList = entities;
-      this.loadTransactionsData(entities);
-    });
-  }
-
-  loadTransactionsData(entities: any) {
+  loadTransactionsData(modelId: number) {
     this.rows = [];
-    const observables = entities.map((item: any) => {
       this.currentCriteria.filters = [];
       let newFilter = {
         filterType: "CONDITION",
-        key: "entity_name",
-        value: item.name,
+        key: "group_id",
+        value: modelId,
         joinType: "NONE",
         operatorType: "EQUALS",
-        dataType: "string",
+        dataType: "number",
       };
       this.currentCriteria.filters?.push(newFilter);
-      return this.transactionService.loadTransactionsData(this.currentCriteria);
-    });
-
-    forkJoin(observables).subscribe(
-      (results: any) => {
-        const combinedContent = [].concat(
-          ...results.map((item: any) => item.content)
-        );
-        this.totalElements = results[0].totalElements;
-        this.rows = combinedContent;
+    this.transactionService.loadTransactionsData(this.currentCriteria).subscribe({
+      next:(res:any)=>{
+         this.totalElements = res.totalElements;
+        this.rows = res.content;
       },
-      (error: any) => {}
-    );
+      error:(err:any)=>{
+        console.log(err);
+      }
+    })
   }
   ngOnDestroy(): void {
     this.subscriptions.forEach((item) => item.unsubscribe());
