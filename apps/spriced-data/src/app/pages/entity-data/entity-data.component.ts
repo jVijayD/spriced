@@ -403,6 +403,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         const fileDetails = {
           source: "web",
           entityName: this.currentSelectedEntity?.name,
+          entityId:this.currentSelectedEntity?.id
         };
         const formData = new FormData();
 
