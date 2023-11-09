@@ -119,6 +119,8 @@ export class EntityAddComponent implements OnInit {
   isFullScreen = false;
   totalElements = 0;
   selectedItem: any = null;
+  isChangedValue: Boolean = true
+  previousEntityData: any;
   systemAtt: any;
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
@@ -139,6 +141,7 @@ export class EntityAddComponent implements OnInit {
     this.attDetails.type = "FREE_FORM";
     this.attDetails.width = DEFAULT_ATTRIBUTE_WIDTH;
     this.local_data = { ...data.row };
+    this.previousEntityData = { ...data.row };
     this.entityList = data.entities;
 
     if (this.local_data.id == this.entityList[0]?.id) {
@@ -171,11 +174,19 @@ export class EntityAddComponent implements OnInit {
       }
     );
 
-    this.local_data.attributes = this.local_data?.attributes?.filter(
-      (value: any) => {
-        return !value.systemAttribute;
-      }
-    );
+    this.filterAttributes(this.local_data);
+    this.filterAttributes(this.previousEntityData);
+
+    // if (this.local_data?.attributes) {
+    //   this.local_data?.attributes.forEach((attribute: any) => {
+    //     const existingAttribute = showInFormAttributes.find((a: any) => a.name === attribute.name);
+    //     if (!existingAttribute) {
+    //       showInFormAttributes.push(attribute);
+    //     }
+    //     return showInFormAttributes
+    //   });
+    // }
+    // this.local_data.attributes = showInFormAttributes;
     this.rows = this.local_data?.attributes || [];
     this.totalElements = this.rows.length;
   }
@@ -216,6 +227,20 @@ export class EntityAddComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
   }
+
+  /**
+   * HANDLE THIS FUNCTION FOR FILTER THE SYSTEM ATTRIBUTES
+   * @param item any
+   */
+  public filterAttributes(item: any)
+  {
+    item.attributes = item?.attributes?.filter(
+      (value: any) => {
+        return !value.systemAttribute;
+      }
+    );
+  }
+
   doAction() {
     console.log(this.rows)
     this.local_data.attributes = [...this.rows];
@@ -227,6 +252,45 @@ export class EntityAddComponent implements OnInit {
     }
     this.dataChange.emit(this.local_data);
   }
+
+  public modelChangedValue(item: any)
+  {
+    this.isChangedValue = this.areObjectsEqual(this.previousEntityData, this.local_data);
+  }
+
+  /**
+ * HANDLE THIS FUNCTION FOR MATCHING THE TWO OBJECTS
+ * @param obj1 any
+ * @param obj2 any
+ * @returns 
+ */
+  public areObjectsEqual(obj1: any, obj2: any): boolean {
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+  
+    if (keys1.length !== keys2.length) {
+      return false;
+    }
+  
+    for (let key of keys1) {
+      const val1 = obj1[key];
+      const val2 = obj2[key];
+  
+      // Check if the values are objects and recursively compare them
+      if (typeof val1 === 'object' && val1 !== null && typeof val2 === 'object' && val2 !== null) {
+        if (!this.areObjectsEqual(val1, val2)) {
+          return false;
+        }
+      } else if (val1 !== val2) {
+        // Values are not equal
+        return false;
+      }
+    }
+  
+    // All keys and values are equal
+    return true;
+  }
+
 
   closeDialog() {
     if(this.action == 'Add'){
@@ -302,6 +366,7 @@ if(update)
         return true;
       });
       this.rows = [...this.rows];
+      this.isChangedValue = this.areObjectsEqual(this.previousEntityData.attributes, this.rows);
     }
   }
     if (this.attAction == "Add") {
@@ -351,9 +416,10 @@ if(add)
       this.rows = [...this.rows];
       this.totalElements = this.rows.length;
     }
+    this.isChangedValue = this.areObjectsEqual(this.previousEntityData.attributes, this.rows);
+    this.clear();
   }
-  this.clear();
-  }
+}
 
   initForm() {
     if (this.action == "Edit") {
@@ -390,6 +456,7 @@ if(add)
         this.rows = this.rows.filter((value: any) => {
           return value.name != this.selectedItem.name;
         });
+        this.isChangedValue = this.areObjectsEqual(this.previousEntityData.attributes, this.rows);
         this.clear();
       }
     })

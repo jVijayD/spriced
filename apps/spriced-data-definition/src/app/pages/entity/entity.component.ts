@@ -217,7 +217,7 @@ export class EntityComponent {
       };
       this.entityService.edit(entity).subscribe({
         next: (results: any) => {
-          this.snackbarService.success("Succesfully Updated");
+          this.snackbarService.success('Succesfully Updated');
           dialogRef.close();
           this.load({ value: this.groupId });
         },

@@ -46,7 +46,8 @@
           <input
             matInput
             [(ngModel)]="local_data.displayName"
-            maxlength="50"
+            (ngModelChange)="modelChangedValue($event)"
+            max="50"
             [pattern]="pattern"
             #uname="ngModel"
           />
@@ -73,6 +74,7 @@
             matInput
             maxlength="100"
             [(ngModel)]="local_data.description"
+            (ngModelChange)="modelChangedValue($event)"
           />
         </mat-form-field>
       </div>
@@ -82,10 +84,11 @@
         <mat-checkbox
           [disabled]="action == 'Edit'"
           [(ngModel)]="local_data.autoNumberCode"
+          (ngModelChange)="modelChangedValue($event)"
           color="primary"
           >Auto generate Code</mat-checkbox
         >
-        <mat-checkbox [(ngModel)]="local_data.enableAuditTrial" color="primary"
+        <mat-checkbox [(ngModel)]="local_data.enableAuditTrial" (ngModelChange)="modelChangedValue($event)" color="primary"
           >Enable Change Tracking</mat-checkbox
         >
       </div>
@@ -417,7 +420,7 @@
       color="primary"
       type="submit"
       (click)="doAction()"
-      [disabled]="entityForm.invalid && action !== 'Edit' || local_data.displayName=='' || local_data.displayName==undefined"
+      [disabled]="entityForm.invalid && action !== 'Edit' || local_data.displayName=='' || local_data.displayName==undefined || isChangedValue"
     >
       Save
     </button>
