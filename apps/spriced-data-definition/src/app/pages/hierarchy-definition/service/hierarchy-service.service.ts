@@ -22,8 +22,14 @@ export class HierarchyServiceService {
   loadHeirarchysummaryByModelId(model:Model,role:any,criteria:Criteria){
     const url = this.requestUtility.addCriteria(`${this.api_url}/hierarchy/getPermissionSummary/${model.id}/${role}`,criteria)
      return this.http.get<PageData>(url);
-   
   }
+
+  loadHierarchiesByEntityId(id: any, criteria:Criteria)
+  {
+    const url = this.requestUtility.addCriteria(`${this.api_url}/hierarchy/model/${id}`,criteria)
+    return this.http.get<PageData>(url);
+  }
+
   loadHierarchy(hierarchy: Hierarchy) {
     return this.http
       .get(`${this.api_url}/hierarchy/${hierarchy.id}`)

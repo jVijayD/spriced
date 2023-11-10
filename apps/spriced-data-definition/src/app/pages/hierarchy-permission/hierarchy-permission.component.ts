@@ -72,9 +72,10 @@ export class HierarchyPermissionComponent implements OnInit {
   hierarchyForm!: FormGroup;
   selectedModel!: Model | null;
   selectedEntity!: Entity | null;
-  dropDownItems: any[] = [{ name: 'Read-only', value: 'READ' }, { name: 'Update', value: 'UPDATE' }, { name: 'deny', value: 'DENY' }]
+  dropDownItems: any[] = [{ name: 'Read-only', value: 'READ' }, { name: 'Update', value: 'UPDATE' }, { name: 'Deny', value: 'DENY' }]
   roleList: any;
   selectedRole: any;
+  allHierarchyList: any;
 
   permissionHeaders: any[] = [
     {
@@ -126,9 +127,16 @@ export class HierarchyPermissionComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     // this.role =
     //   this.keycloak.getKeycloakInstance().tokenParsed?.realm_access?.roles;
+    const { roles } = await this.getAllRoles();
+    if (roles) {
+      this.roleList = roles.map((m: any) => {
+        return { name: m } as RoleDTO;
+      });
+      this.selectedRole = this.roleList[0].name;
+    }
     this.getAllModels();
 
     this.listForm.valueChanges.pipe(
@@ -138,14 +146,23 @@ export class HierarchyPermissionComponent implements OnInit {
       this.filteredEntities = this.filterItems(this.entityList, item.entityFilter);
       this.filteredHierarchy = this.filterItems(this.hierarchyList, item.hierarchyFilter);
     })
-    this.userAccessService
-      .loadAllRoles()
-      .subscribe((roles: string[]) => {
-        this.roleList = roles.map((m) => {
-          return { name: m } as RoleDTO;
-        });
-        this.selectedRole = this.roleList[0].name;
-      });
+  }
+
+  public getAllRoles(): Promise<any> {
+    return new Promise((resolve, rejects) => {
+      this.userAccessService
+        .loadAllRoles().subscribe((res: any) => {
+          resolve({
+            roles: res
+          });
+        },
+          (err) => {
+            rejects({
+              roles: []
+            })
+          }
+        )
+    });
   }
 
   // Generic filtering function
@@ -187,6 +204,7 @@ export class HierarchyPermissionComponent implements OnInit {
         id: 'ALL'
       }, ...el];
       this.hierarchyList = this.filteredHierarchy;
+      this.allHierarchyList = this.hierarchyList;
     })
   }
 
@@ -212,17 +230,40 @@ export class HierarchyPermissionComponent implements OnInit {
     })
   }
 
+  public handleHierarchyByEntityId(item: any) {
+    this.defaultHierarchy = 'ALL';
+    this.hierarchyList = this.allHierarchyList;
+    this.hierarchyPreviewNodes = [];
+    if (item.value !== 'ALL') {
+      this.currentCriteria = {
+        ...this.currentCriteria,
+        filters: [{ "filterType": "CONDITION", "joinType": "NONE", "operatorType": "EQUALS", "key": "entity_id", "value": item.value, "dataType": "number" }]
+      }
+      this.hierarchyService.loadHierarchiesByEntityId(this.model.id, this.currentCriteria).subscribe((res: any) => {
+        this.loadHeirarchysummaryByModelId(this.model, this.selectedRole, this.currentCriteria);
+        this.filteredHierarchy = [{
+          name: 'All',
+          id: 'ALL'
+        }, ...res];
+        this.hierarchyList = this.filteredHierarchy;
+      })
+    }
+  }
+
   public onSelectRole(role: any) {
     this.selectedRole = role.value;
     this.loadHeirarchysummaryByModelId(this.model, this.selectedRole, this.currentCriteria);
   }
 
   public handleHierarchy(id: any) {
-    const hierarchy = this.hierarchyList.find((el: any) => el.id === id);
-    this.HierarchyService.loadHierarchy(hierarchy).subscribe((res: any) => {
-      console.log(res, '>????');
-      this.onBind(res);
-    })
+    this.hierarchyPreviewNodes = [];
+    if (id !== 'ALL') {
+      const hierarchy = this.hierarchyList.find((el: any) => el.id === id);
+      this.HierarchyService.loadHierarchy(hierarchy).subscribe((res: any) => {
+        console.log(res, '>????');
+        this.onBind(res);
+      })
+    }
   }
 
   onTreeActionPreview(event: any) {

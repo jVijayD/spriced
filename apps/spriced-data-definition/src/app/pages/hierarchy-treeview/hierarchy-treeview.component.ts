@@ -248,6 +248,8 @@ export class HierarchyTreeviewComponent {
   }
 
   populateLevelTree() {
+    const lastHierarchy = this.getLastHierarchyDtls();
+    const lastHierarchyEntity = lastHierarchy ? lastHierarchy.entity : this.currentEntity
     this.hierarchyLevelNodes = [
       ...this.hierarchyDetails.map((hdtl) => {
         return {
@@ -257,6 +259,7 @@ export class HierarchyTreeviewComponent {
           parentId: hdtl.groupLevel == 0 ? null : hdtl.groupLevel,
           tablename: hdtl.entityName,
           tableId: hdtl.entityId,
+          tabledisplayname: this.getTableDisplayName(lastHierarchyEntity, '', this.hierarchyDetails.length == 0),
           name: hdtl.tabledisplayname,
           expanded: true
         } as any;
@@ -351,11 +354,12 @@ export class HierarchyTreeviewComponent {
       let hierarchyRow = { ...row };
       this.table.selected = [row];
       const level = this.hierarchyDetails.length - (row.level + 1);
+      const tableName = this.hierarchyDetails.find((el: any) => el.groupLevel === level);
       row = this.hierarchyDetails.find(elm => elm.groupLevel === level);
       if (!!row.id) {
         let entity: any = this.entityList.find((item: any) => item.id == row.entityId);
         const filter = row.groupLevel !== (this.hierarchyDetails.length - 1) ? [{ "filterType": "CONDITION", "joinType": "NONE", "operatorType": "EQUALS", "key": row?.refColumn, "value": hierarchyRow?.id, "dataType": "string" }] : [];
-        entity = { ...entity, 'filter': filter ? filter : '' };
+        entity = { ...entity, filter: filter ? filter : '', displayName: tableName.tabledisplayname };
         this.getEntityByHierarchyItem.emit(entity);
       }
     }
@@ -417,12 +421,11 @@ export class HierarchyTreeviewComponent {
   public updateHierarchyData() {
     console.log(this.selectedItems);
     const item = this.selectedItems;
-    let row: any = this.hierarchyDetails.length - (item.level + 1);
-    row = this.hierarchyDetails.find(elm => elm.groupLevel === row);
-    const currentEntity = this.getEntityById(row.entityId);
+    let level: any = this.hierarchyDetails.length - (item.level + 1);
+    const row = this.hierarchyDetails.find(elm => elm.groupLevel === level);
     const param = {
-      "entityName": currentEntity.name,
-      "refColumn": item.column,
+      "entityName": row.entityName,
+      "refColumn": row.refColumn,
       "memberId": +this.removeBufferItems.id,
       "newParentId": +item.id
     }
