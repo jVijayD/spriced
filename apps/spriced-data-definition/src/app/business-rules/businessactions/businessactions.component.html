@@ -86,7 +86,7 @@
             appearance="outline">
             <mat-label>Value</mat-label>
             <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="operand">
-              <mat-option *ngFor="let item of lookupSourceData" [value]="item?.id"><p>{{item.code}}</p> </mat-option>
+              <mat-option *ngFor="let item of lookupSourceData" [value]="item?.code"><p>{{item.code}}</p> </mat-option>
             </mat-select>
           </mat-form-field>
 
