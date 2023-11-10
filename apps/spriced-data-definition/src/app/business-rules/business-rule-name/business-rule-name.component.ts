@@ -181,7 +181,8 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         "contains_subset",
         "does_not_contain_subset",
         "is_between",
-        "is_not_between"
+        "is_not_between",
+        "has_not_changed"
       ];
 
       // Filter the array to exclude items with names in the excludedNames array
