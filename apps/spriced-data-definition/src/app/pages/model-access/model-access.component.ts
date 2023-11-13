@@ -69,6 +69,7 @@ export class ModelAccessComponent {
   ColumnMode = ColumnMode;
   SelectionType = SelectionType;
   filteredModelList: any;
+  filteredRoleList: any;
 
   treeStore: TreeStore = new TreeStore();
   selectedRole!: RoleDTO | null;
@@ -103,6 +104,7 @@ export class ModelAccessComponent {
       this.roleList = roles.map((m) => {
         return { name: m } as RoleDTO;
       });
+      this.filteredRoleList = this.roleList;
     });
     this.statusPannelService.init();
   }
@@ -115,6 +117,17 @@ export class ModelAccessComponent {
     this.filteredModelList = this.modelList.filter((item: any) => {
       return (
         item.displayName
+          .trim()
+          .toLowerCase()
+          .indexOf(text.trim().toLowerCase()) != -1
+      );
+    });
+  }
+
+  filterRolesSelection(text: any) {
+    this.filteredRoleList = this.roleList.filter((item: any) => {
+      return (
+        item.name
           .trim()
           .toLowerCase()
           .indexOf(text.trim().toLowerCase()) != -1
