@@ -481,7 +481,10 @@ export class HierarchyPermissionComponent implements OnInit {
   }
 
   public setPermissions(value: string, data: any) {
-    const hierarchyDtlId: any = this.hierarchyDetails.find((el: any) => el.groupLevel === data.level);
+    let hierarchyDtlId: any = this.hierarchyDetails.find((el: any) => el.groupLevel === data.level);
+    if(!hierarchyDtlId){
+      hierarchyDtlId = this.hierarchyDetails.find((el: any) => el.groupLevel === 0);
+    }
     const summaryData: any = this.rows.find((el: any) => el.hierarchy_dtl_id === hierarchyDtlId.id);
     const params: permissions = {
       id: summaryData ? summaryData.id : 0,
