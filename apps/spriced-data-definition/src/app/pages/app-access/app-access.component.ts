@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component } from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatSelectChange, MatSelectModule } from "@angular/material/select";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import {
   DialogService,
   DialogueModule,
@@ -30,6 +31,7 @@ import {
 import { AppDataService } from "@spriced-frontend/shared/spriced-shared-lib";
 import { UserAccessService } from "@spriced-frontend/spriced-common-lib";
 import { MatCheckboxModule } from "@angular/material/checkbox";
+import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 const POPULATE_ATTRIBUTES = false;
 @Component({
     selector: "sp-app-access",
@@ -43,8 +45,11 @@ const POPULATE_ATTRIBUTES = false;
         VboxComponent,
         HttpClientModule,
         HboxComponent,
+        FormsModule, 
+        ReactiveFormsModule,
         HeaderActionComponent,
         NgxDatatableModule,
+        NgxMatSelectSearchModule,
         MatIconModule,
         MatFormFieldModule,
         MatSelectModule,
@@ -62,6 +67,7 @@ export class AppAccessComponent {
   selectedRoleCmp!: RoleDTO | null;
   AppList: AppDTO[] = [];
   AppListBkp: AppDTO[] = [];
+  filteredRoleList:any;
   roleList: RoleDTO[] = [];
 
   constructor(
@@ -79,6 +85,7 @@ export class AppAccessComponent {
       this.roleList = roles.map((m) => {
         return { name: m } as RoleDTO;
       });
+      this.filteredRoleList = this.roleList;
     });
     this.userAccessService.loadAllApps().subscribe((roles: any[]) => {
       this.AppListBkp = roles.map((m) => m as AppDTO);
@@ -142,6 +149,18 @@ export class AppAccessComponent {
     } else {
       this.onClearClick();
     }
+  }
+
+  filterRolesSelection(text:any){
+    this.filteredRoleList = this.roleList.filter((item: any) => {
+      return (
+        item.name
+          .trim()
+          .toLowerCase()
+          .indexOf(text.trim().toLowerCase()) != -1
+      );
+    });
+
   }
 
   loadAppList(init: boolean) {
