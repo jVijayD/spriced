@@ -421,12 +421,11 @@ export class HierarchyTreeviewComponent {
   public updateHierarchyData() {
     console.log(this.selectedItems);
     const item = this.selectedItems;
-    let row: any = this.hierarchyDetails.length - (item.level + 1);
-    row = this.hierarchyDetails.find(elm => elm.groupLevel === row);
-    const currentEntity = this.getEntityById(row.entityId);
+    let level: any = this.hierarchyDetails.length - (item.level + 1);
+    const row = this.hierarchyDetails.find(elm => elm.groupLevel === level);
     const param = {
-      "entityName": currentEntity.name,
-      "refColumn": item.column,
+      "entityName": row.entityName,
+      "refColumn": row.refColumn,
       "memberId": +this.removeBufferItems.id,
       "newParentId": +item.id
     }
