@@ -914,10 +914,12 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       const attribute = this.findAttributeById(condition.attributeId);
       if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute?.dataType) && condition?.operandType === 'CONSTANT') {
         const d1 = new Date(condition.operand);
-        const newDate = await this.unixTimeStamp(d1);
-        condition.operand = newDate;
-        condition.min_value = moment(condition.min_value).toISOString();
-        condition.max_value = moment(condition.max_value).toISOString();
+        const minD = new Date(condition.min_value);
+        const maxD = new Date(condition.max_value);
+
+        condition.operand = await this.unixTimeStamp(d1);
+        condition.min_value = await this.unixTimeStamp(minD);
+        condition.max_value = await this.unixTimeStamp(maxD);
       }
       if (['DECIMAL', 'INTEGER'].includes(attribute?.dataType) && condition?.operandType === 'CONSTANT' && !!condition?.operand && condition?.operand !== '') {
         condition.operand = +condition.operand;
@@ -967,11 +969,12 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         const attribute = this.findAttributeById(item.attributeId);
         if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute?.dataType) && item?.operandType === 'CONSTANT') {
           const d1 = new Date(item.operand);
-          const newDate = await this.unixTimeStamp(d1);
-          item.operand = newDate;
-          // item.operand = moment(item.operand).toISOString();
-          item.min_value = moment(item.min_value).toISOString();
-          item.max_value = moment(item.max_value).toISOString();
+          const minD = new Date(item.min_value);
+          const maxD = new Date(item.max_value);
+
+          item.operand = await this.unixTimeStamp(d1);;
+          item.min_value = await this.unixTimeStamp(minD);
+          item.max_value = await this.unixTimeStamp(maxD);
         }
         if (['DECIMAL', 'INTEGER'].includes(attribute?.dataType) && item?.operandType === 'CONSTANT' && !!item?.operand && item?.operand !== '') {
           item.operand = +item.operand;
