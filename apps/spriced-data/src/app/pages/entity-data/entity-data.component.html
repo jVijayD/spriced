@@ -30,6 +30,7 @@
         [selected]="!!selectedItem ? [selectedItem] : []"
         (sort)="onSort($event)"
         *ngIf="!hide"
+        page="explorer"
       >
         <ng-container>
           <!-- <sp-header-action

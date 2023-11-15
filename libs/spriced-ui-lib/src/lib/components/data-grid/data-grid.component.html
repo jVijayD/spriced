@@ -41,29 +41,27 @@
         {{ rowIndex + 1 }}
       </ng-template>
     </ngx-datatable-column>
-    
-    <ng-container *ngIf="page=='error'">
-    <ngx-datatable-column
-    name="Validation Status"
-    [width]="170"
-  >
-    <ng-template  ngx-datatable-cell-template>
-        <div class="flex  items-center">
-        <mat-icon class="mr-2" style="color: white;background-color: green;"
-          >check</mat-icon
-        > Validation Succeeded</div>
-    </ng-template>
-  </ngx-datatable-column>
 
-  <ngx-datatable-column
-  name="Input Status"
->
-  <ng-template  ngx-datatable-cell-template>
-    New
-  </ng-template>
-</ngx-datatable-column>
-</ng-container>
 
+    <ng-container *ngIf="page=='explorer'">
+      <ngx-datatable-column
+      [width]="50"
+      [sortable]="false"
+    >     
+      <ng-template  ngx-datatable-cell-template  let-row="row">
+          <mat-icon *ngIf="row.is_valid" spToolTipRenderer
+          [contentTemplate]="errortemplate" style="color: white;background-color: green;"
+            >check</mat-icon>
+            <mat-icon spToolTipRenderer
+            [contentTemplate]="errortemplate" *ngIf="!row.is_valid"  style="color: white;background-color: red;"
+              >cancel</mat-icon>
+      </ng-template>
+      <ng-template #errortemplate>
+        <div >data type mismatch</div>
+      </ng-template>
+    </ngx-datatable-column>
+    </ng-container>
+  
     <ng-container *ngFor="let header of headers; let i = index">
       <ngx-datatable-column
         [name]="header.name"
@@ -78,6 +76,7 @@
         [canAutoResize]="header.canAutoResize || true"
         *ngIf="!header.hidden"
       >
+
         <ng-template
           let-row="row"
           let-value="value"
