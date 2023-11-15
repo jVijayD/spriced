@@ -9,6 +9,7 @@ import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, moveItemInArray, trans
 import * as moment from 'moment';
 import { MessageService } from "./../services/message.service";
 import { SnackBarService } from '@spriced-frontend/spriced-ui-lib';
+import { async } from '@angular/core/testing';
 
 @Component({
   selector: "sp-business-rule-name",
@@ -874,16 +875,47 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     return attributeItem;
   }
 
+  public async unixTimeStamp(timestamp: any): Promise<any> {
+    try {
+      // const timestamp = 1458601200000; // Unix timestamp in milliseconds
+      const date = new Date(timestamp);
+
+      // Get the components of the date (year, month, day, etc.)
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1; // Months are zero-based, so add 1
+      const day = date.getDate();
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const seconds = date.getSeconds();
+
+      // Create a formatted date string
+      const formattedDate = `${year}-${this.pad(month)}-${this.pad(day)} ${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
+
+      console.log(formattedDate, '>>');
+      return formattedDate;
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+
+  // Function to pad single-digit numbers with a leading zero
+  private pad(num: number): string {
+    return (num < 10 ? '0' : '') + num;
+  }
+
   /**
    * HANDLE CONDITIONS AND SUBCONDITIONS VALUES
    * @param conditions any
    */
   public conditionAndSubcondition(conditions: any) {
-    conditions.forEach((condition: any) => {
+    conditions.forEach(async (condition: any) => {
       condition.operand = condition.operandType === 'BLANK' ? '' : condition.operand;
       const attribute = this.findAttributeById(condition.attributeId);
       if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute?.dataType) && condition?.operandType === 'CONSTANT') {
-        condition.operand = moment(condition.operand).toISOString();
+        const d1 = new Date(condition.operand);
+        const newDate = await this.unixTimeStamp(d1);
+        condition.operand = newDate;
         condition.min_value = moment(condition.min_value).toISOString();
         condition.max_value = moment(condition.max_value).toISOString();
       }
@@ -930,11 +962,14 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
 
     // EDIT FOR ACTIONS VALUE
     Object.entries(dataItem.conditionalAction).map((action: any) => {
-      action[1].forEach((item: any) => {
+      action[1].forEach(async(item: any) => {
         item.actionGroup = dataItem.group;
         const attribute = this.findAttributeById(item.attributeId);
         if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute?.dataType) && item?.operandType === 'CONSTANT') {
-          item.operand = moment(item.operand).toISOString();
+          const d1 = new Date(item.operand);
+          const newDate = await this.unixTimeStamp(d1);
+          item.operand = newDate;
+          // item.operand = moment(item.operand).toISOString();
           item.min_value = moment(item.min_value).toISOString();
           item.max_value = moment(item.max_value).toISOString();
         }
