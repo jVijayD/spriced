@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subject, of, tap } from 'rxjs';
 import { LRUCache } from "typescript-lru-cache";
-import { RequestUtilityService, } from "@spriced-frontend/spriced-common-lib";
+import { Criteria, PageData, RequestUtilityService, } from "@spriced-frontend/spriced-common-lib";
 import { Entity, Rule, conditionTypes, dataTypes, modelData, operandType, operatorType } from '../models/buisnessrule';
 
 @Injectable({
@@ -150,18 +150,27 @@ export class BusinessruleService {
     return this.http.put<Rule[]>(`${this.apiUrl}/rules/save/${ruleId}`, params);
   }
 
-/**
- * HANDLE THIS FUNCTION FOR LOAD LOOKUPDATA
- * @param id number
- * @returns 
- */
-  loadLookupData(
-    id: number,
-  ): Observable<any> {
+  /**
+   * HANDLE THIS FUNCTION FOR LOAD LOOKUPDATA
+   * @param id number
+   * @returns 
+   */
+  loadLookupData(id: string | number, pageNumber: number = 0, pageSize: number = 20000): Observable<PageData> {
+    const criteria: Criteria = {
+      pager: {
+        pageSize,
+        pageNumber,
+      },
+    };
     const headers = new HttpHeaders().set("no-loader", "true");
+
     const url = this.requestUtility.addCriteria(
       `${this.data_url}/entity/${id}/data?lookup=true`,
+      criteria,
+      false
     );
-    return this.http.get(url, { headers: headers })
+    return this.http.get<PageData>(url, {
+      headers: headers,
+    });
   }
 }

@@ -403,7 +403,7 @@ export class BusinessRuleListComponent
     const parentAttribute = this.findAttributeById(parentAttributeId);
     const operend = this.findAttributeById(operand);
     const parentOperand = this.findAttributeById(parentOperandId);
-    if (attribute?.name === 'code' || !attribute) {
+    if (attribute?.name === 'code' || (!attribute && parentAttribute?.referencedTableId)) {
       this.lookupInput = true;
       this.loadLookupData(parentAttribute?.referencedTableId);
       attribute = {
