@@ -554,9 +554,9 @@ export class ListComponent implements OnInit, OnDestroy {
       if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
         // Use Promise.all to wait for all promises to resolve
         await Promise.all(
-          relatedRefreneceTableEntity.map(async (el: any) => {
+           relatedRefreneceTableEntity.map(async (el: any) => {
             const { entityData } = await this.getEntityById(el.referencedTableId);
-            const attributes = entityData.attributes.filter((el: any) => !el.systemAttribute);
+            const attributes = entityData?.attributes.filter((el: any) => !el.systemAttribute);
             const nestedProcessedAttributes = this.processNestedAttributes(attributes, el);
             this.domainAttributes.push(...nestedProcessedAttributes);
           })
@@ -594,25 +594,27 @@ export class ListComponent implements OnInit, OnDestroy {
    * @param entityId number
    * @returns 
    */
-  public getEntityById(entityId: number): Promise<any> {
-    return new Promise((resolve, rejects) => {
-      forkJoin([
-        this.businessRuleService.getAllEntitesById(entityId)
-      ]).subscribe(
-        ([entityData]: any) => {
-          resolve({
-            entityData
-          });
-        },
-        (err) => {
-          this.loading = false;
-          rejects({
-            entityData: []
-          });
-        }
-      );
+  public getEntityById(entityId: number, retryCount = 3): Promise<any> {
+    return new Promise((resolve, reject) => {
+        const fetchData = () => {
+            this.businessRuleService.getAllEntitesById(entityId).subscribe(
+                (entityData: any) => {
+                    resolve({ entityData });
+                },
+                (err) => {
+                    if (retryCount > 0) {
+                        fetchData();
+                        retryCount--;
+                    } else {
+                        reject({ entityData: [] });
+                    }
+                }
+            );
+        };
+        fetchData(); 
     });
   }
+
 
   /**
   * HANDLE THIS FUNCTION FOR EDIT THE NESTEDATTRIBUTES
