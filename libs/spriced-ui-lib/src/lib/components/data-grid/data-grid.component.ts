@@ -147,13 +147,6 @@ export class DataGridComponent implements AfterViewInit {
   }
 
   onSort(e: any) {
-    // var headers: any = this.headers
-    //   .filter((item) => {
-    //     if (item.column == e.sorts[0].prop)
-    //       return true
-    //     else
-    //       return false
-    //   })
     var headers: any  = this.headers.filter((item) =>item.column === e.sorts[0].prop);
     if (headers[0]?.sortColumn) {
       e.sorts[0].prop = headers[0].sortColumn
