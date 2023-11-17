@@ -94,6 +94,7 @@ export class ViewTransactionsAdminComponent {
       isFilterable: true,
       column: "entityName",
       name: "Entity",
+      sortColumn:"entity_name"
     },
 
     {
@@ -102,6 +103,8 @@ export class ViewTransactionsAdminComponent {
       isFilterable: true,
       column: "columnName",
       name: "Attribute",
+      sortColumn:"column_name"
+
     },
     {
       canAutoResize: true,
@@ -112,6 +115,7 @@ export class ViewTransactionsAdminComponent {
       pipe: (data: any) => {
         return moment(data).format("MM/DD/YYYY HH:mm:ss");
       },
+      sortColumn:"updated_date"
     },
     {
       canAutoResize: true,
@@ -119,6 +123,7 @@ export class ViewTransactionsAdminComponent {
       isFilterable: true,
       column: "priorValue",
       name: "Prior Value",
+      sortColumn:"prior_value"
     },
     {
       canAutoResize: true,
@@ -126,6 +131,7 @@ export class ViewTransactionsAdminComponent {
       isFilterable: true,
       column: "newValue",
       name: "New value",
+      sortColumn:"new_value"
     },
     {
       canAutoResize: true,
@@ -133,6 +139,7 @@ export class ViewTransactionsAdminComponent {
       isFilterable: true,
       column: "updatedBy",
       name: "User",
+      sortColumn:"updated_by"
     },
     {
       canAutoResize: true,
@@ -140,6 +147,7 @@ export class ViewTransactionsAdminComponent {
       isFilterable: true,
       column: "transactionType",
       name: "Transaction",
+      sortColumn:"transaction_type"
     },
   ];
 
@@ -164,6 +172,7 @@ export class ViewTransactionsAdminComponent {
   }
 
   onSort(e: any) {
+    console.log(e)
     const sorters = e.sorts.map((sort: any) => {
       return { direction: sort.dir.toUpperCase(), property: sort.prop };
     });

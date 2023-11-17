@@ -61,6 +61,8 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       isFilterable: true,
       column: "columnName",
       name: "Attribute",
+      sortColumn:"column_name",
+
     },
     {
       canAutoResize: true,
@@ -71,6 +73,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       pipe: (data: any) => {
         return moment(data).format("MM/DD/YYYY HH:mm:ss");
       },
+      sortColumn:"updated_date",
     },
     {
       canAutoResize: true,
@@ -78,6 +81,8 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       isFilterable: true,
       column: "priorValue",
       name: "Prior Value",
+      sortColumn:"prior_value"
+
     },
     {
       canAutoResize: true,
@@ -85,6 +90,8 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       isFilterable: true,
       column: "newValue",
       name: "New value",
+      sortColumn:"new_value"
+
     },
     {
       canAutoResize: true,
@@ -92,6 +99,8 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       isFilterable: true,
       column: "updatedBy",
       name: "User",
+      sortColumn:"updated_by"
+
     },
     {
       canAutoResize: true,
@@ -99,6 +108,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       isFilterable: true,
       column: "transactionType",
       name: "Transaction",
+      sortColumn:"transaction_type"
     },
   ];
   @ViewChild('inputField') inputField!:ElementRef;
