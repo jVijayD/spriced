@@ -2,10 +2,13 @@
 
     <div class="flex flex-col w-full h-full" left>
         <mat-accordion [multi]="false">
-            <mat-expansion-panel hideToggle [expanded]="true">
+            <mat-expansion-panel disabled hideToggle [expanded]="true">
                 <mat-expansion-panel-header>
                     <mat-panel-title>
+                      <div class="flex justify-between w-full">
                         <b> {{hierarchyData?.name}} </b>
+                        <p class="back-btn p-0" (click)="goToDerivedHierarchy()"> <mat-icon>arrow_back</mat-icon> <span>Back</span> </p>
+                      </div>
                     </mat-panel-title>
                 </mat-expansion-panel-header>
 
