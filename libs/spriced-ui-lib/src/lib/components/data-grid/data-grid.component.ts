@@ -109,11 +109,11 @@ export class DataGridComponent implements AfterViewInit {
   tooltipTemplate: any;
 
   @Input()
-  page:any
+  page: any
 
-  @Output() 
-  action:EventEmitter<any> = new EventEmitter<any>();
-     
+  @Output()
+  action: EventEmitter<any> = new EventEmitter<any>();
+
   @Output()
   itemSelected: EventEmitter<any> = new EventEmitter<any>();
 
@@ -147,7 +147,15 @@ export class DataGridComponent implements AfterViewInit {
   }
 
   onSort(e: any) {
-    this.sort.emit(e);
+    var headers: any  = this.headers.filter((item) =>item.column === e.sorts[0].prop);
+    if (headers[0]?.sortColumn) {
+      e.sorts[0].prop = headers[0].sortColumn
+      e.column.prop = headers[0].sortColumn
+      this.sort.emit(e);
+    }
+    else {
+      this.sort.emit(e);
+    }
   }
 
   public clearSorting() {
@@ -183,7 +191,7 @@ export class DataGridComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     //this.table.virtualization = false;
   }
- 
+
 
   public renderData(data: any, itemHeader: Header) {
     if (itemHeader.pipe && itemHeader.pipe instanceof Function) {
@@ -199,16 +207,16 @@ export class DataGridComponent implements AfterViewInit {
       return prev === "-##"
         ? row[cur]
         : `${prev == null ? "" : prev} ${this.renderDataWithCurlyBrace(
-            row[cur]
-          )}`;
+          row[cur]
+        )}`;
     }, "-##");
 
   }
 
-  public openLink(linkUrl: string){
+  public openLink(linkUrl: string) {
     window.open(linkUrl, 'blank');
   }
-  
+
   private renderDataWithCurlyBrace(data: any) {
     return data == null ? "" : "{" + data + "}";
   }
@@ -235,10 +243,11 @@ export interface Header {
   checkbox?: boolean;
   tooltip?: boolean;
   tooltipTemplate?: any;
-  action?:any;
+  action?: any;
   imgsrc?: any;
   disableCheckbox?: any;
   isLink?: boolean;
+  sortColumn?: any
 }
 
 export interface Paginate {

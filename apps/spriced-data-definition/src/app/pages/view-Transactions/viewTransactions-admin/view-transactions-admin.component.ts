@@ -92,54 +92,62 @@ export class ViewTransactionsAdminComponent {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "entity_name",
+      column: "entityName",
       name: "Entity",
+      sortColumn:"entity_name"
     },
 
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "column_name",
+      column: "columnName",
       name: "Attribute",
+      sortColumn:"column_name"
+
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "updated_date",
+      column: "updatedDate",
       name: "Last Updated On",
       pipe: (data: any) => {
         return moment(data).format("MM/DD/YYYY HH:mm:ss");
       },
+      sortColumn:"updated_date"
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "prior_value",
+      column: "priorValue",
       name: "Prior Value",
+      sortColumn:"prior_value"
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "new_value",
+      column: "newValue",
       name: "New value",
+      sortColumn:"new_value"
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "updated_by",
+      column: "updatedBy",
       name: "User",
+      sortColumn:"updated_by"
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "transaction_type",
+      column: "transactionType",
       name: "Transaction",
+      sortColumn:"transaction_type"
     },
   ];
 
@@ -164,6 +172,7 @@ export class ViewTransactionsAdminComponent {
   }
 
   onSort(e: any) {
+    console.log(e)
     const sorters = e.sorts.map((sort: any) => {
       return { direction: sort.dir.toUpperCase(), property: sort.prop };
     });
@@ -207,6 +216,7 @@ export class ViewTransactionsAdminComponent {
     });
     dialogResult.afterClosed().subscribe((val) => {
       if(val){
+        console.log(val)
       this.query = dialogResult.componentInstance.data.query;
       this.addDisplayNameInFilter(this.query);
       this.currentCriteria.filters = val;
@@ -228,7 +238,7 @@ export class ViewTransactionsAdminComponent {
     return headers
       .map((col: any) => {
         return {
-          name: col.column,
+          name: col.sortColumn,
           displayName: col.name,
           dataType:  "string",
           options: col?.dataType === "category" ? col.options : undefined,
