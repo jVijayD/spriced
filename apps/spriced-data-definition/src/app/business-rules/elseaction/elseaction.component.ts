@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ServiceTokens, FormDataFetchService } from '@spriced-frontend/shared/spriced-shared-lib';
-import { DateAdapterService } from '@spriced-frontend/spriced-common-lib';
+import { DateAdapterService, BusinessruleService } from '@spriced-frontend/spriced-common-lib';
 import { DynamicFormService, FORM_DATA_SERVICE, SnackBarService } from '@spriced-frontend/spriced-ui-lib';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
@@ -18,6 +18,7 @@ import { NGX_MAT_DATE_FORMATS, NgxMatDateAdapter, NgxMatDatetimePickerModule, Ng
 import { RouterModule } from '@angular/router';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatMenuModule } from '@angular/material/menu';
+
 
 const MY_DATE_FORMAT = {
   parse: {
@@ -114,10 +115,14 @@ export class ElseactionComponent {
   public isFieldDisabled: boolean = false;
   public selectedAttribute: any = '';
   public selectedOperand: any = '';
+  public lookupSourceData: any = [];
+  public lookupInput: boolean = false;
+  public prop: string = "code|name";
 
 
   constructor(
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private businessruleservice: BusinessruleService,
   ) { }
 
   /**
@@ -191,7 +196,7 @@ export class ElseactionComponent {
       maxValueControl?.disable();
       this.isFieldDisabled ? this.removeValidators(valueControl) : this.addValidators(valueControl);
       this.disableOperandFormControl(this.valueConstant);
-    } 
+    }
     this.cdr.detectChanges();
   }
   /**
@@ -211,11 +216,11 @@ export class ElseactionComponent {
     this.dataType = attribute?.dataType ? attribute?.dataType : 'AUTO';
     const decimalValueSize = attribute?.size;
     this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern('')]);
-    this.dynamicInputType = ['INTEGER', 'DECIMAL','DOUBLE'].includes(this.dataType) ? 'number' : 'text';
+    this.dynamicInputType = ['INTEGER', 'DECIMAL', 'DOUBLE'].includes(this.dataType) ? 'number' : 'text';
     if (text === 'changeAttribute') {
       this.actionForm?.patchValue({ operand: '', min_value: '', max_value: '' });
     }
-    if (['FLOAT', 'LINK','DOUBLE'].includes(this.dataType)) {
+    if (['FLOAT', 'LINK', 'DOUBLE'].includes(this.dataType)) {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
@@ -243,8 +248,7 @@ export class ElseactionComponent {
     }
   }
 
-  public disableOperandFormControl(valueConstant: any)
-  {
+  public disableOperandFormControl(valueConstant: any) {
     const valueControl = this.actionForm?.get('operand');
     if (valueConstant) {
       this.removeValidators(valueControl);
@@ -286,7 +290,19 @@ export class ElseactionComponent {
     });
   }
 
+  public loadLookupData(id: number) {
+    this.businessruleservice.loadLookupData(id).subscribe({
+      next: (res: any) => {
+        this.lookupSourceData = res.content;
+      },
+      error: (err) => {
+        console.log(err)
+      }
+    })
+  }
+
   public selectAttribute(item: any, parent?: any, type?: string) {
+    this.lookupInput = false;
     if (type === 'operand') {
       const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
       this.selectedOperand = value;
@@ -298,9 +314,22 @@ export class ElseactionComponent {
       this.actionForm?.get('parentOperandDisplayName')?.setValue(parentAtt.displayName ?? '');
       this.actionForm?.get('parentOperandName')?.setValue(parentAtt.name ?? '');
       this.actionForm?.get('operandTableName')?.setValue(parentAtt.referencedTable ?? '');
+
     }
     else {
-      const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
+      let parentAtt: any = parent ?? '';
+      if (!parent && item.type === 'LOOKUP') {
+        this.lookupInput = true;
+        this.loadLookupData(item?.referencedTableId)
+        parentAtt = item;
+        item = {
+          displayName: 'Code',
+          name: 'code',
+          id: '1234'
+        }
+      }
+
+      const value = parentAtt && parentAtt !== '' && !this.lookupInput ? `${parentAtt?.displayName.trim()}.${item.displayName}` : parentAtt && parentAtt !== '' && this.lookupInput ? parentAtt?.displayName.trim() : item?.displayName;
       this.selectedAttribute = value;
       this.selectedOperand = '';
       this.disableFormControl();
@@ -309,7 +338,7 @@ export class ElseactionComponent {
       this.actionForm?.get('attributeDisplayName')?.setValue(item.displayName);
       this.actionForm?.get('attributeName')?.setValue(item.name);
 
-      const parentAtt = parent ?? '';
+      // const parentAtt = parent ?? '';
       this.actionForm?.get('parentAttributeId')?.setValue(parentAtt.id ?? '');
       this.actionForm?.get('parentAttributeName')?.setValue(parentAtt.name ?? '');
       this.actionForm?.get('parentAttributeDisplayName')?.setValue(parentAtt.displayName ?? '');
@@ -340,10 +369,19 @@ export class ElseactionComponent {
   * @param operand string
   */
   public handleParentAttributes(attributeId: string, parentAttributeId?: string, parentOperandId?: string, operand?: string) {
-    const attribute = this.findAttributeById(attributeId);
+    let attribute = this.findAttributeById(attributeId);
     const parentAttribute = this.findAttributeById(parentAttributeId);
     const operend = this.findAttributeById(operand);
     const parentOperand = this.findAttributeById(parentOperandId);
+    if (attribute?.name === 'code' || (!attribute && parentAttribute?.referencedTableId)) {
+      this.lookupInput = true;
+      this.loadLookupData(parentAttribute?.referencedTableId);
+      attribute = {
+        name: 'code',
+        displayName: 'Code',
+        id: '1234'
+      }
+    }
 
     const checkValue = [attributeId, parentAttributeId, parentOperandId, operand].every(element => element === '');
 
@@ -357,9 +395,9 @@ export class ElseactionComponent {
 
     this.dataType = attribute?.dataType || 'AUTO';
     const decimalValueSize = attribute?.size;
-    this.dynamicInputType = ['INTEGER', 'DECIMAL','DOUBLE'].includes(this.dataType) ? 'number' : 'text';
+    this.dynamicInputType = ['INTEGER', 'DECIMAL', 'DOUBLE'].includes(this.dataType) ? 'number' : 'text';
 
-    if (['FLOAT', 'LINK','DOUBLE'].includes(this.dataType)) {
+    if (['FLOAT', 'LINK', 'DOUBLE'].includes(this.dataType)) {
       const pattern = this.getValidationPatternForDataType(this.dataType, decimalValueSize);
       this.actionForm?.get('operand')?.setValidators([Validators.required, Validators.pattern(pattern)]);
     }
@@ -409,7 +447,7 @@ export class ElseactionComponent {
    * @returns 
    */
   private buildSelectedAttribute(attribute: any, parentAttribute: any): string {
-    return !parentAttribute && !attribute ? '' : !parentAttribute ? attribute?.displayName.trim() : `${parentAttribute?.displayName.trim()}.${attribute.displayName}`;
+    return !parentAttribute && !attribute ? '' : !parentAttribute ? attribute?.displayName.trim() : !!parentAttribute && !!attribute && this.lookupInput ? parentAttribute?.displayName.trim() : `${parentAttribute?.displayName.trim()}.${attribute.displayName}`;
   }
 
   /**

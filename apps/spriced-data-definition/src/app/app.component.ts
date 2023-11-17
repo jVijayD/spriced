@@ -4,7 +4,7 @@ import {
   AppDataService,
   MenuItem,
 } from "@spriced-frontend/shared/spriced-shared-lib";
-import { RouterOutlet } from "@angular/router";
+import { Router, RouterOutlet } from "@angular/router";
 
 @Component({
   selector: "sp-app",
@@ -57,7 +57,16 @@ export class AppComponent {
       path: "/spriced-data-definition/hierarchy-permission",
     },
   ];
-  constructor(private appDataService: AppDataService) {
+  constructor(private appDataService: AppDataService,
+    private router:Router
+    ) {
+    const currentRoute = this.router.url.split('#')[0];
+    const activeRoute = this.menuDItems.find((item:any)=>item.path === currentRoute)
+    if(activeRoute){
+      this.menuDItems.forEach((item: any) => {
+        item.active = activeRoute.path === item.path;
+      });
+    }
     this.appDataService.setMenuData(this.menuDItems);
   }
 }

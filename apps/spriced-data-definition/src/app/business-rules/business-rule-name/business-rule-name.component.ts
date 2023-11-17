@@ -153,7 +153,8 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
 
         for (const el of relatedRefreneceTableEntity) {
           const { entityData } = await this.getEntityById(el.referencedTableId);
-          const filteredAttributes = entityData?.attributes.filter((attr: any) => attr.name !== 'id');
+          let filteredAttributes = entityData?.attributes.filter((attr: any) => attr.name !== 'id');
+          filteredAttributes = entityData?.attributes.filter((attr: any) => attr.name !== 'code');
           entityData.attributes = filteredAttributes.filter((attr: any) => !attr.systemAttribute);
           await this.processNestedAttributes(entityData.attributes, el);
         }
@@ -486,7 +487,13 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
    * @param subcondition any
    */
   public patchsubConditionsForm(item: any): FormGroup {
-    const value = item?.operand ? item?.operand.split(',') : '';
+    const sepStart = '.';
+    const type = typeof item.operand
+    const startIndex = type === 'string' ? item.operand.indexOf(sepStart) : -1;
+    let value: any = item?.operand;
+    if (startIndex !== -1) {
+      value = item?.operand ? item?.operand.split(',') : '';
+    }
     const form: FormGroup = this.formbuilder.group({
       id: [this.generateRandomIds()],
       conditionType: item?.conditionType ? [item.conditionType, Validators.required] : ['', Validators.required],
@@ -588,9 +595,8 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         break;
       default:
     }
-    this.cdRef.detectChanges();
     this.businessRuleService.ruleChageDetection.next(true);
-
+    this.cdRef.detectChanges();
   }
 
   // Common method to remove controls
@@ -690,8 +696,8 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         event.currentIndex
       );
     }
-    this.cdRef.detectChanges();
     this.businessRuleService.ruleChageDetection.next(true);
+    this.cdRef.detectChanges();
   }
 
   /**
