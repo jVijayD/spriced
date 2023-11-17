@@ -157,6 +157,13 @@ export class DerivedHierarchyComponent {
     );
   }
 
+  public goToDerivedHierarchy()
+  {
+    this.router.navigate(['/spriced-data-definition/hierarchy-definition'], {
+      queryParams: { model_id: this.currentSelectedEntity?.groupId },
+    });
+  }
+
   subscribeToFormEvents() {
     this.subscriptions.push(
       this.dynamicFormService.eventSubject$.subscribe((value) => {
@@ -171,11 +178,12 @@ export class DerivedHierarchyComponent {
     const pathParams: any = {
       modelId: this.currentSelectedEntity?.groupId,
       entityId: data,
+      hierarchyId: this.hierarchyId
     };
     const pathSegments = Object.keys(pathParams)
       .map((key) => encodeURIComponent(pathParams[key]))
       .join("/");
-    const url = `${window.location.href}/${pathSegments}`; // Replace this with the desired URL
+    const url = this.replaceEndNumbers(window.location.href, data);; // Replace this with the desired URL
     const newTab: any = window.open(url, "_blank");
     newTab.focus();
 
@@ -186,6 +194,19 @@ export class DerivedHierarchyComponent {
     //   }
     // );
     // dialogReference.afterClosed().subscribe(() => { });
+  }
+
+  private replaceEndNumbers(path: string, newNumber: number): string {
+    // Use regular expression to find the end numbers in the path
+    const match = path.match(/\d+$/);
+
+    if (match) {
+      // Replace the end numbers with the new number
+      return path.replace(/\d+$/, String(newNumber));
+    } else {
+      // No numbers found at the end of the path
+      return path;
+    }
   }
 
   ngOnDestroy(): void {

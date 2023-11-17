@@ -1,36 +1,61 @@
 .mat-expansion-panel-body {
-    padding: 0px;
+  padding: 0px;
+}
+
+.grid-container {
+  @apply h-full w-full;
+  //overflow-y: hidden;
+  overflow: auto;
+}
+
+.grid-height {
+  display: block;
+  //height: calc(100% - 6rem);
+  //height: calc(100% - 3rem);
+  @apply h-full;
+}
+
+mat-accordion.mat-accordion {
+  overflow: auto;
+
+  .mat-expansion-panel-header {
+    height: auto !important;
+    min-height: 20px;
+    padding-top: 4px !important;
+
+    .mat-content {
+      margin-right: 0 !important;
+    }
+
+    .mat-expansion-panel-header-title {
+      margin: 0 !important;
+
+      .back-btn {
+        display: flex;
+
+        .mat-icon {
+          font-size: 12px;
+          width: 12px;
+          height: 18px;
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
   }
-  
-  .grid-container {
-    @apply h-full w-full;
-    //overflow-y: hidden;
-    overflow: auto;
-  }
-  
-  .grid-height {
-    display: block;
-    //height: calc(100% - 6rem);
-    //height: calc(100% - 3rem);
-    @apply h-full;
-  }
-  
-  mat-accordion.mat-accordion {
-    overflow: auto;
-  }
-  
-  // .file-excel::before {
-  //   font: 20px;
-  //   color: var(--white);
-  //   content: " \f1c3";
-  // }
-  
-  .elipsis
-  {
-          display: inline-block;
-          width: 150px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          text-align: center;
-  }
+}
+
+// .file-excel::before {
+//   font: 20px;
+//   color: var(--white);
+//   content: " \f1c3";
+// }
+
+.elipsis {
+  display: inline-block;
+  width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
