@@ -216,6 +216,7 @@ export class ViewTransactionsAdminComponent {
     });
     dialogResult.afterClosed().subscribe((val) => {
       if(val){
+        console.log(val)
       this.query = dialogResult.componentInstance.data.query;
       this.addDisplayNameInFilter(this.query);
       this.currentCriteria.filters = val;
@@ -237,7 +238,7 @@ export class ViewTransactionsAdminComponent {
     return headers
       .map((col: any) => {
         return {
-          name: col.column,
+          name: col.sortColumn,
           displayName: col.name,
           dataType:  "string",
           options: col?.dataType === "category" ? col.options : undefined,
