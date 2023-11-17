@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subject, of, tap } from 'rxjs';
 import { LRUCache } from "typescript-lru-cache";
-import { Criteria, PageData, RequestUtilityService, } from "@spriced-frontend/spriced-common-lib";
+import { Criteria, PageData, RequestUtilityService, } from "../services/utility/request-utility.service";
 import { Entity, Rule, conditionTypes, dataTypes, modelData, operandType, operatorType } from '../models/buisnessrule';
 
 @Injectable({
