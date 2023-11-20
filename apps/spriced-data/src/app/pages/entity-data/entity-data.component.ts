@@ -590,7 +590,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     );
 
     this.dynamicFormService.setFormValues(extraData, extractedFormFields);
-    debugger;
     if (row["permission"] === "READ") {
       this.dynamicFormService.setReadOnly();
     } else {
