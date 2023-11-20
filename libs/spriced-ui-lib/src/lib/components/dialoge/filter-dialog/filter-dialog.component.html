@@ -67,7 +67,7 @@
 
       <ng-container *queryField="let rule; let fields=fields; let onChange=onChange">
         <mat-form-field class="ml-2" appearance="outline">
-          <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.field" (ngModelChange)="onChange($event, rule)">
+          <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.field" (valueChange)="handleLookupData($event)" (ngModelChange)="onChange($event, rule)">
             <mat-option *ngFor="let field of fields" [value]="field.value">{{field.name}}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -77,6 +77,25 @@
         <mat-form-field class="mx-4" appearance="outline">
           <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.operator">
             <mat-option *ngFor="let value of operators" [value]="value">{{value}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
+
+      <ng-container *queryInput="let rule; let field=field; let onChange=onChange; type: 'LOOKUP'">
+        <mat-form-field appearance="outline">
+          <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.value" (ngModelChange)="onChange($event, rule)">
+            <mat-option>
+              <ngx-mat-select-search
+                placeholderLabel="Search"
+                [ngModelOptions]="{standalone:true}"
+                ngModel
+                (ngModelChange)="handleSerch($event, rule)"
+              ></ngx-mat-select-search>
+            </mat-option>
+            <mat-option value="" class="option">--Select--</mat-option>
+            <mat-option *ngFor="let opt of field?.filteredOptions" [value]="opt.code">
+             {{getDisplayProp(opt)}}
+            </mat-option>
           </mat-select>
         </mat-form-field>
       </ng-container>
