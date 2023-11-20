@@ -197,7 +197,6 @@ export class FilterDialogComponent {
     let field: any = this.config.fields[rule];
     if (field?.type === 'LOOKUP' && !!field?.entity && !field?.options) {
       this.entityService.loadLookupData(field.entity, 0, 20000, []).subscribe((res: any) => {
-        res.content = res.content.filter((el: any) => ![null, undefined, ''].includes(el.name && el.code));
         field.options = res.content;
         field.filteredOptions = res.content;
       })
