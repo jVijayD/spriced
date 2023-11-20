@@ -1,8 +1,9 @@
-import { Attribute, Component, Inject } from "@angular/core";
+import { Component, Inject} from "@angular/core";
 
 import { QueryBuilderConfig } from "ngx-angular-query-builder";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { FormGroup, FormBuilder } from "@angular/forms";
+import { DataEntityService } from "@spriced-frontend/spriced-common-lib";
 
 @Component({
   selector: "sp-filter",
@@ -12,11 +13,20 @@ import { FormGroup, FormBuilder } from "@angular/forms";
 export class FilterDialogComponent {
   form!: FormGroup
   config!: QueryBuilderConfig;
+  currentFilteredItems: any = [];
+  displayProp: any;
   constructor(
     public fb: FormBuilder,
+    private entityService: DataEntityService,
     public dialogRef: MatDialogRef<FilterDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: FilterData
   ) {
+    this.displayProp =
+      data.displayFormat === "code"
+        ? "code"
+        : data.displayFormat === "codename"
+          ? "code|name"
+          : "name|code";
     data.query =
       data && data.query
         ? data.query
@@ -60,9 +70,9 @@ export class FilterDialogComponent {
     let filters: Filter[] = [];
     //debugger;
     query.rules.forEach((item: any, index: number) => {
-      const field = item.field.split(',');
-      if(field.length > 1)
-      {
+      const check = item.field.indexOf(',');
+      const field = check !== -1 ? item.field.split(',') : item;
+      if (field.length > 1) {
         item.field = field.find((el: any) => el.endsWith('_code'));
       }
       const operatorType = this.getOperatorType(item.operator);
@@ -155,11 +165,13 @@ export class FilterDialogComponent {
       fields: {},
     };
     columns.forEach((col) => {
-      //debugger;
+      // debugger;
+      const dataType = col.formType === 'LOOKUP' ? col.formType : col.dataType;
       config.fields[col.name] = {
         name: col.displayName || col.name,
-        type: col.dataType,
-        operators: this.mapOperators(col.dataType),
+        type: dataType,
+        operators: this.mapOperators(dataType),
+        entity: col.referencedTableId,
         options: col.options,
         nullable: col.nullable,
         validator: (rule) => {
@@ -178,6 +190,52 @@ export class FilterDialogComponent {
     return config;
   }
 
+  public handleLookupData(rule: any) {
+    let field: any = this.config.fields[rule];
+    if (field?.type === 'LOOKUP' && !!field?.entity && !field?.options) {
+      this.entityService.loadLookupData(field.entity, 0, 20000, []).subscribe((res: any) => {
+        field.options = res.content;
+        field.filteredOptions = res.content;
+      })
+    }
+  }
+
+  public handleSerch(value: any, item: any) {
+    let field: any = this.config.fields[item.field];
+    field.filteredOptions = this.filterItems(field.options, value);
+  }
+
+  // Generic filtering function
+  private filterItems(items: any[], searchText: string): any[] {
+
+    if (searchText === '') {
+      return items;
+    }
+    return items.filter((item: any) => {
+      // Check if either code or name includes the searchText
+      return (
+        (item.code && item.code.toString().toLowerCase().includes(searchText.trim().toLowerCase())) ||
+        (item.name &&
+          item.name.trim().toLowerCase().includes(searchText.trim().toLowerCase()))
+      );
+    });
+  }
+
+  public getDisplayProp(option: any) {
+    const prop = this.displayProp?.split("|") || [];
+    return prop.reduce((prev: any, cur: any) => {
+      return prev === "-##"
+        ? option[cur]
+        : `${prev == null ? "" : prev} ${this.renderDataWithCurlyBrace(
+          option[cur]
+        )}`;
+    }, "-##");
+  }
+
+  private renderDataWithCurlyBrace(data: any) {
+    return data == null ? "" : "{" + data + "}";
+  }
+
   private mapOperators(type: string) {
     switch (type) {
       case "string":
@@ -192,8 +250,8 @@ export class FilterDialogComponent {
           "Does not contain pattern",
           "Is NULL",
           "Is not NULL",
-          "Starts with",
-          "Ends with",
+          // "Starts with",
+          // "Ends with",
         ];
       case "date":
         return [
@@ -205,7 +263,7 @@ export class FilterDialogComponent {
           "Is less than or equal to",
           "Is NULL",
           "Is not NULL",
-          "IN",
+          // "IN",
         ];
       case "number":
         return [
@@ -218,6 +276,14 @@ export class FilterDialogComponent {
         ];
       case "boolean":
         return ["Is equal to", "Is not equal to"];
+
+      case "LOOKUP":
+        return [
+          "Is equal to",
+          "Is not equal to",
+          "Is NULL",
+          "Is not NULL",
+        ];
     }
     return [];
   }
@@ -230,6 +296,7 @@ export interface FilterData {
   persistValueOnFieldChange?: boolean;
   columns?: QueryColumns[];
   emptyMessage?: string;
+  displayFormat?: string;
 }
 
 // export interface FilterGroup {
@@ -282,7 +349,9 @@ enum OperatorType {
 export interface QueryColumns {
   name: string;
   displayName?: string;
+  formType?: any;
   dataType: "number" | "string" | "date" | "boolean" | "category";
   options?: { name: string; value: any }[];
   nullable?: boolean;
+  referencedTableId?: any;
 }
