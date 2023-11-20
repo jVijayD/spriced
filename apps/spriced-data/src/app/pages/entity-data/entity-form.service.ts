@@ -195,6 +195,12 @@ export class EntityFormService {
     return validations;
   }
 
+  public getReadOnlyFormControlNames(selectedItem: any): string[] {
+    return selectedItem?.attributes
+      .filter((item: any) => item.permission === "READ")
+      .map((item: any) => item.name);
+  }
+
   // public getDateFormatter(mask: string) {
   //   switch (mask) {
   //     case "MM/dd/yy":
