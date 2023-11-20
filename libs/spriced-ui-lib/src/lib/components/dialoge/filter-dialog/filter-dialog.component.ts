@@ -1,10 +1,9 @@
-import { Attribute, ChangeDetectorRef, Component, ElementRef, Inject, ViewChild } from "@angular/core";
+import { Component, Inject} from "@angular/core";
 
 import { QueryBuilderConfig } from "ngx-angular-query-builder";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { FormGroup, FormBuilder } from "@angular/forms";
 import { DataEntityService } from "@spriced-frontend/spriced-common-lib";
-import { debounceTime } from "rxjs";
 
 @Component({
   selector: "sp-filter",
@@ -19,7 +18,6 @@ export class FilterDialogComponent {
   constructor(
     public fb: FormBuilder,
     private entityService: DataEntityService,
-    private cdk: ChangeDetectorRef,
     public dialogRef: MatDialogRef<FilterDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: FilterData
   ) {
@@ -40,9 +38,7 @@ export class FilterDialogComponent {
       data && data.config ? data.config : this.createConfig(data.columns || []);
 
     this.form = this.fb.group({
-      query: [data.query],
-      itemFiltered: [''],
-      fieldName: ['']
+      query: [data.query]
     })
     dialogRef.disableClose = true;
   }
@@ -170,10 +166,11 @@ export class FilterDialogComponent {
     };
     columns.forEach((col) => {
       // debugger;
+      const dataType = col.formType === 'LOOKUP' ? col.formType : col.dataType;
       config.fields[col.name] = {
         name: col.displayName || col.name,
-        type: col.formType === 'LOOKUP' ? col.formType : col.dataType,
-        operators: this.mapOperators(col.dataType),
+        type: dataType,
+        operators: this.mapOperators(dataType),
         entity: col.referencedTableId,
         options: col.options,
         nullable: col.nullable,
@@ -245,12 +242,12 @@ export class FilterDialogComponent {
         return [
           "Is equal to",
           "Is not equal to",
-          // "Is greater than",
-          // "Is less than",
-          // "Is greater than or equal to",
-          // "Is less than or equal to",
-          // "Contains pattern",
-          // "Does not contain pattern",
+          "Is greater than",
+          "Is less than",
+          "Is greater than or equal to",
+          "Is less than or equal to",
+          "Contains pattern",
+          "Does not contain pattern",
           "Is NULL",
           "Is not NULL",
           // "Starts with",
@@ -260,10 +257,10 @@ export class FilterDialogComponent {
         return [
           "Is equal to",
           "Is not equal to",
-          // "Is greater than",
-          // "Is less than",
-          // "Is greater than or equal to",
-          // "Is less than or equal to",
+          "Is greater than",
+          "Is less than",
+          "Is greater than or equal to",
+          "Is less than or equal to",
           "Is NULL",
           "Is not NULL",
           // "IN",
@@ -272,13 +269,21 @@ export class FilterDialogComponent {
         return [
           "Is equal to",
           "Is not equal to",
-          // "Is greater than",
-          // "Is less than",
-          // "Is greater than or equal to",
-          // "Is less than or equal to",
+          "Is greater than",
+          "Is less than",
+          "Is greater than or equal to",
+          "Is less than or equal to",
         ];
       case "boolean":
         return ["Is equal to", "Is not equal to"];
+
+      case "LOOKUP":
+        return [
+          "Is equal to",
+          "Is not equal to",
+          "Is NULL",
+          "Is not NULL",
+        ];
     }
     return [];
   }
