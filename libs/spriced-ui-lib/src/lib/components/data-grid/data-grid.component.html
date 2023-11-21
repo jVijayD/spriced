@@ -49,15 +49,15 @@
       [sortable]="false"
     >     
       <ng-template  ngx-datatable-cell-template  let-row="row">
-          <mat-icon *ngIf="row.is_valid" spToolTipRenderer
-          [contentTemplate]="errortemplate" style="color: white;background-color: green;"
+          <mat-icon *ngIf="row.is_valid"
+           style="color: white;background-color: green;"
             >check</mat-icon>
             <mat-icon spToolTipRenderer
             [contentTemplate]="errortemplate" *ngIf="!row.is_valid"  style="color: white;background-color: red;"
               >cancel</mat-icon>
       </ng-template>
       <ng-template #errortemplate>
-        <div >data type mismatch</div>
+        <div >error</div>
       </ng-template>
     </ngx-datatable-column>
     </ng-container>
