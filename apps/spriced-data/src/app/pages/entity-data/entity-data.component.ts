@@ -309,9 +309,17 @@ export class EntityDataComponent implements OnDestroy, OnInit {
    * @param query any
    */
   public addDisplayNameInFilter(query: any) {
+    const updatedHeaders = this.headers.map((item :any) => {
+      const res = item.column.split(',');
+      if (res.length > 1) {
+        item.column =  res.find((el: any) => el.endsWith('_code'));
+      }
+      return { ...item };
+    });
+
     if (query.rules) {
       query.rules.forEach((el: any) => {
-        const item: any = this.headers.find(
+        const item: any = updatedHeaders.find(
           (elm: any) => elm.column === el.field
         );
         if (el?.rules && el?.rules.length > 0) {
