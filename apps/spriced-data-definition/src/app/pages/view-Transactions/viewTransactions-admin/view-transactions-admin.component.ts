@@ -152,8 +152,8 @@ export class ViewTransactionsAdminComponent {
   ];
 
   onModelChange(ev: MatSelectChange) {
+    this.onClearFilter()
     this.selectedModel = ev.value;
-    this.loadTransactionsData(this.selectedModel);
   }
   onPaginate(e: Paginate) {
     this.pageNumber = e.offset;
@@ -191,11 +191,11 @@ export class ViewTransactionsAdminComponent {
   }
   loadTransactionsData(modelId: number) {
    this.rows = [];
-   const filters = (this.currentCriteria.filters && this.currentCriteria.filters.length == 0) ? this.createFilters("group_id",modelId,"number"):this.currentCriteria.filters;
-   (this.currentCriteria.filters && this.currentCriteria.filters.length == 0) ? this.currentCriteria.filters?.push(filters):'';
+   const filters =this.createFilters("group_id",modelId,"number");
+   this.currentCriteria.filters?.push(filters);
     this.transactionService.loadTransactionsData(this.currentCriteria).subscribe({
       next:(res:any)=>{
-         this.totalElements = res.totalElements;
+        this.totalElements = res.totalElements;
         this.rows = res.content;
       },
       error:(err:any)=>{
@@ -216,20 +216,11 @@ export class ViewTransactionsAdminComponent {
     });
     dialogResult.afterClosed().subscribe((val) => {
       if(val){
-        console.log(val)
       this.query = dialogResult.componentInstance.data.query;
       this.addDisplayNameInFilter(this.query);
       this.currentCriteria.filters = val;
       this.currentCriteria.filters?.length==0 ?this.query = null:'';
-      this.transactionService.loadTransactionsData(this.currentCriteria).subscribe({
-        next:(res:any)=>{
-           this.totalElements = res.totalElements;
-          this.rows = res.content;
-        },
-        error:(err:any)=>{
-          console.log(err);
-        }
-      })
+      this.loadTransactionsData(this.selectedModel)
     }
     });
    }
@@ -281,6 +272,13 @@ export class ViewTransactionsAdminComponent {
     const text: any = this.getTooltipText(conditions);
     return text;
   }
+  getDisplayName(name:string)
+  {
+    var headers: any  = this.headers.filter((item) =>item.sortColumn === name);
+    if (headers[0]?.sortColumn) {
+     return headers[0]?.name
+    }
+  }
 
   public getTooltipText(items: any): string {
     let tooltipText = "";
@@ -288,7 +286,7 @@ export class ViewTransactionsAdminComponent {
       const lastItem = items.rules.length - 1;
       items.rules.forEach((rule: any, index: number) => {
         if (!rule.condition && !rule.rules) {
-          const field = rule?.displayName;
+          const field = this.getDisplayName(rule?.field);
           const value = !!rule?.value ? rule?.value : "";
           const condition = lastItem !== index ? items.condition : "";
           tooltipText += `<strong>${field}</strong> ${rule.operator} ${value} <strong>${condition}</strong> <br>`;
@@ -306,13 +304,12 @@ export class ViewTransactionsAdminComponent {
   }
 
   public getNestedTooltipText(items: any): string {
-    debugger
     let tooltipText = "";
     if (items.condition && items.rules && items.rules.length > 0) {
       const lastItem = items.rules.length - 1;
       items.rules.forEach((rule: any, index: number) => {
         if (!rule.condition && !rule.rules) {
-          const field = rule?.displayName;
+          const field = this.getDisplayName(rule?.field);;
           const value = !!rule?.value ? rule?.value : "";
           const condition = lastItem !== index ? items.condition : "";
           tooltipText += `<strong>${field}</strong> ${rule.operator} ${value} <strong>${condition}</strong>`;
@@ -335,12 +332,11 @@ export class ViewTransactionsAdminComponent {
       filterType: "CONDITION",
       key: key,
       value: value,
-      joinType: "NONE",
+      joinType: "AND",
       operatorType: "EQUALS",
       dataType: type,
     };
   }
-
 
   ngOnDestroy(): void {
     this.subscriptions.forEach((item) => item.unsubscribe());
