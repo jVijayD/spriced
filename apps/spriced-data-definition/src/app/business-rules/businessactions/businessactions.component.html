@@ -65,7 +65,7 @@
 
         <ng-container *ngIf="valueConstant">
             <mat-form-field
-                *ngIf="['AUTO', 'INTEGER', 'DECIMAL' ,'DOUBLE', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)"
+                *ngIf="['AUTO', 'INTEGER', 'DECIMAL' ,'DOUBLE', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType) && !lookupInput"
                 [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
                 <mat-label>Value</mat-label>
                 <input [disabled]="isFieldDisabled" [type]="dynamicInputType" [readonly]="preview" matInput placeholder="Add Value"
@@ -73,7 +73,7 @@
             </mat-form-field>
 
             <!-- WHEN DATATYPE IS EQUAL TO BOOLEAN -->
-            <mat-form-field *ngIf="dataType === 'BOOLEAN'" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
+            <mat-form-field *ngIf="dataType === 'BOOLEAN' && !lookupInput" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
                 appearance="outline">
                 <mat-label>Value</mat-label>
                 <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="operand">
@@ -82,8 +82,16 @@
                 </mat-select>
             </mat-form-field>
 
+            <mat-form-field  *ngIf="lookupInput" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
+            appearance="outline">
+            <mat-label>Value</mat-label>
+            <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="operand">
+              <mat-option *ngFor="let item of lookupSourceData" [value]="item?.id"><p>{{item.code}}</p> </mat-option>
+            </mat-select>
+          </mat-form-field>
+
             <!-- WHEN DATATYPE IS EQUAL TO TEXT -->
-            <mat-form-field *ngIf="['TEXT'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
+            <mat-form-field *ngIf="['TEXT'].includes(dataType) && !lookupInput" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
                 appearance="outline">
                 <mat-label>Textarea</mat-label>
                 <textarea [disabled]="isFieldDisabled" class="text-box" [readonly]="preview" matInput
@@ -91,7 +99,7 @@
             </mat-form-field>
 
             <!-- WHEN DATATYPE IS EQUAL TO DATE -->
-            <mat-form-field *ngIf="['DATE'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
+            <mat-form-field *ngIf="['DATE'].includes(dataType) && !lookupInput" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
                 appearance="outline">
                 <mat-label>Date</mat-label>
                 <input matInput [readonly]="preview" [matDatepicker]="picker" formControlName="operand">
@@ -100,7 +108,7 @@
             </mat-form-field>
 
             <!-- WHEN DATATPE IS EQUAL TO TIME STAMP -->
-            <mat-form-field *ngIf="['TIME_STAMP', 'DATE_TIME'].includes(dataType)"
+            <mat-form-field *ngIf="['TIME_STAMP', 'DATE_TIME'].includes(dataType) && !lookupInput"
                 [ngClass]="preview ? 'not-allow' : ''" class="w-52" appearance="outline">
                 <mat-label>DateTime</mat-label>
                 <input matInput [readonly]="preview" [matDatepicker]="mindatetimepicker1"

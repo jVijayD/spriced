@@ -59,46 +59,56 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "column_name",
+      column: "columnName",
       name: "Attribute",
+      sortColumn:"column_name",
+
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "updated_date",
+      column: "updatedDate",
       name: "Last Updated On",
       pipe: (data: any) => {
         return moment(data).format("MM/DD/YYYY HH:mm:ss");
       },
+      sortColumn:"updated_date",
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "prior_value",
+      column: "priorValue",
       name: "Prior Value",
+      sortColumn:"prior_value"
+
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "new_value",
+      column: "newValue",
       name: "New value",
+      sortColumn:"new_value"
+
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "updated_by",
+      column: "updatedBy",
       name: "User",
+      sortColumn:"updated_by"
+
     },
     {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "transaction_type",
+      column: "transactionType",
       name: "Transaction",
+      sortColumn:"transaction_type"
     },
   ];
   @ViewChild('inputField') inputField!:ElementRef;

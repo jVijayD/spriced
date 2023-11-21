@@ -244,6 +244,11 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.dataGrid.clearSelection();
     this.dataGrid.selected = [];
     this.dynamicFormService.resetFormValues();
+    this.dynamicFormService.setReadOnly(
+      this.entityFormService.getReadOnlyFormControlNames(
+        this.currentSelectedEntity
+      )
+    );
   }
 
   onReset() {
@@ -281,6 +286,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       persistValueOnFieldChange: true,
       columns: this.entityGridService.getFilterColumns(this.headers),
       emptyMessage: "Please select filter criteria.",
+      displayFormat: this.globalSettings.displayFormat,
       config: null,
       query: this.query,
     });
@@ -403,7 +409,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         const fileDetails = {
           source: "web",
           entityName: this.currentSelectedEntity?.name,
-          entityId:this.currentSelectedEntity?.id
+          entityId: this.currentSelectedEntity?.id,
         };
         const formData = new FormData();
 
@@ -426,7 +432,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       data: this.currentSelectedEntity,
     });
 
-    dialogResult.afterClosed().subscribe((val) => { });
+    dialogResult.afterClosed().subscribe((val) => {});
   }
 
   onSettings() {
@@ -582,7 +588,17 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.selectedItem,
       this.currentSelectedEntity as Entity
     );
+
     this.dynamicFormService.setFormValues(extraData, extractedFormFields);
+    if (row["permission"] === "READ") {
+      this.dynamicFormService.setReadOnly();
+    } else {
+      this.dynamicFormService.setReadOnly(
+        this.entityFormService.getReadOnlyFormControlNames(
+          this.currentSelectedEntity
+        )
+      );
+    }
   }
 
   private createDynamicUIMapping(entity: Entity | undefined) {
@@ -760,16 +776,20 @@ export class EntityDataComponent implements OnDestroy, OnInit {
               errorMessage += rulResult.message;
             });
           });
-          const sepStart = '{SEP}';
-          const sepEnd = '{/SEP}';
+          const sepStart = "{SEP}";
+          const sepEnd = "{/SEP}";
 
           let firstMessage = "";
           const startIndex = errorMessage.indexOf(sepStart);
           const endIndex = errorMessage.indexOf(sepEnd);
 
           if (startIndex !== -1 && endIndex !== -1 && startIndex < endIndex) {
-            firstMessage = errorMessage.substring(startIndex + sepStart.length, endIndex).trim();
-            errorMessage = firstMessage.replace(/:\s/g, ":\n").replace(/\b(IF|THEN|ELSE)\b\s/g, "\n$1 ");
+            firstMessage = errorMessage
+              .substring(startIndex + sepStart.length, endIndex)
+              .trim();
+            errorMessage = firstMessage
+              .replace(/:\s/g, ":\n")
+              .replace(/\b(IF|THEN|ELSE)\b\s/g, "\n$1 ");
             this.snackbarService.error(errorMessage);
           } else {
             this.snackbarService.error(errorMessage);

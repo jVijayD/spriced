@@ -44,6 +44,22 @@ export class DynamicFormService {
     this.parentForm?.setValue(values);
   }
 
+  setReadOnly(readonlyControls?: string[]) {
+    for (let control in this.parentForm?.controls) {
+      debugger;
+      let con = this.parentForm?.controls[control];
+      if (!readonlyControls) {
+        con.disable();
+      } else {
+        if (readonlyControls.some((value) => value == control)) {
+          con.disable();
+        } else {
+          con.enable();
+        }
+      }
+    }
+  }
+
   resetFormValues() {
     this.extraData.clear();
     this.parentForm?.reset();

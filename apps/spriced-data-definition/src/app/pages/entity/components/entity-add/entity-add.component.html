@@ -236,11 +236,11 @@
               <mat-option
                 *ngFor="let item of entityList"
                 [value]="item.id"
-                [disabled]="local_data.id === item.id"
-                >{{ item.displayName }}</mat-option
-              >
+                >{{ item.displayName }}</mat-option>
             </mat-select>
           </mat-form-field>
+          <!-- [disabled]="local_data.id === item.id" -->
+
           <mat-checkbox
             *ngIf="attDetails.type !== 'LOOKUP'"
             class="mt-2"

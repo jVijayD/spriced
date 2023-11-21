@@ -37,6 +37,30 @@
               </mat-select>
             </mat-form-field>
           </sp-header-component-wrapper>
+          <sp-header-action
+          icon="filter_list"
+          [text]="!query ? 'Filter' : ''"
+          (actionClick)="onFilter()"
+          [disabled]="this.headers.length === 0"
+          spToolTipRenderer
+          [contentTemplate]="template"
+          [customPosition]="true"
+          [showToolTip]="!!query"
+        ></sp-header-action>
+
+        <ng-template #template>
+          <div [innerHTML]="getToolTipTemplate(query)"></div>
+        </ng-template>
+
+        <sp-header-action
+          icon="filter_list_off"
+          text="Clear Filter"
+          title="Clear Filter"
+          [disabled]="
+            !this.query
+          "
+          (actionClick)="onClearFilter()"
+        ></sp-header-action>
       </ng-container>
     </sp-data-grid>
     <!-- </div> -->

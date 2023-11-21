@@ -554,9 +554,9 @@ export class ListComponent implements OnInit, OnDestroy {
       if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
         // Use Promise.all to wait for all promises to resolve
         await Promise.all(
-          relatedRefreneceTableEntity.map(async (el: any) => {
+           relatedRefreneceTableEntity.map(async (el: any) => {
             const { entityData } = await this.getEntityById(el.referencedTableId);
-            const attributes = entityData.attributes.filter((el: any) => !el.systemAttribute);
+            const attributes = entityData?.attributes.filter((el: any) => !el.systemAttribute);
             const nestedProcessedAttributes = this.processNestedAttributes(attributes, el);
             this.domainAttributes.push(...nestedProcessedAttributes);
           })
@@ -594,25 +594,27 @@ export class ListComponent implements OnInit, OnDestroy {
    * @param entityId number
    * @returns 
    */
-  public getEntityById(entityId: number): Promise<any> {
-    return new Promise((resolve, rejects) => {
-      forkJoin([
-        this.businessRuleService.getAllEntitesById(entityId)
-      ]).subscribe(
-        ([entityData]: any) => {
-          resolve({
-            entityData
-          });
-        },
-        (err) => {
-          this.loading = false;
-          rejects({
-            entityData: []
-          });
-        }
-      );
+  public getEntityById(entityId: number, retryCount = 3): Promise<any> {
+    return new Promise((resolve, reject) => {
+        const fetchData = () => {
+            this.businessRuleService.getAllEntitesById(entityId).subscribe(
+                (entityData: any) => {
+                    resolve({ entityData });
+                },
+                (err) => {
+                    if (retryCount > 0) {
+                        fetchData();
+                        retryCount--;
+                    } else {
+                        reject({ entityData: [] });
+                    }
+                }
+            );
+        };
+        fetchData(); 
     });
   }
+
 
   /**
   * HANDLE THIS FUNCTION FOR EDIT THE NESTEDATTRIBUTES
@@ -675,9 +677,10 @@ export class ListComponent implements OnInit, OnDestroy {
     if (conditions && conditions.length > 0) {
       conditions.forEach((condition: any, index: number) => {
         tooltipConditionText += index !== 0 ? this.getIndent(3) : "";
-        const attribute = this.attributes.find(
+        let attribute = this.attributes.find(
           (item: any) => item.id === condition.attributeId
         );
+        attribute = !!attribute ? attribute : {name: 'code', displayName: 'Code', id: '1234'};
         if (attribute && attribute.name.includes('_') || condition?.operatorType.includes('_')) {
           attribute.name = attribute?.name.replace(/_/g, ' ');
           condition.operatorType = condition?.operatorType.replace(/_/g, ' ');
@@ -740,9 +743,10 @@ export class ListComponent implements OnInit, OnDestroy {
     if (subConditions && subConditions.length > 0) {
       subConditions.forEach((condition: any, index: number) => {
         subConditionText += index !== 0 ? this.getIndent(1) : "";
-        const attribute = this.attributes.find(
+        let attribute = this.attributes.find(
           (item: any) => item.id === condition.attributeId
         );
+        attribute = !!attribute ? attribute : {name: 'code', displayName: 'Code', id: '1234'};
         if (attribute && attribute.name.includes('_') || condition.operatorType.includes('_')) {
           attribute.name = attribute?.name.replace(/_/g, ' ');
           condition.operatorType = condition?.operatorType.replace(/_/g, ' ');
@@ -838,9 +842,10 @@ export class ListComponent implements OnInit, OnDestroy {
       actions.forEach((action: any, index: number) => {
         tooltipActionConditionsText += index !== 0 ? this.getIndent(3) : "";
         operand = action?.operand !== "" ? action?.operand : "Blank";
-        const attribute = this.attributes.find(
+        let attribute = this.attributes.find(
           (item: any) => item.id === action.attributeId
         );
+        attribute = !!attribute ? attribute : {name: 'code', displayName: 'Code', id: '1234'};
         if (attribute && attribute.name.includes('_') || action.actionType.includes('_')) {
           attribute.name = attribute?.name.replace(/_/g, ' ');
           action.actionType = action?.actionType.replace(/_/g, ' ')

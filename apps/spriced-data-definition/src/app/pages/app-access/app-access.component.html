@@ -2,8 +2,16 @@
   <sp-hbox>
     <mat-form-field appearance="outline">
       <mat-label>User Role</mat-label>
-      <mat-select (selectionChange)="onSelectRole($event)" [(value)]="selectedRoleCmp">
-        <mat-option *ngFor="let item of roleList" [value]="item">{{item.name}}</mat-option>
+      <mat-select matNativeControl (selectionChange)="onSelectRole($event)" [(value)]="selectedRoleCmp">
+        <mat-option>
+          <ngx-mat-select-search
+            placeholderLabel="Search"
+            ngModel
+            (ngModelChange)="filterRolesSelection($event)"
+          ></ngx-mat-select-search>
+        </mat-option>
+        <mat-option value="" class="option">--Select--</mat-option>
+        <mat-option *ngFor="let item of filteredRoleList" [value]="item">{{item.name}}</mat-option>
       </mat-select>
     </mat-form-field>
     <!-- <mat-form-field appearance="outline">

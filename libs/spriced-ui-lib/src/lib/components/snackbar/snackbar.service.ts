@@ -5,7 +5,7 @@ import { SnackbarFailureComponent } from './snackbar-failure/snackbar-failure.co
 import { SnackbarNotificationComponent } from './snackbar-notification/snackbar-notification.component';
 import { SnackbarWarnComponent } from './snackbar-warn/snackbar-warn.component';
 
-const SNACKBAR_OPEN_TIME = 3000;
+const SNACKBAR_OPEN_TIME = 20000;
 
 @Injectable()
 export class SnackBarService {
