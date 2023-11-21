@@ -281,6 +281,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       persistValueOnFieldChange: true,
       columns: this.entityGridService.getFilterColumns(this.headers),
       emptyMessage: "Please select filter criteria.",
+      displayFormat: this.globalSettings.displayFormat,
       config: null,
       query: this.query,
     });

@@ -20,6 +20,7 @@ import { ModelService } from "../../services/model.service";
 import { Model } from "@spriced-frontend/spriced-common-lib";
 import { MatSelectChange } from "@angular/material/select";
 import { KeycloakService } from "keycloak-angular";
+import { ActivatedRoute } from "@angular/router";
 @Component({
   selector: "app-hierarchy-definition",
   templateUrl: "./hierarchy-definition.component.html",
@@ -33,8 +34,7 @@ import { KeycloakService } from "keycloak-angular";
   ],
 })
 export class HierarchyDefinitionComponent
-  implements OnInit, AfterViewInit, OnDestroy
-{
+  implements OnInit, AfterViewInit, OnDestroy {
   selectedTabIndex = 0;
   selectedHierarchy: Hierarchy | null = null;
   subscriptions: Subscription[] = [];
@@ -54,19 +54,25 @@ export class HierarchyDefinitionComponent
     private entityService: EntityService,
     private modelService: ModelService,
     protected readonly keycloak: KeycloakService,
-  ) {}
+    private aroute: ActivatedRoute
+  ) { }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach((e) => e.unsubscribe());
   }
 
   ngOnInit() {
+    const modelId: any = this.aroute.snapshot.queryParams["model_id"] ? Number(this.aroute.snapshot.queryParams["model_id"]) : null;
+    let currentModel: any = null;
     this.subscriptions.push(
       this.modelService.loadAllModels().subscribe((result: any) => {
         this.modelList = result;
-        if(this.modelList.length>0){
-          this.viewTab.selectedModel =   this.modelList[0];
-          this.viewTab.onModelChange({value:this.viewTab.selectedModel});
+        if (this.modelList.length > 0) {
+          if (modelId) {
+            currentModel = this.modelList.find((el: any) => el.id === modelId);
+          }
+          this.viewTab.selectedModel = currentModel ? currentModel : this.modelList[0];
+          this.viewTab.onModelChange({ value: this.viewTab.selectedModel });
         }
       })
     );
