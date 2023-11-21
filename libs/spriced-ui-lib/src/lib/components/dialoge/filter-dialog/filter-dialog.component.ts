@@ -1,4 +1,4 @@
-import { Component, Inject} from "@angular/core";
+import { Component, Inject } from "@angular/core";
 
 import { QueryBuilderConfig } from "ngx-angular-query-builder";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -37,6 +37,10 @@ export class FilterDialogComponent {
     this.config =
       data && data.config ? data.config : this.createConfig(data.columns || []);
 
+    if (data.query.rules.length > 0) {
+      this.addLookupData(data.query.rules);
+    }
+
     this.form = this.fb.group({
       query: [data.query]
     })
@@ -66,14 +70,31 @@ export class FilterDialogComponent {
         return "";
     }
   }
+
+  // HANDLE THIS FUNCTION FOR WHEN WE EDIT THE FILTER THEN FETCH LOOKUPDATA
+  public addLookupData(item: any) {
+    item.forEach((elm: any) => {
+      if (elm.rules && elm.rules.length > 0) {
+        this.addLookupData(elm.rules);
+      }
+      else {
+        this.handleLookupData(elm.field);
+      }
+    });
+  }
+
   private convertToFilters(query: any) {
     let filters: Filter[] = [];
     //debugger;
     query.rules.forEach((item: any, index: number) => {
-      const check = item.field.indexOf(',');
-      const field = check !== -1 ? item.field.split(',') : item;
-      if (field.length > 1) {
-        item.field = field.find((el: any) => el.endsWith('_code'));
+      let fields: string[] = [];
+      if (item.rules) {
+        fields = this.editRuleFields(item.rules);
+      } else {
+        fields = item.field.split(',');
+      }
+      if (fields.length > 1) {
+        item.field = fields.find((el: any) => el.endsWith('_code'));
       }
       const operatorType = this.getOperatorType(item.operator);
       const dataTypeType = this.getDataType(this.data.columns, item.field);
@@ -218,6 +239,17 @@ export class FilterDialogComponent {
         (item.name &&
           item.name.trim().toLowerCase().includes(searchText.trim().toLowerCase()))
       );
+    });
+  }
+
+  // HANDLE THIS FUNCTION FOR EDIT THE RULE FIELD
+  private editRuleFields(rules: any): string[] {
+    return rules.flatMap((rule: any) => {
+      if (rule.rules) {
+        return this.editRuleFields(rule.rules);
+      } else {
+        return rule.field.split(',');
+      }
     });
   }
 
