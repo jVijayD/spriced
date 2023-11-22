@@ -139,7 +139,7 @@ export class FilterDialogComponent {
     let dataType: "string" | "number" | "date" | "boolean" | "category" =
       "string";
     const col = columns?.find((item) => item.name === name);
-    dataType = col?.dataType || "string";
+    dataType = col?.dataType && col?.formType !== 'LOOKUP' ? col?.dataType : "string";
     dataType = dataType === "category" ? "boolean" : dataType;
     return dataType;
   }
