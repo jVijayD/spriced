@@ -188,6 +188,14 @@
               "
               (actionClick)="onSettings()"
             ></sp-header-action>
+            <sp-header-action
+            icon="refresh"
+            text="Refresh"
+            title="Refresh"
+            (actionClick)="onRefresh()"
+            [disabled]="this.headers.length === 0"
+          ></sp-header-action>
+
           </div>
         </ng-container>
       </sp-data-grid>
