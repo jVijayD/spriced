@@ -350,7 +350,6 @@ export class ViewTransactionsAdminComponent {
     this.subscriptions.forEach((item) => item.unsubscribe());
   }
   filterModelSelection(text: any) {
-    console.log(text)
     this.filteredModelList = this.modelList.filter((item: any) => {
       return (
         item.displayName
@@ -359,7 +358,6 @@ export class ViewTransactionsAdminComponent {
           .indexOf(text.trim().toLowerCase()) != -1
       );
     });
-    console.log(this.filteredModelList)
   }
 
 }
