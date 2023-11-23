@@ -7,6 +7,7 @@ import {
   Header,
   HeaderActionComponent,
   HeaderComponentWrapperComponent,
+  OrderByPipe,
   Paginate,
   QueryColumns,
 } from "@spriced-frontend/spriced-ui-lib";
@@ -34,6 +35,7 @@ import { ModelService } from "../../../services/model.service";
 import { Subject, forkJoin } from "rxjs";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 import { MatToolbarModule } from "@angular/material/toolbar";
+import { FormsModule } from "@angular/forms";
 @Component({
   selector: "sp-view-transactions-admin",
   standalone: true,
@@ -52,6 +54,9 @@ import { MatToolbarModule } from "@angular/material/toolbar";
     HeaderActionComponent,
     NgxMatSelectSearchModule,
     ToolTipRendererDirective,
+    NgxMatSelectSearchModule,
+    OrderByPipe,
+    FormsModule
   ],
   providers: [DialogService],
   templateUrl: "./view-transactions-admin.component.html",
@@ -81,6 +86,8 @@ export class ViewTransactionsAdminComponent {
     },
     sorters:[{ direction:"DESC" ,property: "updated_date" }]
   };
+  filteredModelList: any;
+
   constructor(
     private modelService: ModelService,
     private enitityService: EntityService,
@@ -184,6 +191,7 @@ export class ViewTransactionsAdminComponent {
     this.subscriptions.push(
       this.modelService.loadAllModels().subscribe((result: any) => {
         this.modelList = result;
+        this.filteredModelList = this.modelList;
         this.selectedModel = this.modelList[0].id;
         this.loadTransactionsData(this.selectedModel);
       })
@@ -341,4 +349,17 @@ export class ViewTransactionsAdminComponent {
   ngOnDestroy(): void {
     this.subscriptions.forEach((item) => item.unsubscribe());
   }
+  filterModelSelection(text: any) {
+    console.log(text)
+    this.filteredModelList = this.modelList.filter((item: any) => {
+      return (
+        item.displayName
+          .trim()
+          .toLowerCase()
+          .indexOf(text.trim().toLowerCase()) != -1
+      );
+    });
+    console.log(this.filteredModelList)
+  }
+
 }
