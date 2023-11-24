@@ -837,4 +837,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       asyncValidations: [],
     };
   }
+  onRefresh()
+  {
+    this.onEntitySelectionChange(this.currentSelectedEntity as Entity)
+  }
 }
