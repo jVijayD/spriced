@@ -124,11 +124,15 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
   }
 
   navigate(e:any){
-    this.selectedHierarchy = e;
-    const groupId = e.modelId;
-    const id = e.entityId;
-    const hierarchyId = e.id;
-    this.router.navigate(["/spriced-data-definition/derived-hierarchy/" + hierarchyId + "/" + groupId + "/", id]);
+    this.hierarchyService.loadHierarchy(e).subscribe((el: any) => {
+      const level = el.details.length - 1;
+      const id = el.details.find((res: any) => res.groupLevel === level);
+      this.selectedHierarchy = e;
+      const groupId = e.modelId;
+      const hierarchyId = e.id;
+      this.router.navigate(["/spriced-data-definition/derived-hierarchy/" + hierarchyId + "/" + groupId + "/", id.entityId]);
+    })
+    
   }
   loadAllHierarchies(model: Model) {
     this.hierarchyService

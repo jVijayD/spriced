@@ -78,6 +78,7 @@ const TIMER_CONST = 300;
 })
 export class DerivedHierarchyComponent {
   @ViewChild(HierarchyTreeviewComponent) public derivedHierarchy!: HierarchyTreeviewComponent;
+  @ViewChild('entitySelection') public entitySelection!: EntitySelectionComponent;
   isFullScreen = false;
   hide = false;
   hierarchyId: any;
@@ -134,7 +135,17 @@ export class DerivedHierarchyComponent {
       this.entityDataService.loadHierarchy(this.hierarchyId).subscribe((e: any) => {
         this.hierarchyData = e;
         if (!!this.hierarchyId) {
-          this.derivedHierarchy.onBind(e, this.globalSettings?.displayFormat);
+          setTimeout(() => {
+            this.derivedHierarchy.onBind(e, this.globalSettings?.displayFormat);
+            setTimeout(() => {
+            if (this.derivedHierarchy.filterHierarchyPreviewNodes.length > 0) {
+              const level =  this.hierarchyData.details.length - 1;
+              const tableName = this.hierarchyData.details.find((el: any) => el.groupLevel === level);
+              this.currentSelectedEntity!.displayName = tableName.tabledisplayname;
+              }
+            }, 1000);
+          }, 500);
+          
         }
       });
     }
@@ -149,7 +160,7 @@ export class DerivedHierarchyComponent {
         const selectionTimer = timer(TIMER_CONST);
         if (this.rows && this.rows?.length > 0) {
           //Since the form not completely get loaded by the time data arrived.
-          selectionTimer.pipe(first()).subscribe(() => {
+          selectionTimer.subscribe(() => {
             this.setSelectedRow(this.rows[0]);
           });
         }
@@ -469,8 +480,12 @@ export class DerivedHierarchyComponent {
 
   getEntityFormHierarchyItem(event:any){
     setTimeout(() => {
-      this.entity = event as Entity;
-      this.onEntitySelectionChange(event);
+      const entity = this.entitySelection.entities.find( elm => elm.id === event.id);
+      if (!!this.currentSelectedEntity!.id && this.derivedHierarchy.currentRowId === 0 && this.currentSelectedEntity!.id === event.id) {
+        this.currentSelectedEntity = ({...entity, displayName: event?.displayName}) as Entity;
+      } else {
+        this.entitySelection.onEntitySelectionChange({ value : {...entity, displayName: event?.displayName, filter: event?.filter} } as any);
+      }
     }, 500);
   }
 
