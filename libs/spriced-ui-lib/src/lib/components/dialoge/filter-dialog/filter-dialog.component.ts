@@ -1,21 +1,27 @@
-import { Component, Inject } from "@angular/core";
+import {Component, Inject } from "@angular/core";
 
 import { QueryBuilderConfig } from "ngx-angular-query-builder";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { FormGroup, FormBuilder } from "@angular/forms";
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { FormGroup, FormBuilder} from "@angular/forms";
 import { DataEntityService } from "@spriced-frontend/spriced-common-lib";
-
+import { LookupDialogComponent } from "../../dynamic-form/sub-components/lookup-select/lookup-dialog/lookup-dialog/lookup-dialog.component";
 @Component({
   selector: "sp-filter",
   templateUrl: "./filter-dialog.component.html",
   styleUrls: ["./filter-dialog.component.scss"],
 })
 export class FilterDialogComponent {
-  form!: FormGroup
+  form!: FormGroup;
   config!: QueryBuilderConfig;
   currentFilteredItems: any = [];
   displayProp: any;
+  dialogReference: any = null;
+  maxCount:number = 50;
+  count!:number;
+  pageSize:number=30;
+  source:any;
   constructor(
+    private dialog: MatDialog,
     public fb: FormBuilder,
     private entityService: DataEntityService,
     public dialogRef: MatDialogRef<FilterDialogComponent>,
@@ -214,18 +220,59 @@ export class FilterDialogComponent {
   public handleLookupData(rule: any) {
     let field: any = this.config.fields[rule];
     if (field?.type === 'LOOKUP' && !!field?.entity && !field?.options) {
-      this.entityService.loadLookupData(field.entity, 0, 20000, []).subscribe((res: any) => {
-        field.options = res.content;
-        field.filteredOptions = res.content;
-      })
+      this.loadLookupData(field.entity, 0, [],rule);
     }
   }
-
+  
+   loadLookupData(id:string|number,pageNumber:number,filters:any,rule?:any){
+    this.entityService.loadLookupData(id, pageNumber,this.pageSize, filters).subscribe((res: any) => {
+      if(rule){
+        let field:any = this.config.fields[rule];
+        field.options = res.content;
+        field.filteredOptions = res.content;
+        this.count = res.totalElements;
+      }
+      else{
+          this.source = res.content;
+          this.dialogReference.componentInstance.upDatedData({
+          value: this.source,
+          total: this.count,
+        });
+      }
+    })
+   }   
+ 
+  openPopup(rule: any, onChange?: any): void {
+    let field: any = this.config.fields[rule.field];
+    const dialogRef = this.dialog.open(LookupDialogComponent, {
+      width: "700px",
+      height: "620px",
+      data: {
+        value: this.source,
+        total: this.count,
+        pageSize: this.pageSize,
+      },
+      hasBackdrop: false,
+    });
+    this.dialogReference = dialogRef;
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if(result && result.data){
+      const {data} = result
+      rule.value = data.code;
+      rule.valueName = this.getDisplayProp(data);
+      if (!!onChange) {
+        onChange(data.code, rule);
+      }
+      }
+    });
+   dialogRef.componentInstance.dialogEvent$.subscribe((event: any) => {
+      this.loadLookupData(field.entity,event.pageNumber, event.filters);
+    });
+  }
   public handleSerch(value: any, item: any) {
     let field: any = this.config.fields[item.field];
     field.filteredOptions = this.filterItems(field.options, value);
   }
-
   // Generic filtering function
   private filterItems(items: any[], searchText: string): any[] {
 
