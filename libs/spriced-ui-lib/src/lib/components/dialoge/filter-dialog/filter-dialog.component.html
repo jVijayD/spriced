@@ -80,8 +80,8 @@
           </mat-select>
         </mat-form-field>
       </ng-container>
-
-      <ng-container *queryInput="let rule; let field=field; let onChange=onChange; type: 'LOOKUP'">
+      <ng-container *ngIf="count<=maxCount">
+      <ng-container *queryInput="let rule; let field=field; let onChange=onChange; type: 'LOOKUP'; ">
         <mat-form-field appearance="outline">
           <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.value" (ngModelChange)="onChange($event, rule)">
             <mat-option>
@@ -99,7 +99,23 @@
           </mat-select>
         </mat-form-field>
       </ng-container>
-          
+          </ng-container>
+
+          <ng-container *ngIf="count>maxCount">
+            <ng-container *queryInput="let rule ; let field=field; let onChange=onChange; type: 'LOOKUP';">
+              <mat-form-field appearance="outline">
+                <input matInput [style.display]="'none'" [ngModelOptions]="{ standalone: true }" [(ngModel)]="rule.value" (ngModelChange)="onChange($event,rule)">
+               <input matInput  [value]="rule?.valueName || 'select item'"  [readonly]="true">
+              </mat-form-field>
+               <button mat-raised-button *ngIf="count<50" color="primary" class="edit-button ml-2"
+              title="selectItem" (click)="openPopup(rule, onChange)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            </ng-container>
+           
+          </ng-container>
+               <!-- <input  *ngIf="field.lookupItem && field.lookupItem.code" matInput [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.value" (ngModelChange)="onChange($event, rule)"/> -->
+
       <!-- <ng-container *querySwitchGroup="let ruleset; let onChange = onChange">
         <mat-radio-group
           *ngIf="ruleset"
@@ -156,3 +172,4 @@
     </button>
   </div>
 </div>
+

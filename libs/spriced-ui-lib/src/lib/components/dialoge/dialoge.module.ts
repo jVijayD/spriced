@@ -13,6 +13,7 @@ import { MatRadioModule } from "@angular/material/radio";
 import { FilterDialogComponent } from "./filter-dialog/filter-dialog.component";
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
+import { MatInputModule } from "@angular/material/input";
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
     MatRadioModule,
     MatSelectModule,
     ReactiveFormsModule,
-    NgxMatSelectSearchModule
+    NgxMatSelectSearchModule,
+    MatInputModule
   ],
   providers: [DialogService],
   exports: [ConfirmDialogComponent, InfoDialogComponent, FilterDialogComponent],
