@@ -52,12 +52,14 @@
           <mat-icon *ngIf="row.is_valid"
            style="color: white;background-color: green;"
             >check</mat-icon>
-            <mat-icon spToolTipRenderer
-            [contentTemplate]="errortemplate" *ngIf="!row.is_valid"  style="color: white;background-color: red;"
+            <mat-icon spToolTipRenderer 
+            [showToolTip]="!row.is_valid"
+            [contentTemplate]="errortemplate" *ngIf="!row.is_valid"  
+            style="color: white;background-color: red;"
               >cancel</mat-icon>
       </ng-template>
-      <ng-template #errortemplate>
-        <div >error</div>
+      <ng-template #errortemplate >
+        <div *ngFor="let item of validationMessage" >{{item.message}}</div>
       </ng-template>
     </ngx-datatable-column>
     </ng-container>

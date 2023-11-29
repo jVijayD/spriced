@@ -111,6 +111,9 @@ export class DataGridComponent implements AfterViewInit {
   @Input()
   page: any
 
+  @Input()
+  validationMessage: any;
+
   @Output()
   action: EventEmitter<any> = new EventEmitter<any>();
 

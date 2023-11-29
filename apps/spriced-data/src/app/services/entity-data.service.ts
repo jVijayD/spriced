@@ -110,7 +110,14 @@ export class EntityDataService {
     );
     return this.http.get<PageData>(url);
   }
-  
+
+  loadValidationMessage(item:any): Observable<PageData> {
+    const url = this.requestUtility.addCriteria(
+      `${this.api_url}/entity/validations`,
+    );
+    return this.http.get<PageData>(url);
+  }
+
   loadAnnotations(id:number,criteria:Criteria):Observable<PageData>{
     const url = this.requestUtility.addCriteria(`${this.api_url}/audit-trial/annotation`,
     criteria
