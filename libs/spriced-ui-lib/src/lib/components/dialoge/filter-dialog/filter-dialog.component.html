@@ -11,13 +11,14 @@
       [disabled]="data.disabled || false"
       [persistValueOnFieldChange]="data.persistValueOnFieldChange || true"
       [emptyMessage]="data.emptyMessage || ''"
+      #queryBuilder
     >
       <ng-container
         *queryButtonGroup="
           let ruleset;
           let addRule = addRule;
           let addRuleSet = addRuleSet;
-          let removeRuleSet = removeRuleSet
+          let removeRuleSet = removeRuleSet;
         "
       >
         <div class="flex flex-row">
@@ -26,7 +27,7 @@
             *ngIf="addRuleSet"
             title="Rule"
             color="primary"
-            (click)="addRule()"
+            (click)="handleAddRule(ruleset, addRule);"
             class="ml-2"
           >
             Rule
@@ -68,7 +69,16 @@
       <ng-container *queryField="let rule; let fields=fields; let onChange=onChange">
         <mat-form-field class="ml-2" appearance="outline">
           <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.field" (valueChange)="handleLookupData($event)" (ngModelChange)="onChange($event, rule)">
-            <mat-option *ngFor="let field of fields" [value]="field.value">{{field.name}}</mat-option>
+            <mat-option>
+              <ngx-mat-select-search
+                placeholderLabel="Search"
+                [ngModelOptions]="{standalone:true}"
+                ngModel
+                (ngModelChange)="handleSerch($event, rule, 'fieldSearch')"
+              ></ngx-mat-select-search>
+              <mat-option value="" class="option">--Select--</mat-option>
+               <mat-option *ngFor="let field of rule.filteredItems" [value]="field.value">{{field.name}}</mat-option>
+            </mat-option>
           </mat-select>
         </mat-form-field>
       </ng-container>
