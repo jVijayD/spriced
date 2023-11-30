@@ -2,7 +2,7 @@ import {Component, Inject, ViewChild } from "@angular/core";
 
 import { QueryBuilderConfig,QueryBuilderComponent } from "ngx-angular-query-builder";
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { FormGroup, FormBuilder} from "@angular/forms";
+import { FormGroup, FormBuilder } from "@angular/forms";
 import { DataEntityService } from "@spriced-frontend/spriced-common-lib";
 import { LookupDialogComponent } from "../../dynamic-form/sub-components/lookup-select/lookup-dialog/lookup-dialog/lookup-dialog.component";
 @Component({
@@ -11,16 +11,16 @@ import { LookupDialogComponent } from "../../dynamic-form/sub-components/lookup-
   styleUrls: ["./filter-dialog.component.scss"],
 })
 export class FilterDialogComponent {
+  @ViewChild('queryBuilder') public queryBuilder!: QueryBuilderComponent;
   form!: FormGroup;
   config!: QueryBuilderConfig;
   currentFilteredItems: any = [];
   displayProp: any;
   dialogReference: any = null;
-  maxCount:number = 50;
-  count!:number;
-  pageSize:number=30;
-  source:any;
-  @ViewChild('queryBuilder') public queryBuilder!: QueryBuilderComponent;
+  maxCount: number = 50;
+  count!: number;
+  pageSize: number = 30;
+  source: any;
   constructor(
     private dialog: MatDialog,
     public fb: FormBuilder,
@@ -52,6 +52,26 @@ export class FilterDialogComponent {
       query: [data.query]
     })
     dialogRef.disableClose = true;
+
+    //HANDLE THIS FUNCTION FOR REMOVE THE INPUT FIELD DEPENDS UPON THE OPERATOR TYPE
+    QueryBuilderComponent.prototype.getInputType = function (field, operator) {
+      if (this.config.getInputType) {
+        return this.config.getInputType(field, operator);
+      }
+      if (!this.config.fields[field]) {
+        return null; //MY CODE
+        // throw new Error("No configuration for field '" + field + "' could be found! Please add it to config.fields."); // EXISTING CODE
+      }
+      var type = this.config.fields[field].type;
+      switch (operator) {
+        case 'Is not NULL':
+          return null; // No displayed component
+        case 'Is NULL':
+          return null; // No displayed component
+        default:
+          return type;
+      }
+    };
   }
 
   // HANDLE FOR ADDING FILTER FILTERED ITEMS TO EVERY RULE 
@@ -67,6 +87,15 @@ export class FilterDialogComponent {
   onApply(): void {
     const filterGroup = this.convertToFilters(this.form.value.query);
     this.dialogRef.close(filterGroup);
+  }
+
+  // HANDLE THIS FUNCTION FOR CHANGING THE OPERATOR AND SET VALIDATORS DEPENDS UPON THE OPERATOR
+  handleOperators(value: any, rule: any, onChange?: any) {
+    rule.operator = value;
+    console.log(this.config, this.form, this.queryBuilder);
+    if (!!onChange) {
+      onChange(rule, rule?.value || '');
+    }
   }
 
   getDefaultValue(
@@ -211,7 +240,7 @@ export class FilterDialogComponent {
         options: col.options,
         nullable: col.nullable,
         validator: (rule) => {
-          if (['', null, undefined].includes(rule.value)) {
+          if (['', null, undefined].includes(rule.value) && ![undefined, 'Is NULL', 'Is not NULL'].includes(rule.operator)) {
             return {
               required: {
                 rule: rule,
@@ -229,28 +258,28 @@ export class FilterDialogComponent {
   public handleLookupData(rule: any) {
     let field: any = this.config.fields[rule];
     if (field?.type === 'LOOKUP' && !!field?.entity && !field?.options) {
-      this.loadLookupData(field.entity, 0, [],rule);
+      this.loadLookupData(field.entity, 0, [], rule);
     }
   }
-  
-   loadLookupData(id:string|number,pageNumber:number,filters:any,rule?:any){
-    this.entityService.loadLookupData(id, pageNumber,this.pageSize, filters).subscribe((res: any) => {
-      if(rule){
-        let field:any = this.config.fields[rule];
+
+  loadLookupData(id: string | number, pageNumber: number, filters: any, rule?: any) {
+    this.entityService.loadLookupData(id, pageNumber, this.pageSize, filters).subscribe((res: any) => {
+      if (rule) {
+        let field: any = this.config.fields[rule];
         field.options = res.content;
         field.filteredOptions = res.content;
         this.count = res.totalElements;
       }
-      else{
-          this.source = res.content;
-          this.dialogReference.componentInstance.upDatedData({
+      else {
+        this.source = res.content;
+        this.dialogReference.componentInstance.upDatedData({
           value: this.source,
           total: this.count,
         });
       }
     })
-   }   
- 
+  }
+
   openPopup(rule: any, onChange?: any): void {
     let field: any = this.config.fields[rule.field];
     const dialogRef = this.dialog.open(LookupDialogComponent, {
@@ -265,17 +294,17 @@ export class FilterDialogComponent {
     });
     this.dialogReference = dialogRef;
     dialogRef.afterClosed().subscribe((result: any) => {
-      if(result && result.data){
-      const {data} = result
-      rule.value = data.code;
-      rule.valueName = this.getDisplayProp(data);
-      if (!!onChange) {
-        onChange(data.code, rule);
-      }
+      if (result && result.data) {
+        const { data } = result
+        rule.value = data.code;
+        rule.valueName = this.getDisplayProp(data);
+        if (!!onChange) {
+          onChange(data.code, rule);
+        }
       }
     });
-   dialogRef.componentInstance.dialogEvent$.subscribe((event: any) => {
-      this.loadLookupData(field.entity,event.pageNumber, event.filters);
+    dialogRef.componentInstance.dialogEvent$.subscribe((event: any) => {
+      this.loadLookupData(field.entity, event.pageNumber, event.filters);
     });
   }
   public handleSerch(value: any, item: any,text?:string) {
