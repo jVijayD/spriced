@@ -76,9 +76,9 @@
                 ngModel
                 (ngModelChange)="handleSerch($event, rule, 'fieldSearch')"
               ></ngx-mat-select-search>
+            </mat-option>
               <mat-option value="" class="option">--Select--</mat-option>
                <mat-option *ngFor="let field of rule.filteredItems" [value]="field.value">{{field.name}}</mat-option>
-            </mat-option>
           </mat-select>
         </mat-form-field>
       </ng-container>
@@ -118,7 +118,7 @@
                 <input matInput [style.display]="'none'" [ngModelOptions]="{ standalone: true }" [(ngModel)]="rule.value" (ngModelChange)="onChange($event,rule)">
                <input matInput  [value]="rule?.valueName || 'select item'"  [readonly]="true">
               </mat-form-field>
-               <button mat-raised-button *ngIf="count<50" color="primary" class="edit-button ml-2"
+               <button mat-raised-button *ngIf="count>maxCount" color="primary" class="edit-button ml-2"
               title="selectItem" (click)="openPopup(rule, onChange)">
               <mat-icon>edit</mat-icon>
             </button>
