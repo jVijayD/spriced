@@ -1,6 +1,6 @@
-import { Component, Inject, ViewChild } from "@angular/core";
+import {Component, Inject, ViewChild } from "@angular/core";
 
-import { QueryBuilderComponent, QueryBuilderConfig } from "ngx-angular-query-builder";
+import { QueryBuilderConfig,QueryBuilderComponent } from "ngx-angular-query-builder";
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { FormGroup, FormBuilder } from "@angular/forms";
 import { DataEntityService } from "@spriced-frontend/spriced-common-lib";
@@ -72,6 +72,14 @@ export class FilterDialogComponent {
           return type;
       }
     };
+  }
+
+  // HANDLE FOR ADDING FILTER FILTERED ITEMS TO EVERY RULE 
+  handleAddRule(ruleset:any, addRule: Function){
+    if (!!addRule) {
+      addRule();
+    }
+    ruleset.rules.map((item:any)=>item.filteredItems = this.queryBuilder.fields);
   }
   onCancel(): void {
     this.dialogRef.close(null);
@@ -299,9 +307,17 @@ export class FilterDialogComponent {
       this.loadLookupData(field.entity, event.pageNumber, event.filters);
     });
   }
-  public handleSerch(value: any, item: any) {
-    let field: any = this.config.fields[item.field];
-    field.filteredOptions = this.filterItems(field.options, value);
+  public handleSerch(value: any, item: any,text?:string) {
+    if (text === 'fieldSearch') {
+      console.log(this.config, this.data.columns);
+      const items: any = this.queryBuilder.fields;
+      const final = this.filterItems(items, value);
+      item.filteredItems = final;
+    }
+    else {
+      let field: any = this.config.fields[item.field];
+      field.filteredOptions = this.filterItems(field.options, value);
+    }
   }
   // Generic filtering function
   private filterItems(items: any[], searchText: string): any[] {

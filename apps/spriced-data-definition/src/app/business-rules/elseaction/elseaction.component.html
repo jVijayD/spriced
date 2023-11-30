@@ -5,7 +5,8 @@
         <mat-form-field [ngClass]="preview ? 'not-allow' : ''" class="w-auto" appearance="outline">
             <mat-label>Attribute</mat-label>
             <div class="flex attribute-input" [ngClass]="preview ? 'disableMenu' : ''"
-                [matMenuTriggerFor]="!preview ? attributeMenu : null">
+                [matMenuTriggerFor]="!preview ? attributeMenu : null" (menuOpened)="matMenuOpen(searchAttributeParent)"
+                (menuClosed)="matMenuClosed(searchAttributeParent)">
                 <input style="display: none;" [readonly]="true" [readonly]="preview" matInput placeholder="Add Value"
                     formControlName="attributeId" [disabled]="isFieldDisabled">
                 <input [readonly]="true" [readonly]="preview" matInput placeholder="Add Value" required
@@ -21,10 +22,16 @@
 
     <!-- MAT MENU FOR NESTED ATTRIBUTE -->
     <mat-menu class="attribute-menu" #attributeMenu="matMenu" yPosition="below">
-        <ng-container *ngFor="let attribute of dataRules?.attributes">
+        <mat-form-field appearance="outline" class="w-full">
+            <input matInput #searchAttributeParent class="p-2" name="search" [ngModelOptions]="{standalone:true}"
+                ngModel (click)="$event.stopPropagation()"
+                (ngModelChange)="filterAttributes(searchAttributeParent.value,searchAttributeParent,'Parent')"
+                placeholder="Search...">
+        </mat-form-field>
+        <button mat-menu-item *ngIf="filteredAttributes.length === 0"> No record found </button>
+        <ng-container *ngFor="let attribute of filteredAttributes">
             <button [ngClass]="{'selected-item': selectedAttribute.split('.')[0] === attribute?.displayName}"
-                mat-menu-item
-                (click)="selectAttribute(attribute)">
+                mat-menu-item (click)="selectAttribute(attribute)" (menuClosed)="matMenuClosed(searchAttributeParent)">
                 {{ attribute.displayName }}
             </button>
             <!-- <mat-menu #nestedMenu="matMenu">
@@ -68,13 +75,13 @@
                 *ngIf="['AUTO', 'INTEGER', 'DECIMAL','DOUBLE', 'STRING_VAR', 'STRING', 'CHARACTER', 'LINK'].includes(dataType)   &&  !lookupInput"
                 [ngClass]="preview ? 'not-allow' : ''" class="w-40" appearance="outline">
                 <mat-label>Value</mat-label>
-                <input [disabled]="isFieldDisabled" [type]="dynamicInputType" [readonly]="preview" matInput placeholder="Add Value"
-                    formControlName="operand">
+                <input [disabled]="isFieldDisabled" [type]="dynamicInputType" [readonly]="preview" matInput
+                    placeholder="Add Value" formControlName="operand">
             </mat-form-field>
 
             <!-- WHEN DATATYPE IS EQUAL TO BOOLEAN -->
-            <mat-form-field *ngIf="dataType === 'BOOLEAN'   &&  !lookupInput" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
-                appearance="outline">
+            <mat-form-field *ngIf="dataType === 'BOOLEAN'   &&  !lookupInput" [ngClass]="preview ? 'not-allow' : ''"
+                class="w-40" appearance="outline">
                 <mat-label>Value</mat-label>
                 <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="operand">
                     <mat-option value="True"> True </mat-option>
@@ -82,25 +89,27 @@
                 </mat-select>
             </mat-form-field>
 
-            <mat-form-field  *ngIf="lookupInput" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
+            <mat-form-field *ngIf="lookupInput" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
                 appearance="outline">
                 <mat-label>Value</mat-label>
                 <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="operand">
-                  <mat-option *ngFor="let item of lookupSourceData" [value]="item?.id"><p>{{item.code}}</p> </mat-option>
+                    <mat-option *ngFor="let item of lookupSourceData" [value]="item?.id">
+                        <p>{{item.code}}</p>
+                    </mat-option>
                 </mat-select>
-              </mat-form-field>
+            </mat-form-field>
 
             <!-- WHEN DATATYPE IS EQUAL TO TEXT -->
-            <mat-form-field *ngIf="['TEXT'].includes(dataType) &&  !lookupInput" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
-                appearance="outline">
+            <mat-form-field *ngIf="['TEXT'].includes(dataType) &&  !lookupInput" [ngClass]="preview ? 'not-allow' : ''"
+                class="w-40" appearance="outline">
                 <mat-label>Textarea</mat-label>
                 <textarea [disabled]="isFieldDisabled" class="text-box" [readonly]="preview" matInput
                     placeholder="Add Value" formControlName="operand"></textarea>
             </mat-form-field>
 
             <!-- WHEN DATATYPE IS EQUAL TO DATE -->
-            <mat-form-field *ngIf="['DATE'].includes(dataType) &&  !lookupInput" [ngClass]="preview ? 'not-allow' : ''" class="w-40"
-                appearance="outline">
+            <mat-form-field *ngIf="['DATE'].includes(dataType) &&  !lookupInput" [ngClass]="preview ? 'not-allow' : ''"
+                class="w-40" appearance="outline">
                 <mat-label>Date</mat-label>
                 <input matInput [readonly]="preview" [matDatepicker]="picker" formControlName="operand">
                 <mat-datepicker-toggle [disabled]="preview" matIconSuffix [for]="picker"></mat-datepicker-toggle>
@@ -111,12 +120,10 @@
             <mat-form-field *ngIf="['TIME_STAMP', 'DATE_TIME'].includes(dataType) &&  !lookupInput"
                 [ngClass]="preview ? 'not-allow' : ''" class="w-52" appearance="outline">
                 <mat-label>DateTime</mat-label>
-                <input matInput [readonly]="preview" [matDatepicker]="mindatetimepicker1"
-                    formControlName="operand">
+                <input matInput [readonly]="preview" [matDatepicker]="mindatetimepicker1" formControlName="operand">
                 <mat-datepicker-toggle [disabled]="preview" matSuffix
                     [for]="$any(mindatetimepicker1)"></mat-datepicker-toggle>
-                <mat-datepicker  #mindatetimepicker1
-                    [panelClass]="'matDatePopup'"></mat-datepicker>
+                <mat-datepicker #mindatetimepicker1 [panelClass]="'matDatePopup'"></mat-datepicker>
             </mat-form-field>
 
             <mat-error class="text-sm italic text-red-500"
@@ -133,7 +140,8 @@
                 *ngIf="!valueConstant">
                 <mat-label>Attribute</mat-label>
                 <div class="flex attribute-input" [ngClass]="preview ? 'disableMenu' : ''"
-                    [matMenuTriggerFor]="!preview ? operandMenu : null">
+                    [matMenuTriggerFor]="!preview ? operandMenu : null" (menuOpened)="matMenuOpen(searchOperandParent)"
+                    (menuClosed)="matMenuClosed(searchOperandParent)">
                     <input style="display: none;" [readonly]="true" [readonly]="preview" matInput
                         placeholder="Add Value" formControlName="operand" [disabled]="isFieldDisabled">
                     <input [readonly]="true" [readonly]="preview" matInput placeholder="Add Value" required
@@ -151,15 +159,30 @@
 
             <!-- MAT MENU FOR NESTED ATTRIBUTE -->
             <mat-menu class="attribute-menu" #operandMenu="matMenu" yPosition="below">
-                <ng-container *ngFor="let attribute of dataRules?.attributes">
+                <mat-form-field appearance="outline" class="w-full">
+                    <input matInput #searchOperandParent class="p-2" name="search" [ngModelOptions]="{standalone:true}"
+                        ngModel (click)="$event.stopPropagation()"
+                        (ngModelChange)="filterAttributes(searchOperandParent.value,searchOperandParent,'Parent')"
+                        placeholder="Search...">
+                </mat-form-field>
+                <button mat-menu-item *ngIf="filteredAttributes.length === 0"> No record found </button>
+                <ng-container *ngFor="let attribute of filteredAttributes">
                     <button [ngClass]="{'selected-item': selectedOperand.split('.')[0] === attribute?.displayName}"
                         [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
-                        (click)="selectAttribute(attribute, '', 'operand')">
+                        (click)="selectAttribute(attribute, '', 'operand')"
+                        (menuClosed)="matMenuClosed(searchOperandParent)">
                         {{ attribute.displayName }}
                     </button>
                     <mat-menu #nestedMenu="matMenu">
+                        <mat-form-field appearance="outline" class="w-full">
+                            <input matInput #searchOperandParent class="p-2" name="search"
+                                [ngModelOptions]="{standalone:true}" ngModel (click)="$event.stopPropagation()"
+                                (ngModelChange)="filterAttributes(searchOperandParent.value,searchOperandParent,'Nested')"
+                                placeholder="Search...">
+                        </mat-form-field>
+                        <button mat-menu-item *ngIf="filteredDbAttributes.length === 0"> No record found </button>
                         <button [ngClass]="{'selected-item': selectedOperand.split('.')[1] === attribute?.displayName}"
-                            mat-menu-item *ngFor="let nestedAttribute of attribute.attributes"
+                            mat-menu-item *ngFor="let nestedAttribute of filteredDbAttributes"
                             (click)="selectAttribute(nestedAttribute, attribute, 'operand')">
                             {{ nestedAttribute.displayName }}
                         </button>
@@ -209,12 +232,10 @@
         <mat-form-field *ngIf="['TIME_STAMP', 'DATE_TIME'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''"
             class="w-52" appearance="outline">
             <mat-label>DateTime</mat-label>
-            <input matInput [readonly]="preview" [matDatepicker]="mindatetimepicker1"
-                formControlName="min_value">
+            <input matInput [readonly]="preview" [matDatepicker]="mindatetimepicker1" formControlName="min_value">
             <mat-datepicker-toggle [disabled]="preview" matSuffix
                 [for]="$any(mindatetimepicker1)"></mat-datepicker-toggle>
-            <mat-datepicker  #mindatetimepicker1
-                [panelClass]="'matDatePopup'"></mat-datepicker>
+            <mat-datepicker #mindatetimepicker1 [panelClass]="'matDatePopup'"></mat-datepicker>
         </mat-form-field>
 
 
@@ -263,12 +284,10 @@
         <mat-form-field *ngIf="['TIME_STAMP', 'DATE_TIME'].includes(dataType)" [ngClass]="preview ? 'not-allow' : ''"
             class="w-52" appearance="outline">
             <mat-label>DateTime</mat-label>
-            <input matInput [readonly]="preview" [matDatepicker]="maxdatetimepicker1"
-                formControlName="max_value">
+            <input matInput [readonly]="preview" [matDatepicker]="maxdatetimepicker1" formControlName="max_value">
             <mat-datepicker-toggle [disabled]="preview" matSuffix
                 [for]="$any(maxdatetimepicker1)"></mat-datepicker-toggle>
-            <mat-datepicker  #maxdatetimepicker1
-                [panelClass]="'matDatePopup'"></mat-datepicker>
+            <mat-datepicker #maxdatetimepicker1 [panelClass]="'matDatePopup'"></mat-datepicker>
         </mat-form-field>
 
         <mat-error class="text-sm italic text-red-500"

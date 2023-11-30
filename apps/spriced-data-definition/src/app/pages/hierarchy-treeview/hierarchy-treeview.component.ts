@@ -68,11 +68,11 @@ export class HierarchyTreeviewComponent {
   displayFormat: any;
   entityId: any;
   currentEntity: any;
-  selectedItems: any;
+  selectedItems: any = [];
   removeBufferItems: any;
   searchInputSubject = new Subject<string>();
   currentRowId: any = undefined;
-  disableRowId: any = null;
+  disableRowId: any = [];
   selected: any;
 
 
@@ -341,6 +341,12 @@ export class HierarchyTreeviewComponent {
       if (!row.id) {
         cr = {}
       }
+      // cr = {
+      //   pager: {
+      //     pageNumber: 0,
+      //     pageSize: 1000
+      //   }
+      // }
       this.entityDataService.loadEntityData(hie.entityId, cr).forEach(callBack);
     } else {
       row.treeStatus = "expanded";
@@ -383,10 +389,13 @@ export class HierarchyTreeviewComponent {
 
   public handleCheckBox(event: any, item: any) {
     if (event.checked) {
-      this.selectedItems = item;
+      this.selectedItems.push(item);
     }
     else {
-      this.selectedItems = null;
+      const indexToRemove = this.selectedItems.indexOf(item);
+      if (indexToRemove !== -1) {
+        this.selectedItems.splice(indexToRemove, 1);
+      }
     }
     // const indexOfItem = this.selectedItems.findIndex(selectedItem => selectedItem.id === item.id);
 
@@ -401,14 +410,19 @@ export class HierarchyTreeviewComponent {
 
   // Function to check if a row is selected
   isRowSelected(row: any): boolean {
-    return this.selectedItems === row;
+    return this.selectedItems.some((el: any) => el === row);
   }
 
   public removeHierarchyData() {
     console.log(this.selectedItems, this.table);
     this.removeBufferItems = this.selectedItems;
-    this.disableRowId = this.selectedItems.grpId;
-    this.selectedItems = null;
+    this.selectedItems.forEach((el: any) => {
+      if(el)
+      {
+        this.disableRowId.push(el.grpId);
+      }
+    });
+    this.selectedItems = [];
     // this.filterHierarchyPreviewNodes = this.filterHierarchyPreviewNodes;
     // const ids = this.selectedItems.map((el: any) => el.id);
     // const slicedData = this.sliceDataByIds(this.filterHierarchyPreviewNodes, this.selectedItems?.id);
@@ -419,17 +433,29 @@ export class HierarchyTreeviewComponent {
   // }
 
   public updateHierarchyData() {
+    let param: any = [];
     console.log(this.selectedItems);
-    const item = this.selectedItems;
+    const item = this.selectedItems[0];
     let level: any = this.hierarchyDetails.length - (item.level + 1);
     const row = this.hierarchyDetails.find(elm => elm.groupLevel === level);
-    const param = {
-      "entityName": row.entityName,
-      "refColumn": row.refColumn,
-      "memberId": +this.removeBufferItems.id,
-      "newParentId": +item.id
-    }
-    this.entityDataService.updateHierarchy(param).subscribe((res: any) => {
+    // const param = {
+    //   "entityName": row.entityName,
+    //   "refColumn": row.refColumn,
+    //   "memberId": +this.removeBufferItems.id,
+    //   "newParentId": +item.id
+    // }
+    this.removeBufferItems.forEach((elm: any) => {
+      if(elm)
+      {
+        param.push({
+          "entityName": row.entityName,
+          "refColumn": row.refColumn,
+          "memberId": +elm.id,
+          "newParentId": +item.id
+        })
+      }
+    })
+    this.entityDataService.updateHierarchy({ data: param }).subscribe((res: any) => {
       console.log(res);
       if (this.hierarchyId && res) {
         this.entityDataService.loadHierarchy(this.hierarchyId).subscribe((e: any) => {
@@ -443,9 +469,9 @@ export class HierarchyTreeviewComponent {
         this.snackbarService.error("Hierarchy record updated failed");
       }
     })
-    this.selectedItems = null;
+    this.selectedItems = [];
     this.removeBufferItems = null;
-    this.disableRowId = null;
+    this.disableRowId = [];
   }
 
   public getDisplayProp(option: any, prop: any) {
