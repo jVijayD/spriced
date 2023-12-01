@@ -23,7 +23,7 @@
         </svg> </button>
 </div>
 
-<ngx-datatable #table style="min-width: 300px; min-height: calc(100vh - 20rem); height: 100%;"
+<ngx-datatable #table style="min-width: 300px; height: 100%;"
     class="material tableScroll" [selectionType]="selectionType" [columnMode]="ColumnMode.flex"
     [headerHeight]="50" [footerHeight]="0" [rowHeight]="30" [rows]="filterHierarchyPreviewNodes"
     [scrollbarV]="true" [scrollbarH]="true" [treeFromRelation]="'parentGrpId'"
@@ -32,7 +32,7 @@
         <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
             <span style="display: inline-flex" class="ml-2">
                 <!-- <mat-icon>account_tree</mat-icon> -->
-                <mat-checkbox class="hierarchy-checkbox" [checked]="isRowSelected(row)"
+                <mat-checkbox *ngIf="row.name !== 'Show more...'" class="hierarchy-checkbox" [checked]="isRowSelected(row)"
                     color="primary" (change)="handleCheckBox($event, row)"></mat-checkbox>
                     <span class="ml-2 flex items-center cursor-pointer" [ngStyle]="{'opacity': disableRowId.length > 0 && disableRowId.includes(row?.grpId) ? 0.5 : 1}" (click)="handleSelectItem(row)"> {{ value
                     }}</span></span>
