@@ -112,7 +112,17 @@ export class EntityFormService {
             validations: this.getValidations(attr),
             readOnly: attr.permission === "READ" ? true : false,
           };
-        case "INTEGER":
+        case "INTEGER": return {
+          type: "numeric",
+          subType: "text",
+          name: attr.name,
+          placeholder: attr.displayName || attr.name,
+          label: attr.displayName || attr.name,
+          decimalCount: attr.size,
+          validations: this.getValidations(attr),
+          readOnly: attr.permission === "READ" ? true : false,
+        };
+
         case "DECIMAL":
           //debugger;
           return {
@@ -189,6 +199,28 @@ export class EntityFormService {
         message: `Invalid pattern for link`.toLowerCase(),
         validator: Validators.pattern(
           "(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?"
+        ),
+      });
+    }
+    if (attr.dataType === "INTEGER") {
+      validations.push({
+        name: `max`,
+        message: `Maximum value exceeded`,
+        validator: Validators.max(9223372036854775807)
+      });
+      validations.push({
+        name: `min`,
+        message: `Minimum value exceeded`,
+        validator: Validators.min(-9223372036854775808)
+      });
+    }
+    if (attr.dataType === "DECIMAL") {
+      validations.push({
+        name: `pattern`,
+        message: `Invalid data`,
+        validator:  Validators.pattern(
+          "^[0-9]{0,131072}\.[0-9]{0,16383}$"
+          
         ),
       });
     }
