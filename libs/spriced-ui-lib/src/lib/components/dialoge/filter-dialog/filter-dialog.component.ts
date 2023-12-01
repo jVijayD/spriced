@@ -289,13 +289,15 @@ export class FilterDialogComponent {
         value: this.source,
         total: this.count,
         pageSize: this.pageSize,
+        selectedItem:rule.selectedItem
       },
       hasBackdrop: false,
     });
     this.dialogReference = dialogRef;
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result && result.data) {
-        const { data } = result
+        const { data } = result;
+        rule.selectedItem = data;
         rule.value = data.code;
         rule.valueName = this.getDisplayProp(data);
         if (!!onChange) {
