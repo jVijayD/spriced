@@ -67,6 +67,15 @@ export class AppComponent {
         item.active = activeRoute.path === item.path;
       });
     }
+    else{
+      const nestedRoute = this.router.url.split('/')[2];
+      const targetName = nestedRoute === 'rules' ? 'Rules' : nestedRoute === 'derived-hierarchy' ? 'Derived Hierarchy' : null;
+      if (targetName) {
+        this.menuDItems.forEach((el) => {
+          el.active = el.name === targetName;
+        });
+      }
+    }
     this.appDataService.setMenuData(this.menuDItems);
   }
 }
