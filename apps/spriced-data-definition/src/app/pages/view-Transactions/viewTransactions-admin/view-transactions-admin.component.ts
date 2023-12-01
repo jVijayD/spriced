@@ -359,5 +359,34 @@ export class ViewTransactionsAdminComponent {
       );
     });
   }
+onRevert()
+{
+  let criteria:Criteria=
+      {
+      "filters": [
+          {
+              "filterType": "CONDITION",
+              "joinType": "AND",
+              "operatorType": "EQUALS",
+              "key": "id",
+              "value":this.selectedItem.entityId,
+              "dataType": "number"
+          }    
+      ],
+      "pager": {
+          "pageNumber": 0,
+          "pageSize": 15
+      },
+      "sorters": []
+    }
 
+  this.transactionService.auditReversal(this.selectedItem,criteria).subscribe({
+    next:(res:any)=>{
+     console.log(res)
+    },
+    error:(err:any)=>{
+      console.log(err);
+    }
+  })
+}
 }
