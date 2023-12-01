@@ -29,6 +29,7 @@
         (itemSelected)="onItemSelected($event)"
         [selected]="!!selectedItem ? [selectedItem] : []"
         (sort)="onSort($event)"
+        [offset]="pageNumber"
         *ngIf="!hide"
       >
         <ng-container>

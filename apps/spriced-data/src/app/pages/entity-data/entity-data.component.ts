@@ -163,6 +163,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.subscriptions.push(
       this.entityDataLoadCompleted$.subscribe((page: any) => {
         this.rows = page.content;
+        if(this.rows.length === 0)
+        {
+          this.onClear();
+        }
         this.totalElements = page.totalElements;
         const selectionTimer = timer(TIMER_CONST);
         if (this.rows && this.rows?.length > 0) {
@@ -490,6 +494,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onEntitySelectionChange(entity: Entity | string) {
     this.selectedItem = null;
+    this.pageNumber = 0;
     this.currentSelectedEntity = undefined;
     this.dataGrid.table._internalColumns = [...[]];
     this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);
