@@ -36,6 +36,7 @@ export class LookupDialogComponent {
       this.item = this.data;
       this.count = this.item.total;
       this.pageSize = this.item.pageSize;
+      this.selectedItem = this.item.selectedItem;
       console.log()
       this.rows = this.item.value;
   }
