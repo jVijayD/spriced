@@ -78,8 +78,10 @@
         ></sp-header-action>
         <sp-header-action
         icon="undo"
-        text="Revert Transaction"
-        title="Revert Transaction"
+        text="Reverse Transaction"
+        title="Reverse Transaction"
+        [disabled]="
+        this.selectedItem?.priorValue==null"
         (actionClick)="onRevert()"
       ></sp-header-action>
       </ng-container>
