@@ -85,14 +85,11 @@
           ngx-datatable-cell-template
         >
 
-        <ng-container *ngIf="header?.name=='Upload Status' && page=='status'" >
-          <div class="underline cursor-pointer" (click)="uploadStatus.emit()" >{{
-            isArray
-              ? this.renderData(row[i], header)
-              : this.renderData(getData(row, header), header)
-          }} </div>
+        <ng-container *ngIf="header?.name=='Download' && page=='status'" >
+          <div class="underline cursor-pointer" 
+          (click)="downloadErrorExcel.emit()">
+          Download error ecxel</div>
            </ng-container>
-
           <ng-container *ngIf="header?.isLink">
           <mat-icon
            class="cursor-pointer"
@@ -102,7 +99,7 @@
             >link</mat-icon>
 
           </ng-container>
-          <ng-container *ngIf="!header?.isLink && header?.name !=='Upload Status'">
+          <ng-container *ngIf="!header?.isLink && header?.name !=='Download'">
             <ng-container *ngIf="!header?.checkbox"
               >{{
                 isArray

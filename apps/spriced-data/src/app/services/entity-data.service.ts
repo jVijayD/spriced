@@ -89,6 +89,25 @@ export class EntityDataService {
 }*/
   }
 
+
+  
+ downloadErrorExcel(
+    id: string | number
+  ) {
+    const url =`${this.api_url}/bulk/errorexcel/${id}`
+    return this.http
+      .get(url, {
+        responseType: "blob",
+      })
+      .subscribe((blob) => {
+        let data = new Blob([blob], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        saveAs(data, 'error');
+      });
+  }
+
+
   private createRows(content: any) {
     const records = content.records || [];
     const fields = content.fields || [];

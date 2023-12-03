@@ -32,7 +32,6 @@ export class StatusComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<StatusComponent>,
     private dataService: EntityDataService,
-    private router: Router,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
   headers: Header[] = [
@@ -71,6 +70,13 @@ export class StatusComponent implements OnInit {
       isSortable: true,
       width: 60,
     },
+    {
+      column: "",
+      name: "Download",
+      canAutoResize: true,
+      isSortable: true,
+      width: 60,
+    },
   ];
   columnMode: ColumnMode = ColumnMode.force;
   selectionType: SelectionType = SelectionType.single;
@@ -98,8 +104,12 @@ export class StatusComponent implements OnInit {
   }
   viewError()
   {
-    console.log('this.viewError')
-    this.dialogRef.close();
-    this.router.navigate(["/spriced-data/upload-error/"  + this.data.groupId + "/" +this.data.id ]);
+    setTimeout(() => {
+    this.dataService.downloadErrorExcel(
+      this.selectedItem?.id as number
+    );
+  }, 500);
+    // this.dialogRef.close();
+    // this.router.navigate(["/spriced-data/upload-error/"  + this.data.groupId + "/" +this.data.id ]);
   }
 }

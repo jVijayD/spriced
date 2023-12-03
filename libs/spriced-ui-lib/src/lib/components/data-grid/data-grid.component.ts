@@ -130,7 +130,7 @@ export class DataGridComponent implements AfterViewInit {
   checkbox: EventEmitter<any> = new EventEmitter<any>();
 
   @Output()
-  uploadStatus: EventEmitter<any> = new EventEmitter<any>();
+  downloadErrorExcel: EventEmitter<any> = new EventEmitter<any>();
 
   @Output()
   sort: EventEmitter<any> = new EventEmitter<any>();
