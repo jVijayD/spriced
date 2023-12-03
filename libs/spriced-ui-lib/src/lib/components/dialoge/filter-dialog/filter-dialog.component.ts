@@ -1,21 +1,28 @@
-import { Component, Inject} from "@angular/core";
+import {Component, Inject, ViewChild } from "@angular/core";
 
-import { QueryBuilderConfig } from "ngx-angular-query-builder";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { QueryBuilderConfig,QueryBuilderComponent } from "ngx-angular-query-builder";
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { FormGroup, FormBuilder } from "@angular/forms";
 import { DataEntityService } from "@spriced-frontend/spriced-common-lib";
-
+import { LookupDialogComponent } from "../../dynamic-form/sub-components/lookup-select/lookup-dialog/lookup-dialog/lookup-dialog.component";
 @Component({
   selector: "sp-filter",
   templateUrl: "./filter-dialog.component.html",
   styleUrls: ["./filter-dialog.component.scss"],
 })
 export class FilterDialogComponent {
-  form!: FormGroup
+  @ViewChild('queryBuilder') public queryBuilder!: QueryBuilderComponent;
+  form!: FormGroup;
   config!: QueryBuilderConfig;
   currentFilteredItems: any = [];
   displayProp: any;
+  dialogReference: any = null;
+  maxCount: number = 50;
+  count!: number;
+  pageSize: number = 30;
+  source: any;
   constructor(
+    private dialog: MatDialog,
     public fb: FormBuilder,
     private entityService: DataEntityService,
     public dialogRef: MatDialogRef<FilterDialogComponent>,
@@ -37,10 +44,42 @@ export class FilterDialogComponent {
     this.config =
       data && data.config ? data.config : this.createConfig(data.columns || []);
 
+    if (data.query.rules.length > 0) {
+      this.addLookupData(data.query.rules);
+    }
+
     this.form = this.fb.group({
       query: [data.query]
     })
     dialogRef.disableClose = true;
+
+    //HANDLE THIS FUNCTION FOR REMOVE THE INPUT FIELD DEPENDS UPON THE OPERATOR TYPE
+    QueryBuilderComponent.prototype.getInputType = function (field, operator) {
+      if (this.config.getInputType) {
+        return this.config.getInputType(field, operator);
+      }
+      if (!this.config.fields[field]) {
+        return null; //MY CODE
+        // throw new Error("No configuration for field '" + field + "' could be found! Please add it to config.fields."); // EXISTING CODE
+      }
+      var type = this.config.fields[field].type;
+      switch (operator) {
+        case 'Is not NULL':
+          return null; // No displayed component
+        case 'Is NULL':
+          return null; // No displayed component
+        default:
+          return type;
+      }
+    };
+  }
+
+  // HANDLE FOR ADDING FILTER FILTERED ITEMS TO EVERY RULE 
+  handleAddRule(ruleset:any, addRule: Function){
+    if (!!addRule) {
+      addRule();
+    }
+    ruleset.rules.map((item:any)=>item.filteredItems = this.queryBuilder.fields);
   }
   onCancel(): void {
     this.dialogRef.close(null);
@@ -48,6 +87,15 @@ export class FilterDialogComponent {
   onApply(): void {
     const filterGroup = this.convertToFilters(this.form.value.query);
     this.dialogRef.close(filterGroup);
+  }
+
+  // HANDLE THIS FUNCTION FOR CHANGING THE OPERATOR AND SET VALIDATORS DEPENDS UPON THE OPERATOR
+  handleOperators(value: any, rule: any, onChange?: any) {
+    rule.operator = value;
+    console.log(this.config, this.form, this.queryBuilder);
+    if (!!onChange) {
+      onChange(rule, rule?.value || '');
+    }
   }
 
   getDefaultValue(
@@ -66,14 +114,31 @@ export class FilterDialogComponent {
         return "";
     }
   }
+
+  // HANDLE THIS FUNCTION FOR WHEN WE EDIT THE FILTER THEN FETCH LOOKUPDATA
+  public addLookupData(item: any) {
+    item.forEach((elm: any) => {
+      if (elm.rules && elm.rules.length > 0) {
+        this.addLookupData(elm.rules);
+      }
+      else {
+        this.handleLookupData(elm.field);
+      }
+    });
+  }
+
   private convertToFilters(query: any) {
     let filters: Filter[] = [];
     //debugger;
     query.rules.forEach((item: any, index: number) => {
-      const check = item.field.indexOf(',');
-      const field = check !== -1 ? item.field.split(',') : item;
-      if (field.length > 1) {
-        item.field = field.find((el: any) => el.endsWith('_code'));
+      let fields: string[] = [];
+      if (item.rules) {
+        fields = this.editRuleFields(item.rules);
+      } else {
+        fields = item.field.split(',');
+      }
+      if (fields.length > 1) {
+        item.field = fields.find((el: any) => el.endsWith('_code'));
       }
       const operatorType = this.getOperatorType(item.operator);
       const dataTypeType = this.getDataType(this.data.columns, item.field);
@@ -118,7 +183,7 @@ export class FilterDialogComponent {
     let dataType: "string" | "number" | "date" | "boolean" | "category" =
       "string";
     const col = columns?.find((item) => item.name === name);
-    dataType = col?.dataType || "string";
+    dataType = col?.dataType && col?.formType !== 'LOOKUP' ? col?.dataType : "string";
     dataType = dataType === "category" ? "boolean" : dataType;
     return dataType;
   }
@@ -175,7 +240,7 @@ export class FilterDialogComponent {
         options: col.options,
         nullable: col.nullable,
         validator: (rule) => {
-          if (['', null, undefined].includes(rule.value)) {
+          if (['', null, undefined].includes(rule.value) && ![undefined, 'Is NULL', 'Is not NULL'].includes(rule.operator)) {
             return {
               required: {
                 rule: rule,
@@ -193,18 +258,69 @@ export class FilterDialogComponent {
   public handleLookupData(rule: any) {
     let field: any = this.config.fields[rule];
     if (field?.type === 'LOOKUP' && !!field?.entity && !field?.options) {
-      this.entityService.loadLookupData(field.entity, 0, 20000, []).subscribe((res: any) => {
-        field.options = res.content;
-        field.filteredOptions = res.content;
-      })
+      this.loadLookupData(field.entity, 0, [], rule);
     }
   }
 
-  public handleSerch(value: any, item: any) {
-    let field: any = this.config.fields[item.field];
-    field.filteredOptions = this.filterItems(field.options, value);
+  loadLookupData(id: string | number, pageNumber: number, filters: any, rule?: any) {
+    this.entityService.loadLookupData(id, pageNumber, this.pageSize, filters).subscribe((res: any) => {
+      if (rule) {
+        let field: any = this.config.fields[rule];
+        field.options = res.content;
+        field.filteredOptions = res.content;
+        this.count = res.totalElements;
+      }
+      else {
+        this.source = res.content;
+        this.dialogReference.componentInstance.upDatedData({
+          value: this.source,
+          total: this.count,
+        });
+      }
+    })
   }
 
+  openPopup(rule: any, onChange?: any): void {
+    let field: any = this.config.fields[rule.field];
+    const dialogRef = this.dialog.open(LookupDialogComponent, {
+      width: "700px",
+      height: "620px",
+      data: {
+        value: this.source,
+        total: this.count,
+        pageSize: this.pageSize,
+        selectedItem:rule.selectedItem
+      },
+      hasBackdrop: false,
+    });
+    this.dialogReference = dialogRef;
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result && result.data) {
+        const { data } = result;
+        rule.selectedItem = data;
+        rule.value = data.code;
+        rule.valueName = this.getDisplayProp(data);
+        if (!!onChange) {
+          onChange(data.code, rule);
+        }
+      }
+    });
+    dialogRef.componentInstance.dialogEvent$.subscribe((event: any) => {
+      this.loadLookupData(field.entity, event.pageNumber, event.filters);
+    });
+  }
+  public handleSerch(value: any, item: any,text?:string) {
+    if (text === 'fieldSearch') {
+      console.log(this.config, this.data.columns);
+      const items: any = this.queryBuilder.fields;
+      const final = this.filterItems(items, value);
+      item.filteredItems = final;
+    }
+    else {
+      let field: any = this.config.fields[item.field];
+      field.filteredOptions = this.filterItems(field.options, value);
+    }
+  }
   // Generic filtering function
   private filterItems(items: any[], searchText: string): any[] {
 
@@ -218,6 +334,17 @@ export class FilterDialogComponent {
         (item.name &&
           item.name.trim().toLowerCase().includes(searchText.trim().toLowerCase()))
       );
+    });
+  }
+
+  // HANDLE THIS FUNCTION FOR EDIT THE RULE FIELD
+  private editRuleFields(rules: any): string[] {
+    return rules.flatMap((rule: any) => {
+      if (rule.rules) {
+        return this.editRuleFields(rule.rules);
+      } else {
+        return rule.field.split(',');
+      }
     });
   }
 

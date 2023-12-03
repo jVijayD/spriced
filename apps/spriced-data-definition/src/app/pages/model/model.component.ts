@@ -130,7 +130,7 @@ export class ModelComponent implements OnInit, OnDestroy {
       this.rows = results;
       this.totalElements = results.length;
       this.filterData = results;
-      const previousItem = this.rows.find((el: any) => el.name === this.selectedItem.name);
+      const previousItem = this.rows.find((el: any) => el.name === this.selectedItem?.name);
       this.selectedItem = null;
       this.onItemSelected(previousItem);
     });

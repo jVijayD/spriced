@@ -11,13 +11,14 @@
       [disabled]="data.disabled || false"
       [persistValueOnFieldChange]="data.persistValueOnFieldChange || true"
       [emptyMessage]="data.emptyMessage || ''"
+      #queryBuilder
     >
       <ng-container
         *queryButtonGroup="
           let ruleset;
           let addRule = addRule;
           let addRuleSet = addRuleSet;
-          let removeRuleSet = removeRuleSet
+          let removeRuleSet = removeRuleSet;
         "
       >
         <div class="flex flex-row">
@@ -26,7 +27,7 @@
             *ngIf="addRuleSet"
             title="Rule"
             color="primary"
-            (click)="addRule()"
+            (click)="handleAddRule(ruleset, addRule);"
             class="ml-2"
           >
             Rule
@@ -68,20 +69,30 @@
       <ng-container *queryField="let rule; let fields=fields; let onChange=onChange">
         <mat-form-field class="ml-2" appearance="outline">
           <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.field" (valueChange)="handleLookupData($event)" (ngModelChange)="onChange($event, rule)">
-            <mat-option *ngFor="let field of fields" [value]="field.value">{{field.name}}</mat-option>
+            <mat-option>
+              <ngx-mat-select-search
+                placeholderLabel="Search"
+                [ngModelOptions]="{standalone:true}"
+                ngModel
+                (ngModelChange)="handleSerch($event, rule, 'fieldSearch')"
+              ></ngx-mat-select-search>
+            </mat-option>
+              <mat-option value="" class="option">--Select--</mat-option>
+               <mat-option *ngFor="let field of rule.filteredItems" [value]="field.value">{{field.name}}</mat-option>
           </mat-select>
         </mat-form-field>
       </ng-container>
 
-      <ng-container  *queryOperator="let rule; let operators=operators">
+      <ng-container  *queryOperator="let rule; let operators=operators; let onChange=onChange">
         <mat-form-field class="mx-4" appearance="outline">
-          <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.operator">
+          <mat-select *ngIf="operators?.length > 0" [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.operator" (ngModelChange)="handleOperators($event, rule, onChange)">
             <mat-option *ngFor="let value of operators" [value]="value">{{value}}</mat-option>
           </mat-select>
         </mat-form-field>
       </ng-container>
-
-      <ng-container *queryInput="let rule; let field=field; let onChange=onChange; type: 'LOOKUP'">
+      
+      <ng-container *ngIf="count<=maxCount">
+      <ng-container *queryInput="let rule; let field=field; let onChange=onChange; type: 'LOOKUP'; ">
         <mat-form-field appearance="outline">
           <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.value" (ngModelChange)="onChange($event, rule)">
             <mat-option>
@@ -99,7 +110,23 @@
           </mat-select>
         </mat-form-field>
       </ng-container>
-          
+          </ng-container>
+
+          <ng-container *ngIf="count>maxCount">
+            <ng-container *queryInput="let rule ; let field=field; let onChange=onChange; type: 'LOOKUP';">
+              <mat-form-field appearance="outline">
+                <input matInput [style.display]="'none'" [ngModelOptions]="{ standalone: true }" [(ngModel)]="rule.value" (ngModelChange)="onChange($event,rule)">
+               <input matInput  [value]="rule?.valueName || 'select item'"  [readonly]="true">
+              </mat-form-field>
+               <button mat-raised-button *ngIf="count>maxCount" color="primary" class="edit-button ml-2"
+              title="selectItem" (click)="openPopup(rule, onChange)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            </ng-container>
+           
+          </ng-container>
+               <!-- <input  *ngIf="field.lookupItem && field.lookupItem.code" matInput [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.value" (ngModelChange)="onChange($event, rule)"/> -->
+
       <!-- <ng-container *querySwitchGroup="let ruleset; let onChange = onChange">
         <mat-radio-group
           *ngIf="ruleset"
@@ -156,3 +183,4 @@
     </button>
   </div>
 </div>
+

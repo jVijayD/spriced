@@ -106,8 +106,8 @@ export class ElseactionComponent {
   @Input() public dataRules: any;
   public dataType: any = 'AUTO';
   public dynamicInputType: any;
-  public filteredAttributes: any;
-
+  public filteredAttributes: any = [];
+  public filteredDbAttributes:any = [];
   public onChange: any = () => { }
   public onTouch: any = () => { }
   public value = "" // this is the updated value that the class accesses
@@ -134,7 +134,7 @@ export class ElseactionComponent {
       el.name === 'const' ? el.name = 'value' : '';
       return
     });
-    this.filteredAttributes = this.dataRules?.attributes.filter((el: any) => el.type !== 'LOOKUP');
+    // this.filteredAttributes = this.dataRules?.attributes.filter((el: any) => el.type !== 'LOOKUP');
 
     const value = this.getValue('actionType');
     const operandType = this.getValue('operandType');
@@ -147,6 +147,8 @@ export class ElseactionComponent {
     this.handleValue(operandType);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
     this.handleValueChange(value);
+    this.filteredAttributes = this.dataRules.attributes;
+    this.filteredDbAttributes = this.dataRules.attributes.filter((item:any)=>item.attributes);
   }
 
   // Helper function to get values from actionForm
@@ -373,7 +375,7 @@ export class ElseactionComponent {
     const parentAttribute = this.findAttributeById(parentAttributeId);
     const operend = this.findAttributeById(operand);
     const parentOperand = this.findAttributeById(parentOperandId);
-    if (attribute?.name === 'code' || (!attribute && parentAttribute?.referencedTableId)) {
+    if (attribute?.name === 'code' && attribute?.id === '1234' || (!attribute && parentAttribute?.referencedTableId)) {
       this.lookupInput = true;
       this.loadLookupData(parentAttribute?.referencedTableId);
       attribute = {
@@ -428,6 +430,45 @@ export class ElseactionComponent {
     }
 
     return attributeItem;
+  }
+
+   // HANDLE FOR MAT MENU SEARCH
+   filterAttributes(value:any,control?:any,text?:string){
+    debugger
+    if(text ==='Parent' || value===''){
+      this.filteredAttributes = this.dataRules?.attributes.filter((item: any) => {
+        return (
+          item.displayName
+            .trim()
+            .toLowerCase()
+            .indexOf(value.trim().toLowerCase()) != -1
+        );
+      });
+    }
+    if(text==='Nested' || value===''){
+      this.filteredDbAttributes = this.dataRules.attributes.filter((item: any) => {
+        if (item.type === 'LOOKUP') {
+          return item.displayName
+            .trim()
+            .toLowerCase()
+            .includes(value.trim().toLowerCase());
+        }
+        return false; 
+      });
+    }
+    setTimeout(() => {
+    control.focus();
+    },200);
+  }
+  //HANDLE FOR MAT MENU OPEN
+  matMenuOpen(control:any)
+  {
+    control.focus();
+  }
+  //HANDLE FOR MAT MENU CLOSED
+  matMenuClosed(control:any){
+    control.value = '';
+    this.filterAttributes('',control);
   }
 
   /**

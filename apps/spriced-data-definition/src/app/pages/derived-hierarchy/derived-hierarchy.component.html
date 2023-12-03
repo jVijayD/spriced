@@ -64,6 +64,7 @@
                     ></sp-header-action> -->
                     <sp-header-component-wrapper>
                       <sp-entity-selection
+                        #entitySelection
                         [selectedEntity]="entity"
                         (entitySelectionEvent)="onEntitySelectionChange($event)"
                         (modelSelectionEvent)="onModelSelectionChange()"

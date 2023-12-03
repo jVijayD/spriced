@@ -46,7 +46,7 @@ export class DynamicFormService {
 
   setReadOnly(readonlyControls?: string[]) {
     for (let control in this.parentForm?.controls) {
-      debugger;
+      // debugger;
       let con = this.parentForm?.controls[control];
       if (!readonlyControls) {
         con.disable();

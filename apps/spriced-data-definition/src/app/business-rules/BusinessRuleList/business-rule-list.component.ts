@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
 import { NGX_MAT_DATE_FORMATS, NgxMatDateAdapter, NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 import { MatRadioModule } from '@angular/material/radio';
 import { RouterModule } from '@angular/router';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatMenuModule} from '@angular/material/menu';
 import { Subscription } from "rxjs";
 
 const MY_DATE_FORMAT = {
@@ -105,6 +105,8 @@ export class BusinessRuleListComponent
   @Input() dataRules?: any;
   @Input() index: any;
   @Input() length: any;
+  public filteredAttributes:any=[];
+  public filteredDbAttributes:any=[]
   public conditionForm?: any;
   public lookupInput: boolean = false;
   public lookupAllAttributeData: any = [];
@@ -181,6 +183,8 @@ export class BusinessRuleListComponent
     this.handleValue(operandType);
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
     this.handleValueChange(value);
+    this.filteredAttributes = this.dataRules.attributes;
+    this.filteredDbAttributes = this.dataRules.attributes.filter((item:any)=>item.attributes);
   }
 
   // Helper function to get values from conditionForm
@@ -403,7 +407,7 @@ export class BusinessRuleListComponent
     const parentAttribute = this.findAttributeById(parentAttributeId);
     const operend = this.findAttributeById(operand);
     const parentOperand = this.findAttributeById(parentOperandId);
-    if (attribute?.name === 'code' || (!attribute && parentAttribute?.referencedTableId)) {
+    if (attribute?.name === 'code' && attribute?.id === '1234' || (!attribute && parentAttribute?.referencedTableId)) {
       this.lookupInput = true;
       this.loadLookupData(parentAttribute?.referencedTableId);
       attribute = {
@@ -451,6 +455,44 @@ export class BusinessRuleListComponent
 
     return attributeItem;
   }
+
+  filterAttributes(value:any,control?:any,text?:string){
+    if(text ==='Parent' || value===''){
+      this.filteredAttributes = this.dataRules?.attributes.filter((item: any) => {
+        return (
+          item.displayName
+            .trim()
+            .toLowerCase()
+            .indexOf(value.trim().toLowerCase()) != -1
+        );
+      });
+    }
+    if(text==='Nested' || value===''){
+      this.filteredDbAttributes = this.dataRules.attributes.filter((item: any) => {
+        if (item.type === 'LOOKUP') {
+          return item.displayName
+            .trim()
+            .toLowerCase()
+            .includes(value.trim().toLowerCase());
+        }
+        return false; 
+      });
+    }
+    setTimeout(() => {
+    control.focus();
+    },200);
+  }
+
+  matMenuOpen(control:any)
+  {
+    control.focus();
+  }
+  matMenuClosed(control:any){
+    control.value = '';
+    this.filterAttributes('',control);
+  }
+
+  
 
   /**
    * HANDLE THIS FUNCTION FOR FIND THE ATTRIBUTE ARRAY

@@ -164,6 +164,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.subscriptions.push(
       this.entityDataLoadCompleted$.subscribe((page: any) => {
         this.rows = page.content;
+        if(this.rows.length === 0)
+        {
+          this.onClear();
+        }
         this.totalElements = page.totalElements;
         const selectionTimer = timer(TIMER_CONST);
         if (this.rows && this.rows?.length > 0) {
@@ -330,9 +334,17 @@ export class EntityDataComponent implements OnDestroy, OnInit {
    * @param query any
    */
   public addDisplayNameInFilter(query: any) {
+    const updatedHeaders = this.headers.map((item :any) => {
+      const res = item.column.split(',');
+      if (res.length > 1) {
+        item.column =  res.find((el: any) => el.endsWith('_code'));
+      }
+      return { ...item };
+    });
+
     if (query.rules) {
       query.rules.forEach((el: any) => {
-        const item: any = this.headers.find(
+        const item: any = updatedHeaders.find(
           (elm: any) => elm.column === el.field
         );
         if (el?.rules && el?.rules.length > 0) {
@@ -503,6 +515,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onEntitySelectionChange(entity: Entity | string) {
     this.selectedItem = null;
+    this.pageNumber = 0;
     this.currentSelectedEntity = undefined;
     this.dataGrid.table._internalColumns = [...[]];
     this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);
@@ -849,5 +862,9 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       validations: [],
       asyncValidations: [],
     };
+  }
+  onRefresh()
+  {
+    this.onEntitySelectionChange(this.currentSelectedEntity as Entity)
   }
 }

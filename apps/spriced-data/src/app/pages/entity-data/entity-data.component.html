@@ -29,6 +29,7 @@
         (itemSelected)="onItemSelected($event)"
         [selected]="!!selectedItem ? [selectedItem] : []"
         (sort)="onSort($event)"
+        [offset]="pageNumber"
         *ngIf="!hide"
         page="explorer"
         [validationMessage]="ValidationMessage"
@@ -190,6 +191,14 @@
               "
               (actionClick)="onSettings()"
             ></sp-header-action>
+            <sp-header-action
+            icon="refresh"
+            text="Refresh"
+            title="Refresh"
+            (actionClick)="onRefresh()"
+            [disabled]="this.headers.length === 0"
+          ></sp-header-action>
+
           </div>
         </ng-container>
       </sp-data-grid>

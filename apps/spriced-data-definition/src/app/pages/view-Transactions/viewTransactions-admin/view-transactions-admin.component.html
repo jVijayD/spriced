@@ -33,7 +33,22 @@
         <sp-header-component-wrapper title="Model">
             <mat-form-field>
               <mat-select (selectionChange)="onModelChange($event)" [(value)]="selectedModel">
-                <mat-option class="option" *ngFor="let model of modelList" [value]="model.id">{{model.displayName}}</mat-option>
+                <mat-option>
+                  <ngx-mat-select-search
+                    placeholderLabel="Search"
+                    ngModel
+                    (ngModelChange)="filterModelSelection($event)"
+                  ></ngx-mat-select-search>
+                </mat-option>
+                <mat-option
+                  *ngFor="
+                    let item of this.filteredModelList | orderBy : 'displayName' : 'asc'
+                  "
+                  [value]="item.id"
+                  class="option"
+                >
+                  {{ item.displayName }}
+                </mat-option>
               </mat-select>
             </mat-form-field>
           </sp-header-component-wrapper>
@@ -61,6 +76,14 @@
           "
           (actionClick)="onClearFilter()"
         ></sp-header-action>
+        <sp-header-action
+        icon="undo"
+        text="Reverse Transaction"
+        title="Reverse Transaction"
+        [disabled]="
+        this.selectedItem?.priorValue==null"
+        (actionClick)="onRevert()"
+      ></sp-header-action>
       </ng-container>
     </sp-data-grid>
     <!-- </div> -->

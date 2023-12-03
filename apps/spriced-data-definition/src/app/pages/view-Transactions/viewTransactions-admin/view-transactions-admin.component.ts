@@ -7,8 +7,11 @@ import {
   Header,
   HeaderActionComponent,
   HeaderComponentWrapperComponent,
+  OrderByPipe,
   Paginate,
   QueryColumns,
+  SnackBarService,
+  SnackbarModule,
 } from "@spriced-frontend/spriced-ui-lib";
 import {
   ColumnMode,
@@ -34,6 +37,7 @@ import { ModelService } from "../../../services/model.service";
 import { Subject, forkJoin } from "rxjs";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 import { MatToolbarModule } from "@angular/material/toolbar";
+import { FormsModule } from "@angular/forms";
 @Component({
   selector: "sp-view-transactions-admin",
   standalone: true,
@@ -52,6 +56,10 @@ import { MatToolbarModule } from "@angular/material/toolbar";
     HeaderActionComponent,
     NgxMatSelectSearchModule,
     ToolTipRendererDirective,
+    NgxMatSelectSearchModule,
+    OrderByPipe,
+    FormsModule,
+    SnackbarModule
   ],
   providers: [DialogService],
   templateUrl: "./view-transactions-admin.component.html",
@@ -74,18 +82,22 @@ export class ViewTransactionsAdminComponent {
   subscriptions: any[] = [];
   pageNumber!:number;
   currentCriteria: Criteria = {
-    filters: [],
+    filters:
+       [],
     pager: {
       pageNumber: 0,
       pageSize: this.limit,
     },
     sorters:[{ direction:"DESC" ,property: "updated_date" }]
   };
+  filteredModelList: any;
+
   constructor(
     private modelService: ModelService,
     private enitityService: EntityService,
     private transactionService: TransactionsService,
     private dialogService:DialogService,
+    private snackbarService: SnackBarService,
   ) {}
   headers: Header[] = [
     {
@@ -184,6 +196,7 @@ export class ViewTransactionsAdminComponent {
     this.subscriptions.push(
       this.modelService.loadAllModels().subscribe((result: any) => {
         this.modelList = result;
+        this.filteredModelList = this.modelList;
         this.selectedModel = this.modelList[0].id;
         this.loadTransactionsData(this.selectedModel);
       })
@@ -192,7 +205,7 @@ export class ViewTransactionsAdminComponent {
   loadTransactionsData(modelId: number) {
    this.rows = [];
    const filters =this.createFilters("group_id",modelId,"number");
-   this.currentCriteria.filters?.push(filters);
+   this.currentCriteria.filters?.push(...filters);
     this.transactionService.loadTransactionsData(this.currentCriteria).subscribe({
       next:(res:any)=>{
         this.totalElements = res.totalElements;
@@ -328,17 +341,90 @@ export class ViewTransactionsAdminComponent {
   }
 
   createFilters(key:string,value:any,type:string){
-    return  {
+    return [{
       filterType: "CONDITION",
       key: key,
       value: value,
       joinType: "AND",
       operatorType: "EQUALS",
       dataType: type,
-    };
+    },
+    {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Updated By",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Last Update On",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Is Valid",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Id",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  }]
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach((item) => item.unsubscribe());
   }
+  filterModelSelection(text: any) {
+    this.filteredModelList = this.modelList.filter((item: any) => {
+      return (
+        item.displayName
+          .trim()
+          .toLowerCase()
+          .indexOf(text.trim().toLowerCase()) != -1
+      );
+    });
+  }
+onRevert()
+{
+  let criteria:Criteria=
+      {
+      "filters": [
+          {
+              "filterType": "CONDITION",
+              "joinType": "AND",
+              "operatorType": "EQUALS",
+              "key": "id",
+              "value":this.selectedItem.entityId,
+              "dataType": "number"
+          }    
+      ],
+      "pager": {
+          "pageNumber": 0,
+          "pageSize": 15
+      },
+      "sorters": []
+    }
+
+  this.transactionService.auditReversal(this.selectedItem,criteria).subscribe({
+    next:(res:any)=>{
+      this.snackbarService.success("Reversed successfully");
+      this.loadTransactionsData(this.selectedModel);
+    },
+    error:(err:any)=>{
+      this.snackbarService.error("Something went wrong");
+    }
+  })
+}
 }

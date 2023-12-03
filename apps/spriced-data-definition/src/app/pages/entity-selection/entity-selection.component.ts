@@ -161,8 +161,10 @@ export class EntitySelectionComponent {
 
   // Comapare object to show the entity form hierarchy to entity selection dropdown. 
   compareObjects(o1: any, o2: any) {
-    if (o1.id == o2.id)
+    if (!!o1 && !!o2 && o1?.id == o2?.id) {
       return true;
-    else return false
+    } else {
+      return false
+    }
   }
 }
