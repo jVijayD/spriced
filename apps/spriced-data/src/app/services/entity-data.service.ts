@@ -92,7 +92,8 @@ export class EntityDataService {
 
   
  downloadErrorExcel(
-    id: string | number
+    id: string | number,
+    entityName:string
   ) {
     const url =`${this.api_url}/bulk/errorexcel/${id}`
     return this.http
@@ -103,7 +104,7 @@ export class EntityDataService {
         let data = new Blob([blob], {
           type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         });
-        saveAs(data, 'error');
+        saveAs(data, entityName);
       });
   }
 
