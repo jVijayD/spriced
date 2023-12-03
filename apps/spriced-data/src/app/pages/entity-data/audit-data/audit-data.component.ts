@@ -175,13 +175,13 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   }
   ngOnInit(): void {
     const filters = this.createFilters("entity_name",this.currentSelectedEntity.name,"string");
-    this.currentCriteria.filters?.push(filters);
+    this.currentCriteria.filters?.push(...filters);
   }
 
   onPaginate(e: Paginate) {
     this.currentCriteria.filters=[];
     const filters = this.createFilters("entity_name",this.currentSelectedEntity.name,"string");
-    this.currentCriteria.filters?.push(filters);
+    this.currentCriteria.filters?.push(...filters);
     this.currentCriteria={
       ...this.currentCriteria,
       pager: {
@@ -194,10 +194,19 @@ export class AuditDataComponent implements OnInit, OnDestroy {
 
   onItemSelected(e: any) {
     this.selectedItem = e;
-    this.currentCriteria.filters=[];
-    const filters = this.createFilters("entity_name",this.currentSelectedEntity.name,"string");
-    this.currentCriteria.filters?.push(filters);
-    this.entityDataService.loadAnnotations(this.selectedItem.id,this.currentCriteria).subscribe({
+    const filters:Criteria =  {
+      filters: [{
+        filterType: "CONDITION",
+        key:"entity_name",
+        value:this.currentSelectedEntity.name,
+        joinType: "NONE",
+        operatorType: "EQUALS",
+        dataType:"string",
+      },],
+      pager: {pageNumber:0,pageSize:10000},
+      sorters:[{direction:"DESC",property:"updated_date"}]
+    };
+    this.entityDataService.loadAnnotations(this.selectedItem.id,filters).subscribe({
       next:(res:any)=>{
       const result = res.content.find((item:any)=>item.id===this.selectedItem.id);
       this.annotations = result?.annotations.annotations || [];
@@ -210,8 +219,9 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   }
 
   onSort(e: any) {
+    this.currentCriteria.filters=[];
     const filters = this.createFilters("entity_name",this.currentSelectedEntity.name,"string");
-    this.currentCriteria.filters?.push(filters);
+    this.currentCriteria.filters?.push(...filters);
     const sorters = e.sorts.map((sort: any) => {
       return { direction: sort.dir.toUpperCase(), property: sort.prop };
     });
@@ -237,14 +247,46 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   }
 
   createFilters(key:string,value:any,dataType:string){
-    return {
+    return [{
       filterType: "CONDITION",
       key:key,
       value:value,
       joinType: "NONE",
       operatorType: "EQUALS",
       dataType:dataType,
-    }
+    },
+    {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Updated By",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Last Update On",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Is Valid",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Id",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  }]
   }  
 
   onClose(): void {

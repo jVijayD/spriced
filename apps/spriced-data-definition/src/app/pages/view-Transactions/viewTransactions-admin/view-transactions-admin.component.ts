@@ -10,6 +10,8 @@ import {
   OrderByPipe,
   Paginate,
   QueryColumns,
+  SnackBarService,
+  SnackbarModule,
 } from "@spriced-frontend/spriced-ui-lib";
 import {
   ColumnMode,
@@ -56,7 +58,8 @@ import { FormsModule } from "@angular/forms";
     ToolTipRendererDirective,
     NgxMatSelectSearchModule,
     OrderByPipe,
-    FormsModule
+    FormsModule,
+    SnackbarModule
   ],
   providers: [DialogService],
   templateUrl: "./view-transactions-admin.component.html",
@@ -79,7 +82,8 @@ export class ViewTransactionsAdminComponent {
   subscriptions: any[] = [];
   pageNumber!:number;
   currentCriteria: Criteria = {
-    filters: [],
+    filters:
+       [],
     pager: {
       pageNumber: 0,
       pageSize: this.limit,
@@ -93,6 +97,7 @@ export class ViewTransactionsAdminComponent {
     private enitityService: EntityService,
     private transactionService: TransactionsService,
     private dialogService:DialogService,
+    private snackbarService: SnackBarService,
   ) {}
   headers: Header[] = [
     {
@@ -200,7 +205,7 @@ export class ViewTransactionsAdminComponent {
   loadTransactionsData(modelId: number) {
    this.rows = [];
    const filters =this.createFilters("group_id",modelId,"number");
-   this.currentCriteria.filters?.push(filters);
+   this.currentCriteria.filters?.push(...filters);
     this.transactionService.loadTransactionsData(this.currentCriteria).subscribe({
       next:(res:any)=>{
         this.totalElements = res.totalElements;
@@ -336,14 +341,46 @@ export class ViewTransactionsAdminComponent {
   }
 
   createFilters(key:string,value:any,type:string){
-    return  {
+    return [{
       filterType: "CONDITION",
       key: key,
       value: value,
       joinType: "AND",
       operatorType: "EQUALS",
       dataType: type,
-    };
+    },
+    {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Updated By",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Last Update On",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Is Valid",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Id",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  }]
   }
 
   ngOnDestroy(): void {
@@ -359,5 +396,35 @@ export class ViewTransactionsAdminComponent {
       );
     });
   }
+onRevert()
+{
+  let criteria:Criteria=
+      {
+      "filters": [
+          {
+              "filterType": "CONDITION",
+              "joinType": "AND",
+              "operatorType": "EQUALS",
+              "key": "id",
+              "value":this.selectedItem.entityId,
+              "dataType": "number"
+          }    
+      ],
+      "pager": {
+          "pageNumber": 0,
+          "pageSize": 15
+      },
+      "sorters": []
+    }
 
+  this.transactionService.auditReversal(this.selectedItem,criteria).subscribe({
+    next:(res:any)=>{
+      this.snackbarService.success("Reversed successfully");
+      this.loadTransactionsData(this.selectedModel);
+    },
+    error:(err:any)=>{
+      this.snackbarService.error("Something went wrong");
+    }
+  })
+}
 }

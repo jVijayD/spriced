@@ -76,6 +76,14 @@
           "
           (actionClick)="onClearFilter()"
         ></sp-header-action>
+        <sp-header-action
+        icon="undo"
+        text="Reverse Transaction"
+        title="Reverse Transaction"
+        [disabled]="
+        this.selectedItem?.priorValue==null"
+        (actionClick)="onRevert()"
+      ></sp-header-action>
       </ng-container>
     </sp-data-grid>
     <!-- </div> -->
