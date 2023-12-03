@@ -92,8 +92,7 @@ export class StatusComponent implements OnInit {
   ngOnInit(): void {
     this.dataService.getStatus().subscribe((val: any) => {
       val = val.filter((value: any) => {
-        var entityName=value.entityName.substring(0, value.entityName.indexOf('_'))
-        return entityName == this.data.name;
+        return value.entityName == this.data.name;
       }); 
       this.rows = [...val];
       this.totalElements = this.rows.length;
