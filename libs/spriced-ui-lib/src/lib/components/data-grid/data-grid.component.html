@@ -90,8 +90,9 @@
               <img
                 class="w-7 h-7 cursor-pointer"
                 spToolTipRenderer
+                [showToolTip]="page=='explorer' ? header?.showtooltip(row):header?.showtooltip"
                 [contentTemplate]="template"
-                [src]="header?.imgsrc"
+                [src]="page=='explorer' ? header?.imgsrc(row):header?.imgsrc"
               />
               <ng-template #template>
                 <div [innerHTML]="header?.tooltipTemplate(row)"></div>

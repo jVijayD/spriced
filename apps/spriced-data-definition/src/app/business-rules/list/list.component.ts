@@ -117,7 +117,8 @@ export class ListComponent implements OnInit, OnDestroy {
       tooltip: true,
       tooltipTemplate: (row: any) => this.getExpressionTooltip(row),
       imgsrc: 'assets/images/file.png',
-      width: 100
+      width: 100,
+      showtooltip:true
     },
     {
       column: "status",
