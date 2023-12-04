@@ -40,6 +40,6 @@ export class TransactionsService {
       "record_id": data.recordId,
       "dataType": data.dataType,
       "group_id": data.groupId
-    });
+    }, {responseType: 'text'});
   }
 }

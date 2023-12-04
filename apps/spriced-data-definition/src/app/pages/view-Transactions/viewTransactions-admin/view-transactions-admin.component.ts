@@ -66,7 +66,7 @@ import { FormsModule } from "@angular/forms";
   styleUrls: ["./view-transactions-admin.component.scss"],
 })
 export class ViewTransactionsAdminComponent {
-  selectedItem: any;
+  selectedItem: any=null;
   selectedModel: any;
   sortType = SortType.single;
   columnMode: ColumnMode = ColumnMode.force;
@@ -91,6 +91,7 @@ export class ViewTransactionsAdminComponent {
     sorters:[{ direction:"DESC" ,property: "updated_date" }]
   };
   filteredModelList: any;
+  appliedFilters: any=[];
 
   constructor(
     private modelService: ModelService,
@@ -164,7 +165,12 @@ export class ViewTransactionsAdminComponent {
   ];
 
   onModelChange(ev: MatSelectChange) {
+    this.currentCriteria.pager= {
+      pageNumber: 0,
+      pageSize: this.limit,
+    }
     this.onClearFilter()
+    this.selectedItem=null
     this.selectedModel = ev.value;
   }
   onPaginate(e: Paginate) {
@@ -184,7 +190,6 @@ export class ViewTransactionsAdminComponent {
   }
 
   onSort(e: any) {
-    console.log(e)
     const sorters = e.sorts.map((sort: any) => {
       return { direction: sort.dir.toUpperCase(), property: sort.prop };
     });
@@ -204,8 +209,8 @@ export class ViewTransactionsAdminComponent {
   }
   loadTransactionsData(modelId: number) {
    this.rows = [];
-   const filters =this.createFilters("group_id",modelId,"number");
-   this.currentCriteria.filters?.push(...filters);
+   this.currentCriteria.filters =this.createFilters("group_id",modelId,"number");
+   this.currentCriteria.filters?.push(...this.appliedFilters);
     this.transactionService.loadTransactionsData(this.currentCriteria).subscribe({
       next:(res:any)=>{
         this.totalElements = res.totalElements;
@@ -231,8 +236,8 @@ export class ViewTransactionsAdminComponent {
       if(val){
       this.query = dialogResult.componentInstance.data.query;
       this.addDisplayNameInFilter(this.query);
-      this.currentCriteria.filters = val;
-      this.currentCriteria.filters?.length==0 ?this.query = null:'';
+      this.appliedFilters = val;
+      this.appliedFilters?.length==0 ?this.query = null:'';
       this.loadTransactionsData(this.selectedModel)
     }
     });
@@ -254,6 +259,7 @@ export class ViewTransactionsAdminComponent {
   onClearFilter(){
     this.query = null;
     this.currentCriteria.filters = [];
+    this.appliedFilters=[]
     this.loadTransactionsData(this.selectedModel);
    }
    /**
@@ -419,11 +425,11 @@ onRevert()
 
   this.transactionService.auditReversal(this.selectedItem,criteria).subscribe({
     next:(res:any)=>{
-      this.snackbarService.success("Reversed successfully");
+      this.snackbarService.success(res);
       this.loadTransactionsData(this.selectedModel);
     },
     error:(err:any)=>{
-      this.snackbarService.error("Something went wrong");
+      this.snackbarService.error("The selected row cannot be reversed");
     }
   })
 }
