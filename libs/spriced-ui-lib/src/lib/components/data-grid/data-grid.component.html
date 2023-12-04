@@ -41,28 +41,6 @@
         {{ rowIndex + 1 }}
       </ng-template>
     </ngx-datatable-column>
-
-
-    <ng-container *ngIf="page=='explorer'">
-      <ngx-datatable-column
-      [width]="50"
-      [sortable]="false"
-    >     
-      <ng-template  ngx-datatable-cell-template  let-row="row">
-          <mat-icon *ngIf="row.is_valid"
-           style="color: white;background-color: green;"
-            >check</mat-icon>
-            <mat-icon spToolTipRenderer 
-            [showToolTip]="!row.is_valid"
-            [contentTemplate]="errortemplate" *ngIf="!row.is_valid"  
-            style="color: white;background-color: red;"
-              >cancel</mat-icon>
-      </ng-template>
-      <ng-template #errortemplate >
-        <div *ngFor="let item of validationMessage" >{{item.message}}</div>
-      </ng-template>
-    </ngx-datatable-column>
-    </ng-container>
   
     <ng-container *ngFor="let header of headers; let i = index">
       <ngx-datatable-column
