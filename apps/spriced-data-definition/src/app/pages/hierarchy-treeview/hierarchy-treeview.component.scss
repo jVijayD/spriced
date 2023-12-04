@@ -1,3 +1,31 @@
-:host ::ng-deep ngx-datatable datatable-body{
-    height: calc(70vh - 40px) !important;
-} 
+:host ::ng-deep ngx-datatable {
+    height: calc(100% - 65px);
+    datatable-body {
+        // height: calc(70vh - 40px) !important;
+        width: 100% !important;
+    }
+}
+
+:host ::ng-deep ngx-datatable datatable-body datatable-selection datatable-scroller {
+    width: 100% !important;
+}
+
+:host ::ng-deep ngx-datatable datatable-body datatable-selection datatable-scroller datatable-row-wrapper {
+    width: calc(100vh - 80%) !important;
+
+    datatable-body-row {
+        width: 100% !important;
+
+        .datatable-row-center {
+            width: 100% !important;
+
+            datatable-body-cell {
+                width: 100% !important;
+
+                .datatable-body-cell-label {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}

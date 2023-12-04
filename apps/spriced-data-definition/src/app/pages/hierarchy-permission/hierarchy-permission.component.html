@@ -1,10 +1,10 @@
-<div style="margin-bottom: 55px;">
-    <form [formGroup]="listForm">
-        <div class="flex items-center grid grid-cols-7 mb-2">
+<div style="margin-bottom: 20px;" class="flex">
+    <form [formGroup]="listForm" class="flex">
+        <div class="flex items-center">
             <div class="col-span-1">
-                <mat-label class="text-sm"> Model: </mat-label>
+                <mat-label class="text-sm"> Model </mat-label>
             </div>
-            <div class="col-span-6">
+            <div class="col-span-6 ml-2">
                 <mat-form-field [appearance]="'outline'" class="full-width ">
                     <mat-select matNativeControl (valueChange)="handleEntityByModels($event)"
                         [(value)]="defaultModelId">
@@ -21,11 +21,11 @@
             </div>
         </div>
 
-        <div class="flex items-center grid grid-cols-7 mb-2">
+        <div class="flex items-center ml-4">
             <div class="col-span-1">
-                <mat-label class="text-sm"> Entity: </mat-label>
+                <mat-label class="text-sm"> Entity </mat-label>
             </div>
-            <div class="col-span-6">
+            <div class="col-span-6 ml-2">
                 <mat-form-field [appearance]="'outline'" class="full-width ">
                     <mat-select matNativeControl
                         [(value)]="defaultEntity" (selectionChange)="handleHierarchyByEntityId($event)">
@@ -42,11 +42,11 @@
             </div>
         </div>
 
-        <div class="flex items-center grid grid-cols-7 mb-2">
-            <div class="col-span-1">
-                <mat-label class="text-sm"> Hierarchy: </mat-label>
+        <div class="flex items-center ml-4">
+            <div class="col-span-1 ml-2">
+                <mat-label class="text-sm"> Hierarchy </mat-label>
             </div>
-            <div class="col-span-6">
+            <div class="col-span-6 ml-2">
                 <mat-form-field [appearance]="'outline'" class="full-width ">
                     <mat-select matNativeControl (valueChange)="handleHierarchy($event)" [(value)]="defaultHierarchy">
                         <mat-option>
@@ -62,11 +62,11 @@
             </div>
         </div>
 
-        <div class="flex items-center grid grid-cols-7 mb-2">
+        <div class="flex items-center ml-4">
             <div class="col-span-1">
-                <mat-label class="text-sm"> Role: </mat-label>
+                <mat-label class="text-sm"> Role </mat-label>
             </div>
-            <div class="col-span-6">
+            <div class="col-span-6 ml-2">
                 <mat-form-field [appearance]="'outline'" class="full-width ">
                     <mat-select matNativeControl (selectionChange)="onSelectRole($event)" [(value)]="selectedRole">
                         <!-- <mat-option>
@@ -90,7 +90,7 @@
     <div class="col-span-2">
         <ngx-datatable
          #table 
-        style="min-width: 300px; min-height: calc(100vh - 20rem);"              class="material striped tableScroll"
+        style="min-width: 300px; min-height: calc(100vh - 10rem);"              class="material striped tableScroll"
             [columnMode]="ColumnMode.flex"  
             [headerHeight]="50" 
             [footerHeight]="0" 
@@ -101,11 +101,11 @@
             [treeFromRelation]="'parentGrpId'"
             (treeAction)="onTreeActionPreview($event)" 
             [treeToRelation]="'grpId'">
-            <ngx-datatable-column name="Name" [flexGrow]="3" [isTreeColumn]="true">
+            <ngx-datatable-column name="Name" [flexGrow]="2" [isTreeColumn]="true">
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                     <span style="display: inline-flex" class="ml-5">
-                        <mat-icon>account_tree</mat-icon>
-                        <span class="ml-2" mat-button [matMenuTriggerFor]="menu"> {{ value }}</span>
+                        <mat-icon *ngIf="row.name !== 'Show more...'">account_tree</mat-icon>
+                        <span class="ml-4" [ngClass]="row.name === 'Show more...' ? 'item-pointer' : ''" mat-button [matMenuTriggerFor]="row.name !== 'Show more...' ? menu : null" (click)="handleSelectItem(row)"> {{ value }}</span>
                               <mat-menu #menu="matMenu">
                                 <ng-container >
                                   <button mat-menu-item *ngFor="let item of dropDownItems" (click)="onSelect(item.value, row)">
