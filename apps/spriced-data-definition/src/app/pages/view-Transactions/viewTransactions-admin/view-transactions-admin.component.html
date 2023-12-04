@@ -5,86 +5,86 @@
       <mat-icon>close</mat-icon>
     </button> -->
     <!-- <div class="grid "> -->
-    <sp-data-grid
-          #dataGrid
-          class="w-full h-full"
-          [title]="'Transactions'"
-          [enableRowIndex]="false"
-          [isArray]="false"
-          [headers]="headers"
-          [rows]="rows"
-          [rowHeight]="40"
-          [headerHeight]="40"
-          [footerHeight]="30"
-          [columnMode]="columnMode"
-          [virtualScroll]="false"
-          [selectionType]="selectionType"
-          [count]="totalElements"
-          [limit]="limit"
-          [isExternalPaging]="true"
-          [isExternalSorting]="true"
-          [sortType]="sortType"
-          [selected]="!!selectedItem?[selectedItem]:[]"
-          (itemSelected)="onItemSelected($event)"
-          (paginate)="onPaginate($event)"
-          (sort)="onSort($event)"
-        >
-      <ng-container>
-        <sp-header-component-wrapper title="Model">
-            <mat-form-field>
-              <mat-select (selectionChange)="onModelChange($event)" [(value)]="selectedModel">
-                <mat-option>
-                  <ngx-mat-select-search
-                    placeholderLabel="Search"
-                    ngModel
-                    (ngModelChange)="filterModelSelection($event)"
-                  ></ngx-mat-select-search>
-                </mat-option>
-                <mat-option
-                  *ngFor="
-                    let item of this.filteredModelList | orderBy : 'displayName' : 'asc'
-                  "
-                  [value]="item.id"
-                  class="option"
-                >
-                  {{ item.displayName }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </sp-header-component-wrapper>
-          <sp-header-action
-          icon="filter_list"
-          [text]="!query ? 'Filter' : ''"
-          (actionClick)="onFilter()"
-          [disabled]="this.headers.length === 0"
-          spToolTipRenderer
-          [contentTemplate]="template"
-          [customPosition]="true"
-          [showToolTip]="!!query"
-        ></sp-header-action>
+      <sp-data-grid
+      #dataGrid
+      class="w-full h-full"
+      [title]="'Transactions'"
+      [enableRowIndex]="false"
+      [isArray]="false"
+      [headers]="headers"
+      [rows]="rows"
+      [rowHeight]="40"
+      [headerHeight]="40"
+      [footerHeight]="30"
+      [columnMode]="columnMode"
+      [virtualScroll]="false"
+      [selectionType]="selectionType"
+      [count]="totalElements"
+      [limit]="limit"
+      [isExternalPaging]="true"
+      [isExternalSorting]="true"
+      [sortType]="sortType"
+      [selected]="!!selectedItem?[selectedItem]:[]"
+      (itemSelected)="onItemSelected($event)"
+      (paginate)="onPaginate($event)"
+      (sort)="onSort($event)"
+    >
+  <ng-container>
+    <sp-header-component-wrapper title="Model">
+        <mat-form-field>
+          <mat-select (selectionChange)="onModelChange($event)" [(value)]="selectedModel">
+            <mat-option>
+              <ngx-mat-select-search
+                placeholderLabel="Search"
+                ngModel
+                (ngModelChange)="filterModelSelection($event)"
+              ></ngx-mat-select-search>
+            </mat-option>
+            <mat-option
+              *ngFor="
+                let item of this.filteredModelList | orderBy : 'displayName' : 'asc'
+              "
+              [value]="item.id"
+              class="option"
+            >
+              {{ item.displayName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </sp-header-component-wrapper>
+      <sp-header-action
+      icon="filter_list"
+      [text]="!query ? 'Filter' : ''"
+      (actionClick)="onFilter()"
+      [disabled]="this.headers.length === 0"
+      spToolTipRenderer
+      [contentTemplate]="template"
+      [customPosition]="true"
+      [showToolTip]="!!query"
+    ></sp-header-action>
 
-        <ng-template #template>
-          <div [innerHTML]="getToolTipTemplate(query)"></div>
-        </ng-template>
+    <ng-template #template>
+      <div [innerHTML]="getToolTipTemplate(query)"></div>
+    </ng-template>
 
-        <sp-header-action
-          icon="filter_list_off"
-          text="Clear Filter"
-          title="Clear Filter"
-          [disabled]="
-            !this.query
-          "
-          (actionClick)="onClearFilter()"
-        ></sp-header-action>
-        <sp-header-action
-        icon="undo"
-        text="Reverse Transaction"
-        title="Reverse Transaction"
-        [disabled]="
-        this.selectedItem?.priorValue==null"
-        (actionClick)="onRevert()"
-      ></sp-header-action>
-      </ng-container>
-    </sp-data-grid>
-    <!-- </div> -->
-    <!-- </div> -->
+    <sp-header-action
+      icon="filter_list_off"
+      text="Clear Filter"
+      title="Clear Filter"
+      [disabled]="
+        !this.query
+      "
+      (actionClick)="onClearFilter()"
+    ></sp-header-action>
+    <sp-header-action
+    icon="undo"
+    text="Reverse Transaction"
+    title="Reverse Transaction"
+    [disabled]="
+    selectedItem?.priorValue==null || selectedItem == null "
+    (actionClick)="onRevert()"
+  ></sp-header-action>
+  </ng-container>
+</sp-data-grid>
+<!-- </div> -->
+<!-- </div> -->
