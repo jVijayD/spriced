@@ -135,6 +135,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   dataGrid!: DataGridComponent;
   pageNumber: number = 0;
   relatedEntity: any;
+  ValidationMessage:any;
   public showTooltip: boolean = false;
 
   defaultCodeSetting = "namecode";
@@ -241,8 +242,28 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onItemSelected(e: any) {
     this.setSelectedRow(e);
+    // if(e.is_valid==true)
+    // {
+      this.loadValidationMessage(e)
+      
+    // }
   }
-
+  loadValidationMessage(item:any)
+  {
+    // this.entityDataService.loadValidationMessage(item) .subscribe((val) => {
+    // console.log(val)
+    // });
+    this.ValidationMessage=[ 
+      {
+          "rule": "rule 1",
+          "message": " rule failed   "
+      },
+      {
+          "rule": "rule 2",
+          "message": " rule passed   "
+      }
+     ]
+  }
   onClear() {
     this.selectedItem = null;
     this.dataGrid.clearSelection();

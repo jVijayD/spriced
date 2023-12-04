@@ -31,6 +31,8 @@
         (sort)="onSort($event)"
         [offset]="pageNumber"
         *ngIf="!hide"
+        page="explorer"
+        [validationMessage]="ValidationMessage"
       >
         <ng-container>
           <!-- <sp-header-action
