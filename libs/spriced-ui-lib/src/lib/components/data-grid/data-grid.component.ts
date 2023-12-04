@@ -246,6 +246,7 @@ export interface Header {
   checkbox?: boolean;
   tooltip?: boolean;
   tooltipTemplate?: any;
+  showtooltip?:any;
   action?: any;
   imgsrc?: any;
   disableCheckbox?: any;

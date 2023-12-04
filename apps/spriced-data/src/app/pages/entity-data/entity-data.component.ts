@@ -135,7 +135,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   dataGrid!: DataGridComponent;
   pageNumber: number = 0;
   relatedEntity: any;
-  ValidationMessage:any;
+  ValidationMessage:any=[];
   public showTooltip: boolean = false;
 
   defaultCodeSetting = "namecode";
@@ -242,27 +242,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onItemSelected(e: any) {
     this.setSelectedRow(e);
-    // if(e.is_valid==true)
-    // {
-      this.loadValidationMessage(e)
-      
-    // }
-  }
-  loadValidationMessage(item:any)
-  {
-    // this.entityDataService.loadValidationMessage(item) .subscribe((val) => {
-    // console.log(val)
-    // });
-    this.ValidationMessage=[ 
-      {
-          "rule": "rule 1",
-          "message": " rule failed   "
-      },
-      {
-          "rule": "rule 2",
-          "message": " rule passed   "
-      }
-     ]
   }
   onClear() {
     this.selectedItem = null;
@@ -694,15 +673,47 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       const showSystemAttributes = globalSettings
         ? globalSettings.showSystem
         : false;
-      this.headers = this.entityGridService.getGridHeaders(
+        this.headers=[{
+          column: "",
+          name: "",
+          canAutoResize: false,
+          isSortable: false,
+          width: 80,
+          tooltip: true,
+          tooltipTemplate: (row: any) => this.getErrorTooltip(row),
+          imgsrc:(row: any) => this.getImage(row) ,
+          showtooltip:(row: any) => !row.is_valid 
+        }]
+     let headers :Header[] = this.entityGridService.getGridHeaders(
         entity,
         showSystemAttributes,
         globalSettings?.displayFormat || this.defaultCodeSetting
-      );
+      )
+      this.headers.push(...headers)
       this.loadEntityData(entity, criteria);
     }
   }
-
+  getErrorTooltip(row:any)
+  {
+  // this.entityDataService.loadValidationMessage(item) .subscribe((val) => {
+    // console.log(val)
+    // });
+    // this.ValidationMessage=[ 
+    //   {
+    //       "rule": "rule 1",
+    //       "message": " rule failed   "
+    //   },
+    //   {
+    //       "rule": "rule 2",
+    //       "message": " rule passed   "
+    //   }
+    //  ]
+     return this.ValidationMessage
+  }
+  getImage(row:any)
+  {
+    return row.is_valid ? 'assets/images/valid.png' :'assets/images/invalid.png';
+  }
   private loadEntityData(
     entity: Entity,
     criteria: Criteria,
