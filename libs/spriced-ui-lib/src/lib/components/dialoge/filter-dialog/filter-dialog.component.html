@@ -68,7 +68,7 @@
 
       <ng-container *queryField="let rule; let fields=fields; let onChange=onChange">
         <mat-form-field class="ml-2" appearance="outline">
-          <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.field" (valueChange)="handleLookupData($event)" (ngModelChange)="onChange($event, rule)">
+          <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.field" (valueChange)="handleLookupData($event,rule)" (ngModelChange)="onChange($event, rule)">
             <mat-option>
               <ngx-mat-select-search
                 placeholderLabel="Search"

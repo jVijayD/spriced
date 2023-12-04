@@ -131,15 +131,6 @@ export class FilterDialogComponent {
     let filters: Filter[] = [];
     //debugger;
     query.rules.forEach((item: any, index: number) => {
-      let fields: string[] = [];
-      if (item.rules) {
-        fields = this.editRuleFields(item.rules);
-      } else {
-        fields = item.field.split(',');
-      }
-      if (fields.length > 1) {
-        item.field = fields.find((el: any) => el.endsWith('_code'));
-      }
       const operatorType = this.getOperatorType(item.operator);
       const dataTypeType = this.getDataType(this.data.columns, item.field);
 
@@ -255,10 +246,11 @@ export class FilterDialogComponent {
     return config;
   }
 
-  public handleLookupData(rule: any) {
-    let field: any = this.config.fields[rule];
-    if (field?.type === 'LOOKUP' && !!field?.entity && !field?.options) {
-      this.loadLookupData(field.entity, 0, [], rule);
+  public handleLookupData(item: any,rule?:any) {
+    rule ? (rule.valueName = '', rule.selectedItem = '') : null;
+    let field: any = this.config.fields[item];
+    if (field?.type === 'LOOKUP' && !!field?.entity) {
+      this.loadLookupData(field.entity, 0, [], item);
     }
   }
 
@@ -334,17 +326,6 @@ export class FilterDialogComponent {
         (item.name &&
           item.name.trim().toLowerCase().includes(searchText.trim().toLowerCase()))
       );
-    });
-  }
-
-  // HANDLE THIS FUNCTION FOR EDIT THE RULE FIELD
-  private editRuleFields(rules: any): string[] {
-    return rules.flatMap((rule: any) => {
-      if (rule.rules) {
-        return this.editRuleFields(rule.rules);
-      } else {
-        return rule.field.split(',');
-      }
     });
   }
 
