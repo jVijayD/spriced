@@ -25,7 +25,7 @@
       [sortType]="sortType"
       [count]="totalElements"
       (itemSelected)="onItemSelected($event)"
-      (downloadErrorExcel)="viewError()"
+      (downloadErrorExcel)="viewError($event)"
     >
      <!-- <sp-header-action
             [disabled]="!selectedItem"

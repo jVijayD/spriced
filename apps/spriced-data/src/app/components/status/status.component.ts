@@ -101,14 +101,12 @@ export class StatusComponent implements OnInit {
   onItemSelected(e: any) {
     this.selectedItem = e;
   }
-  viewError()
+  viewError(event:any)
   {
-    setTimeout(() => {
     this.dataService.downloadErrorExcel(
-      this.selectedItem?.id as number,
+      event.id as number,
       this.selectedItem?.entityName
     );
-  }, 500);
     // this.dialogRef.close();
     // this.router.navigate(["/spriced-data/upload-error/"  + this.data.groupId + "/" +this.data.id ]);
   }

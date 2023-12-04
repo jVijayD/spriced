@@ -87,7 +87,7 @@
 
         <ng-container *ngIf="header?.name=='Download' && page=='status'" >
           <div class="underline cursor-pointer" 
-          (click)="downloadErrorExcel.emit()">
+          (click)="downloadErrorExcel.emit(row)">
           Download error excel</div>
            </ng-container>
           <ng-container *ngIf="header?.isLink">
