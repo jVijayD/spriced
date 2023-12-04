@@ -32,7 +32,6 @@ export class StatusComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<StatusComponent>,
     private dataService: EntityDataService,
-    private router: Router,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
   headers: Header[] = [
@@ -71,6 +70,13 @@ export class StatusComponent implements OnInit {
       isSortable: true,
       width: 60,
     },
+    {
+      column: "",
+      name: "Download",
+      canAutoResize: true,
+      isSortable: true,
+      width: 60,
+    },
   ];
   columnMode: ColumnMode = ColumnMode.force;
   selectionType: SelectionType = SelectionType.single;
@@ -86,8 +92,7 @@ export class StatusComponent implements OnInit {
   ngOnInit(): void {
     this.dataService.getStatus().subscribe((val: any) => {
       val = val.filter((value: any) => {
-        var entityName=value.entityName.substring(0, value.entityName.indexOf('_'))
-        return entityName == this.data.name;
+        return value.entityName == this.data.name;
       }); 
       this.rows = [...val];
       this.totalElements = this.rows.length;
@@ -96,10 +101,13 @@ export class StatusComponent implements OnInit {
   onItemSelected(e: any) {
     this.selectedItem = e;
   }
-  viewError()
+  viewError(event:any)
   {
-    console.log('this.viewError')
-    this.dialogRef.close();
-    this.router.navigate(["/spriced-data/upload-error/"  + this.data.groupId + "/" +this.data.id ]);
+    this.dataService.downloadErrorExcel(
+      event.id as number,
+      this.selectedItem?.entityName
+    );
+    // this.dialogRef.close();
+    // this.router.navigate(["/spriced-data/upload-error/"  + this.data.groupId + "/" +this.data.id ]);
   }
 }

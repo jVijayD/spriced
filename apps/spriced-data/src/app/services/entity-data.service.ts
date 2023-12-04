@@ -89,6 +89,26 @@ export class EntityDataService {
 }*/
   }
 
+
+  
+ downloadErrorExcel(
+    id: string | number,
+    entityName:string
+  ) {
+    const url =`${this.api_url}/bulk/errorexcel/${id}`
+    return this.http
+      .get(url, {
+        responseType: "blob",
+      })
+      .subscribe((blob) => {
+        let data = new Blob([blob], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        saveAs(data, entityName);
+      });
+  }
+
+
   private createRows(content: any) {
     const records = content.records || [];
     const fields = content.fields || [];
@@ -110,7 +130,14 @@ export class EntityDataService {
     );
     return this.http.get<PageData>(url);
   }
-  
+
+  loadValidationMessage(item:any): Observable<PageData> {
+    const url = this.requestUtility.addCriteria(
+      `${this.api_url}/entity/validations`,
+    );
+    return this.http.get<PageData>(url);
+  }
+
   loadAnnotations(id:number,criteria:Criteria):Observable<PageData>{
     const url = this.requestUtility.addCriteria(`${this.api_url}/audit-trial/annotation`,
     criteria

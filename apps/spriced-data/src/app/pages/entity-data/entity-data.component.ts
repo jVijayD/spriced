@@ -135,6 +135,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   dataGrid!: DataGridComponent;
   pageNumber: number = 0;
   relatedEntity: any;
+  ValidationMessage:any;
   public showTooltip: boolean = false;
 
   defaultCodeSetting = "namecode";
@@ -163,6 +164,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.subscriptions.push(
       this.entityDataLoadCompleted$.subscribe((page: any) => {
         this.rows = page.content;
+        if(this.rows.length === 0)
+        {
+          this.onClear();
+        }
         this.totalElements = page.totalElements;
         const selectionTimer = timer(TIMER_CONST);
         if (this.rows && this.rows?.length > 0) {
@@ -237,8 +242,28 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onItemSelected(e: any) {
     this.setSelectedRow(e);
+    // if(e.is_valid==true)
+    // {
+      this.loadValidationMessage(e)
+      
+    // }
   }
-
+  loadValidationMessage(item:any)
+  {
+    // this.entityDataService.loadValidationMessage(item) .subscribe((val) => {
+    // console.log(val)
+    // });
+    this.ValidationMessage=[ 
+      {
+          "rule": "rule 1",
+          "message": " rule failed   "
+      },
+      {
+          "rule": "rule 2",
+          "message": " rule passed   "
+      }
+     ]
+  }
   onClear() {
     this.selectedItem = null;
     this.dataGrid.clearSelection();
@@ -490,6 +515,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onEntitySelectionChange(entity: Entity | string) {
     this.selectedItem = null;
+    this.pageNumber = 0;
     this.currentSelectedEntity = undefined;
     this.dataGrid.table._internalColumns = [...[]];
     this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);

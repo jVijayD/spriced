@@ -44,6 +44,7 @@
     [count]="count" 
     [offset]="offset"
     [sortType]="sortType"
+    [selected]="!!selectedItem?[selectedItem]:[]"
     (page)="onPage($event)"
     (select)='onItemSelected($event)'
     >

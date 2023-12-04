@@ -1,9 +1,14 @@
-:host ::ng-deep mat-form-field{
-    height: 30px;
-  }
-  
-  :host ::ng-deep .mdc-text-field {
-    display: flex;
-    align-items: center;
-    height: 30px;
-  }
+:host ::ng-deep mat-form-field {
+  height: 30px;
+}
+
+:host ::ng-deep .mdc-text-field {
+  display: flex;
+  align-items: center;
+  height: 30px;
+}
+
+.item-pointer {
+  cursor: pointer;
+  font-weight: bold;
+}
