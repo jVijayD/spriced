@@ -343,9 +343,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       return { ...item };
     });
 
-    if(!!query)
+    if(!!query &&query.rules)
     {
-    if (query.rules) {
       query.rules.forEach((el: any) => {
         const item: any = updatedHeaders.find(
           (elm: any) => elm.column === el.field
@@ -359,7 +358,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         return;
       });
     }
-  }
   }
 
   public getToolTipTemplate(conditions: any): string {
