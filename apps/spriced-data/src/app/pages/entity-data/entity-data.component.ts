@@ -286,6 +286,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   onFilter() {
+    this.addDisplayNameInFilter();
     const dialogResult = this.dialogService.openFilterDialog({
       persistValueOnFieldChange: true,
       columns: this.entityGridService.getFilterColumns(this.headers),
@@ -312,7 +313,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
    * HANDLE THIS FUNCTION FOR ADD DISPLAY NAME IN FILTER QUERY
    * @param query any
    */
-  public addDisplayNameInFilter(query: any) {
+  public addDisplayNameInFilter(query?: any) {
     const updatedHeaders = this.headers.map((item :any) => {
       const res = item.column.split(',');
       if (res.length > 1) {
@@ -321,7 +322,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       return { ...item };
     });
 
-    if (query.rules) {
+    if(!!query &&query.rules)
+    {
       query.rules.forEach((el: any) => {
         const item: any = updatedHeaders.find(
           (elm: any) => elm.column === el.field
