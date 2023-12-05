@@ -126,7 +126,7 @@ export class ViewTransactionsAdminComponent {
       column: "updatedDate",
       name: "Last Updated On",
       pipe: (data: any) => {
-        return moment(data).format("MM/DD/YYYY HH:mm:ss");
+        return moment(data).format("MM/DD/YYYY");
       },
       sortColumn:"updated_date"
     },
