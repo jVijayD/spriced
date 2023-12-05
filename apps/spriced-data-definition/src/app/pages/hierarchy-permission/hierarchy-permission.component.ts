@@ -29,7 +29,7 @@ export class HierarchyPermissionComponent implements OnInit {
   public modelList: any;
   public hierarchyList: any;
   public entityList: any;
-  pageSize: number = 10;
+  pageSize: number = 500;
   currentCriteria: Criteria = {
     filters: [],
     pager: {
