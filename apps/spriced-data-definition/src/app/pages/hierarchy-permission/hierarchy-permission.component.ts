@@ -76,6 +76,7 @@ export class HierarchyPermissionComponent implements OnInit {
   roleList: any;
   selectedRole: any;
   allHierarchyList: any;
+  hierarchyLevels: any = [];
 
   permissionHeaders: any[] = [
     {
@@ -268,7 +269,6 @@ export class HierarchyPermissionComponent implements OnInit {
 
   onTreeActionPreview(event: any) {
     if (event.row.name !== 'Show more...') {
-      const index = event.rowIndex;
       const row = event.row;
       if (row.treeStatus === 'collapsed') {
         row.treeStatus = 'loading';
@@ -522,6 +522,7 @@ export class HierarchyPermissionComponent implements OnInit {
           this.hierarchyDetails.push(hieDtls);
         });
       this.hierarchyDetails = this.hierarchyDetails.sort((a, b) => b.groupLevel - a.groupLevel);
+      this.hierarchyLevels = this.hierarchyDetails.map((el: any) => {return el.groupLevel});
       this.populateLevelTree();
       this.populateAvailableEntities();
       this.setPreviewRootNode(this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1)?.entity);
