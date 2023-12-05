@@ -105,7 +105,7 @@ export class StatusComponent implements OnInit {
   {
     this.dataService.downloadErrorExcel(
       event.id as number,
-      this.selectedItem?.entityName
+      event.entityName
     );
     // this.dialogRef.close();
     // this.router.navigate(["/spriced-data/upload-error/"  + this.data.groupId + "/" +this.data.id ]);

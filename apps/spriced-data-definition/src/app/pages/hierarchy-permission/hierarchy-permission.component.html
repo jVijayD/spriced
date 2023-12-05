@@ -105,7 +105,7 @@
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                     <span style="display: inline-flex" class="ml-5">
                         <mat-icon *ngIf="row.name !== 'Show more...'">account_tree</mat-icon>
-                        <span class="ml-4" [ngClass]="row.name === 'Show more...' ? 'item-pointer' : ''" mat-button [matMenuTriggerFor]="row.name !== 'Show more...' ? menu : null" (click)="handleSelectItem(row)"> {{ value }}</span>
+                        <span class="ml-4" [ngClass]="row.name === 'Show more...' ? 'item-pointer' : ''" mat-button [matMenuTriggerFor]="row.name !== 'Show more...' && hierarchyLevels.includes(row?.level) ? menu : null" (click)="handleSelectItem(row)"> {{ value }}</span>
                               <mat-menu #menu="matMenu">
                                 <ng-container >
                                   <button mat-menu-item *ngFor="let item of dropDownItems" (click)="onSelect(item.value, row)">

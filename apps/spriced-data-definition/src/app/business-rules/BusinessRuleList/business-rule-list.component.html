@@ -46,16 +46,16 @@
                   {{ attribute.displayName }}
                 </button>
                 <mat-menu #nestedMenu="matMenu">
-                  <mat-form-field appearance="outline" class="w-full">
+                  <!-- <mat-form-field appearance="outline" class="w-full">
                     <input matInput #searchAttributeParent class="p-2" name="search"
                       [ngModelOptions]="{standalone:true}" ngModel (click)="$event.stopPropagation()"
                       (ngModelChange)="filterAttributes(searchAttributeParent.value,searchAttributeParent,'Nested')"
                       placeholder="Search...">
-                  </mat-form-field>
+                  </mat-form-field> -->
                   <button mat-menu-item *ngIf="filteredDbAttributes.length === 0"> No record found </button>
                   <button
                     [ngClass]="{'selected-item': !!selectedAttribute ? selectedAttribute.split('.')[1] === nestedAttribute?.displayName : ''}"
-                    mat-menu-item *ngFor="let nestedAttribute of filteredDbAttributes"
+                    mat-menu-item *ngFor="let nestedAttribute of attribute.filteredAttributes"
                     (click)="selectAttribute(nestedAttribute, attribute)">
                     {{ nestedAttribute.displayName }}
                   </button>
@@ -186,16 +186,16 @@
                   {{ attribute.displayName }}
                 </button>
                 <mat-menu #nestedMenu="matMenu">
-                  <mat-form-field appearance="outline" class="w-full">
+                  <!-- <mat-form-field appearance="outline" class="w-full">
                     <input matInput #searchOperandParent class="p-2" name="search" [ngModelOptions]="{standalone:true}"
                       ngModel (click)="$event.stopPropagation()"
                       (ngModelChange)="filterAttributes(searchOperandParent.value,searchOperandParent,'Nested')"
                       placeholder="Search...">
-                  </mat-form-field>
+                  </mat-form-field> -->
                   <button mat-menu-item *ngIf="filteredDbAttributes.length === 0"> No record found </button>
                   <button
                     [ngClass]="{'selected-item': !!selectedOperand ? selectedOperand.split('.')[1] === nestedAttribute?.displayName : ''}"
-                    mat-menu-item *ngFor="let nestedAttribute of filteredDbAttributes"
+                    mat-menu-item *ngFor="let nestedAttribute of attribute.filteredAttributes"
                     (click)="selectAttribute(nestedAttribute, attribute, 'operand')">
                     {{ nestedAttribute.displayName }}
                   </button>

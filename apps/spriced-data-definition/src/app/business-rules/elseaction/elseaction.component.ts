@@ -148,7 +148,13 @@ export class ElseactionComponent {
     this.handleParentAttributes(attributeId, parentAttributeId, parentOperandId, operand);
     this.handleValueChange(value);
     this.filteredAttributes = this.dataRules.attributes;
-    this.filteredDbAttributes = this.dataRules.attributes.filter((item:any)=>item.attributes);
+    this.dataRules.attributes = this.dataRules.attributes.map((item: any) => {
+      if (item.attributes) {
+        return { ...item, filteredAttributes: item.attributes };
+      } else {
+        return item;
+      }
+    });
   }
 
   // Helper function to get values from actionForm
@@ -457,14 +463,18 @@ export class ElseactionComponent {
       });
     }
     setTimeout(() => {
-    control.focus();
-    },200);
-  }
-  //HANDLE FOR MAT MENU OPEN
-  matMenuOpen(control:any)
-  {
-    control.focus();
-  }
+      control.focus({
+        preventScroll: true
+      });
+      },200);
+    }
+  
+    matMenuOpen(control:any)
+    {
+      control.focus({
+        preventScroll: true
+      });
+    }
   //HANDLE FOR MAT MENU CLOSED
   matMenuClosed(control:any){
     control.value = '';
