@@ -26,6 +26,7 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { SettingsService } from "../../../components/settingsPopUp/service/settings.service";
+import { KeycloakService } from "keycloak-angular";
 // import { SettingsService } from "../../../components/settingsPopUp/service/settings.service";
 
 @Component({
@@ -136,6 +137,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<AuditDataComponent>,
     private entityDataService: EntityDataService,
     private settings: SettingsService,
+    private keycloak: KeycloakService,
     @Inject(MAT_DIALOG_DATA) public dialogData: any
   ) {
     debugger
@@ -293,9 +295,10 @@ export class AuditDataComponent implements OnInit, OnDestroy {
     this.dialogRef.close(null);
   }
   onAdd(value: any) {
+    let user = this.keycloak.getKeycloakInstance();
     let newAnnotation=
       {
-        "userid": this.selectedItem.id,
+        "userid": user?.profile?.email || this.selectedItem.id,
         "comment": value,
         "code":this.dialogData.selectedItem.code
     }
