@@ -72,7 +72,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       column: "updatedDate",
       name: "Last Updated On",
       pipe: (data: any) => {
-        return moment(data).format("MM/DD/YYYY HH:mm:ss");
+        return moment(data).format("MM/DD/YYYY");
       },
       sortColumn:"updated_date",
     },
@@ -133,6 +133,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   defaultCodeSetting = "namecode";
   globalSettings!: any;
   title = "View Transactions for ";
+  name:string=''
   constructor(
     public dialogRef: MatDialogRef<AuditDataComponent>,
     private entityDataService: EntityDataService,
@@ -140,17 +141,23 @@ export class AuditDataComponent implements OnInit, OnDestroy {
     private keycloak: KeycloakService,
     @Inject(MAT_DIALOG_DATA) public dialogData: any
   ) {
-    debugger
     this.currentSelectedEntity = dialogData.currentSelectedEntity as Entity;
     dialogRef.disableClose = true;
     this.globalSettings =
       this.settings.getGlobalSettings()?.displayFormat ||
       this.defaultCodeSetting;
+      if(this.dialogData.selectedItem.name == undefined || this.dialogData.selectedItem.name == null)
+      {
+      this.name=' '
+      }
+      else{
+      this.name=this.dialogData.selectedItem.name
+      }
     switch (this.globalSettings) {
       case "namecode": {
         this.title =
           this.title +
-          this.dialogData.selectedItem?.name +
+          this.name  +
           " {" +
           this.dialogData.selectedItem?.code +
           "}";
@@ -161,7 +168,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
           this.title +
           this.dialogData.selectedItem?.code +
           " {" +
-          this.dialogData.selectedItem?.name +
+          this.name +
           "}";
         break;
       }
