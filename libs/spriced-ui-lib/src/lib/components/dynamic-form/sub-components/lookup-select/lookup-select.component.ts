@@ -185,7 +185,7 @@ export class LookupSelectComponent
       return props.reduce((prev, cur) => {
         return prev === "-##"
           ? option[cur]
-          : `${prev == null ? "" : prev} ${this.renderDataWithCurlyBrace(
+          : this.value === '' ? "--Select--" : `${prev == null ? " " : prev} ${this.renderDataWithCurlyBrace(
               option[cur]
             )}`;
       }, "-##");
