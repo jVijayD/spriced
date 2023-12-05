@@ -128,14 +128,14 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   currentCriteria!: Criteria;
   globalSettings!: any;
   query?: any;
-
+  lastId = -1;
   entityDataLoadCompleted$ = new Subject();
 
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
   pageNumber: number = 0;
   relatedEntity: any;
-  ValidationMessage:any=[];
+  ValidationMessage: any = [];
   public showTooltip: boolean = false;
 
   defaultCodeSetting = "namecode";
@@ -164,8 +164,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.subscriptions.push(
       this.entityDataLoadCompleted$.subscribe((page: any) => {
         this.rows = page.content;
-        if(this.rows.length === 0)
-        {
+        if (this.rows.length === 0) {
           this.onClear();
         }
         this.totalElements = page.totalElements;
@@ -314,16 +313,15 @@ export class EntityDataComponent implements OnDestroy, OnInit {
    * @param query any
    */
   public addDisplayNameInFilter(query?: any) {
-    const updatedHeaders = this.headers.map((item :any) => {
-      const res = item.column.split(',');
+    const updatedHeaders = this.headers.map((item: any) => {
+      const res = item.column.split(",");
       if (res.length > 1) {
-        item.column =  res.find((el: any) => el.endsWith('_code'));
+        item.column = res.find((el: any) => el.endsWith("_code"));
       }
       return { ...item };
     });
 
-    if(!!query &&query.rules)
-    {
+    if (!!query && query.rules) {
       query.rules.forEach((el: any) => {
         const item: any = updatedHeaders.find(
           (elm: any) => elm.column === el.field
@@ -403,6 +401,15 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.currentCriteria
     );
   }
+
+  clearCriteria() {
+    if (this.currentCriteria) {
+      this.currentCriteria.filters = [];
+      this.currentCriteria.sorters = [];
+      this.currentCriteria.pager = { pageNumber: 0, pageSize: this.limit };
+    }
+  }
+
   onEdit() {
     if (this.selectedItem) {
       this.dialogService.openDialog(AddModelComponent, {
@@ -483,6 +490,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.dataGrid.table._internalColumns = [...[]];
     this.rows = [...[]];
     this.setFormData("", []);
+    this.clearCriteria();
   }
 
   onAudit() {
@@ -500,6 +508,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.currentSelectedEntity = undefined;
     this.dataGrid.table._internalColumns = [...[]];
     this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);
+    this.clearCriteria();
     this.createDynamicGrid(
       this.currentSelectedEntity,
       {
@@ -673,7 +682,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       const showSystemAttributes = globalSettings
         ? globalSettings.showSystem
         : false;
-        this.headers=[{
+      this.headers = [
+        {
           column: "",
           name: "",
           canAutoResize: false,
@@ -681,24 +691,25 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           width: 80,
           tooltip: true,
           tooltipTemplate: (row: any) => this.getErrorTooltip(row),
-          imgsrc:(row: any) => this.getImage(row) ,
-          showtooltip:(row: any) => !row.is_valid 
-        }]
-     let headers :Header[] = this.entityGridService.getGridHeaders(
+          imgsrc: (row: any) => this.getImage(row),
+          showtooltip: (row: any) => !row.is_valid,
+          className: "grid-image-icon",
+        },
+      ];
+      let headers: Header[] = this.entityGridService.getGridHeaders(
         entity,
         showSystemAttributes,
         globalSettings?.displayFormat || this.defaultCodeSetting
-      )
-      this.headers.push(...headers)
+      );
+      this.headers.push(...headers);
       this.loadEntityData(entity, criteria);
     }
   }
-  getErrorTooltip(row:any)
-  {
-  // this.entityDataService.loadValidationMessage(item) .subscribe((val) => {
+  getErrorTooltip(row: any) {
+    // this.entityDataService.loadValidationMessage(item) .subscribe((val) => {
     // console.log(val)
     // });
-    // this.ValidationMessage=[ 
+    // this.ValidationMessage=[
     //   {
     //       "rule": "rule 1",
     //       "message": " rule failed   "
@@ -708,11 +719,12 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     //       "message": " rule passed   "
     //   }
     //  ]
-     return this.ValidationMessage
+    return this.ValidationMessage;
   }
-  getImage(row:any)
-  {
-    return row.is_valid ? 'assets/images/valid.png' :'assets/images/invalid.png';
+  getImage(row: any) {
+    return row.is_valid
+      ? "assets/images/valid.png"
+      : "assets/images/invalid.png";
   }
   private loadEntityData(
     entity: Entity,
@@ -723,6 +735,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       const sort: any = { direction: "DESC", property: "updated_date" };
       criteria.sorters = [sort];
     }
+
+    //criteria = this.setDefaultCriteria(criteria, this.lastId);
     this.currentCriteria = criteria;
     if (entity) {
       this.applyEntitySettings(entity);
@@ -732,6 +746,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           .pipe(first())
           .subscribe({
             next: (page) => {
+              this.lastId =
+                page.content && page.content.length
+                  ? page.content[page.content.length - 1].id
+                  : -1;
               this.entityDataLoadCompleted$.next(page);
             },
             error: (err) => {
@@ -743,6 +761,35 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     } else {
       this.rows = [];
     }
+  }
+
+  private setDefaultCriteria(criteria: Criteria, lastId: number): Criteria {
+    let id =
+      criteria &&
+      criteria.pager &&
+      criteria.pager.pageSize * this.limit > lastId
+        ? criteria.pager.pageSize * criteria.pager.pageNumber
+        : lastId;
+    const filters: any = [
+      {
+        filterType: "CONDITION",
+        joinType: "NONE",
+        operatorType: "GREATER_THAN",
+        key: "id",
+        value: id,
+        dataType: "number",
+      },
+    ];
+    if (
+      (!criteria.sorters && !criteria.filters) ||
+      (criteria.sorters?.length == 0 && criteria.filters?.length == 0) ||
+      (criteria.sorters?.length == 0 &&
+        criteria.filters?.length == 1 &&
+        criteria.filters[0].key == "id")
+    ) {
+      criteria.filters = filters;
+    }
+    return criteria;
   }
 
   private applyEntitySettings(entity: Entity) {
@@ -876,8 +923,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       asyncValidations: [],
     };
   }
-  onRefresh()
-  {
-    this.onEntitySelectionChange(this.currentSelectedEntity as Entity)
+  onRefresh() {
+    this.onEntitySelectionChange(this.currentSelectedEntity as Entity);
   }
 }

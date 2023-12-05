@@ -182,9 +182,9 @@ body {
 .ngx-datatable .datatable-body .datatable-row-wrapper {
   border-bottom-width: 0.5px;
 }
-.ngx-datatable{
-          border-bottom-left-radius:  0.375rem;
-          border-bottom-right-radius:  0.375rem;
+.ngx-datatable {
+  border-bottom-left-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
 }
 
 .ngx-datatable.material
@@ -302,6 +302,13 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   display: flex;
   justify-content: space-between;
 }
+
+.grid-image-icon {
+  width: 20px !important;
+  height: 20px !important;
+  margin-top: 3px;
+}
+
 .page-header {
   @apply text-secondary-default font-medium text-base p-2;
 }
