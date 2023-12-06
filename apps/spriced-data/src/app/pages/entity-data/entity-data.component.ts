@@ -128,6 +128,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   currentCriteria!: Criteria;
   globalSettings!: any;
   query?: any;
+  columnSort: boolean = false;
+
   lastId = -1;
   entityDataLoadCompleted$ = new Subject();
 
@@ -235,8 +237,9 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       return { direction: sort.dir.toUpperCase(), property: sort.prop };
     });
 
+    this.columnSort = true;
     const criteria: Criteria = { ...this.currentCriteria, sorters: sorters };
-    this.loadEntityData(this.currentSelectedEntity as Entity, criteria, true);
+    this.loadEntityData(this.currentSelectedEntity as Entity, criteria, this.columnSort);
   }
 
   onItemSelected(e: any) {
@@ -505,6 +508,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   onEntitySelectionChange(entity: Entity | string) {
     this.selectedItem = null;
     this.pageNumber = 0;
+    this.columnSort = false;
     this.currentSelectedEntity = undefined;
     this.dataGrid.table._internalColumns = [...[]];
     this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);
@@ -731,7 +735,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     criteria: Criteria,
     columnSort?: boolean
   ) {
-    if (!columnSort) {
+    if (!this.columnSort) {
       const sort: any = { direction: "DESC", property: "updated_date" };
       criteria.sorters = [sort];
     }
