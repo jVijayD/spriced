@@ -26,6 +26,7 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { SettingsService } from "../../../components/settingsPopUp/service/settings.service";
+import { KeycloakService } from "keycloak-angular";
 // import { SettingsService } from "../../../components/settingsPopUp/service/settings.service";
 
 @Component({
@@ -71,7 +72,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       column: "updatedDate",
       name: "Last Updated On",
       pipe: (data: any) => {
-        return moment(data).format("MM/DD/YYYY HH:mm:ss");
+        return moment(data).format("MM/DD/YYYY");
       },
       sortColumn:"updated_date",
     },
@@ -132,23 +133,31 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   defaultCodeSetting = "namecode";
   globalSettings!: any;
   title = "View Transactions for ";
+  name:string=''
   constructor(
     public dialogRef: MatDialogRef<AuditDataComponent>,
     private entityDataService: EntityDataService,
     private settings: SettingsService,
+    private keycloak: KeycloakService,
     @Inject(MAT_DIALOG_DATA) public dialogData: any
   ) {
-    debugger
     this.currentSelectedEntity = dialogData.currentSelectedEntity as Entity;
     dialogRef.disableClose = true;
     this.globalSettings =
       this.settings.getGlobalSettings()?.displayFormat ||
       this.defaultCodeSetting;
+      if(this.dialogData.selectedItem.name == undefined || this.dialogData.selectedItem.name == null)
+      {
+      this.name=' '
+      }
+      else{
+      this.name=this.dialogData.selectedItem.name
+      }
     switch (this.globalSettings) {
       case "namecode": {
         this.title =
           this.title +
-          this.dialogData.selectedItem?.name +
+          this.name  +
           " {" +
           this.dialogData.selectedItem?.code +
           "}";
@@ -159,7 +168,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
           this.title +
           this.dialogData.selectedItem?.code +
           " {" +
-          this.dialogData.selectedItem?.name +
+          this.name +
           "}";
         break;
       }
@@ -247,7 +256,8 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   }
 
   createFilters(key:string,value:any,dataType:string){
-    return [{
+    return [
+      {
       filterType: "CONDITION",
       key:key,
       value:value,
@@ -280,12 +290,20 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       "dataType": "string"
   },
   {
+    "filterType": "CONDITION",
+    "key": "column_name",
+    "value": "Id",
+    "joinType": "AND",
+    "operatorType": "IS_NOT_EQUAL",
+    "dataType": "string"
+},
+  {
       "filterType": "CONDITION",
-      "key": "column_name",
-      "value": "Id",
+      "key": "record_id",
+      "value":  this.dialogData.selectedItem?.id,
       "joinType": "AND",
-      "operatorType": "IS_NOT_EQUAL",
-      "dataType": "string"
+      "operatorType": "EQUALS",
+      "dataType": "number"
   }]
   }  
 
@@ -293,9 +311,10 @@ export class AuditDataComponent implements OnInit, OnDestroy {
     this.dialogRef.close(null);
   }
   onAdd(value: any) {
+    let user = this.keycloak.getKeycloakInstance();
     let newAnnotation=
       {
-        "userid": this.selectedItem.id,
+        "userid": user?.profile?.email || this.selectedItem.id,
         "comment": value,
         "code":this.dialogData.selectedItem.code
     }

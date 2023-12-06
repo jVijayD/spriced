@@ -126,7 +126,7 @@ export class ViewTransactionsAdminComponent {
       column: "updatedDate",
       name: "Last Updated On",
       pipe: (data: any) => {
-        return moment(data).format("MM/DD/YYYY HH:mm:ss");
+        return moment(data).format("MM/DD/YYYY");
       },
       sortColumn:"updated_date"
     },
@@ -423,14 +423,26 @@ onRevert()
       "sorters": []
     }
 
-  this.transactionService.auditReversal(this.selectedItem,criteria).subscribe({
-    next:(res:any)=>{
-      this.snackbarService.success(res);
-      this.loadTransactionsData(this.selectedModel);
-    },
-    error:(err:any)=>{
-      this.snackbarService.error("The selected row cannot be reversed");
-    }
-  })
+
+    const dialogRef = this.dialogService.openConfirmDialoge({
+      message: "Do you want to Reverse?",
+      title: "Reverse Transaction",
+      icon: "undo",
+    });
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result == true) {
+        this.transactionService.auditReversal(this.selectedItem,criteria).subscribe({
+          next:(res:any)=>{
+            this.snackbarService.success(res);
+            this.loadTransactionsData(this.selectedModel);
+          },
+          error:(err:any)=>{
+            this.snackbarService.error("The selected row cannot be reversed");
+          }
+        })
+      }
+    });
+
+
 }
 }
