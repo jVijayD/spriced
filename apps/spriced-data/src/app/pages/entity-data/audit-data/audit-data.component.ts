@@ -290,6 +290,14 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       "dataType": "string"
   },
   {
+    "filterType": "CONDITION",
+    "key": "column_name",
+    "value": "Id",
+    "joinType": "AND",
+    "operatorType": "IS_NOT_EQUAL",
+    "dataType": "string"
+},
+  {
       "filterType": "CONDITION",
       "key": "record_id",
       "value":  this.dialogData.selectedItem?.id,
