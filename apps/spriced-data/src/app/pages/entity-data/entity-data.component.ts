@@ -924,6 +924,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     };
   }
   onRefresh() {
-    this.onEntitySelectionChange(this.currentSelectedEntity as Entity);
+    //this.onEntitySelectionChange(this.currentSelectedEntity as Entity);
+    this.loadEntityData(
+      this.currentSelectedEntity as Entity,
+      this.currentCriteria
+    );
   }
 }
