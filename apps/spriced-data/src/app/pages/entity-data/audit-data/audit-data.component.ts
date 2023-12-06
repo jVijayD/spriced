@@ -256,7 +256,8 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   }
 
   createFilters(key:string,value:any,dataType:string){
-    return [{
+    return [
+      {
       filterType: "CONDITION",
       key:key,
       value:value,
@@ -289,12 +290,20 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       "dataType": "string"
   },
   {
+    "filterType": "CONDITION",
+    "key": "column_name",
+    "value": "Id",
+    "joinType": "AND",
+    "operatorType": "IS_NOT_EQUAL",
+    "dataType": "string"
+},
+  {
       "filterType": "CONDITION",
-      "key": "column_name",
-      "value": "Id",
+      "key": "record_id",
+      "value":  this.dialogData.selectedItem?.id,
       "joinType": "AND",
-      "operatorType": "IS_NOT_EQUAL",
-      "dataType": "string"
+      "operatorType": "EQUALS",
+      "dataType": "number"
   }]
   }  
 
