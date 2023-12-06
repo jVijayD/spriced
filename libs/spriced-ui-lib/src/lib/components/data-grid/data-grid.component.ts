@@ -109,7 +109,7 @@ export class DataGridComponent implements AfterViewInit {
   tooltipTemplate: any;
 
   @Input()
-  page: any
+  page: any;
 
   @Input()
   validationMessage: any;
@@ -150,13 +150,14 @@ export class DataGridComponent implements AfterViewInit {
   }
 
   onSort(e: any) {
-    var headers: any  = this.headers.filter((item) =>item.column === e.sorts[0].prop);
+    var headers: any = this.headers.filter(
+      (item) => item.column === e.sorts[0].prop
+    );
     if (headers[0]?.sortColumn) {
-      e.sorts[0].prop = headers[0].sortColumn
-      e.column.prop = headers[0].sortColumn
+      e.sorts[0].prop = headers[0].sortColumn;
+      e.column.prop = headers[0].sortColumn;
       this.sort.emit(e);
-    }
-    else {
+    } else {
       this.sort.emit(e);
     }
   }
@@ -195,7 +196,6 @@ export class DataGridComponent implements AfterViewInit {
     //this.table.virtualization = false;
   }
 
-
   public renderData(data: any, itemHeader: Header) {
     if (itemHeader.pipe && itemHeader.pipe instanceof Function) {
       return itemHeader.pipe(data);
@@ -210,14 +210,13 @@ export class DataGridComponent implements AfterViewInit {
       return prev === "-##"
         ? row[cur]
         : `${prev == null ? "" : prev} ${this.renderDataWithCurlyBrace(
-          row[cur]
-        )}`;
+            row[cur]
+          )}`;
     }, "-##");
-
   }
 
   public openLink(linkUrl: string) {
-    window.open(linkUrl, 'blank');
+    window.open(linkUrl, "blank");
   }
 
   private renderDataWithCurlyBrace(data: any) {
@@ -246,12 +245,13 @@ export interface Header {
   checkbox?: boolean;
   tooltip?: boolean;
   tooltipTemplate?: any;
-  showtooltip?:any;
+  showtooltip?: any;
   action?: any;
   imgsrc?: any;
   disableCheckbox?: any;
   isLink?: boolean;
-  sortColumn?: any
+  sortColumn?: any;
+  className?: string;
 }
 
 export interface Paginate {
