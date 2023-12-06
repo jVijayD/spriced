@@ -43,6 +43,7 @@ import { DateFormatDirectiveYYYYMMDD } from "./directives/.dateformat-yyyymmdd.d
 import { LookupDialogComponent } from "./sub-components/lookup-select/lookup-dialog/lookup-dialog/lookup-dialog.component";
 import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
+import { DialogService } from "../dialoge/dialog.service";
 
 @NgModule({
   declarations: [
@@ -128,5 +129,6 @@ import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
     DateFormatDirectiveYYYY__MM__DD,
     CheckboxComponent,
   ],
+  providers: [DialogService]
 })
 export class DynamicFormModule {}
