@@ -99,8 +99,8 @@
               <ngx-datatable-column name="Name" [flexGrow]="3" [isTreeColumn]="true">
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                   <span style="display: inline-flex" class="ml-5">
-                    <mat-icon>account_tree</mat-icon>
-                    <span class="ml-2"> {{ value }}</span></span>
+                    <mat-icon *ngIf="row.name !== 'Show more...'">account_tree</mat-icon>
+                    <span class="ml-2" [ngClass]="row.name === 'Show more...' ? 'tex-style' : ''" (click)="handleShowMore(row)"> {{ value }}</span></span>
                 </ng-template>
               </ngx-datatable-column>
             </ngx-datatable>
