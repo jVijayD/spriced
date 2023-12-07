@@ -366,7 +366,6 @@ export class HierarchyTreeviewComponent {
         cr = {}
       }
       if (totalItem !== null) {
-        console.log((totalItem / 2) || 2, totalItem, '>>>?')
         cr = {
           ...cr,
           pager: {

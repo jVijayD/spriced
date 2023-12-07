@@ -128,7 +128,7 @@ export class HierarchyNewTabComponent {
     private hierarchyService: HierarchyServiceService,
     private fb: FormBuilder,
   ) {
-    
+
     this.onClearClick();
   }
   initForm() {
@@ -160,7 +160,7 @@ export class HierarchyNewTabComponent {
     this.hierarchyDetails = [];
     this.selectedModel = this.getModelById(hie.modelId);
     this.getEntitiesByModel(this.selectedModel, hie.entityId, hie, true);
-    }
+  }
 
   onSaveClick() {
     if (!this.selectedEntity || !this.selectedModel) { return; }
@@ -342,42 +342,66 @@ export class HierarchyNewTabComponent {
     this.hierarchyLevelNodes = [...this.hierarchyLevelNodes];
   }
   onTreeActionPreview(event: any) {
-    const index = event.rowIndex;
-    const row = event.row;
-    if (row.treeStatus === 'collapsed') {
-      row.treeStatus = 'loading';
+    if (event.row.name !== 'Show more...') {
+      const index = event.rowIndex;
+      const row = event.row;
+      if (row.treeStatus === 'collapsed') {
+        row.treeStatus = 'loading';
 
-      if (!row.loaded && this.hierarchyDetails.length != row.level) {
-        var hie = this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1 - row.level)
-        this.getChildNodes(row, (data: any) => {
-          data = data.content.map((d: PreviewTreeNode) => {
-            d.treeStatus = 'collapsed';
-            d.parentGrpId = row.grpId;
-            d.column = hie.refColumn;
-            // d.column = hie ? hie.refColumn : "";
-            d.tableId = hie.entityId;
-            // d.tableId = hie ? hie.tableId : 0;
-            d.name = d.code + (d.name && d.name.length ? `{${d.name}}` : "{}")
-            d.grpId = row.grpId + "-" + d.id
-            return d;
-          });
-          row.treeStatus = 'expanded';
-          row.loaded = true;
-          this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes, ...data];
-          this.cd.detectChanges();
-        }, hie);
-        return;
+        if (!row.loaded && this.hierarchyDetails.length != row.level) {
+          var hie = this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1 - row.level)
+          this.getChildNodes(row, null, (data: any) => {
+            const result = data;
+            let id: any;
+            data = data.content.map((d: PreviewTreeNode) => {
+              d.treeStatus = 'collapsed';
+              d.parentGrpId = row.grpId;
+              d.column = hie.refColumn;
+              // d.column = hie ? hie.refColumn : "";
+              d.tableId = hie.entityId;
+              // d.tableId = hie ? hie.tableId : 0;
+              d.name = d.code + (d.name && d.name.length ? `{${d.name}}` : "{}")
+              d.grpId = row.grpId + "-" + d.id
+              return d;
+            });
+            if (!!data || data.length > 0) {
+              const index: any = data.length - 1;
+              const item = data[index];
+              id = item.id + 1;
+            }
+            // this.filterHierarchyPreviewNodes = this.filterHierarchyPreviewNodes.filter((elm: any) => elm.grpId !== row.grpId);
+            if (result.totalElements !== 0 && result.totalElements !== data.length) {
+              data.push({
+                treeStatus: 'collapsed',
+                parentGrpId: row.grpId,
+                column: hie.refColumn,
+                // d.column = hie ? hie.refColumn : "";
+                tableId: hie.entityId,
+                id: row.id,
+                // d.tableId = hie ? hie.tableId : 0;
+                name: 'Show more...',
+                grpId: row.grpId + "-" + id
+                // d.name = d.code + (d.name && d.name.length ? `{${d.name}}` : "{}")
+              });
+            }
+            row.treeStatus = 'expanded';
+            row.loaded = true;
+            this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes, ...data];
+            this.cd.detectChanges();
+          }, hie);
+          return;
+        }
+        row.treeStatus = 'expanded';
+        this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes];
+        this.cd.detectChanges();
+      } else {
+        row.treeStatus = 'collapsed';
+        this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes];
+        this.cd.detectChanges();
       }
-      row.treeStatus = 'expanded';
-      this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes];
-      this.cd.detectChanges();
-    } else {
-      row.treeStatus = 'collapsed';
-      this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes];
-      this.cd.detectChanges();
     }
   }
-  getChildNodes(row: PreviewTreeNode, callBack: (v: any) => any, hie: HierarchyDetails) {
+  getChildNodes(row: PreviewTreeNode, totalItem: any, callBack: (v: any) => any, hie: HierarchyDetails) {
     if (hie) {
       let cr = {
         filters: [{
@@ -392,10 +416,84 @@ export class HierarchyNewTabComponent {
       if (!row.id) {
         cr = {}
       }
+      if (totalItem !== null) {
+        console.log((totalItem / 2) || 2, totalItem, '>>>?')
+        cr = {
+          ...cr,
+          pager: {
+            pageNumber: Math.ceil(totalItem / 50) || 50,
+            pageSize: cr.pager ? cr.pager!.pageSize : 50
+          }
+        }
+      } else {
+        cr = {
+          ...cr,
+          pager: {
+            pageNumber: 0,
+            pageSize: 50
+          }
+        }
+      }
       this.hierarchyService.loadEntityData(hie.entityId, cr).forEach(callBack);
     } else {
       row.treeStatus = "expanded";
       callBack([]);
+    }
+  }
+
+  public showMoreHierarchyNodes(row: any) {
+    row.entityId = row.tableId;
+    row.refColumn = row.column;
+    const totalItem = this.hierarchyPreviewNodes.filter((el: any) => el.level === row.level && el.parentGrpId === row.parentGrpId && el.name !== 'Show more...');
+    this.getChildNodes(row, totalItem.length, (data: any) => {
+      const result = data;
+      let id: any;
+      data = data.content.map((d: any) => {
+        d.treeStatus = 'collapsed';
+        d.parentGrpId = row.parentGrpId;
+        d.column = row.refColumn;
+        // d.column = hie ? hie.refColumn : "";
+        d.tableId = row.entityId;
+        // d.tableId = hie ? hie.tableId : 0;
+        d.name = d.code + (d.name && d.name.length ? `{${d.name}}` : "{}")
+        // d.name = d.code + (d.name && d.name.length ? `{${d.name}}` : "{}")
+        d.grpId = row.parentGrpId + "-" + d.id
+        return d;
+      });
+      if (!!data || data.length > 0) {
+        const index: any = data.length - 1;
+        const item = data[index];
+        id = item.id + 1;
+      }
+      this.hierarchyPreviewNodes = this.hierarchyPreviewNodes.filter((elm: any) => elm.grpId !== row.grpId);
+      let total = totalItem.length + 50
+      total = total > result.totalElements ? result.totalElements : total;
+      if (result.totalElements !== 0 && result.totalElements !== total) {
+        data.push({
+          treeStatus: 'collapsed',
+          parentGrpId: row.parentGrpId,
+          column: row.refColumn,
+          // d.column = hie ? hie.refColumn : "";
+          tableId: row.entityId,
+          id: row.id,
+          // d.tableId = hie ? hie.tableId : 0;
+          name: 'Show more...',
+          grpId: row.parentGrpId + "-" + id
+          // d.name = d.code + (d.name && d.name.length ? `{${d.name}}` : "{}")
+        });
+      }
+      row.treeStatus = 'expanded';
+      row.loaded = true;
+      this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes, ...data];
+      this.cd.detectChanges();
+    }, row);
+    return;
+  }
+
+  public handleShowMore(row: any) {
+    if (row.name === 'Show more...') {
+      this.showMoreHierarchyNodes(row);
+      return
     }
   }
 }
