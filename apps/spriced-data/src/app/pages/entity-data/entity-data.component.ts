@@ -696,7 +696,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           tooltip: true,
           tooltipTemplate: (row: any) => this.getErrorTooltip(row),
           imgsrc: (row: any) => this.getImage(row),
-          showtooltip: (row: any) => !row.is_valid,
+          showtooltip: (row: any) => !row.is_valid && this.ValidationMessage.length!==0,
           className: "grid-image-icon",
         },
       ];
