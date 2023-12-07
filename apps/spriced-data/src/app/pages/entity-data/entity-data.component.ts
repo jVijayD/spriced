@@ -307,6 +307,11 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           this.currentSelectedEntity as Entity,
           this.currentCriteria
         );
+        this.createDynamicGrid(
+          this.currentSelectedEntity as Entity,
+          this.currentCriteria,
+          this.globalSettings
+        );
       }
     });
   }

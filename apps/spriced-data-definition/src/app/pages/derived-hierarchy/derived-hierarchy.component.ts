@@ -106,7 +106,7 @@ export class DerivedHierarchyComponent {
   pageNumber: number = 0;
   relatedEntity: any;
   public showTooltip: boolean = false;
-  public entity:any;
+  public entity: any;
   defaultCodeSetting = "namecode";
   hierarchyData: any;
 
@@ -138,14 +138,14 @@ export class DerivedHierarchyComponent {
           setTimeout(() => {
             this.derivedHierarchy.onBind(e, this.globalSettings?.displayFormat);
             setTimeout(() => {
-            if (this.derivedHierarchy.filterHierarchyPreviewNodes.length > 0) {
-              const level =  this.hierarchyData.details.length - 1;
-              const tableName = this.hierarchyData.details.find((el: any) => el.groupLevel === level);
-              this.currentSelectedEntity!.displayName = tableName.tabledisplayname;
+              if (this.derivedHierarchy.filterHierarchyPreviewNodes.length > 0) {
+                const level = this.hierarchyData.details.length - 1;
+                const tableName = this.hierarchyData.details.find((el: any) => el.groupLevel === level);
+                this.currentSelectedEntity!.displayName = tableName.tabledisplayname;
               }
             }, 1000);
           }, 500);
-          
+
         }
       });
     }
@@ -168,8 +168,7 @@ export class DerivedHierarchyComponent {
     );
   }
 
-  public goToDerivedHierarchy()
-  {
+  public goToDerivedHierarchy() {
     this.router.navigate(['/spriced-data-definition/hierarchy-definition'], {
       queryParams: { model_id: this.currentSelectedEntity?.groupId },
     });
@@ -307,6 +306,11 @@ export class DerivedHierarchyComponent {
         this.loadEntityData(
           this.currentSelectedEntity as Entity,
           this.currentCriteria
+        );
+        this.createDynamicGrid(
+          this.currentSelectedEntity as Entity,
+          this.currentCriteria,
+          this.globalSettings
         );
       }
     });
@@ -456,7 +460,7 @@ export class DerivedHierarchyComponent {
           this.globalSettings
         );
         this.createDynamicUIMapping(this.currentSelectedEntity);
-        this.derivedHierarchy.onBind(this.hierarchyData,this.globalSettings?.displayFormat);
+        this.derivedHierarchy.onBind(this.hierarchyData, this.globalSettings?.displayFormat);
       }
     });
   }
@@ -478,13 +482,13 @@ export class DerivedHierarchyComponent {
     this.setFormData("", []);
   }
 
-  getEntityFormHierarchyItem(event:any){
+  getEntityFormHierarchyItem(event: any) {
     setTimeout(() => {
-      const entity = this.entitySelection.entities.find( elm => elm.id === event.id);
+      const entity = this.entitySelection.entities.find(elm => elm.id === event.id);
       if (!!this.currentSelectedEntity!.id && this.derivedHierarchy.currentRowId === 0 && this.currentSelectedEntity!.id === event.id) {
-        this.currentSelectedEntity = ({...entity, displayName: event?.displayName}) as Entity;
+        this.currentSelectedEntity = ({ ...entity, displayName: event?.displayName }) as Entity;
       } else {
-        this.entitySelection.onEntitySelectionChange({ value : {...entity, displayName: event?.displayName, filter: event?.filter} } as any);
+        this.entitySelection.onEntitySelectionChange({ value: { ...entity, displayName: event?.displayName, filter: event?.filter } } as any);
       }
     }, 500);
   }
