@@ -169,10 +169,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         if (this.rows.length === 0) {
           this.onClear();
         }
-        if(this.pageNumber > 0)
-        {
-          this.dataGrid.table._offset = this.pageNumber;
-        }
         this.totalElements = page.totalElements;
         const selectionTimer = timer(TIMER_CONST);
         if (this.rows && this.rows?.length > 0) {
@@ -242,6 +238,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     });
 
     this.columnSort = true;
+    this.dataGrid.table._offset = this.pageNumber > 0 ? this.pageNumber : 0;
     const criteria: Criteria = { ...this.currentCriteria, sorters: sorters };
     this.loadEntityData(this.currentSelectedEntity as Entity, criteria, this.columnSort);
   }
