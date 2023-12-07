@@ -50,6 +50,8 @@ export class LookupSelectComponent
   subscriptions: Subscription[] = [];
   totalCount: number = 0;
   initialClick = false;
+  selectedItemId:any;
+  selectedItem:any;
   loading = false;
   @Input()
   set control(selectControl: GenericControl) {
@@ -80,10 +82,14 @@ export class LookupSelectComponent
     this.subscriptions.push(
       this.dataPopulation$.subscribe((items) => {
         this.filteredSource = items;
+        if(!this.selectedItem && this.selectedItemId){
+          this.selectedItem = items.find((item:any)=>item.id === this.selectedItemId);
+        }
         if (this.dialogReference) {
           this.dialogReference.componentInstance.upDatedData({
             value: items,
             total: this.totalCount,
+            selectedItem:this.selectedItem
           });
         }
         this.totalCount = this.count;
@@ -155,6 +161,7 @@ export class LookupSelectComponent
     if (!this.initialClick) {
       this.loading = true;
       this.initialClick = true;
+      this.selectedItemId = this.source.length > 0 ? this.source[0].id : null;
       this.source = [];
       this.populateSourceOnDemand();
     }
@@ -183,7 +190,7 @@ export class LookupSelectComponent
         }
       }
       return props.reduce((prev, cur) => {
-        return prev === "-##"
+        return this.value === '' ? "--Select--" : prev === "-##"
           ? option[cur]
           : this.value === '' ? "--Select--" : `${prev == null ? " " : prev} ${this.renderDataWithCurlyBrace(
               option[cur]
@@ -205,7 +212,7 @@ export class LookupSelectComponent
           )}`;
     }, "-##");
   }
-  openPopup(): void {
+  openPopup(): void {  
     const dialogRef = this.dialog.open(LookupDialogComponent, {
       width: "700px",
       height: "620px",
@@ -213,12 +220,14 @@ export class LookupSelectComponent
         value: this.source,
         total: this.totalCount,
         pageSize: this.pageSize,
+        selectedItem:this.selectedItem
       },
       hasBackdrop: false,
     });
     this.dialogReference = dialogRef;
 
     dialogRef.afterClosed().subscribe(({ data }: any) => {
+      this.selectedItem = data;
       const lookupControl = this._control as LookupSelectControl;
       this.writeValue(data.id);
       this.lookupDataId = data.id;
