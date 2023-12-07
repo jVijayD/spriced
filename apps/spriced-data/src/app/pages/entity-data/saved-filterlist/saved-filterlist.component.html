@@ -1,0 +1,41 @@
+<div class="container">
+    <label class="text-secondary-dark m-2 font-bold text-lg"
+      >Apply filter</label
+    >
+  
+    <div mat-dialog-content class="content">
+        <sp-one-col>
+            <sp-data-grid
+              class="w-full h-full"
+              #dataGrid
+              title="Filter List"
+              [enableRowIndex]="false"
+              [isArray]="false"
+              [headers]="headers"
+              [rows]="rows"
+              [rowHeight]="20"
+              [headerHeight]="30"
+              [footerHeight]="0"
+              [columnMode]="columnMode"
+              [virtualScroll]="true"
+              [selectionType]="selectionType"
+              [limit]="10"
+              [isExternalPaging]="true"
+              [isExternalSorting]="false"           
+              [count]="totalElements"
+              (itemSelected)="onItemSelected($event)"
+            >
+            </sp-data-grid>
+            </sp-one-col>
+    </div>
+    <div mat-dialog-actions class="actions">
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+      >
+        Apply
+      </button>
+    </div>
+  </div>
+  
