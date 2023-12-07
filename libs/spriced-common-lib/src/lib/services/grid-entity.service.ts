@@ -14,6 +14,8 @@ export class GridEntityService {
         return {
           name: col.column,
           displayName: col.name,
+          formType: col.formType,
+          referencedTableId: col.referencedTableId,
           dataType: col.dataType || "string",
           options: col.dataType === "category" ? col.options : undefined,
         };
@@ -52,6 +54,8 @@ export class GridEntityService {
           dataType: this.getColumnDataType(attr),
           options: this.getOptions(attr),
           width: attr.width || 0,
+          formType: attr.type,
+          referencedTableId: attr?.referencedTableId || null,
           pipe: (data: any) => {
             return this.getTransform(data, attr);
           },
