@@ -394,7 +394,7 @@ export class ListComponent implements OnInit, OnDestroy {
       maxWidth: '100%',
       width: 'auto',
       height: '140px',
-      hasBackdrop: false,
+      disableClose: true,
       data: {
         message: message,
         button: {
