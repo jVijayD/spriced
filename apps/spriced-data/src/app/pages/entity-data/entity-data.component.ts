@@ -321,17 +321,28 @@ export class EntityDataComponent implements OnDestroy, OnInit {
             groupId:this.currentSelectedEntity?.groupId,
             filterName: this.getToolTipTemplate(this.query).replace(/<[^>]*>/g, '')
           } 
+        let exist=false
         if(this.savedFilters.length!==0)
          { 
          this.savedFilters.map((item: any) => {
-           if(item.entityId!==this.currentSelectedEntity?.id && 
-            item.filterName!==value.filterName)
+           if(item.entityId==this.currentSelectedEntity?.id && 
+            item.filterName==value.filterName)
             {
-              this.savedFilters.push(value)
-              localStorage.setItem("savedFilters", JSON.stringify(this.savedFilters))
+              exist= true
             }
-           
+            else
+            {
+              exist= false
+            }
           })}
+          console.log(exist)
+      if(!exist)
+         {
+           this.savedFilters.push(value)
+           console.log(this.savedFilters)
+           localStorage.setItem("savedFilters", JSON.stringify(this.savedFilters))
+
+         }
         }
       }
     });
@@ -746,7 +757,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           tooltip: true,
           tooltipTemplate: (row: any) => this.getErrorTooltip(row),
           imgsrc: (row: any) => this.getImage(row),
-          showtooltip: (row: any) => !row.is_valid && this.ValidationMessage.length!==0,
+          showtooltip: (row: any) => !row.is_valid,
           className: "grid-image-icon",
         },
       ];
