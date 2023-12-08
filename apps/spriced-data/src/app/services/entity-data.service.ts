@@ -209,4 +209,21 @@ export class EntityDataService {
   loadEntity(id: number): Observable<any> {
     return this.http.get(`${this.def_url}/entities/${id}`);
   }
+  loadFilters()
+  {
+   let filter:any=localStorage.getItem("savedFilters")
+   return JSON.parse(filter) || []
+  }
+  addFilters(filter:any)
+  {
+    localStorage.setItem("savedFilters", JSON.stringify(filter))
+  }
+  deleteFilter(item:any)
+  {
+    let filters:any=this.loadFilters()
+    filters=filters.filter((val:any)=> {
+      return item.filterName!==val.filterName
+    })
+    localStorage.setItem("savedFilters", JSON.stringify(filters))
+  }
 }

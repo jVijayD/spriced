@@ -1,16 +1,17 @@
 import { Component, Inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { DataGridComponent, Header, OneColComponent } from "@spriced-frontend/spriced-ui-lib";
+import { DataGridComponent, Header, HeaderActionComponent, OneColComponent } from "@spriced-frontend/spriced-ui-lib";
 import { MatButtonModule } from "@angular/material/button";
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { ColumnMode, SelectionType } from "@swimlane/ngx-datatable";
 import { equal } from "assert";
 import { DialogRef } from "@angular/cdk/dialog";
+import { EntityDataService } from "../../../services/entity-data.service";
 
 @Component({
   selector: "sp-saved-filterlist",
   standalone: true,
-  imports: [CommonModule, MatButtonModule, DataGridComponent, MatDialogModule, OneColComponent],
+  imports: [CommonModule, MatButtonModule, DataGridComponent, MatDialogModule, OneColComponent,HeaderActionComponent],
   templateUrl: "./saved-filterlist.component.html",
   styleUrls: ["./saved-filterlist.component.scss"],
 })
@@ -20,7 +21,8 @@ export class SavedFilterlistComponent {
   totalElements = 0;
 
   constructor(public dialogRef: MatDialogRef<SavedFilterlistComponent>, 
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private entityDataService:EntityDataService
   ) {
     this.rows = data
     this.selectedItem = this.rows[0]
@@ -39,14 +41,22 @@ export class SavedFilterlistComponent {
   selectionType: SelectionType = SelectionType.single;
   onItemSelected(event: any) {
     this.selectedItem = event
-    console.log(this.selectedItem)
   }
   closeDialog() {
     this.dialogRef.close()
   }
   onApply() {
-    console.log(this.selectedItem)
     this.dialogRef.close(this.selectedItem)
 
+  }
+  onDelete()
+  {
+this.entityDataService.deleteFilter(this.selectedItem)
+console.log(this.rows,this.selectedItem)
+this.rows=this.rows.filter((val:any)=> {
+  console.log(val.filterName,this.selectedItem.filterName)
+  return this.selectedItem.filterName !=val.filterName
+  })
+  console.log(this.rows)
   }
 }

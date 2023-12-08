@@ -312,8 +312,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         );
         if(val.button=='save')
         {
-          this.savedFilters=localStorage.getItem("savedFilters") 
-          this.savedFilters=JSON.parse(this.savedFilters) || []
+          this.savedFilters=this.entityDataService.loadFilters() 
           let value ={
             query:dialogResult.componentInstance.data.query,
             val:val,
@@ -340,8 +339,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
          {
            this.savedFilters.push(value)
            console.log(this.savedFilters)
-           localStorage.setItem("savedFilters", JSON.stringify(this.savedFilters))
-
+           this.entityDataService.addFilters(this.savedFilters)
          }
         }
       }
@@ -350,8 +348,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onSavedFilter()
   {
-   this.savedFilters=localStorage.getItem("savedFilters")
-   this.savedFilters=JSON.parse(this.savedFilters) || []
+   this.savedFilters=this.entityDataService.loadFilters()
    this.savedFilters= this.savedFilters.filter((item: any) => {
     return item.entityId==this.currentSelectedEntity?.id && 
     item.groupId==this.currentSelectedEntity?.groupId

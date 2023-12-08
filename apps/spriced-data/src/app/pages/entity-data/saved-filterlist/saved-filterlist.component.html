@@ -19,11 +19,23 @@
               [selectionType]="selectionType"
               [count]="totalElements"
               (itemSelected)="onItemSelected($event)"
+              [selected]="!!selectedItem ? [selectedItem] : []"
             >
-            </sp-data-grid>
+            <sp-header-action
+            icon="delete"
+            text="Delete Filter"
+            title="Delete Filter"
+            [disabled]="
+              this.selectedItem === null ||
+              this.selectedItem === undefined
+            "
+            (actionClick)="onDelete()"
+          ></sp-header-action>
+        </sp-data-grid>
+
     </div>
     <div class="footer">
-      <button mat-raised-button color="primary" (click)="onApply()" [disabled]="selectedItem==null"  class="ml-2">
+      <button mat-raised-button color="primary" (click)="onApply()" [disabled]="selectedItem==null || this.selectedItem == undefined"  class="ml-2">
         Apply
       </button>
       <button mat-raised-button color="accent" (click)="closeDialog()" class="ml-2">
