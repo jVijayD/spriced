@@ -238,6 +238,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     });
 
     this.columnSort = true;
+    this.dataGrid.table._offset = this.pageNumber;
     const criteria: Criteria = { ...this.currentCriteria, sorters: sorters };
     this.loadEntityData(this.currentSelectedEntity as Entity, criteria, this.columnSort);
   }
@@ -701,7 +702,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           tooltip: true,
           tooltipTemplate: (row: any) => this.getErrorTooltip(row),
           imgsrc: (row: any) => this.getImage(row),
-          showtooltip: (row: any) => !row.is_valid,
+          showtooltip: (row: any) => !row.is_valid && this.ValidationMessage.length!==0,
           className: "grid-image-icon",
         },
       ];
