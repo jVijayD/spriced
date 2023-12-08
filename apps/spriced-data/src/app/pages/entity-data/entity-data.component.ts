@@ -321,25 +321,17 @@ export class EntityDataComponent implements OnDestroy, OnInit {
             groupId:this.currentSelectedEntity?.groupId,
             filterName: this.getToolTipTemplate(this.query).replace(/<[^>]*>/g, '')
           } 
-        let exist=false
         if(this.savedFilters.length!==0)
          { 
-          exist=this.savedFilters.map((item: any) => {
-           if(item.entityId==this.currentSelectedEntity?.id && 
-            item.filterName==value.filterName)
+         this.savedFilters.map((item: any) => {
+           if(item.entityId!==this.currentSelectedEntity?.id && 
+            item.filterName!==value.filterName)
             {
-              return true
+              this.savedFilters.push(value)
+              localStorage.setItem("savedFilters", JSON.stringify(this.savedFilters))
             }
-            else
-            {
-              return false
-            }
+           
           })}
-      if(!exist)
-         {
-           this.savedFilters.push(value)
-           localStorage.setItem("savedFilters", JSON.stringify(this.savedFilters))
-         }
         }
       }
     });
