@@ -1,10 +1,11 @@
-import { Component } from "@angular/core";
+import { Component, Inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { DataGridComponent, Header, OneColComponent } from "@spriced-frontend/spriced-ui-lib";
 import { MatButtonModule } from "@angular/material/button";
-import { MatDialogModule } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { ColumnMode, SelectionType } from "@swimlane/ngx-datatable";
 import { equal } from "assert";
+import { DialogRef } from "@angular/cdk/dialog";
 
 @Component({
   selector: "sp-saved-filterlist",
@@ -14,17 +15,21 @@ import { equal } from "assert";
   styleUrls: ["./saved-filterlist.component.scss"],
 })
 export class SavedFilterlistComponent {
+  rows: any[] = []
+  selectedItem: any = null;
+  totalElements = 0;
+
+  constructor(public dialogRef: MatDialogRef<SavedFilterlistComponent>, 
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    this.rows = data
+    this.selectedItem = this.rows[0]
+    this.totalElements = data.length;
+  }
   headers: Header[] = [
     {
-      column: "Name",
-      name: "name",
-      canAutoResize: true,
-      isSortable: false,
-      width: 100,
-    },
-    {
-      column: "Action",
-      name: "action",
+      column: "filterName",
+      name: "Name",
       canAutoResize: true,
       isSortable: false,
       width: 100,
@@ -32,40 +37,16 @@ export class SavedFilterlistComponent {
   ]
   columnMode: ColumnMode = ColumnMode.force;
   selectionType: SelectionType = SelectionType.single;
-  totalElements = 10000;
-  rows: any[] = [{
-    name: "name is equal to sdjhg",
-    action: 'apply'
-  },
-  {
-    name: "name is equal to sdjhg",
-    action: 'apply'
-  },
-  {
-    name: "name is equal to sdjhg",
-    action: 'apply'
-  },
-  {
-    name: "name is equal to sdjhg",
-    action: 'apply'
-  },
-  {
-    name: "name is equal to sdjhg",
-    action: 'apply'
-  },
-  {
-    name: "name is equal to sdjhg",
-    action: 'apply'
-  },
-  {
-    name: "name is equal to sdjhg",
-    action: 'apply'
-  },
-
-  ];
-  selectedItem: any = null;
-
   onItemSelected(event: any) {
+    this.selectedItem = event
+    console.log(this.selectedItem)
+  }
+  closeDialog() {
+    this.dialogRef.close()
+  }
+  onApply() {
+    console.log(this.selectedItem)
+    this.dialogRef.close(this.selectedItem)
 
   }
 }

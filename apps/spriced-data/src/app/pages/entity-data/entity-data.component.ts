@@ -142,6 +142,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   public showTooltip: boolean = false;
 
   defaultCodeSetting = "namecode";
+  savedFilters: any=[];
 
   constructor(
     private snackbarService: SnackBarService,
@@ -302,14 +303,70 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     dialogResult.afterClosed().subscribe((val) => {
       if (val) {
         this.query = dialogResult.componentInstance.data.query;
+        console.log(this.query)
         this.addDisplayNameInFilter(this.query);
         this.currentCriteria.filters = val;
         this.loadEntityData(
           this.currentSelectedEntity as Entity,
           this.currentCriteria
         );
+        if(val.button=='save')
+        {
+          this.savedFilters=localStorage.getItem("savedFilters") 
+          this.savedFilters=JSON.parse(this.savedFilters) || []
+          let value ={
+            query:dialogResult.componentInstance.data.query,
+            val:val,
+            entityId:this.currentSelectedEntity?.id,
+            groupId:this.currentSelectedEntity?.groupId,
+            filterName: this.getToolTipTemplate(this.query).replace(/<[^>]*>/g, '')
+          } 
+        let exist=false
+        if(this.savedFilters.length!==0)
+         { 
+          exist=this.savedFilters.map((item: any) => {
+           if(item.entityId==this.currentSelectedEntity?.id && 
+            item.filterName==value.filterName)
+            {
+              return true
+            }
+            else
+            {
+              return false
+            }
+          })}
+      if(!exist)
+         {
+           this.savedFilters.push(value)
+           localStorage.setItem("savedFilters", JSON.stringify(this.savedFilters))
+         }
+        }
       }
     });
+  }
+
+  onSavedFilter()
+  {
+   this.savedFilters=localStorage.getItem("savedFilters")
+   this.savedFilters=JSON.parse(this.savedFilters) || []
+   this.savedFilters= this.savedFilters.filter((item: any) => {
+    return item.entityId==this.currentSelectedEntity?.id && 
+    item.groupId==this.currentSelectedEntity?.groupId
+  });
+  const dialogResult = this.dialogService.openDialog(SavedFilterlistComponent, {
+      data:this.savedFilters
+    });
+    dialogResult.afterClosed().subscribe((val) => {
+      if (val) {
+        this.query = val.query;
+        this.addDisplayNameInFilter(this.query);
+        this.currentCriteria.filters = val.val;
+        this.loadEntityData(
+          this.currentSelectedEntity as Entity,
+          this.currentCriteria
+        );
+      }
+    })
   }
 
   /**
@@ -584,13 +641,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   //       };
   //     });
   // }
-
-
-  onSavedFilter()
-  {
-    this.dialogService.openDialog(SavedFilterlistComponent, {
-    });
-  }
 
   private deleteEntityData(entityDataId: number) {
     return this.entityDataService

@@ -1,10 +1,8 @@
 <div class="container">
     <label class="text-secondary-dark m-2 font-bold text-lg"
-      >Apply filter</label
+      >Saved filters</label
     >
-  
-    <div mat-dialog-content class="content">
-        <sp-one-col>
+    <div  class="content">
             <sp-data-grid
               class="w-full h-full"
               #dataGrid
@@ -19,22 +17,17 @@
               [columnMode]="columnMode"
               [virtualScroll]="true"
               [selectionType]="selectionType"
-              [limit]="10"
-              [isExternalPaging]="true"
-              [isExternalSorting]="false"           
               [count]="totalElements"
               (itemSelected)="onItemSelected($event)"
             >
             </sp-data-grid>
-            </sp-one-col>
     </div>
-    <div mat-dialog-actions class="actions">
-      <button
-        mat-raised-button
-        color="primary"
-        type="submit"
-      >
+    <div class="footer">
+      <button mat-raised-button color="primary" (click)="onApply()" [disabled]="selectedItem==null"  class="ml-2">
         Apply
+      </button>
+      <button mat-raised-button color="accent" (click)="closeDialog()" class="ml-2">
+        Cancel
       </button>
     </div>
   </div>
