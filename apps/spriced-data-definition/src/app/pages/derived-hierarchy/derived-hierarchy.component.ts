@@ -145,7 +145,6 @@ export class DerivedHierarchyComponent {
               }
             }, 1000);
           }, 500);
-
         }
       });
     }
@@ -290,11 +289,13 @@ export class DerivedHierarchyComponent {
   }
 
   onFilter() {
+    const headers = this.addDisplayNameInFilter();
     const dialogResult = this.dialogService.openFilterDialog({
       persistValueOnFieldChange: true,
-      columns: this.entityGridService.getFilterColumns(this.headers),
+      columns: this.entityGridService.getFilterColumns(headers),
       emptyMessage: "Please select filter criteria.",
       config: null,
+      displayFormat: this.globalSettings.displayFormat,
       query: this.query,
     });
 
@@ -307,23 +308,29 @@ export class DerivedHierarchyComponent {
           this.currentSelectedEntity as Entity,
           this.currentCriteria
         );
-        this.createDynamicGrid(
-          this.currentSelectedEntity as Entity,
-          this.currentCriteria,
-          this.globalSettings
-        );
       }
     });
   }
 
   /**
-   * HANDLE THIS FUNCTION FOR ADD DISPLAY NAME IN FILTER QUERY
-   * @param query any
-   */
-  public addDisplayNameInFilter(query: any) {
-    if (query.rules) {
+     * HANDLE THIS FUNCTION FOR ADD DISPLAY NAME IN FILTER QUERY
+     * @param query any
+     */
+  public addDisplayNameInFilter(query?: any) {
+    const updatedHeaders = this.headers.map((item: any) => {
+      const res = item.column.split(",");
+      if (res.length > 1) {
+        const col = res.find((el: any) => el.endsWith("_code"));
+        if (!!col) {
+          return { ...item, column: col };
+        }
+      }
+      return item
+    });
+
+    if (!!query && query.rules) {
       query.rules.forEach((el: any) => {
-        const item: any = this.headers.find(
+        const item: any = updatedHeaders.find(
           (elm: any) => elm.column === el.field
         );
         if (el?.rules && el?.rules.length > 0) {
@@ -335,6 +342,7 @@ export class DerivedHierarchyComponent {
         return;
       });
     }
+    return updatedHeaders;
   }
 
   public getToolTipTemplate(conditions: any): string {
