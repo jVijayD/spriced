@@ -81,6 +81,7 @@ export class LookupDialogComponent {
    upDatedData(newData:any){
     this.rows = newData.value;
     this.count = newData.total;
+    this.selectedItem = newData.selectedItem;
    }
    onFilter(){
     const dialogResult = this.dialogService.openFilterDialog({
