@@ -54,6 +54,7 @@ import { CustomToolTipComponent } from "libs/spriced-ui-lib/src/lib/components/c
 import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components/directive/tool-tip-renderer.directive";
 import { EntitySelectionComponent } from "../entity-selection/entity-selection.component";
 
+
 const TIMER_CONST = 300;
 
 @Component({
@@ -187,22 +188,13 @@ export class DerivedHierarchyComponent {
     const pathParams: any = {
       modelId: this.currentSelectedEntity?.groupId,
       entityId: data,
-      hierarchyId: this.hierarchyId
     };
     const pathSegments = Object.keys(pathParams)
-      .map((key) => encodeURIComponent(pathParams[key]))
-      .join("/");
-    const url = this.replaceEndNumbers(window.location.href, data);; // Replace this with the desired URL
-    const newTab: any = window.open(url, "_blank");
-    newTab.focus();
-
-    // const dialogReference = this.dialogService.openDialog(
-    //   LookupPopupComponent,
-    //   {
-    //     data: data,
-    //   }
-    // );
-    // dialogReference.afterClosed().subscribe(() => { });
+    .map((key) => encodeURIComponent(pathParams[key]))
+    .join("/");
+      const url = "spriced-data/"+pathSegments;
+      const newTab: any = window.open(url, "_blank");
+      newTab.focus();
   }
 
   private replaceEndNumbers(path: string, newNumber: number): string {
