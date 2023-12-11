@@ -238,6 +238,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     });
 
     this.columnSort = true;
+    this.dataGrid.table._offset = this.pageNumber;
     const criteria: Criteria = { ...this.currentCriteria, sorters: sorters };
     this.loadEntityData(this.currentSelectedEntity as Entity, criteria, this.columnSort);
   }
