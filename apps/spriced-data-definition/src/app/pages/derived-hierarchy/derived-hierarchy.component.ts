@@ -289,10 +289,10 @@ export class DerivedHierarchyComponent {
   }
 
   onFilter() {
-    this.addDisplayNameInFilter();
+    const headers = this.addDisplayNameInFilter();
     const dialogResult = this.dialogService.openFilterDialog({
       persistValueOnFieldChange: true,
-      columns: this.entityGridService.getFilterColumns(this.headers),
+      columns: this.entityGridService.getFilterColumns(headers),
       emptyMessage: "Please select filter criteria.",
       config: null,
       displayFormat: this.globalSettings.displayFormat,
@@ -320,9 +320,12 @@ export class DerivedHierarchyComponent {
     const updatedHeaders = this.headers.map((item: any) => {
       const res = item.column.split(",");
       if (res.length > 1) {
-        item.column = res.find((el: any) => el.endsWith("_code"));
+        const col = res.find((el: any) => el.endsWith("_code"));
+        if (!!col) {
+          return { ...item, column: col };
+        }
       }
-      return { ...item };
+      return item
     });
 
     if (!!query && query.rules) {
@@ -339,6 +342,7 @@ export class DerivedHierarchyComponent {
         return;
       });
     }
+    return updatedHeaders;
   }
 
   public getToolTipTemplate(conditions: any): string {
