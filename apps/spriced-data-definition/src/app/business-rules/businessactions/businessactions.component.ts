@@ -443,7 +443,6 @@ export class BusinessactionsComponent implements OnInit {
 
   // HANDLE FOR MAT MENU SEARCH
   filterAttributes(value:any,control?:any,text?:string){
-    debugger
     if(text ==='Parent' || value===''){
       this.filteredAttributes = this.dataRules?.attributes.filter((item: any) => {
         return (

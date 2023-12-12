@@ -53,6 +53,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { CustomToolTipComponent } from "libs/spriced-ui-lib/src/lib/components/custom-tool-tip/custom-tool-tip.component";
 import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components/directive/tool-tip-renderer.directive";
 import { EntitySelectionComponent } from "../entity-selection/entity-selection.component";
+import { AuditDataComponent } from "@spriced-frontend/spriced-ui-lib";
 
 const TIMER_CONST = 300;
 
@@ -501,14 +502,14 @@ export class DerivedHierarchyComponent {
     }, 500);
   }
 
-  // onAudit() {
-  //   this.dialogService.openDialog(AuditDataComponent, {
-  //     data: {
-  //       currentSelectedEntity: this.currentSelectedEntity,
-  //       selectedItem: this.selectedItem,
-  //     },
-  //   });
-  // }
+  onAudit() {
+    this.dialogService.openDialog(AuditDataComponent, {
+      data: {
+        currentSelectedEntity: this.currentSelectedEntity,
+        selectedItem: this.selectedItem,
+      },
+    });
+  }
 
   onEntitySelectionChange(entity: Entity | any) {
     this.selectedItem = null;
@@ -543,6 +544,7 @@ export class DerivedHierarchyComponent {
       this.snackbarService.warn("Please check whether user has permission.");
     } else {
       if (data.valid) {
+        this.derivedHierarchy.onBind(this.hierarchyData, this.globalSettings?.displayFormat);
         const entityId = this.currentSelectedEntity?.id as number;
         //const finalData = this.removeNull(data.value);
         const finalData = {
@@ -592,6 +594,7 @@ export class DerivedHierarchyComponent {
         next: (result) => {
           if (result > 0) {
             this.snackbarService.success("Record deleted successfully.");
+            this.derivedHierarchy.onBind(this.hierarchyData, this.globalSettings?.displayFormat);
             this.onClear();
             this.loadEntityData(
               this.currentSelectedEntity as Entity,
@@ -830,5 +833,13 @@ export class DerivedHierarchyComponent {
       validations: [],
       asyncValidations: [],
     };
+  }
+
+  onRefresh() {
+    //this.onEntitySelectionChange(this.currentSelectedEntity as Entity);
+    this.loadEntityData(
+      this.currentSelectedEntity as Entity,
+      this.currentCriteria
+    );
   }
 }

@@ -60,7 +60,7 @@ import * as moment from "moment";
 import { SettingsService } from "../../components/settingsPopUp/service/settings.service";
 import { Router, RouterModule } from "@angular/router";
 
-import { AuditDataComponent } from "./audit-data/audit-data.component";
+import { AuditDataComponent } from "@spriced-frontend/spriced-ui-lib";
 import { LookupPopupComponent } from "../../components/lookup-Popup/lookup-popup.component";
 import { EntityGridService } from "./entity-grid.service";
 import { EntityFormService } from "./entity-form.service";

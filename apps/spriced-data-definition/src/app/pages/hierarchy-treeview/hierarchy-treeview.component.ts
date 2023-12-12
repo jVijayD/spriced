@@ -294,6 +294,9 @@ export class HierarchyTreeviewComponent {
           var hie = this.getHierarchyDtlByLevel(this.hierarchyDetails.length - 1 - row.level)
           this.getChildNodes(row, null, (data: any) => {
             const result = data;
+            data.content = data.content.sort((a: any, b: any) => {
+              return a.updated_date - b.updated_date;
+            });
             let id: any;
             data = data.content.map((d: any) => {
               d.treeStatus = 'collapsed';
