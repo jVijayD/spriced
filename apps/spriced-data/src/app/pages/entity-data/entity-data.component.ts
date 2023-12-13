@@ -128,9 +128,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   currentCriteria!: Criteria;
   globalSettings!: any;
   query?: any;
-  columnSort: boolean = false;
-
-  lastId = -1;
+  lastId = 0;
   entityDataLoadCompleted$ = new Subject();
 
   @ViewChild(DataGridComponent)
@@ -181,6 +179,21 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     );
   }
 
+  updateGridRow(row: any) {
+    let selRowIndex = -1;
+    const selectionTimer = timer(TIMER_CONST);
+    if (this.rows && this.rows.length > 0) {
+      selRowIndex = this.rows.findIndex((item) => item.id === row.id);
+    }
+    if (selRowIndex != -1) {
+      this.rows[selRowIndex] = row;
+      //this.rows = [...this.rows];
+      selectionTimer.pipe(first()).subscribe(() => {
+        this.setSelectedRow(this.rows[selRowIndex]);
+      });
+    }
+  }
+
   subscribeToFormEvents() {
     this.subscriptions.push(
       this.dynamicFormService.eventSubject$.subscribe((value) => {
@@ -225,6 +238,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         pageSize: this.limit,
       },
     };
+    this.dynamicFormService.resetFormValues();
     this.loadEntityData(this.currentSelectedEntity as Entity, criteria);
   }
 
@@ -236,11 +250,9 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       }
       return { direction: sort.dir.toUpperCase(), property: sort.prop };
     });
-
-    this.columnSort = true;
     this.dataGrid.table._offset = this.pageNumber;
     const criteria: Criteria = { ...this.currentCriteria, sorters: sorters };
-    this.loadEntityData(this.currentSelectedEntity as Entity, criteria, this.columnSort);
+    this.loadEntityData(this.currentSelectedEntity as Entity, criteria);
   }
 
   onItemSelected(e: any) {
@@ -316,7 +328,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
    * HANDLE THIS FUNCTION FOR ADD DISPLAY NAME IN FILTER QUERY
    * @param query any
    */
-  public addDisplayNameInFilter(query?: any): any {
+  public addDisplayNameInFilter(query?: any) {
     const updatedHeaders = this.headers.map((item: any) => {
       const res = item.column.split(",");
       if (res.length > 1) {
@@ -461,7 +473,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       data: this.currentSelectedEntity,
     });
 
-    dialogResult.afterClosed().subscribe((val) => { });
+    dialogResult.afterClosed().subscribe((val) => {});
   }
 
   onSettings() {
@@ -499,6 +511,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.rows = [...[]];
     this.setFormData("", []);
     this.clearCriteria();
+    this.lastId = 0;
   }
 
   onAudit() {
@@ -513,7 +526,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   onEntitySelectionChange(entity: Entity | string) {
     this.selectedItem = null;
     this.pageNumber = 0;
-    this.columnSort = false;
     this.currentSelectedEntity = undefined;
     this.dataGrid.table._internalColumns = [...[]];
     this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);
@@ -526,6 +538,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.settings.getGlobalSettings()
     );
     this.createDynamicUIMapping(entity as Entity);
+    this.lastId = 0;
     this.loadRelatedEntity();
   }
   loadRelatedEntity() {
@@ -575,19 +588,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.currentCriteria
     );
   }
-
-  // private getFilterColumns(): QueryColumns[] {
-  //   return this.headers
-  //     .filter((item) => item.isFilterable)
-  //     .map((col: any) => {
-  //       return {
-  //         name: col.column,
-  //         displayName: col.name,
-  //         dataType: col.dataType || "string",
-  //         options: col.dataType === "category" ? col.options : undefined,
-  //       };
-  //     });
-  // }
 
   private deleteEntityData(entityDataId: number) {
     return this.entityDataService
@@ -701,7 +701,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           tooltip: true,
           tooltipTemplate: (row: any) => this.getErrorTooltip(row),
           imgsrc: (row: any) => this.getImage(row),
-          showtooltip: (row: any) => !row.is_valid && this.ValidationMessage.length!==0,
+          showtooltip: (row: any) =>
+            !row.is_valid && this.ValidationMessage.length !== 0,
           className: "grid-image-icon",
         },
       ];
@@ -735,30 +736,22 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       ? "assets/images/valid.png"
       : "assets/images/invalid.png";
   }
-  private loadEntityData(
-    entity: Entity,
-    criteria: Criteria,
-    columnSort?: boolean
-  ) {
-    if (!this.columnSort) {
-      const sort: any = { direction: "DESC", property: "updated_date" };
-      criteria.sorters = [sort];
-    }
 
-    //criteria = this.setDefaultCriteria(criteria, this.lastId);
+  private loadEntityData(entity: Entity, criteria: Criteria) {
     this.currentCriteria = criteria;
+    const enrichedCriteria = this.setDefaultCriteria(criteria, this.lastId);
     if (entity) {
       this.applyEntitySettings(entity);
       this.subscriptions.push(
         this.entityDataService
-          .loadEntityData(entity.id, criteria)
+          .loadEntityData(entity.id, enrichedCriteria)
           .pipe(first())
           .subscribe({
             next: (page) => {
               this.lastId =
                 page.content && page.content.length
                   ? page.content[page.content.length - 1].id
-                  : -1;
+                  : 0;
               this.entityDataLoadCompleted$.next(page);
             },
             error: (err) => {
@@ -773,31 +766,25 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   private setDefaultCriteria(criteria: Criteria, lastId: number): Criteria {
-    let id =
-      criteria &&
-        criteria.pager &&
-        criteria.pager.pageSize * this.limit > lastId
-        ? criteria.pager.pageSize * criteria.pager.pageNumber
-        : lastId;
-    const filters: any = [
-      {
-        filterType: "CONDITION",
-        joinType: "NONE",
-        operatorType: "GREATER_THAN",
-        key: "id",
-        value: id,
-        dataType: "number",
-      },
-    ];
-    if (
-      (!criteria.sorters && !criteria.filters) ||
-      (criteria.sorters?.length == 0 && criteria.filters?.length == 0) ||
-      (criteria.sorters?.length == 0 &&
-        criteria.filters?.length == 1 &&
-        criteria.filters[0].key == "id")
-    ) {
-      criteria.filters = filters;
+    let id = this.lastId;
+
+    if (!criteria.sorters || criteria.sorters.length == 0) {
+      const sort: any = { direction: "DESC", property: "id" };
+      criteria.sorters = [sort];
     }
+
+    // if ((!criteria.filters || criteria.filters.length == 0) && id != 0) {
+    //   const filter: any = {
+    //     filterType: "CONDITION",
+    //     joinType: "NONE",
+    //     operatorType: "LESS_THAN",
+    //     key: "id",
+    //     value: id,
+    //     dataType: "number",
+    //   };
+    //   criteria.filters = [filter];
+    // }
+
     return criteria;
   }
 
@@ -850,6 +837,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         } else {
           this.dynamicFormService.resetFormValues();
           this.snackbarService.success("Record created successfully.");
+          this.resetToPageZero();
           this.loadEntityData(
             this.currentSelectedEntity as Entity,
             this.currentCriteria
@@ -867,49 +855,33 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     });
   }
 
+  private resetToPageZero() {
+    //Reset to page number 0;
+    this.pageNumber = 0;
+    if (this.currentCriteria && this.currentCriteria.pager) {
+      this.currentCriteria.pager.pageNumber = 0;
+    }
+  }
+
   private editEntityData(entityId: number, recordId: number, data: any) {
     data.id = recordId;
     this.entityDataService.updateEntityData(entityId, data).subscribe({
       next: (item) => {
         const isBusinessRuleSuccess = item.result[0].is_valid;
         if (!isBusinessRuleSuccess) {
-          let errorMessage = "";
-          item.ruleValidations.forEach((rulVal: any) => {
-            rulVal.ruleResults.forEach((rulResult: any) => {
-              errorMessage += rulResult.message;
-            });
-          });
-          const sepStart = "{SEP}";
-          const sepEnd = "{/SEP}";
-
-          let firstMessage = "";
-          const startIndex = errorMessage.indexOf(sepStart);
-          const endIndex = errorMessage.indexOf(sepEnd);
-
-          if (startIndex !== -1 && endIndex !== -1 && startIndex < endIndex) {
-            firstMessage = errorMessage
-              .substring(startIndex + sepStart.length, endIndex)
-              .trim();
-            errorMessage = firstMessage
-              .replace(/:\s/g, ":\n")
-              .replace(/\b(IF|THEN|ELSE)\b\s/g, "\n$1 ");
-            this.snackbarService.error(errorMessage);
-          } else {
-            this.snackbarService.error(errorMessage);
-          }
-          this.statusPannelService.setErrors([
-            {
-              type: ErrorTypes.ERROR,
-              msg: errorMessage,
-            },
-          ]);
+          this.showRuleErrorMessage(item);
         } else {
           this.onClear();
           this.snackbarService.success("Record updated successfully.");
-          this.loadEntityData(
-            this.currentSelectedEntity as Entity,
-            this.currentCriteria
-          );
+          //load only the updated entity
+          this.entityDataService
+            .loadEntityDataById(
+              this.currentSelectedEntity?.id as number,
+              item.result[0].id
+            )
+            .subscribe((item) => {
+              this.updateGridRow(item);
+            });
         }
       },
       error: (err) => {
@@ -917,6 +889,39 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         this.snackbarService.error("Record update failed.");
       },
     });
+  }
+
+  private showRuleErrorMessage(item: any) {
+    let errorMessage = "";
+    item.ruleValidations.forEach((rulVal: any) => {
+      rulVal.ruleResults.forEach((rulResult: any) => {
+        errorMessage += rulResult.message;
+      });
+    });
+    const sepStart = "{SEP}";
+    const sepEnd = "{/SEP}";
+
+    let firstMessage = "";
+    const startIndex = errorMessage.indexOf(sepStart);
+    const endIndex = errorMessage.indexOf(sepEnd);
+
+    if (startIndex !== -1 && endIndex !== -1 && startIndex < endIndex) {
+      firstMessage = errorMessage
+        .substring(startIndex + sepStart.length, endIndex)
+        .trim();
+      errorMessage = firstMessage
+        .replace(/:\s/g, ":\n")
+        .replace(/\b(IF|THEN|ELSE)\b\s/g, "\n$1 ");
+      this.snackbarService.error(errorMessage);
+    } else {
+      this.snackbarService.error(errorMessage);
+    }
+    this.statusPannelService.setErrors([
+      {
+        type: ErrorTypes.ERROR,
+        msg: errorMessage,
+      },
+    ]);
   }
 
   private setFormData(title: string, formFieldControls: FormFieldControls) {
