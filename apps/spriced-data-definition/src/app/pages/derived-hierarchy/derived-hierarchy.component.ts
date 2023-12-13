@@ -54,6 +54,7 @@ import { CustomToolTipComponent } from "libs/spriced-ui-lib/src/lib/components/c
 import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components/directive/tool-tip-renderer.directive";
 import { EntitySelectionComponent } from "../entity-selection/entity-selection.component";
 
+
 const TIMER_CONST = 300;
 
 @Component({
@@ -106,7 +107,7 @@ export class DerivedHierarchyComponent {
   pageNumber: number = 0;
   relatedEntity: any;
   public showTooltip: boolean = false;
-  public entity:any;
+  public entity: any;
   defaultCodeSetting = "namecode";
   hierarchyData: any;
 
@@ -138,14 +139,13 @@ export class DerivedHierarchyComponent {
           setTimeout(() => {
             this.derivedHierarchy.onBind(e, this.globalSettings?.displayFormat);
             setTimeout(() => {
-            if (this.derivedHierarchy.filterHierarchyPreviewNodes.length > 0) {
-              const level =  this.hierarchyData.details.length - 1;
-              const tableName = this.hierarchyData.details.find((el: any) => el.groupLevel === level);
-              this.currentSelectedEntity!.displayName = tableName.tabledisplayname;
+              if (this.derivedHierarchy.filterHierarchyPreviewNodes.length > 0) {
+                const level = this.hierarchyData.details.length - 1;
+                const tableName = this.hierarchyData.details.find((el: any) => el.groupLevel === level);
+                this.currentSelectedEntity!.displayName = tableName.tabledisplayname;
               }
             }, 1000);
           }, 500);
-          
         }
       });
     }
@@ -168,8 +168,7 @@ export class DerivedHierarchyComponent {
     );
   }
 
-  public goToDerivedHierarchy()
-  {
+  public goToDerivedHierarchy() {
     this.router.navigate(['/spriced-data-definition/hierarchy-definition'], {
       queryParams: { model_id: this.currentSelectedEntity?.groupId },
     });
@@ -189,22 +188,13 @@ export class DerivedHierarchyComponent {
     const pathParams: any = {
       modelId: this.currentSelectedEntity?.groupId,
       entityId: data,
-      hierarchyId: this.hierarchyId
     };
     const pathSegments = Object.keys(pathParams)
-      .map((key) => encodeURIComponent(pathParams[key]))
-      .join("/");
-    const url = this.replaceEndNumbers(window.location.href, data);; // Replace this with the desired URL
-    const newTab: any = window.open(url, "_blank");
-    newTab.focus();
-
-    // const dialogReference = this.dialogService.openDialog(
-    //   LookupPopupComponent,
-    //   {
-    //     data: data,
-    //   }
-    // );
-    // dialogReference.afterClosed().subscribe(() => { });
+    .map((key) => encodeURIComponent(pathParams[key]))
+    .join("/");
+      const url = "spriced-data/"+pathSegments;
+      const newTab: any = window.open(url, "_blank");
+      newTab.focus();
   }
 
   private replaceEndNumbers(path: string, newNumber: number): string {
@@ -291,11 +281,13 @@ export class DerivedHierarchyComponent {
   }
 
   onFilter() {
+    const headers = this.addDisplayNameInFilter();
     const dialogResult = this.dialogService.openFilterDialog({
       persistValueOnFieldChange: true,
-      columns: this.entityGridService.getFilterColumns(this.headers),
+      columns: this.entityGridService.getFilterColumns(headers),
       emptyMessage: "Please select filter criteria.",
       config: null,
+      displayFormat: this.globalSettings.displayFormat,
       query: this.query,
     });
 
@@ -313,13 +305,24 @@ export class DerivedHierarchyComponent {
   }
 
   /**
-   * HANDLE THIS FUNCTION FOR ADD DISPLAY NAME IN FILTER QUERY
-   * @param query any
-   */
-  public addDisplayNameInFilter(query: any) {
-    if (query.rules) {
+     * HANDLE THIS FUNCTION FOR ADD DISPLAY NAME IN FILTER QUERY
+     * @param query any
+     */
+  public addDisplayNameInFilter(query?: any) {
+    const updatedHeaders = this.headers.map((item: any) => {
+      const res = item.column.split(",");
+      if (res.length > 1) {
+        const col = res.find((el: any) => el.endsWith("_code"));
+        if (!!col) {
+          return { ...item, column: col };
+        }
+      }
+      return item
+    });
+
+    if (!!query && query.rules) {
       query.rules.forEach((el: any) => {
-        const item: any = this.headers.find(
+        const item: any = updatedHeaders.find(
           (elm: any) => elm.column === el.field
         );
         if (el?.rules && el?.rules.length > 0) {
@@ -331,6 +334,7 @@ export class DerivedHierarchyComponent {
         return;
       });
     }
+    return updatedHeaders;
   }
 
   public getToolTipTemplate(conditions: any): string {
@@ -456,7 +460,7 @@ export class DerivedHierarchyComponent {
           this.globalSettings
         );
         this.createDynamicUIMapping(this.currentSelectedEntity);
-        this.derivedHierarchy.onBind(this.hierarchyData,this.globalSettings?.displayFormat);
+        this.derivedHierarchy.onBind(this.hierarchyData, this.globalSettings?.displayFormat);
       }
     });
   }
@@ -478,13 +482,13 @@ export class DerivedHierarchyComponent {
     this.setFormData("", []);
   }
 
-  getEntityFormHierarchyItem(event:any){
+  getEntityFormHierarchyItem(event: any) {
     setTimeout(() => {
-      const entity = this.entitySelection.entities.find( elm => elm.id === event.id);
+      const entity = this.entitySelection.entities.find(elm => elm.id === event.id);
       if (!!this.currentSelectedEntity!.id && this.derivedHierarchy.currentRowId === 0 && this.currentSelectedEntity!.id === event.id) {
-        this.currentSelectedEntity = ({...entity, displayName: event?.displayName}) as Entity;
+        this.currentSelectedEntity = ({ ...entity, displayName: event?.displayName }) as Entity;
       } else {
-        this.entitySelection.onEntitySelectionChange({ value : {...entity, displayName: event?.displayName, filter: event?.filter} } as any);
+        this.entitySelection.onEntitySelectionChange({ value: { ...entity, displayName: event?.displayName, filter: event?.filter } } as any);
       }
     }, 500);
   }

@@ -240,6 +240,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     });
 
     this.columnSort = true;
+    this.dataGrid.table._offset = this.pageNumber;
     const criteria: Criteria = { ...this.currentCriteria, sorters: sorters };
     this.loadEntityData(this.currentSelectedEntity as Entity, criteria, this.columnSort);
   }
@@ -290,10 +291,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   onFilter() {
-    this.addDisplayNameInFilter();
+    const headers = this.addDisplayNameInFilter();
     const dialogResult = this.dialogService.openFilterDialog({
       persistValueOnFieldChange: true,
-      columns: this.entityGridService.getFilterColumns(this.headers),
+      columns: this.entityGridService.getFilterColumns(headers),
       emptyMessage: "Please select filter criteria.",
       displayFormat: this.globalSettings.displayFormat,
       config: null,
@@ -351,11 +352,14 @@ export class EntityDataComponent implements OnDestroy, OnInit {
    * HANDLE THIS FUNCTION FOR ADD DISPLAY NAME IN FILTER QUERY
    * @param query any
    */
-  public addDisplayNameInFilter(query?: any) {
+  public addDisplayNameInFilter(query?: any): any {
     const updatedHeaders = this.headers.map((item: any) => {
       const res = item.column.split(",");
       if (res.length > 1) {
-        item.column = res.find((el: any) => el.endsWith("_code"));
+        const col = res.find((el: any) => el.endsWith("_code"));
+        if (!!col) {
+          return { ...item, column: col };
+        }
       }
       return { ...item };
     });
@@ -374,6 +378,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         return;
       });
     }
+    return updatedHeaders;
   }
 
   public getToolTipTemplate(conditions: any): string {
@@ -492,7 +497,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       data: this.currentSelectedEntity,
     });
 
-    dialogResult.afterClosed().subscribe((val) => {});
+    dialogResult.afterClosed().subscribe((val) => { });
   }
 
   onSettings() {
@@ -806,8 +811,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   private setDefaultCriteria(criteria: Criteria, lastId: number): Criteria {
     let id =
       criteria &&
-      criteria.pager &&
-      criteria.pager.pageSize * this.limit > lastId
+        criteria.pager &&
+        criteria.pager.pageSize * this.limit > lastId
         ? criteria.pager.pageSize * criteria.pager.pageNumber
         : lastId;
     const filters: any = [
