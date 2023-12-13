@@ -301,10 +301,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   onFilter() {
-    this.addDisplayNameInFilter();
+    const headers = this.addDisplayNameInFilter();
     const dialogResult = this.dialogService.openFilterDialog({
       persistValueOnFieldChange: true,
-      columns: this.entityGridService.getFilterColumns(this.headers),
+      columns: this.entityGridService.getFilterColumns(headers),
       emptyMessage: "Please select filter criteria.",
       displayFormat: this.globalSettings.displayFormat,
       config: null,
@@ -351,6 +351,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         return;
       });
     }
+    return updatedHeaders;
   }
 
   public getToolTipTemplate(conditions: any): string {
