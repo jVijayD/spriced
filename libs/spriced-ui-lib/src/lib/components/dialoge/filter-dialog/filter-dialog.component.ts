@@ -406,6 +406,7 @@ export interface FilterData {
   columns?: QueryColumns[];
   emptyMessage?: string;
   displayFormat?: string;
+  save?:boolean
 }
 
 // export interface FilterGroup {

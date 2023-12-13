@@ -209,21 +209,24 @@ export class EntityDataService {
   loadEntity(id: number): Observable<any> {
     return this.http.get(`${this.def_url}/entities/${id}`);
   }
-  loadFilters()
+  loadFilters(criteria:Criteria)
   {
-   let filter:any=localStorage.getItem("savedFilters")
-   return JSON.parse(filter) || []
+    const url = this.requestUtility.addCriteria(
+      `${this.api_url}/filter`,
+      criteria
+    );
+    return this.http.get<PageData>(url);
   }
   addFilters(filter:any)
   {
-    localStorage.setItem("savedFilters", JSON.stringify(filter))
+    return this.http.post(`${this.api_url}/filter`, filter);
   }
-  deleteFilter(item:any)
+  deleteFilter(id:number)
   {
-    let filters:any=this.loadFilters()
-    filters=filters.filter((val:any)=> {
-      return item.filterName!==val.filterName
-    })
-    localStorage.setItem("savedFilters", JSON.stringify(filters))
+    return this.http.delete(`${this.api_url}/filter/${id}`);
+  }
+  editFilter(filter:any)
+  {
+    return this.http.put(`${this.api_url}/filter`,filter);
   }
 }

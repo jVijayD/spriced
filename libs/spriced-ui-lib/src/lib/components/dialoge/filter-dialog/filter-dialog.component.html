@@ -178,8 +178,8 @@
     <button [disabled]="!form.valid" mat-raised-button color="primary" (click)="onApply('apply')" class="ml-2">
       Apply
     </button>
-    <button [disabled]="!form.valid" mat-raised-button color="primary" (click)="onApply('save')" class="ml-2">
-      Save and Apply
+    <button *ngIf="data.save" [disabled]="!form.valid" mat-raised-button color="primary" (click)="onApply('save')" class="ml-2">
+      Save
     </button>
     <button mat-raised-button color="accent" (click)="onCancel()" class="ml-2">
       Cancel
