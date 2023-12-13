@@ -43,6 +43,34 @@ export class EntityDataService {
     return this.http.get<PageData>(url);
   }
 
+  loadEntityDataById(entityId: string | number, id: number): Observable<any> {
+    let criteria: Criteria = {
+      filters: [
+        {
+          filterType: "CONDITION",
+          joinType: "NONE",
+          operatorType: "EQUALS",
+          key: "id",
+          value: id,
+          dataType: "number",
+        },
+      ],
+    };
+    const url = this.requestUtility.addCriteria(
+      `${this.api_url}/entity/${entityId}/data`,
+      criteria
+    );
+    return this.http.get<PageData>(url).pipe(
+      map((value) => {
+        let data = null;
+        if (value && value.content && value.content.length > 0) {
+          data = value.content[0];
+        }
+        return data;
+      })
+    );
+  }
+
   loadEntityDataArray(
     id: string | number,
     criteria: Criteria
@@ -89,13 +117,8 @@ export class EntityDataService {
 }*/
   }
 
-
-  
- downloadErrorExcel(
-    id: string | number,
-    entityName:string
-  ) {
-    const url =`${this.api_url}/bulk/errorexcel/${id}`
+  downloadErrorExcel(id: string | number, entityName: string) {
+    const url = `${this.api_url}/bulk/errorexcel/${id}`;
     return this.http
       .get(url, {
         responseType: "blob",
@@ -107,7 +130,6 @@ export class EntityDataService {
         saveAs(data, entityName);
       });
   }
-
 
   private createRows(content: any) {
     const records = content.records || [];
@@ -131,23 +153,26 @@ export class EntityDataService {
     return this.http.get<PageData>(url);
   }
 
-  loadValidationMessage(item:any): Observable<PageData> {
+  loadValidationMessage(item: any): Observable<PageData> {
     const url = this.requestUtility.addCriteria(
-      `${this.api_url}/entity/validations`,
+      `${this.api_url}/entity/validations`
     );
     return this.http.get<PageData>(url);
   }
 
-  loadAnnotations(id:number,criteria:Criteria):Observable<PageData>{
-    const url = this.requestUtility.addCriteria(`${this.api_url}/audit-trial/annotation`,
-    criteria
+  loadAnnotations(id: number, criteria: Criteria): Observable<PageData> {
+    const url = this.requestUtility.addCriteria(
+      `${this.api_url}/audit-trial/annotation`,
+      criteria
     );
     return this.http.get<PageData>(url);
   }
 
   addAnnotations(id: string | number, annotation: any): Observable<any> {
-    let annotations={"annotations":annotation}
-    return this.http.put(`${this.api_url}/audit-trial/annotation/${id}`,{annotations:annotations});
+    let annotations = { annotations: annotation };
+    return this.http.put(`${this.api_url}/audit-trial/annotation/${id}`, {
+      annotations: annotations,
+    });
   }
 
   loadLookupData(
