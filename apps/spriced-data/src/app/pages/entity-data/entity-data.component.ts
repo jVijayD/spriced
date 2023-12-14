@@ -583,7 +583,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     // );
   
     const dialog = this.dialogService.openConfirmDialoge({
-      message: "Do you want to download " + this.totalElements +" records" ,
+      message: "Do you want to download " + this.totalElements +" records ?" ,
       title: "Download",
       icon: "download",
     });
