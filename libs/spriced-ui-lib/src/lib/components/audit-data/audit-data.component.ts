@@ -271,6 +271,22 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   {
       "filterType": "CONDITION",
       "key": "column_name",
+      "value": "Updated Date",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Annotation",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
       "value": "Last Update On",
       "joinType": "AND",
       "operatorType": "IS_NOT_EQUAL",
@@ -285,13 +301,29 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       "dataType": "string"
   },
   {
-    "filterType": "CONDITION",
-    "key": "column_name",
-    "value": "Id",
-    "joinType": "AND",
-    "operatorType": "IS_NOT_EQUAL",
-    "dataType": "string"
-},
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Id",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "id",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Validation Status",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
   {
       "filterType": "CONDITION",
       "key": "record_id",
