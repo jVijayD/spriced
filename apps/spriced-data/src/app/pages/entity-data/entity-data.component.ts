@@ -581,11 +581,24 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     //   format,
     //   this.currentSelectedEntity?.displayName as string
     // );
-  
+    let limit=process.env["NX_DOWNLOAD_LIMIT"] as unknown as number
+  if(this.totalElements > limit )
+  {
+     this.dialogService.openInfoDialog({
+      message: "You are about to download " + this.totalElements +" records.Download limit is " +limit + 
+      '. Please filter the records before download ',
+      title: "Download limit exceeded",
+      icon: "download",
+    });
+  }
+  else
+  {
     const dialog = this.dialogService.openConfirmDialoge({
       message: "Do you want to download " + this.totalElements +" records ?" ,
       title: "Download",
       icon: "download",
+      no:"Cancel",
+      yes:"Ok"
     });
 
     dialog.afterClosed().subscribe((result) => {
@@ -599,6 +612,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       }
     });
   }
+}
 
   private deleteEntityData(entityDataId: number) {
     return this.entityDataService
