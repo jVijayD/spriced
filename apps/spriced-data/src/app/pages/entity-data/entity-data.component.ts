@@ -581,12 +581,23 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     //   format,
     //   this.currentSelectedEntity?.displayName as string
     // );
-    this.entityDataService.exportToExcel(
-      this.currentSelectedEntity?.id as number,
-      `${this.currentSelectedEntity?.displayName}.xlsx`,
-      this.globalSettings?.displayFormat || this.defaultCodeSetting,
-      this.currentCriteria
-    );
+  
+    const dialog = this.dialogService.openConfirmDialoge({
+      message: "Do you want to download " + this.totalElements +" records" ,
+      title: "Download",
+      icon: "download",
+    });
+
+    dialog.afterClosed().subscribe((result) => {
+      if (result) {
+        this.entityDataService.exportToExcel(
+          this.currentSelectedEntity?.id as number,
+          `${this.currentSelectedEntity?.displayName}.xlsx`,
+          this.globalSettings?.displayFormat || this.defaultCodeSetting,
+          this.currentCriteria
+        );
+      }
+    });
   }
 
   private deleteEntityData(entityDataId: number) {
