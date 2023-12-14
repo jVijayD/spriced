@@ -5,18 +5,11 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
-import {
-  DynamicFormModule,
-  DataGridComponent,
-  Header,
-  Paginate,
-  DynamicFormService,
-} from "@spriced-frontend/spriced-ui-lib";
 import { MatIconModule } from "@angular/material/icon";
 import { FormGroup } from "@angular/forms";
 import { Criteria, Entity } from "@spriced-frontend/spriced-common-lib";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
-import { EntityDataService } from "../../../services/entity-data.service";
+import { DataEntityService } from "@spriced-frontend/spriced-common-lib";
 import * as moment from "moment";
 import {
   MatFormField,
@@ -25,9 +18,11 @@ import {
 } from "@angular/material/form-field";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
-import { SettingsService } from "../../../components/settingsPopUp/service/settings.service";
+import { GlobalSettingService } from "./../settting-popup/global-setting.service";
 import { KeycloakService } from "keycloak-angular";
 import { AngularSplitModule, SplitComponent } from 'angular-split';
+import { DynamicFormModule } from "../dynamic-form/dynamic-form.module";
+import { DataGridComponent, Header, Paginate } from "../data-grid/data-grid.component";
 // import { SettingsService } from "../../../components/settingsPopUp/service/settings.service";
 
 @Component({
@@ -45,8 +40,8 @@ import { AngularSplitModule, SplitComponent } from 'angular-split';
     AngularSplitModule
   ],
   providers: [
-    EntityDataService,
-    SplitComponent
+    SplitComponent,
+    DataEntityService,
     // SettingsService,
     // DynamicFormService,
   ],
@@ -139,8 +134,8 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   name:string=''
   constructor(
     public dialogRef: MatDialogRef<AuditDataComponent>,
-    private entityDataService: EntityDataService,
-    private settings: SettingsService,
+    private entityDataService: DataEntityService,
+    private settings: GlobalSettingService,
     private keycloak: KeycloakService,
     @Inject(MAT_DIALOG_DATA) public dialogData: any
   ) {
