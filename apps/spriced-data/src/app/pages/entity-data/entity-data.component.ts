@@ -588,7 +588,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       message: "You are about to download " + this.totalElements +" records.Download limit is " +limit + 
       '. Please filter the records before download ',
       title: "Download limit exceeded",
-      icon: "download",
+      icon: "cloud_download",
     });
   }
   else
@@ -596,7 +596,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     const dialog = this.dialogService.openConfirmDialoge({
       message: "Do you want to download " + this.totalElements +" records ?" ,
       title: "Download",
-      icon: "download",
+      icon: "cloud_download",
     });
 
     dialog.afterClosed().subscribe((result) => {
