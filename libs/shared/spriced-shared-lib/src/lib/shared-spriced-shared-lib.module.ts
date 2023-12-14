@@ -62,11 +62,11 @@ const dbConfig: DBConfig = {
       multi: true,
       deps: [KeycloakService],
     },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: headerInterceptor,
-      multi: true,
-    },
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: headerInterceptor,
+    //   multi: true,
+    // },
   ],
 })
 export class SharedSpricedSharedLibModule {}

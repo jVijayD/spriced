@@ -1,13 +1,17 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
+import { RequestUtilityService } from "./utility/request-utility.service";
 
 @Injectable({ providedIn: "root" })
 export class UserAccessService {
   api_url: string;
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private requestUtilityService: RequestUtilityService
+  ) {
     this.api_url = process.env["NX_API_USER-ACCESS_URL"] as string;
-    this.api_url += "/user-access";
+    //this.api_url += "/user-access";
   }
 
   // add(model: any) {
@@ -30,7 +34,7 @@ export class UserAccessService {
     return this.http.get<string[]>(`${this.api_url}/roles`);
   }
   loadAllApps() {
-    return this.http.get<any[]>(`${this.api_url}/applicaitons`);
+    return this.requestUtilityService.get(`${this.api_url}/applicaitons`, {});
   }
 
   // loadPageModels(pageNo: number, pageSize: number) {

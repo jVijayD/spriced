@@ -42,13 +42,13 @@ export class StatusComponent implements OnInit {
       isSortable: true,
       width: 60,
     },
-    {
-      column: "filePath",
-      name: "File",
-      canAutoResize: true,
-      isSortable: true,
-      width: 60,
-    },
+    // {
+    //   column: "filePath",
+    //   name: "File",
+    //   canAutoResize: true,
+    //   isSortable: true,
+    //   width: 60,
+    // },
     {
       column: "updatedBy",
       name: "Uploaded By",
