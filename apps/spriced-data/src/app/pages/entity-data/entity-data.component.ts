@@ -597,8 +597,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       message: "Do you want to download " + this.totalElements +" records ?" ,
       title: "Download",
       icon: "download",
-      no:"Cancel",
-      yes:"Ok"
     });
 
     dialog.afterClosed().subscribe((result) => {
