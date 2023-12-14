@@ -80,6 +80,7 @@
     "@ngrx/store": "~16.0.0",
     "@superset-ui/embedded-sdk": "^0.1.0-alpha.9",
     "@swimlane/ngx-datatable": "^20.1.0",
+    "angular-split": "^17.1.1",
     "exceljs": "^4.3.0",
     "file-saver": "^2.0.5",
     "json-rules-engine": "^6.3.1",

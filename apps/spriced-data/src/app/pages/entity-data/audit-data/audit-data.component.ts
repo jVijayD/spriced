@@ -27,6 +27,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { SettingsService } from "../../../components/settingsPopUp/service/settings.service";
 import { KeycloakService } from "keycloak-angular";
+import { AngularSplitModule, SplitComponent } from 'angular-split';
 // import { SettingsService } from "../../../components/settingsPopUp/service/settings.service";
 
 @Component({
@@ -41,9 +42,11 @@ import { KeycloakService } from "keycloak-angular";
     MatFormFieldModule,
     MatButtonModule,
     MatInputModule,
+    AngularSplitModule
   ],
   providers: [
     EntityDataService,
+    SplitComponent
     // SettingsService,
     // DynamicFormService,
   ],
@@ -329,12 +332,17 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       }
     })
   }
+  
   onSubmit(data: FormGroup<any>) {
     if (data.valid) {
       this.dialogRef.close(data.value);
     }
   }
 
+  onDrag(event:any){
+    window.dispatchEvent(new Event('resize'));
+  } 
+  
   ngOnDestroy(): void {
     this.subscriptions.forEach((item) => item.unsubscribe());
   }
