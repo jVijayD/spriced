@@ -67,7 +67,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       column: "updatedDate",
       name: "Last Updated On",
       pipe: (data: any) => {
-        return moment(data).format("MM/DD/YYYY");
+        return moment(data).format("MM/DD/YYYY HH:mm:ss");
       },
       sortColumn:"updated_date",
     },
@@ -77,8 +77,17 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       isFilterable: true,
       column: "priorValue",
       name: "Prior Value",
-      sortColumn:"prior_value"
-
+      sortColumn:"prior_value",
+      pipe: (data: any) => {
+        if(moment(data).isValid())
+        {
+         return moment(data).format("MM/DD/YYYY");
+        }
+        else
+        {
+         return data
+        }
+      },
     },
     {
       canAutoResize: true,
@@ -86,7 +95,17 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       isFilterable: true,
       column: "newValue",
       name: "New value",
-      sortColumn:"new_value"
+      sortColumn:"new_value",
+      pipe: (data: any) => {
+        if(moment(data).isValid())
+        {
+         return moment(data).format("MM/DD/YYYY");
+        }
+        else
+        {
+         return data
+        }
+      },
 
     },
     {
