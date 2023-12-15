@@ -104,7 +104,7 @@
                         [disabled] ="disableSubmit"
                       ></sp-header-action>
           
-                      <!-- <sp-header-action
+                      <sp-header-action
                         icon="history"
                         text="View Transactions"
                         title="View Transactions"
@@ -114,7 +114,7 @@
                           this.headers.length === 0
                         "
                         (actionClick)="onAudit()"
-                      ></sp-header-action> -->
+                      ></sp-header-action>
           
                       <!-- <sp-header-action
                       [disabled]="this.isFullScreen"
@@ -204,6 +204,14 @@
                         "
                         (actionClick)="onSettings()"
                       ></sp-header-action>
+
+                      <sp-header-action
+                      icon="refresh"
+                      text="Refresh"
+                      title="Refresh"
+                      (actionClick)="onRefresh()"
+                      [disabled]="this.headers.length === 0"
+                    ></sp-header-action>
                     </div>
                   </ng-container>
                 </sp-data-grid>

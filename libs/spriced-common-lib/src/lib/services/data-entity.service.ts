@@ -109,6 +109,25 @@ export class DataEntityService {
     return this.http.get<PageData>(url);
   }
 
+  loadValidationMessage(item:any): Observable<PageData> {
+    const url = this.requestUtility.addCriteria(
+      `${this.api_url}/entity/validations`,
+    );
+    return this.http.get<PageData>(url);
+  }
+
+  loadAnnotations(id:number,criteria:Criteria):Observable<PageData>{
+    const url = this.requestUtility.addCriteria(`${this.api_url}/audit-trial/annotation`,
+    criteria
+    );
+    return this.http.get<PageData>(url);
+  }
+
+  addAnnotations(id: string | number, annotation: any): Observable<any> {
+    let annotations={"annotations":annotation}
+    return this.http.put(`${this.api_url}/audit-trial/annotation/${id}`,{annotations:annotations});
+  }
+
   loadLookupData(
     id: string | number,
     pageNumber: number = 0,
