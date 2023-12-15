@@ -27,7 +27,7 @@ export class AppComponent {
       path: "/spriced-data-definition/entity",
     },
     {
-      name: "Rules",
+      name: "Business Rules",
       active: false,
       path: "/spriced-data-definition/rules/rule-management",
     },
