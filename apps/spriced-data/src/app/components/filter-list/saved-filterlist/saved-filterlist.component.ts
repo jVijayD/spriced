@@ -19,7 +19,7 @@ import {
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import { equal } from "assert";
 import { DialogRef } from "@angular/cdk/dialog";
-import { EntityDataService } from "../../../services/entity-data.service";
+import { FilterListService } from "../services/filter-list.service";
 import { Criteria } from "@spriced-frontend/spriced-common-lib";
 import * as moment from "moment";
 import { AddFilterlistComponent } from "../add-filterlist/add-filterlist.component";
@@ -61,7 +61,7 @@ export class SavedFilterlistComponent {
 
   constructor(
     public dialogRef: MatDialogRef<SavedFilterlistComponent>,
-    private entityDataService: EntityDataService,
+    private filterListService: FilterListService,
     private snackbarService: SnackBarService,
     private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public data: any
@@ -126,7 +126,7 @@ export class SavedFilterlistComponent {
       },
     ];
     this.currentCriteria.filters?.push(...this.appliedFilters);
-    this.entityDataService
+    this.filterListService
       .loadFilters(this.currentCriteria)
       .subscribe((val: any) => {
         this.rows = val.content;
@@ -148,7 +148,7 @@ export class SavedFilterlistComponent {
 
     dialog.afterClosed().subscribe((result) => {
       if (result) {
-        this.entityDataService.deleteFilter(this.selectedItem.id).subscribe({
+        this.filterListService.deleteFilter(this.selectedItem.id).subscribe({
           next: (result) => {
             this.snackbarService.success("Filter deleted successfully.");
             this.loadFilters();

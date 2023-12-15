@@ -234,24 +234,4 @@ export class EntityDataService {
   loadEntity(id: number): Observable<any> {
     return this.http.get(`${this.def_url}/entities/${id}`);
   }
-  loadFilters(criteria:Criteria)
-  {
-    const url = this.requestUtility.addCriteria(
-      `${this.api_url}/filter`,
-      criteria
-    );
-    return this.http.get<PageData>(url);
-  }
-  addFilters(filter:any)
-  {
-    return this.http.post(`${this.api_url}/filter`, filter);
-  }
-  deleteFilter(id:number)
-  {
-    return this.http.delete(`${this.api_url}/filter/${id}`);
-  }
-  editFilter(filter:any)
-  {
-    return this.http.put(`${this.api_url}/filter`,filter);
-  }
 }

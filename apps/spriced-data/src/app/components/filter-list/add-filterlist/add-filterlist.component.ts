@@ -5,7 +5,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { AppForm, DynamicFormModule, DynamicFormService, FORM_DATA_SERVICE, FormFieldControls, SnackBarService } from "@spriced-frontend/spriced-ui-lib";
 import { Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { EntityDataService } from "../../../services/entity-data.service";
+import { FilterListService } from "../services/filter-list.service";
 
 @Component({
   selector: "sp-add-filterlist",
@@ -22,7 +22,7 @@ export class AddFilterlistComponent {
   formData = {};
   appForm!: AppForm;
   constructor(public dialogRef: MatDialogRef<AddFilterlistComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any, private entityService: EntityDataService,
+    @Inject(MAT_DIALOG_DATA) public data: any, private filterListService: FilterListService,
     private snackbarService: SnackBarService) {
     this.appForm = {
       title: data.action + " Filter",
@@ -95,7 +95,7 @@ export class AddFilterlistComponent {
     this.data.item.name = data.value.name
     this.data.item.description = data.value.description
     if (this.data.action == 'Add') {
-      this.entityService.addFilters(this.data.item).subscribe({
+      this.filterListService.addFilters(this.data.item).subscribe({
         next: (result) => {
           this.snackbarService.success("Filter saved successfully.");
         },
@@ -111,7 +111,7 @@ export class AddFilterlistComponent {
       });
     }
     else {
-      this.entityService.editFilter(this.data.item).subscribe({
+      this.filterListService.editFilter(this.data.item).subscribe({
         next: (result) => {
           this.snackbarService.success("Filter updated successfully.");
         },

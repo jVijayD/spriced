@@ -70,8 +70,8 @@ import {
 } from "@spriced-frontend/shared/spriced-shared-lib";
 import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components/directive/tool-tip-renderer.directive";
 import { CustomToolTipComponent } from "libs/spriced-ui-lib/src/lib/components/custom-tool-tip/custom-tool-tip.component";
-import { SavedFilterlistComponent } from "./saved-filterlist/saved-filterlist.component";
-import { AddFilterlistComponent } from "./add-filterlist/add-filterlist.component";
+import { SavedFilterlistComponent } from "../../components/filter-list/saved-filterlist/saved-filterlist.component";
+import { AddFilterlistComponent } from "../../components/filter-list/add-filterlist/add-filterlist.component";
 
 const TIMER_CONST = 300;
 @Component({
