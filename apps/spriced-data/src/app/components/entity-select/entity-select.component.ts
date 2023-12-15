@@ -98,6 +98,10 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
               // this.selectedEntity =
               //   this.entities.find((item) => item.id === entityId) ||
               //   this.entities[0];
+
+              this.entities.sort((a,b) => a.displayName.localeCompare(b.displayName));
+              this.filteredEntities.sort((a,b) => a.displayName.localeCompare(b.displayName));
+              
               const curSelectedEntity =
                 this.entities.find((item) => item.id === entityId) ||
                 this.entities[0];
