@@ -366,6 +366,22 @@ export class ViewTransactionsAdminComponent {
   {
       "filterType": "CONDITION",
       "key": "column_name",
+      "value": "Updated Date",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Annotation",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
       "value": "Last Update On",
       "joinType": "AND",
       "operatorType": "IS_NOT_EQUAL",
@@ -386,7 +402,24 @@ export class ViewTransactionsAdminComponent {
       "joinType": "AND",
       "operatorType": "IS_NOT_EQUAL",
       "dataType": "string"
-  }]
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "id",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Validation Status",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  }
+]
   }
 
   ngOnDestroy(): void {
