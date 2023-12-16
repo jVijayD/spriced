@@ -20,6 +20,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { GlobalSettingService } from "./../settting-popup/global-setting.service";
 import { KeycloakService } from "keycloak-angular";
+import { AngularSplitModule, SplitComponent } from 'angular-split';
 import { DynamicFormModule } from "../dynamic-form/dynamic-form.module";
 import { DataGridComponent, Header, Paginate } from "../data-grid/data-grid.component";
 // import { SettingsService } from "../../../components/settingsPopUp/service/settings.service";
@@ -36,8 +37,10 @@ import { DataGridComponent, Header, Paginate } from "../data-grid/data-grid.comp
     MatFormFieldModule,
     MatButtonModule,
     MatInputModule,
+    AngularSplitModule
   ],
   providers: [
+    SplitComponent,
     DataEntityService,
     // SettingsService,
     // DynamicFormService,
@@ -324,12 +327,17 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       }
     })
   }
+  
   onSubmit(data: FormGroup<any>) {
     if (data.valid) {
       this.dialogRef.close(data.value);
     }
   }
 
+  onDrag(event:any){
+    window.dispatchEvent(new Event('resize'));
+  } 
+  
   ngOnDestroy(): void {
     this.subscriptions.forEach((item) => item.unsubscribe());
   }
