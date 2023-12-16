@@ -84,8 +84,9 @@ export class FilterDialogComponent {
   onCancel(): void {
     this.dialogRef.close(null);
   }
-  onApply(): void {
-    const filterGroup = this.convertToFilters(this.form.value.query);
+  onApply(event:any): void {
+    const filterGroup:any = this.convertToFilters(this.form.value.query);
+    filterGroup['button'] = event
     this.dialogRef.close(filterGroup);
   }
 
@@ -405,6 +406,7 @@ export interface FilterData {
   columns?: QueryColumns[];
   emptyMessage?: string;
   displayFormat?: string;
+  save?:boolean
 }
 
 // export interface FilterGroup {

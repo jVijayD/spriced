@@ -70,6 +70,8 @@ import {
 } from "@spriced-frontend/shared/spriced-shared-lib";
 import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components/directive/tool-tip-renderer.directive";
 import { CustomToolTipComponent } from "libs/spriced-ui-lib/src/lib/components/custom-tool-tip/custom-tool-tip.component";
+import { SavedFilterlistComponent } from "../../components/filter-list/saved-filterlist/saved-filterlist.component";
+import { AddFilterlistComponent } from "../../components/filter-list/add-filterlist/add-filterlist.component";
 
 const TIMER_CONST = 300;
 @Component({
@@ -311,10 +313,27 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       displayFormat: this.globalSettings.displayFormat,
       config: null,
       query: this.query,
+      save:true
     });
 
     dialogResult.afterClosed().subscribe((val) => {
       if (val) {
+        if(val.button && val.button=='save')
+        {
+          const dialogRef = this.dialog.open(AddFilterlistComponent, {
+            data: {
+             item:{ filters:val as Criteria,
+              entityId:this.currentSelectedEntity?.id,
+              groupId:this.currentSelectedEntity?.groupId,
+              name:'',
+              description:''},
+              action:'Add'
+            },
+            
+          });
+      }
+      else
+      {
         this.query = dialogResult.componentInstance.data.query;
         this.addDisplayNameInFilter(this.query);
         this.currentCriteria.filters = val;
@@ -322,8 +341,25 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           this.currentSelectedEntity as Entity,
           this.currentCriteria
         );
+    }
+  }
+  })
+}
+  onSavedFilter()
+  {
+  const dialogResult = this.dialogService.openDialog(SavedFilterlistComponent,{
+    data:{entityId:this.currentSelectedEntity?.id}
+  })
+    dialogResult.afterClosed().subscribe((val) => {
+      if (val) {
+        this.onClearFilter()
+        this.currentCriteria.filters = val;
+        this.loadEntityData(
+          this.currentSelectedEntity as Entity,
+          this.currentCriteria
+        );
       }
-    });
+    })
   }
 
   /**

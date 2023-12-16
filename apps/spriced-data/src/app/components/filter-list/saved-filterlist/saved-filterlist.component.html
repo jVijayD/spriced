@@ -1,0 +1,91 @@
+<div class="container">
+  <label class="text-secondary-dark m-2 font-bold text-lg">Saved filters</label>
+  <div class="content">
+    <sp-data-grid
+      #dataGrid
+      class="w-full h-full"
+      title="Filter List"
+      [enableRowIndex]="false"
+      [isArray]="false"
+      [headers]="headers"
+      [rows]="rows"
+      [rowHeight]="20"
+      [headerHeight]="30"
+      [footerHeight]="30"
+      [columnMode]="columnMode"
+      [virtualScroll]="false"
+      [selectionType]="selectionType"
+      [count]="totalElements"
+      [limit]="limit"
+      [isExternalPaging]="true"
+      [isExternalSorting]="true"
+      [sortType]="sortType"
+      (itemSelected)="onItemSelected($event)"
+      (paginate)="onPaginate($event)"
+      (sort)="onSort($event)"
+      [selected]="!!selectedItem ? [selectedItem] : []"
+    >
+      <sp-header-action
+        icon="delete"
+        text="Delete Filter"
+        title="Delete Filter"
+        [disabled]="
+          this.selectedItem === null || this.selectedItem === undefined
+        "
+        (actionClick)="onDelete()"
+      ></sp-header-action>
+
+      <sp-header-action
+        icon="edit"
+        text="Edit Filter"
+        title="Edit Filter"
+        [disabled]="
+          this.selectedItem === null || this.selectedItem === undefined
+        "
+        (actionClick)="onEdit()"
+      ></sp-header-action>
+
+      <sp-header-action
+        icon="filter_list"
+        [text]="!query ? 'Filter' : ''"
+        (actionClick)="onFilter()"
+        [disabled]="this.headers.length === 0"
+        spToolTipRenderer
+        [contentTemplate]="template"
+        [customPosition]="true"
+        [showToolTip]="!!query"
+      ></sp-header-action>
+
+      <ng-template #template>
+        <div [innerHTML]="getToolTipTemplate(query)"></div>
+      </ng-template>
+
+      <sp-header-action
+        icon="filter_list_off"
+        text="Clear Filter"
+        title="Clear Filter"
+        [disabled]="!this.query"
+        (actionClick)="onClearFilter()"
+      ></sp-header-action>
+    </sp-data-grid>
+  </div>
+  <div class="footer">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onApply()"
+      [disabled]="selectedItem == null || this.selectedItem == undefined"
+      class="ml-2"
+    >
+      Apply
+    </button>
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="closeDialog()"
+      class="ml-2"
+    >
+      Cancel
+    </button>
+  </div>
+</div>
