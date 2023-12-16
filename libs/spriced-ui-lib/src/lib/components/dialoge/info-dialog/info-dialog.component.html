@@ -1,16 +1,16 @@
 <div class="container">
-  <h1 mat-dialog-title>
-    {{ data.title }}
-  </h1>
 
-  <div mat-dialog-content>
-    <div class="grid grid-flow-row">
+    <label  class="text-secondary-dark m-2 font-bold text-lg">
       <mat-icon
-        style="height: 40px; width: 40px; font-size: 40px"
-        class="text-primary-dark justify-self-center"
-        *ngIf="data.icon"
-        >{{ data.icon }}</mat-icon
-      >
+      style="height: 30px; width: 30px; font-size: 28px;padding-top: 5px;"
+      class="text-primary-dark justify-self-center"
+      *ngIf="data.icon"
+      >{{ data.icon }}</mat-icon
+    > {{ data.title }}
+    </label>
+
+    <div mat-dialog-content>
+    <div class="grid grid-flow-row">
       <span class="font-thin text-base">{{ data.message }}</span>
     </div>
   </div>

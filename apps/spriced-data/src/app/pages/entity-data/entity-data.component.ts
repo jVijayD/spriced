@@ -581,13 +581,36 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     //   format,
     //   this.currentSelectedEntity?.displayName as string
     // );
-    this.entityDataService.exportToExcel(
-      this.currentSelectedEntity?.id as number,
-      `${this.currentSelectedEntity?.displayName}.xlsx`,
-      this.globalSettings?.displayFormat || this.defaultCodeSetting,
-      this.currentCriteria
-    );
+    let limit=process.env["NX_DOWNLOAD_LIMIT"] as unknown as number
+  if(this.totalElements > limit )
+  {
+     this.dialogService.openInfoDialog({
+      message: "You are about to download " + this.totalElements +" records.Download limit is " +limit + 
+      '. Please filter the records before download ',
+      title: "Download limit exceeded",
+      icon: "cloud_download",
+    });
   }
+  else
+  {
+    const dialog = this.dialogService.openConfirmDialoge({
+      message: "Do you want to download " + this.totalElements +" records ?" ,
+      title: "Download",
+      icon: "cloud_download",
+    });
+
+    dialog.afterClosed().subscribe((result) => {
+      if (result) {
+        this.entityDataService.exportToExcel(
+          this.currentSelectedEntity?.id as number,
+          `${this.currentSelectedEntity?.displayName}.xlsx`,
+          this.globalSettings?.displayFormat || this.defaultCodeSetting,
+          this.currentCriteria
+        );
+      }
+    });
+  }
+}
 
   private deleteEntityData(entityDataId: number) {
     return this.entityDataService
