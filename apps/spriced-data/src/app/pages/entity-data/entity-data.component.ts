@@ -167,6 +167,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         if (this.rows.length === 0) {
           this.onClear();
         }
+        this.rows = this.rows.map((elm: any) => ({ ...elm, comment: '', }));
         this.totalElements = page.totalElements;
         const selectionTimer = timer(TIMER_CONST);
         if (this.rows && this.rows?.length > 0) {
@@ -189,6 +190,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.rows[selRowIndex] = row;
       //this.rows = [...this.rows];
       selectionTimer.pipe(first()).subscribe(() => {
+        this.rows = this.rows.map((elm: any) => ({ ...elm, comment: '', }));
         this.setSelectedRow(this.rows[selRowIndex]);
       });
     }
