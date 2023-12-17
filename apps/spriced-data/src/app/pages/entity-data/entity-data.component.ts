@@ -337,6 +337,11 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         this.query = dialogResult.componentInstance.data.query;
         this.addDisplayNameInFilter(this.query);
         this.currentCriteria.filters = val;
+        this.pageNumber = 0;
+        this.currentCriteria.pager = {
+          pageNumber: this.pageNumber,
+          pageSize: this.limit
+        }
         this.loadEntityData(
           this.currentSelectedEntity as Entity,
           this.currentCriteria
@@ -388,6 +393,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         }
         if (!!item) {
           el.displayName = item.name;
+        }
+        if(el.field === 'is_valid')
+        {
+          el.displayName = 'Validation Status';
         }
         return;
       });

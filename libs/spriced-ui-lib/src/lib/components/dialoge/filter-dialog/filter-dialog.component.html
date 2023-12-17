@@ -1,133 +1,120 @@
-
 <div class="container">
   <div class="header">Filter</div>
   <div class="body">
     <form [formGroup]="form">
-    <query-builder
-      [config]="config"
-      formControlName="query"
-      [allowCollapse]="true"
-      [allowRuleset]="true"
-      [disabled]="data.disabled || false"
-      [persistValueOnFieldChange]="data.persistValueOnFieldChange || true"
-      [emptyMessage]="data.emptyMessage || ''"
-      #queryBuilder
-    >
-      <ng-container
-        *queryButtonGroup="
+      <query-builder [config]="config" formControlName="query" [allowCollapse]="true" [allowRuleset]="true"
+        [disabled]="data.disabled || false" [persistValueOnFieldChange]="data.persistValueOnFieldChange || true"
+        [emptyMessage]="data.emptyMessage || ''" #queryBuilder>
+        <ng-container *queryButtonGroup="
           let ruleset;
           let addRule = addRule;
           let addRuleSet = addRuleSet;
           let removeRuleSet = removeRuleSet;
-        "
-      >
-        <div class="flex flex-row">
-          <button
-            mat-raised-button
-            *ngIf="addRuleSet"
-            title="Rule"
-            color="primary"
-            (click)="handleAddRule(ruleset, addRule);"
-            class="ml-2"
-          >
-            Rule
+        ">
+          <div class="flex flex-row">
+            <button mat-raised-button *ngIf="addRuleSet" title="Rule" color="primary"
+              (click)="handleAddRule(ruleset, addRule);" class="ml-2">
+              Rule
+            </button>
+            <button mat-raised-button *ngIf="addRuleSet" title="Rule set" color="primary" (click)="addRuleSet()"
+              class="ml-2">
+              Rule set
+            </button>
+
+            <button *ngIf="removeRuleSet" (click)="removeRuleSet()"
+              class="ml-2 h-full text-r-primary flex flex-row cursor-pointer p-2 border-r-primary-light border-solid">
+              <mat-icon class="mt-auto">delete</mat-icon>
+            </button>
+          </div>
+        </ng-container>
+
+        <ng-container *queryArrowIcon>
+          <mat-icon ngClass="mat-arrow-icon">chevron_right</mat-icon>
+        </ng-container>
+
+        <ng-container *queryRemoveButton="let rule; let removeRule = removeRule">
+          <button (click)="removeRule(rule)"
+            class="ml-2 h-full text-r-primary flex flex-row cursor-pointer p-2 border-r-primary-light border-solid">
+            <mat-icon class="mt-auto">delete</mat-icon>
           </button>
-          <button
-            mat-raised-button
-            *ngIf="addRuleSet"
-            title="Rule set"
-            color="primary"
-            (click)="addRuleSet()"
-            class="ml-2"
-          >
-            Rule set
-          </button>
-       
-          <button
-          *ngIf="removeRuleSet"
-          (click)="removeRuleSet()"
-          class="ml-2 h-full text-r-primary flex flex-row cursor-pointer p-2 border-r-primary-light border-solid"
-        >
-        <mat-icon class="mt-auto" >delete</mat-icon>
-        </button>
-        </div>
-      </ng-container>
+        </ng-container>
 
-      <ng-container *queryArrowIcon>
-        <mat-icon ngClass="mat-arrow-icon">chevron_right</mat-icon>
-      </ng-container>
-
-      <ng-container *queryRemoveButton="let rule; let removeRule = removeRule">
-        <button
-        (click)="removeRule(rule)"
-        class="ml-2 h-full text-r-primary flex flex-row cursor-pointer p-2 border-r-primary-light border-solid"
-      >
-      <mat-icon class="mt-auto" >delete</mat-icon>
-      </button>
-      </ng-container>
-
-      <ng-container *queryField="let rule; let fields=fields; let onChange=onChange">
-        <mat-form-field class="ml-2" appearance="outline">
-          <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.field" (valueChange)="handleLookupData($event,rule)" (ngModelChange)="onChange($event, rule)">
-            <mat-option>
-              <ngx-mat-select-search
-                placeholderLabel="Search"
-                [ngModelOptions]="{standalone:true}"
-                ngModel
-                (ngModelChange)="handleSerch($event, rule, 'fieldSearch')"
-              ></ngx-mat-select-search>
-            </mat-option>
+        <ng-container *queryField="let rule; let fields=fields; let onChange=onChange">
+          <mat-form-field class="ml-2" appearance="outline">
+            <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.field"
+              (valueChange)="handleLookupData($event,rule)" (ngModelChange)="onChange($event, rule)">
+              <mat-option>
+                <ngx-mat-select-search placeholderLabel="Search" [ngModelOptions]="{standalone:true}" ngModel
+                  (ngModelChange)="handleSerch($event, rule, 'fieldSearch')"></ngx-mat-select-search>
+              </mat-option>
               <mat-option value="" class="option">--Select--</mat-option>
-               <mat-option *ngFor="let field of rule.filteredItems" [value]="field.value">{{field.name}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </ng-container>
+              <mat-option *ngFor="let field of rule.filteredItems" [value]="field.value">{{field.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </ng-container>
 
-      <ng-container  *queryOperator="let rule; let operators=operators; let onChange=onChange">
-        <mat-form-field class="mx-4" appearance="outline">
-          <mat-select *ngIf="operators?.length > 0" [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.operator" (ngModelChange)="handleOperators($event, rule, onChange)">
-            <mat-option *ngFor="let value of operators" [value]="value">{{value}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </ng-container>
-      
-      <ng-container *ngIf="count<=maxCount">
-      <ng-container *queryInput="let rule; let field=field; let onChange=onChange; type: 'LOOKUP'; ">
-        <mat-form-field appearance="outline">
-          <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.value" (ngModelChange)="onChange($event, rule)">
-            <mat-option>
-              <ngx-mat-select-search
-                placeholderLabel="Search"
-                [ngModelOptions]="{standalone:true}"
-                ngModel
-                (ngModelChange)="handleSerch($event, rule)"
-              ></ngx-mat-select-search>
-            </mat-option>
-            <mat-option value="" class="option">--Select--</mat-option>
-            <mat-option *ngFor="let opt of field?.filteredOptions" [value]="opt.code">
-             {{getDisplayProp(opt)}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </ng-container>
+        <ng-container *queryOperator="let rule; let operators=operators; let onChange=onChange">
+          <mat-form-field class="mx-4" appearance="outline">
+            <mat-select *ngIf="operators?.length > 0" [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.operator"
+              (ngModelChange)="handleOperators($event, rule, onChange)">
+              <mat-option *ngFor="let value of operators" [value]="value">{{value}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </ng-container>
+
+        <ng-container *ngIf="count<=maxCount">
+          <ng-container *queryInput="let rule; let field=field; let onChange=onChange; type: 'LOOKUP'; ">
+            <mat-form-field appearance="outline">
+              <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.value"
+                (ngModelChange)="onChange($event, rule)">
+                <mat-option>
+                  <ngx-mat-select-search placeholderLabel="Search" [ngModelOptions]="{standalone:true}" ngModel
+                    (ngModelChange)="handleSerch($event, rule)"></ngx-mat-select-search>
+                </mat-option>
+                <mat-option value="" class="option">--Select--</mat-option>
+                <mat-option *ngFor="let opt of field?.filteredOptions" [value]="opt.code">
+                  {{getDisplayProp(opt)}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
           </ng-container>
 
-          <ng-container *ngIf="count>maxCount">
-            <ng-container *queryInput="let rule ; let field=field; let onChange=onChange; type: 'LOOKUP';">
-              <mat-form-field appearance="outline">
-                <input matInput [style.display]="'none'" [ngModelOptions]="{ standalone: true }" [(ngModel)]="rule.value" (ngModelChange)="onChange($event,rule)">
-               <input matInput  [value]="rule?.valueName || 'select item'"  [readonly]="true">
-              </mat-form-field>
-               <button mat-raised-button *ngIf="count>maxCount" color="primary" class="edit-button ml-2"
-              title="selectItem" (click)="openPopup(rule, onChange)">
+        </ng-container>
+
+
+        <ng-container *ngIf="count>maxCount">
+          <ng-container *queryInput="let rule ; let field=field; let onChange=onChange; type: 'LOOKUP';">
+            <mat-form-field appearance="outline">
+              <input matInput [style.display]="'none'" [ngModelOptions]="{ standalone: true }" [(ngModel)]="rule.value"
+                (ngModelChange)="onChange($event,rule)">
+              <input matInput [value]="rule?.valueName || 'select item'" [readonly]="true">
+            </mat-form-field>
+            <button mat-raised-button *ngIf="count>maxCount" color="primary" class="edit-button ml-2" title="selectItem"
+              (click)="openPopup(rule, onChange)">
               <mat-icon>edit</mat-icon>
             </button>
-            </ng-container>
-           
           </ng-container>
-               <!-- <input  *ngIf="field.lookupItem && field.lookupItem.code" matInput [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.value" (ngModelChange)="onChange($event, rule)"/> -->
 
-      <!-- <ng-container *querySwitchGroup="let ruleset; let onChange = onChange">
+        </ng-container>
+
+        <ng-container *queryInput="let rule; let field=field; let onChange=onChange; type: 'boolean'; ">
+          <mat-form-field appearance="outline">
+            <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.value"
+              (ngModelChange)="onChange($event, rule)">
+              <mat-option>
+                <ngx-mat-select-search placeholderLabel="Search" [ngModelOptions]="{standalone:true}" ngModel
+                  (ngModelChange)="handleSerch($event, rule)"></ngx-mat-select-search>
+              </mat-option>
+              <mat-option value="" class="option">--Select--</mat-option>
+              <mat-option *ngFor="let opt of field?.filteredOptions" [value]="opt.value">
+                {{opt.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </ng-container>
+        <!-- <input  *ngIf="field.lookupItem && field.lookupItem.code" matInput [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.value" (ngModelChange)="onChange($event, rule)"/> -->
+
+        <!-- <ng-container *querySwitchGroup="let ruleset; let onChange = onChange">
         <mat-radio-group
           *ngIf="ruleset"
           [(ngModel)]="ruleset.condition"
@@ -141,29 +128,21 @@
           >
         </mat-radio-group>
       </ng-container> -->
-      <ng-container *querySwitchGroup="let ruleset; let onChange = onChange">
-        <div *ngIf="ruleset" class="switch-container">
-          <button
-            mat-button
-            class="square-button"
-            [ngClass]="{ active: ruleset.condition === 'and' }"
-            (click)="onChange('and')"
-          >
-            And
-          </button>
-          <button
-            mat-button
-            class="square-button"
-            [ngClass]="{ active: ruleset.condition === 'or' }"
-            (click)="onChange('or')"
-          >
-            Or
-          </button>
-        </div>
-      </ng-container>
-      
-      
-      <!-- <ng-container
+        <ng-container *querySwitchGroup="let ruleset; let onChange = onChange">
+          <div *ngIf="ruleset" class="switch-container">
+            <button mat-button class="square-button" [ngClass]="{ active: ruleset.condition === 'and' }"
+              (click)="onChange('and')">
+              And
+            </button>
+            <button mat-button class="square-button" [ngClass]="{ active: ruleset.condition === 'or' }"
+              (click)="onChange('or')">
+              Or
+            </button>
+          </div>
+        </ng-container>
+
+
+        <!-- <ng-container
         *queryInput="let rule; type: 'boolean'; let onChange = onChange"
       >
         <mat-checkbox
@@ -171,7 +150,7 @@
           (ngModelChange)="onChange()"
         ></mat-checkbox>
       </ng-container> -->
-    </query-builder>
+      </query-builder>
     </form>
   </div>
   <div class="footer">
@@ -186,4 +165,3 @@
     </button>
   </div>
 </div>
-
