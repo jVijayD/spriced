@@ -1,0 +1,14 @@
+::ng-deep .mat-mdc-progress-bar .mdc-linear-progress__buffer-bar {
+    background-color: grey !important;
+}
+
+.grid {
+    margin-top: 2px;
+    min-width: 400px;
+    display: grid;
+    grid-template-columns: 20% 60% 10%;
+    justify-content: center;
+    align-items: center;
+    max-height: 300px;
+    overflow: auto;
+}
