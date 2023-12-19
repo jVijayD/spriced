@@ -34,6 +34,7 @@
     [externalPaging]="isExternalPaging"
     [limit]="limit"
     [count]="count"
+    [sorts]="[sorts]"
     (sort)="onSort($event)"
   >
     <ngx-datatable-column *ngIf="enableRowIndex" name="#">

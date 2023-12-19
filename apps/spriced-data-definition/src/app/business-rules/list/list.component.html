@@ -26,7 +26,7 @@
 
           <mat-form-field class="ml-4" appearance="outline">
             <mat-label>Entity:</mat-label>
-            <mat-select (valueChange)="handleAttributeByEntity($event)" [(value)]="defaultEntity"
+            <mat-select (valueChange)="handleAttributeByEntity($event, 'entityChange')" [(value)]="defaultEntity"
               formControlName="entity">
               <ng-container *ngIf="entities.length === 0; else entityOptions">
                 <mat-option disabled> No record found </mat-option>
@@ -51,7 +51,7 @@
           <mat-form-field class="ml-4" appearance="outline">
             <mat-label>Attribute:</mat-label>
             <mat-select [(value)]="defaultAttribute" formControlName="attrubute"
-              (valueChange)="handleFilterRuleByAttribute($event)">
+              (valueChange)="handleFilterRuleByAttribute($event, 'attributeChange')">
               <ng-container *ngIf="attributes.length === 0; else attributeOptions">
                 <mat-option disabled> No record found </mat-option>
               </ng-container>
@@ -98,6 +98,8 @@
         (paginate)="onPaginate($event)" 
         (itemSelected)="onItemSelected($event)"
         (checkbox)="updateExcluded($event)"
+        (sort)="onSort($event)"
+        [sorts]="sorts"
         >
       <ng-container>
         <sp-header-action 
