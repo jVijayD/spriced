@@ -525,7 +525,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onSettings() {
     const dialogResult = this.dialog.open(SettingsPopUpComponent, {
-      data: this.currentSelectedEntity,
+      data:{entity:this.currentSelectedEntity,header:this.headers},
     });
 
     dialogResult.afterClosed().subscribe((val) => {

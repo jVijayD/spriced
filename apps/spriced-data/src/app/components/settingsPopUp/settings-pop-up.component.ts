@@ -15,7 +15,6 @@ import {
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { NgxIndexedDBService } from "ngx-indexed-db";
 import { SettingsService } from "./service/settings.service";
 import { GridConstants } from "@spriced-frontend/spriced-ui-lib";
 
@@ -33,8 +32,8 @@ import { GridConstants } from "@spriced-frontend/spriced-ui-lib";
     FormsModule,
     MatCardModule,
     MatFormFieldModule,
-    MatSelectModule,
-  ],
+    MatSelectModule
+    ],
   templateUrl: "./settings-pop-up.component.html",
   styleUrls: ["./settings-pop-up.component.scss"],
 })
@@ -44,19 +43,18 @@ export class SettingsPopUpComponent {
   freeze = 0;
   displayFormat: any;
   showSystem = false;
+  filteredlList: any;
   constructor(
     public dialogRef: MatDialogRef<SettingsPopUpComponent>,
-    private dbService: NgxIndexedDBService,
     private settings: SettingsService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     let result = this.settings.getGlobalSettings();
-    console.log(result);
     if (result) {
       this.displayFormat = result.displayFormat || "code";
       this.showSystem = result.showSystem;
     }
-    let all = this.settings.getCurrentSettings(this.data.name);
+    let all = this.settings.getCurrentSettings(this.data.entity.name);
     if (all) {
       this.noOfRecords = all.noOfRecords || GridConstants.LIMIT;
       this.freeze = all.freeze || 0;
@@ -96,4 +94,17 @@ export class SettingsPopUpComponent {
     localStorage.setItem("all_entity", JSON.stringify(all));
     this.dialogRef.close('ok');
   }
+
+
+  filterSelection(text: string) {
+    this.filteredlList = this.data.header.filter((item: any) => {
+      return (
+        item.displayName
+          .trim()
+          .toLowerCase()
+          .indexOf(text.trim().toLowerCase()) != -1
+      );
+    });
+  }
+
 }

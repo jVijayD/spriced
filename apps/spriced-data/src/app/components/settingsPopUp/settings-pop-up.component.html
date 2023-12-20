@@ -25,6 +25,23 @@
         oninput="validity.valid||(value='');"
       />
     </mat-form-field>
+
+    <mat-form-field appearance="outline" class="mt-4">
+      <mat-label> My defaults</mat-label>
+      
+      <mat-select multiple>
+        <mat-option>
+          <ngx-mat-select-search
+            placeholderLabel="Search"
+            ngModel
+            (ngModelChange)="filterSelection($event)"
+          ></ngx-mat-select-search>
+        </mat-option>
+        <mat-option  *ngFor="let item of filteredlList"
+        [value]="item.column">{{ item.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
   </mat-card>
   <mat-card style="padding: 20px; margin-top: 4px" class="drop-shadow">
     <mat-label class="mb-2"><strong>All Entity</strong></mat-label>
