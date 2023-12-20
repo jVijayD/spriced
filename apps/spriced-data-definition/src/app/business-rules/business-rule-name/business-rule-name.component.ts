@@ -8,7 +8,7 @@ import { Subject, filter, forkJoin, takeUntil } from 'rxjs';
 import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import * as moment from 'moment';
 import { MessageService } from "./../services/message.service";
-import { SnackBarService } from '@spriced-frontend/spriced-ui-lib';
+import { DialogService, SnackBarService } from '@spriced-frontend/spriced-ui-lib';
 import { async } from '@angular/core/testing';
 
 @Component({
@@ -67,7 +67,9 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
   public entityName: any;
   public modelName: any;
   public entities: any = [];
-
+  isValueChanged: boolean=true;
+  previousValue: any;
+  publishButton:boolean=false
   // DEMO LIST CODE
   public get connectedBRDropListsIds(): string[] {
     // We reverse ids here to respect items nesting hierarchy
@@ -84,7 +86,8 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     private renderer: Renderer2,
     private cdRef: ChangeDetectorRef,
     private appStore: AppDataService,
-    private snackbarService: SnackBarService
+    private snackbarService: SnackBarService,
+    private dialogService:DialogService
   ) {
     // HANDLE THIS FOR WHEN REMOVE THE SUBCONDITIONS
     this.appStore.subConditionForm.subscribe((res: any) => {
@@ -132,6 +135,25 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     };
   }
 
+
+  valueChanged()
+  {
+    this.myForm.valueChanges.subscribe(()=> 
+    {
+      
+    this.isValueChanged= this.compareValue(this.myForm.value,this.previousValue)
+    if(this.rulesData.status !=='Yet to Publish')
+    {
+      this.publishButton=this.isValueChanged
+    }
+
+    })
+  }
+
+compareValue(a:any,b:any)
+{
+return JSON.stringify(a)===JSON.stringify(b)
+}
   /**
    * HANDLE THIS FUNCTION FOR GET ALL ENUMS TYPES
    */
@@ -241,6 +263,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     this.actionType = this.conditionsData?.actions[value];
     this.actions.clear();
     this.elseAction.clear();
+    this.valueChanged()
   }
 
   /**
@@ -416,6 +439,22 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
         }
       });
     });
+
+this.previousValue=this.myForm.value
+this.previousValue.condition?.forEach((item:any)=>{
+  delete  item.min_value;
+  delete  item.max_value;
+})
+this.previousValue.action?.forEach((item:any)=>{
+  delete  item.min_value;
+  delete  item.max_value;
+})
+this.previousValue.elseaction?.forEach((item:any)=>{
+  delete  item.min_value;
+  delete  item.max_value;
+})
+this.publishButton=this.rulesData.status !=='Yet to Publish' ? true :false
+console.log(this.publishButton,this.myForm.value)
   }
 
   /**
@@ -967,7 +1006,6 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
       id: this.ruleId
     }
     this.saveButton = true;
-
     // EDIT FOR ACTIONS VALUE
     Object.entries(dataItem.conditionalAction).map((action: any) => {
       action[1].forEach(async(item: any) => {
@@ -1005,9 +1043,12 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     (this.ruleId && text !== 'save' ? this.businessRuleService.updateBusinessRule(this.ruleId, updateParam) : !this.ruleId && text === 'save' ? this.businessRuleService.saveBusinessRule(updateParam) : !!this.ruleId && text === 'save' ? this.businessRuleService.updateSaveBusinessRule(this.ruleId, updateParam) : this.businessRuleService.insertBusinessRule(param)).subscribe((res: any) => {
       const message: any = this.ruleId ? 'Rule is updated successfully!' : 'Rule is created successfully!';
       this.messageservice.snackMessage.next(message);
+      if(text!=='save')
+     { 
       this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
         queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId },
       });
+    }
     },
       // Handle the api error as needed
       (err: any) => {
@@ -1026,9 +1067,45 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
   }
 
   public backToListpage() {
+    if(!this.isValueChanged && !this.saveButton)
+    {
+      const dialogRef = this.dialogService.openConfirmDialoge({
+        message: "Once discarded,you cannot recover the rule.Are you sure you want to continue?",
+        title: "Discard Changes",
+        icon: "warning",
+      });
+      dialogRef.afterClosed().subscribe((result: any) => {
+        if (result == true) {
+          this.back()
+
+      }
+        })
+      }
+     if(!this.isValueChanged && this.saveButton)
+      {
+        const dialogRef = this.dialogService.openConfirmDialoge({
+          message: "Rule is not published. Are you sure you want to continue??",
+          title: "Confirm",
+          icon: "warning",
+        });
+        dialogRef.afterClosed().subscribe((result: any) => {
+          if (result == true) {
+            this.back()
+
+        }
+          })
+      }
+     if(this.isValueChanged)
+      {
+       this.back()
+      }
+  }
+
+  back()
+  {
     this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
       queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId },
-    });
+        })
   }
 
   /**
