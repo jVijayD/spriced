@@ -28,7 +28,7 @@ export class DownloadsDialogueComponent {
       value:100
     },
     {
-      entity:"entit3",
+      entity:"entxxxxxxxxxxxxit3",
       value:90
     },
     {

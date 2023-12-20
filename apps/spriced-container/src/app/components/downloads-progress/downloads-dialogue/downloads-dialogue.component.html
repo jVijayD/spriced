@@ -1,29 +1,27 @@
 <div
-  mat-dialog-content
-  style="padding: 0px; padding-bottom: 20px; overflow: hidden"
+  class="w-full bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5"
 >
-  <div
-    class="w-full bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5"
-  >
-    <span class="float-left text-white font-medium">File processing</span>
-    <div class="flex flex-row">
-      <sp-header-action
-        icon="close"
-        text="Close"
-        title="Close"
-        (actionClick)="onNoClick()"
-      >
-      </sp-header-action>
-    </div>
+  <span class="float-left text-white font-medium">File processing</span>
+  <div class="flex flex-row">
+    <sp-header-action
+      icon="close"
+      text="Close"
+      title="Close"
+      (actionClick)="onNoClick()"
+    >
+    </sp-header-action>
   </div>
-
+</div>
+<div style="overflow-y: auto; max-height: 500px">
   <div class="grid" *ngFor="let item of data">
-    <span
-      >{{item.entity}}</span>
-        <div style="width: 200px">
-          <mat-progress-bar mode="determinate" value={{item.value}}></mat-progress-bar>
-        </div>
-        <span>{{item.value}}%</span>
-        <mat-icon>download</mat-icon>
- </div>
+    <span>{{ item.entity }}</span>
+    <div style="width: 200px">
+      <mat-progress-bar
+        mode="determinate"
+        value="{{ item.value }}"
+      ></mat-progress-bar>
+    </div>
+    <span>{{ item.value }}%</span>
+    <mat-icon>download</mat-icon>
+  </div>
 </div>
