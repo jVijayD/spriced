@@ -163,7 +163,7 @@ export class SavedFilterlistComponent {
 
   onEdit() {
     const dialog = this.dialogService.openDialog(AddFilterlistComponent, {
-      data: { item: this.selectedItem, action: "edit" },
+      data: { item: this.selectedItem, action: "Edit" },
     });
     dialog.afterClosed().subscribe((result) => {
       this.loadFilters();

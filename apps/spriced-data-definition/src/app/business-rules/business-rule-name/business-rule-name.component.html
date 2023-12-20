@@ -20,7 +20,7 @@
             <div class="example-container mt-1.5 flex flex-col">
                 <mat-form-field [ngClass]="previewField ? 'not-allow' : ''" class="w-52 p-0" appearance="outline">
                     <mat-label>Business Rule Name</mat-label>
-                    <input [readonly]="previewField" formControlName="name" matInput placeholder="Enter Rule Name">
+                    <input (change)="valueChanged()" [readonly]="previewField" formControlName="name" matInput placeholder="Enter Rule Name">
                 </mat-form-field>
                 <mat-error class="text-sm italic text-red-500 p-0"
                     *ngIf="myForm.get('name')!.invalid && myForm.get('name')!.touched && myForm.get('name')!.hasError('required')">
@@ -35,7 +35,7 @@
                     <input
                         onkeypress="return (this.value + String.fromCharCode(event.charCode) <= 1000 && this.value + String.fromCharCode(event.charCode) > 0)"
                         min="1" max="1000" [readonly]="previewField" formControlName="priority" matInput type="number"
-                        placeholder="Enter number in range 1-100">
+                        placeholder="Enter number in range 1-100" (change)="valueChanged()">
                 </mat-form-field>
                 <mat-error class="text-sm italic text-red-500"
                     *ngIf="myForm.get('priority')!.invalid && myForm.get('priority')!.touched && myForm.get('priority')!.hasError('required')">
@@ -87,7 +87,7 @@
                 appearance="outline">
                 <mat-label>Description</mat-label>
                 <textarea [readonly]="previewField" matInput placeholder="Add description"
-                    formControlName="description"></textarea>
+                    formControlName="description" (change)="valueChanged()"></textarea>
             </mat-form-field>
             <mat-error class="text-sm italic text-red-500"
                 *ngIf="myForm.get('description')!.invalid && myForm.get('description')!.touched && myForm.get('description')!.hasError('required')">
@@ -191,14 +191,14 @@
             <div *ngIf="!previewField" class="flex">
 
                 <button mat-raised-button color="primary" (click)="onSubmit(myForm.value, 'save')"
-                    [ngStyle]="{'opacity': !myForm.valid || saveButton ? '0.5' : '1'}"
-                    [disabled]="!myForm.valid || saveButton" class="p-4 mr-2">Save</button>
+                    [ngStyle]="{'opacity': !myForm.valid || saveButton || isValueChanged ? '0.5' : '1'}"
+                    [disabled]="!myForm.valid || saveButton || isValueChanged  " class="p-4 mr-2">Save</button>
 
                 <button mat-raised-button color="primary" type="submit"
-                    [ngStyle]="{'opacity': !myForm.valid || saveButton ? '0.5' : '1'}"
-                    [disabled]="!myForm.valid || saveButton" class="p-4 mr-2">Publish</button>
+                    [ngStyle]="{'opacity': !myForm.valid || publishButton ? '0.5' : '1'}"
+                    [disabled]="!myForm.valid || publishButton" class="p-4 mr-2">Publish</button>
                 
-                <button (click)="backToListpage()" mat-raised-button color="primary" class="p-4">Cancel</button>
+                <button (click)="backToListpage()" mat-raised-button color="primary" class="p-4" type="button">Cancel</button>
             </div>
             <button *ngIf="previewField" (click)="backToListpage()" mat-raised-button color="primary"
                 class="p-4">Back</button>

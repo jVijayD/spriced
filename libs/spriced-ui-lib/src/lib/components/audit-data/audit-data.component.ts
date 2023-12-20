@@ -23,6 +23,7 @@ import { KeycloakService } from "keycloak-angular";
 import { AngularSplitModule, SplitComponent } from 'angular-split';
 import { DynamicFormModule } from "../dynamic-form/dynamic-form.module";
 import { DataGridComponent, Header, Paginate } from "../data-grid/data-grid.component";
+import {DragDropModule} from '@angular/cdk/drag-drop';
 // import { SettingsService } from "../../../components/settingsPopUp/service/settings.service";
 
 @Component({
@@ -37,7 +38,8 @@ import { DataGridComponent, Header, Paginate } from "../data-grid/data-grid.comp
     MatFormFieldModule,
     MatButtonModule,
     MatInputModule,
-    AngularSplitModule
+    AngularSplitModule,
+    DragDropModule
   ],
   providers: [
     SplitComponent,
@@ -390,7 +392,6 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   onDrag(event:any){
     window.dispatchEvent(new Event('resize'));
   } 
-  
   ngOnDestroy(): void {
     this.subscriptions.forEach((item) => item.unsubscribe());
   }

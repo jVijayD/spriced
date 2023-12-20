@@ -25,7 +25,7 @@ export class AddFilterlistComponent {
     @Inject(MAT_DIALOG_DATA) public data: any, private filterListService: FilterListService,
     private snackbarService: SnackBarService) {
     this.appForm = {
-      title: data.action + " Filter",
+      title: data.action + " filter",
       groups: [
         {
           title: "",
@@ -35,7 +35,6 @@ export class AddFilterlistComponent {
       asyncValidations: [],
       validations: [],
     };
-    console.log(this.data)
   }
   private formFields: FormFieldControls = [
     {
@@ -45,6 +44,7 @@ export class AddFilterlistComponent {
       value: this.data?.item.name,
       placeholder: "Name",
       label: "Name",
+      maxLength:50,
       validations: [
         {
           name: "required",
@@ -72,19 +72,17 @@ export class AddFilterlistComponent {
       type: "input",
       subType: "text",
       name: "description",
+      maxLength:250,
       value: this.data?.item.description,
       placeholder: "Description",
       label: "Description",
       validations: [{
         name: "maxlength",
-        message: "Name can have a maximum 50 characters",
-        validator: Validators.maxLength(50),
+        message: "Description can have a maximum 250 characters",
+        validator: Validators.maxLength(250),
       },]
     },
-
   ];
-
-
   onClose(data: any) {
     this.dialogRef.close(data);
   }
