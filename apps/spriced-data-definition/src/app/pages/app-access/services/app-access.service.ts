@@ -10,7 +10,7 @@ export class AppAccessService {
   api_url: string;
   constructor(private http: HttpClient) {
     this.api_url = process.env["NX_API_USER-ACCESS_URL"] as string;
-    this.api_url += "/user-access/applicaitons";
+    this.api_url += "/applicaitons";
   }
   public getAppPermissions(role: string): Observable<AppPermissionsDTO[]> {
     return this.http

@@ -169,6 +169,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         if (this.rows.length === 0) {
           this.onClear();
         }
+        this.rows = this.rows.map((elm: any) => ({ ...elm, comment: '', }));
         this.totalElements = page.totalElements;
         const selectionTimer = timer(TIMER_CONST);
         if (this.rows && this.rows?.length > 0) {
@@ -191,6 +192,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.rows[selRowIndex] = row;
       //this.rows = [...this.rows];
       selectionTimer.pipe(first()).subscribe(() => {
+        this.rows = this.rows.map((elm: any) => ({ ...elm, comment: '', }));
         this.setSelectedRow(this.rows[selRowIndex]);
       });
     }
@@ -335,6 +337,11 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         this.query = dialogResult.componentInstance.data.query;
         this.addDisplayNameInFilter(this.query);
         this.currentCriteria.filters = val;
+        this.pageNumber = 0;
+        this.currentCriteria.pager = {
+          pageNumber: this.pageNumber,
+          pageSize: this.limit
+        }
         this.loadEntityData(
           this.currentSelectedEntity as Entity,
           this.currentCriteria
@@ -386,6 +393,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         }
         if (!!item) {
           el.displayName = item.name;
+        }
+        if(el.field === 'is_valid')
+        {
+          el.displayName = 'Validation Status';
         }
         return;
       });
@@ -617,13 +628,36 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     //   format,
     //   this.currentSelectedEntity?.displayName as string
     // );
-    this.entityDataService.exportToExcel(
-      this.currentSelectedEntity?.id as number,
-      `${this.currentSelectedEntity?.displayName}.xlsx`,
-      this.globalSettings?.displayFormat || this.defaultCodeSetting,
-      this.currentCriteria
-    );
+    let limit=process.env["NX_DOWNLOAD_LIMIT"] as unknown as number
+  if(this.totalElements > limit )
+  {
+     this.dialogService.openInfoDialog({
+      message: "You are about to download " + this.totalElements +" records.Download limit is " +limit + 
+      '. Please filter the records before download ',
+      title: "Download limit exceeded",
+      icon: "cloud_download",
+    });
   }
+  else
+  {
+    const dialog = this.dialogService.openConfirmDialoge({
+      message: "Do you want to download " + this.totalElements +" records ?" ,
+      title: "Download",
+      icon: "cloud_download",
+    });
+
+    dialog.afterClosed().subscribe((result) => {
+      if (result) {
+        this.entityDataService.exportToExcel(
+          this.currentSelectedEntity?.id as number,
+          `${this.currentSelectedEntity?.displayName}.xlsx`,
+          this.globalSettings?.displayFormat || this.defaultCodeSetting,
+          this.currentCriteria
+        );
+      }
+    });
+  }
+}
 
   private deleteEntityData(entityDataId: number) {
     return this.entityDataService

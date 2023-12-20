@@ -12,13 +12,11 @@
 .mat-mdc-icon-button ::ng-deep .mat-mdc-button-persistent-ripple {
   display: none;
 }
-.grid{
-  height:40vh;
-}
+
 
 .annotations{
-  height:100px;
-  height:180px;
+  min-height: 10px;
+  height: calc(100% - 30px);
   overflow: auto;
   .annotations-data{
     height:10px;

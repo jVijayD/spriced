@@ -20,8 +20,10 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { GlobalSettingService } from "./../settting-popup/global-setting.service";
 import { KeycloakService } from "keycloak-angular";
+import { AngularSplitModule, SplitComponent } from 'angular-split';
 import { DynamicFormModule } from "../dynamic-form/dynamic-form.module";
 import { DataGridComponent, Header, Paginate } from "../data-grid/data-grid.component";
+import {DragDropModule} from '@angular/cdk/drag-drop';
 // import { SettingsService } from "../../../components/settingsPopUp/service/settings.service";
 
 @Component({
@@ -36,8 +38,11 @@ import { DataGridComponent, Header, Paginate } from "../data-grid/data-grid.comp
     MatFormFieldModule,
     MatButtonModule,
     MatInputModule,
+    AngularSplitModule,
+    DragDropModule
   ],
   providers: [
+    SplitComponent,
     DataEntityService,
     // SettingsService,
     // DynamicFormService,
@@ -67,7 +72,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       column: "updatedDate",
       name: "Last Updated On",
       pipe: (data: any) => {
-        return moment(data).format("MM/DD/YYYY");
+        return moment(data).format("MM/DD/YYYY HH:mm:ss");
       },
       sortColumn:"updated_date",
     },
@@ -77,8 +82,18 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       isFilterable: true,
       column: "priorValue",
       name: "Prior Value",
-      sortColumn:"prior_value"
-
+      sortColumn:"prior_value",
+      pipe: (data: any) => {
+        var momentDate=moment(data,true)
+        if(momentDate.isValid())
+        {
+         return moment(data).format("MM/DD/YYYY");
+        }
+        else
+        {
+         return data
+        }
+      },
     },
     {
       canAutoResize: true,
@@ -86,7 +101,18 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       isFilterable: true,
       column: "newValue",
       name: "New value",
-      sortColumn:"new_value"
+      sortColumn:"new_value",
+      pipe: (data: any) => {
+        var momentDate=moment(data,true)
+        if(momentDate.isValid())
+        {
+         return moment(data).format("MM/DD/YYYY");
+        }
+        else
+        {
+         return data
+        }
+      },
 
     },
     {
@@ -271,6 +297,22 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   {
       "filterType": "CONDITION",
       "key": "column_name",
+      "value": "Updated Date",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Annotation",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
       "value": "Last Update On",
       "joinType": "AND",
       "operatorType": "IS_NOT_EQUAL",
@@ -285,13 +327,29 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       "dataType": "string"
   },
   {
-    "filterType": "CONDITION",
-    "key": "column_name",
-    "value": "Id",
-    "joinType": "AND",
-    "operatorType": "IS_NOT_EQUAL",
-    "dataType": "string"
-},
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Id",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "id",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
+  {
+      "filterType": "CONDITION",
+      "key": "column_name",
+      "value": "Validation Status",
+      "joinType": "AND",
+      "operatorType": "IS_NOT_EQUAL",
+      "dataType": "string"
+  },
   {
       "filterType": "CONDITION",
       "key": "record_id",
@@ -324,12 +382,16 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       }
     })
   }
+  
   onSubmit(data: FormGroup<any>) {
     if (data.valid) {
       this.dialogRef.close(data.value);
     }
   }
 
+  onDrag(event:any){
+    window.dispatchEvent(new Event('resize'));
+  } 
   ngOnDestroy(): void {
     this.subscriptions.forEach((item) => item.unsubscribe());
   }

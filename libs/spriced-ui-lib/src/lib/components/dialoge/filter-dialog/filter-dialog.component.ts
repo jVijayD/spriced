@@ -1,6 +1,6 @@
-import {Component, Inject, ViewChild } from "@angular/core";
+import { Component, Inject, ViewChild } from "@angular/core";
 
-import { QueryBuilderConfig,QueryBuilderComponent } from "ngx-angular-query-builder";
+import { QueryBuilderConfig, QueryBuilderComponent } from "ngx-angular-query-builder";
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { FormGroup, FormBuilder } from "@angular/forms";
 import { DataEntityService } from "@spriced-frontend/spriced-common-lib";
@@ -21,6 +21,17 @@ export class FilterDialogComponent {
   count!: number;
   pageSize: number = 30;
   source: any;
+  status: any[] = [
+    {
+      name: 'Validation succeeded',
+      value: 'true'
+    },
+    {
+      name: 'Validation failed',
+      value: 'false'
+    }
+  ];
+
   constructor(
     private dialog: MatDialog,
     public fb: FormBuilder,
@@ -28,6 +39,15 @@ export class FilterDialogComponent {
     public dialogRef: MatDialogRef<FilterDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: FilterData
   ) {
+    const validationStatus: any = {
+      dataType: "boolean",
+      displayName: "Validation Status",
+      formType: "FREE_FORM",
+      name: "is_valid",
+      options: undefined,
+      referencedTableId: null
+    }
+    data.columns?.push(validationStatus)
     this.displayProp =
       data.displayFormat === "code"
         ? "code"
@@ -75,11 +95,11 @@ export class FilterDialogComponent {
   }
 
   // HANDLE FOR ADDING FILTER FILTERED ITEMS TO EVERY RULE 
-  handleAddRule(ruleset:any, addRule: Function){
+  handleAddRule(ruleset: any, addRule: Function) {
     if (!!addRule) {
       addRule();
     }
-    ruleset.rules.map((item:any)=>item.filteredItems = this.queryBuilder.fields);
+    ruleset.rules.map((item: any) => item.filteredItems = this.queryBuilder.fields);
   }
   onCancel(): void {
     this.dialogRef.close(null);
@@ -247,9 +267,12 @@ export class FilterDialogComponent {
     return config;
   }
 
-  public handleLookupData(item: any,rule?:any) {
+  public handleLookupData(item: any, rule?: any) {
     rule ? (rule.valueName = '', rule.selectedItem = '') : null;
     let field: any = this.config.fields[item];
+    if (item === "is_valid") {
+      field.filteredOptions = this.status;
+    }
     if (field?.type === 'LOOKUP' && !!field?.entity) {
       this.loadLookupData(field.entity, 0, [], item);
     }
@@ -282,7 +305,7 @@ export class FilterDialogComponent {
         value: this.source,
         total: this.count,
         pageSize: this.pageSize,
-        selectedItem:rule.selectedItem
+        selectedItem: rule.selectedItem
       },
       hasBackdrop: false,
     });
@@ -302,7 +325,7 @@ export class FilterDialogComponent {
       this.loadLookupData(field.entity, event.pageNumber, event.filters);
     });
   }
-  public handleSerch(value: any, item: any,text?:string) {
+  public handleSerch(value: any, item: any, text?: string) {
     if (text === 'fieldSearch') {
       console.log(this.config, this.data.columns);
       const items: any = this.queryBuilder.fields;
