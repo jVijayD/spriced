@@ -305,7 +305,8 @@
                 matInput
                 type="number"
                 min="0"
-                max="9"
+                max="6"
+                onkeypress="return /[0-6]/i.test(event.key)"
                 [SelectedValue]="1"
                 [(ngModel)]="attDetails.size"
                 [disabled]="
