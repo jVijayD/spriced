@@ -30,7 +30,6 @@ export class NumericComponent
   extends BaseComponent
   implements OnInit, OnDestroy
 {
-  public maxLength: number = 16;
   @Input()
   set control(inputControl: GenericControl) {
     this._control = inputControl;

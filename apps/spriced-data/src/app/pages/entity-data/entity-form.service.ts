@@ -119,6 +119,7 @@ export class EntityFormService {
           placeholder: attr.displayName || attr.name,
           label: attr.displayName || attr.name,
           decimalCount: attr.size,
+          maxLength: 16,
           validations: this.getValidations(attr),
           readOnly: attr.permission === "READ" ? true : false,
         };
@@ -132,6 +133,7 @@ export class EntityFormService {
             placeholder: attr.displayName || attr.name,
             label: attr.displayName || attr.name,
             decimalCount: attr.size,
+            maxLength: 16,
             validations: this.getValidations(attr),
             readOnly: attr.permission === "READ" ? true : false,
           };
