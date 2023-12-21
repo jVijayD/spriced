@@ -126,6 +126,7 @@ export class FormEntityService {
             label: attr.displayName || attr.name,
             decimalCount: attr.size,
             maxLength: 16,
+            hint: 'Maximum length is 16',
             validations: this.getValidations(attr),
             readOnly: attr.permission === "READ" ? true : false,
           };
