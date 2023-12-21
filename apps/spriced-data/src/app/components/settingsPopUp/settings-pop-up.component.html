@@ -3,7 +3,7 @@
 <div mat-dialog-content class="grid">
   <mat-card style="padding: 20px" class="drop-shadow">
     <mat-label class="mb-2"
-      ><strong>{{ data.displayName || data.name }}</strong></mat-label
+      ><strong>{{ data.entity.displayName || data.entity.name }}</strong></mat-label
     >
     <mat-form-field appearance="outline" class="mb-4">
       <mat-label> Records per page</mat-label>
@@ -26,10 +26,10 @@
       />
     </mat-form-field>
 
+<form [formGroup]="columnForm">
     <mat-form-field appearance="outline" class="mt-4">
       <mat-label> My defaults</mat-label>
-      
-      <mat-select multiple>
+      <mat-select multiple formControlName="column">
         <mat-option>
           <ngx-mat-select-search
             placeholderLabel="Search"
@@ -37,10 +37,13 @@
             (ngModelChange)="filterSelection($event)"
           ></ngx-mat-select-search>
         </mat-option>
-        <mat-option  *ngFor="let item of filteredlList"
-        [value]="item.column">{{ item.name }}</mat-option>
+        <mat-option (click)="toggleAll()" #all value="All"> All </mat-option>
+        <mat-option  (click)="tosslePerColumn()" *ngFor="let item of filteredlList" [value]="item.column">{{
+          item.name
+        }}</mat-option>
       </mat-select>
     </mat-form-field>
+</form>
 
   </mat-card>
   <mat-card style="padding: 20px; margin-top: 4px" class="drop-shadow">
