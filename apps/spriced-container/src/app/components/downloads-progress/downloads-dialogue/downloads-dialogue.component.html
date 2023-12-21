@@ -14,14 +14,14 @@
 </div>
 <div style="overflow-y: auto; max-height: 500px">
   <div class="grid" *ngFor="let item of data">
-    <span>{{ item.entity }}</span>
+    <span>{{ item.entityName }}</span>
     <div style="width: 200px">
       <mat-progress-bar
         mode="determinate"
-        value="{{ item.value }}"
+        value="{{ item.progressPercentage }}"
       ></mat-progress-bar>
     </div>
-    <span>{{ item.value }}%</span>
-    <mat-icon>downloading</mat-icon>
+    <span>{{ item.progressPercentage }}%</span>
+    <mat-icon  [ngClass]="{'cursor': item.processCompleted}">{{item.processCompleted ?'save':'downloading'}}</mat-icon>
   </div>
 </div>

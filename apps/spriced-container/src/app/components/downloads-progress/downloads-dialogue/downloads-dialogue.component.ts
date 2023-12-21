@@ -5,42 +5,29 @@ import { DownloadsProgressComponent } from "../downloads-progress.component";
 import { MatDialogRef } from "@angular/material/dialog";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatIconModule } from "@angular/material/icon";
+import { DownloadsProgressService } from "../services/downloads-progress.service";
 
 @Component({
   selector: "sp-downloads-dialogue",
   standalone: true,
-  imports: [CommonModule, HeaderActionComponent, MatProgressBarModule,MatIconModule],
+  imports: [
+    CommonModule,
+    HeaderActionComponent,
+    MatProgressBarModule,
+    MatIconModule,
+  ],
   templateUrl: "./downloads-dialogue.component.html",
   styleUrls: ["./downloads-dialogue.component.scss"],
 })
 export class DownloadsDialogueComponent {
-  data=[
-    {
-      entity:"entit1",
-      value:40
-    },
-    {
-      entity:"entit1",
-      value:80
-    },
-    {
-      entity:"entit2",
-      value:100
-    },
-    {
-      entity:"entxxxxxxxxxxxxit3",
-      value:90
-    },
-    {
-      entity:"entit4",
-      value:20
-    },
-    {
-      entity:"entit5",
-      value:30
-    },
-  ]
-  constructor(public dialogRef: MatDialogRef<DownloadsDialogueComponent>) {}
+  data;
+  constructor(
+    public dialogRef: MatDialogRef<DownloadsDialogueComponent>,
+    public progressService: DownloadsProgressService
+  ) {
+    this.progressService.setProgress()
+    this.data = this.progressService.getProgress();
+  }
   onNoClick(): void {
     this.dialogRef.close();
   }
