@@ -79,7 +79,7 @@ export class DataGridComponent implements AfterViewInit {
   columnMode: ColumnMode = ColumnMode.standard;
 
   @Input()
-  sorts: any = [];
+  defaultSorts: any = [];
 
   @Input()
   selectionType!: SelectionType;

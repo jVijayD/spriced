@@ -153,7 +153,7 @@ export class ListComponent implements OnInit, OnDestroy {
   selectedItem: any = null;
   public attributeId: any;
   public domainAttributes: any = [];
-  public sorts: any;
+  public defaultSorts: any;
   
   constructor(
     private businessRuleService: BusinessruleService,
@@ -174,7 +174,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.modelId = +this.activeRoute?.snapshot?.queryParams?.['model_id'];
     this.attributeId = this.activeRoute?.snapshot?.queryParams?.['attribute_id'];
     const { sort } = window.history.state;
-    this.sorts = !!sort ? JSON.parse(sort) : [];
+    this.defaultSorts = !!sort ? JSON.parse(sort) : [];
     this.currentAttributeId = this.attributeId;
   }
 
@@ -311,7 +311,7 @@ export class ListComponent implements OnInit, OnDestroy {
    * @param attributeId string
    */
   public handleFilterRuleByAttribute(attributeId: any, text?: any) {
-    !!text ? this.dataGrid.sorts = [] : '';
+    !!text ? this.dataGrid.defaultSorts = [] : '';
     this.currentAttributeId = attributeId;
     if (attributeId !== 'ALL') {
       let filteredRules = [];
@@ -377,7 +377,7 @@ export class ListComponent implements OnInit, OnDestroy {
   public addNewRule() {
     this.route.navigate([`/spriced-data-definition/rules/business-rule`], {
       queryParams: { model_id: this.modelId, entity_id: this.entityId},
-      state: {sort: JSON.stringify(this.sorts)}
+      state: {sort: JSON.stringify(this.defaultSorts)}
     });
   }
 
@@ -443,8 +443,8 @@ export class ListComponent implements OnInit, OnDestroy {
    */
   public onSort(event: any)
   {
-    this.sorts = event.sorts[0];
-    localStorage.setItem('sorts', JSON.stringify(this.sorts));
+    this.defaultSorts = event.sorts[0];
+    localStorage.setItem('sorts', JSON.stringify(this.defaultSorts));
   }
 
   /**
@@ -534,7 +534,7 @@ export class ListComponent implements OnInit, OnDestroy {
     const routePath = text === 'preview' ? `${item.id}/preview` : item.id;
     this.route.navigate([`/spriced-data-definition/rules/business-rule/${routePath}`], {
        queryParams: { model_id: this.modelId, entity_id: this.entityId, attribute_id: this.currentAttributeId },
-       state: {sort: JSON.stringify(this.sorts)}
+       state: {sort: JSON.stringify(this.defaultSorts)}
       });
   }
   /**
@@ -542,7 +542,7 @@ export class ListComponent implements OnInit, OnDestroy {
    * @param id any
    */
   public handleEntityByModels(id: any, text?: any) {
-    !!text ? this.dataGrid.sorts = [] : '';
+    !!text ? this.dataGrid.defaultSorts = [] : '';
     this.businessRuleService
       .getAllEntitesByModuleId(id)
       .pipe(takeUntil(this.notifier$))
@@ -562,7 +562,7 @@ export class ListComponent implements OnInit, OnDestroy {
    * @param id number
    */
   public async handleAttributeByEntity(id: any, text?: any) {
-    !!text ? this.dataGrid.sorts = [] : '';
+    !!text ? this.dataGrid.defaultSorts = [] : '';
     this.entityId = id;
     this.loading = true;
     if (id) {
