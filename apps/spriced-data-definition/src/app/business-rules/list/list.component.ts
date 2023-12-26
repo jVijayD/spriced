@@ -153,7 +153,8 @@ export class ListComponent implements OnInit, OnDestroy {
   selectedItem: any = null;
   public attributeId: any;
   public domainAttributes: any = [];
-
+  public defaultSorts: any;
+  
   constructor(
     private businessRuleService: BusinessruleService,
     private route: Router,
@@ -172,6 +173,8 @@ export class ListComponent implements OnInit, OnDestroy {
     this.entityId = +this.activeRoute?.snapshot?.queryParams?.['entity_id'];
     this.modelId = +this.activeRoute?.snapshot?.queryParams?.['model_id'];
     this.attributeId = this.activeRoute?.snapshot?.queryParams?.['attribute_id'];
+    const { sort } = window.history.state;
+    this.defaultSorts = !!sort ? JSON.parse(sort) : [];
     this.currentAttributeId = this.attributeId;
   }
 
@@ -307,7 +310,8 @@ export class ListComponent implements OnInit, OnDestroy {
    * HANDLE THIS FOR FILTER THE RULE DATA BY ATTRIBUTE ID
    * @param attributeId string
    */
-  public handleFilterRuleByAttribute(attributeId: any) {
+  public handleFilterRuleByAttribute(attributeId: any, text?: any) {
+    !!text ? this.dataGrid.defaultSorts = [] : '';
     this.currentAttributeId = attributeId;
     if (attributeId !== 'ALL') {
       let filteredRules = [];
@@ -372,7 +376,8 @@ export class ListComponent implements OnInit, OnDestroy {
    */
   public addNewRule() {
     this.route.navigate([`/spriced-data-definition/rules/business-rule`], {
-      queryParams: { model_id: this.modelId, entity_id: this.entityId },
+      queryParams: { model_id: this.modelId, entity_id: this.entityId},
+      state: {sort: JSON.stringify(this.defaultSorts)}
     });
   }
 
@@ -433,6 +438,16 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   /**
+   *  HANDLE THIS FUNCTION FOR SORTING THE TABLE COLUMN
+   * @param event any
+   */
+  public onSort(event: any)
+  {
+    this.defaultSorts = event.sorts[0];
+    localStorage.setItem('sorts', JSON.stringify(this.defaultSorts));
+  }
+
+  /**
    * HANDLE FOR DELETE RULE BY ID
    * @param item any
    */
@@ -473,6 +488,7 @@ export class ListComponent implements OnInit, OnDestroy {
                 this.errorPanelService.init();
                 this.msgSrv.success('Rule is deleted successfully!');
                 this.getRulesAndModelsData();
+                this.onRefresh();
               },
               (error: any) => {
                 this.loading = false;
@@ -516,15 +532,17 @@ export class ListComponent implements OnInit, OnDestroy {
    */
   public async editBusinessRule(item: any, text?: string) {
     const routePath = text === 'preview' ? `${item.id}/preview` : item.id;
-    this.route.navigate([
-      `/spriced-data-definition/rules/business-rule/${routePath}`,
-    ], { queryParams: { model_id: this.modelId, entity_id: this.entityId, attribute_id: this.currentAttributeId } });
+    this.route.navigate([`/spriced-data-definition/rules/business-rule/${routePath}`], {
+       queryParams: { model_id: this.modelId, entity_id: this.entityId, attribute_id: this.currentAttributeId },
+       state: {sort: JSON.stringify(this.defaultSorts)}
+      });
   }
   /**
    * HANDLE FOR ENTITIES BY MODEL ID
    * @param id any
    */
   public handleEntityByModels(id: any, text?: any) {
+    !!text ? this.dataGrid.defaultSorts = [] : '';
     this.businessRuleService
       .getAllEntitesByModuleId(id)
       .pipe(takeUntil(this.notifier$))
@@ -543,7 +561,8 @@ export class ListComponent implements OnInit, OnDestroy {
    * HANDLE FOR ATTRIBUTES BY ENTITY ID
    * @param id number
    */
-  public async handleAttributeByEntity(id: any) {
+  public async handleAttributeByEntity(id: any, text?: any) {
+    !!text ? this.dataGrid.defaultSorts = [] : '';
     this.entityId = id;
     this.loading = true;
     if (id) {

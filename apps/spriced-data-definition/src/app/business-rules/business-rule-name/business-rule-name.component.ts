@@ -2,14 +2,12 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit, Output, Renderer2, Vie
 import { MatTable } from '@angular/material/table';
 import { AppDataService } from '@spriced-frontend/shared/spriced-shared-lib';
 import { BusinessruleService } from '@spriced-frontend/spriced-common-lib';
-import { FormGroup, FormControl, Validators, FormArray, FormBuilder } from '@angular/forms';
+import { FormGroup, Validators, FormArray, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, filter, forkJoin, takeUntil } from 'rxjs';
+import { Subject, forkJoin, takeUntil } from 'rxjs';
 import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import * as moment from 'moment';
 import { MessageService } from "./../services/message.service";
 import { DialogService, SnackBarService } from '@spriced-frontend/spriced-ui-lib';
-import { async } from '@angular/core/testing';
 
 @Component({
   selector: "sp-business-rule-name",
@@ -67,6 +65,8 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
   public entityName: any;
   public modelName: any;
   public entities: any = [];
+  public sorts: any;
+
   isValueChanged: boolean=true;
   previousValue: any;
   publishButton:boolean=false
@@ -112,6 +112,9 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     const previewRule = this.activeRoute?.snapshot?.params?.['preview'];
     const entity_id = this.activeRoute?.snapshot?.queryParams?.['entity_id'];
     const model_id = this.activeRoute?.snapshot?.queryParams?.['model_id'];
+    const sorts = localStorage.getItem('sorts') || null;
+    const { sort } = window.history.state;
+    this.sorts = !!sorts ? sorts : sort;
     this.previewField = !['', undefined, null].includes(previewRule);
     this.modelId = model_id;
     this.entityId = entity_id;
@@ -1047,6 +1050,7 @@ console.log(this.publishButton,this.myForm.value)
      { 
       this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
         queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId },
+        state: {sort: this.sorts}
       });
     }
     },
@@ -1105,7 +1109,8 @@ console.log(this.publishButton,this.myForm.value)
   {
     this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
       queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId },
-        })
+      state: {sort: this.sorts}
+    });
   }
 
   /**
@@ -1116,6 +1121,7 @@ console.log(this.publishButton,this.myForm.value)
     this.router.navigate([], { queryParams: {} });
     this.notifier$.next(true);
     this.notifier$.complete();
+    localStorage.removeItem('sorts');
   }
 
 }
