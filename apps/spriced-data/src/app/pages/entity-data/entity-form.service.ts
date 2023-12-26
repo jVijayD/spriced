@@ -13,14 +13,14 @@ const LOOKUP_PAGE_SIZE = 50;
 export class EntityFormService {
   public getFormFieldControls(
     entity: Entity,
-    codeSettings: string
+    codeSettings: string,
   ): FormFieldControls {
     return entity.attributes
-      .filter((item) => {
+      .filter((item:any) => {
         return (
           (item.permission !== "DENY" && item.editable === true) ||
           item.constraintType == "PRIMARY_KEY"
-        );
+        )
       })
       .map((attr: Attribute) => {
         return this.getType(attr, codeSettings);

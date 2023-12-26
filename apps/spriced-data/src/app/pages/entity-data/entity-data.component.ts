@@ -141,6 +141,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   public showTooltip: boolean = false;
 
   defaultCodeSetting = "namecode";
+  selectedColumns: any;
+  columns: any;
 
   constructor(
     private snackbarService: SnackBarService,
@@ -525,7 +527,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onSettings() {
     const dialogResult = this.dialog.open(SettingsPopUpComponent, {
-      data:{entity:this.currentSelectedEntity,header:this.headers},
+      data:{entity:this.currentSelectedEntity,header:this.columns},
     });
 
     dialogResult.afterClosed().subscribe((val) => {
@@ -536,7 +538,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           this.currentCriteria,
           this.globalSettings
         );
-
         this.createDynamicUIMapping(this.currentSelectedEntity);
       }
     });
@@ -652,7 +653,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           this.currentSelectedEntity?.id as number,
           `${this.currentSelectedEntity?.displayName}.xlsx`,
           this.globalSettings?.displayFormat || this.defaultCodeSetting,
-          this.currentCriteria
+          this.currentCriteria,
+          this.selectedColumns
         );
       }
     });
@@ -686,7 +688,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.selectedItem,
       this.dynamicFormService.getFormValues()
     );
-
     const extraData = this.entityFormService.extractExtraData(
       this.selectedItem,
       this.currentSelectedEntity as Entity
@@ -709,9 +710,11 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     if (entity) {
       formFields = this.entityFormService.getFormFieldControls(
         entity,
-        this.globalSettings?.displayFormat || this.defaultCodeSetting
+        this.globalSettings?.displayFormat || this.defaultCodeSetting,
       );
-      this.disableSubmit = !entity.attributes.reduce((prev, current) => {
+     formFields =  this.setSelectedColumns(formFields)
+     console.log(formFields)
+     this.disableSubmit = !entity.attributes.reduce((prev, current) => {
         return prev || current.permission === "UPDATE";
       }, false);
     }
@@ -782,6 +785,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         globalSettings?.displayFormat || this.defaultCodeSetting
       );
       this.headers.push(...headers);
+      this.columns=headers
       this.loadEntityData(entity, criteria);
     }
   }
@@ -814,7 +818,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.applyEntitySettings(entity);
       this.subscriptions.push(
         this.entityDataService
-          .loadEntityData(entity.id, enrichedCriteria)
+          .loadEntityDataFilter(entity.id, enrichedCriteria,this.selectedColumns)
           .pipe(first())
           .subscribe({
             next: (page) => {
@@ -861,21 +865,37 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   private applyEntitySettings(entity: Entity) {
     const entitySettings = this.settings.getCurrentSettings(entity.name);
     if (entitySettings) {
+      this.selectedColumns=entitySettings.columns || []
       this.limit = entitySettings.noOfRecords;
       this.currentCriteria.pager = {
         pageNumber: this.pageNumber,
         pageSize: this.limit,
       };
+    this.headers= this.setSelectedColumns(this.columns)
       this.headers.forEach((item, index) => {
         item.pinned = undefined;
         if (index < entitySettings.freeze) {
           item.pinned = "left";
         }
       });
-    }
   }
-
-  // private removeNull(data: any) {
+  }
+  setSelectedColumns(array:any)
+{
+  if(this.selectedColumns && this.selectedColumns?.length !==0)
+  { 
+    return  array.filter((elem:any) => {
+      return this.selectedColumns.some((ele:any) => {
+          return ele === elem.name.toLowerCase()
+        });
+      });
+  }
+  else
+  {
+    return array
+  }
+}
+    // private removeNull(data: any) {
   //   let finalData: any = {};
   //   for (let item in data) {
   //     if (data[item] !== null && data[item] !== undefined) {
