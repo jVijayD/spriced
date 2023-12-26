@@ -71,7 +71,7 @@ export class SettingsPopUpComponent {
       this.showSystem = result.showSystem;
     }
     this.filteredlList = this.data.header.filter((item: any) => {
-      return item.column !== "name" && item.column !== "code";
+      return item.column !== "name" && item.column !== "code" && item.column !== "validation_status";
     });
     let all = this.settings.getCurrentSettings(this.data.entity.name);
     if (all) {
@@ -90,10 +90,13 @@ export class SettingsPopUpComponent {
     this.dialogRef.close("Cancel");
   }
   save() {
-    let data = this.columnForm.controls["column"].value.filter((item: any) => {
+
+   let data=['validation_status',"name", "code",'comment'];
+
+    let selected = this.columnForm.controls["column"].value.filter((item: any) => {
       return item !== "All";
     });
-    data.push("name", "code",'comment','');
+    data.push(...selected)
     let value: any = {
       noOfRecords: this.noOfRecords,
       freeze: this.freeze,

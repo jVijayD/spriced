@@ -713,7 +713,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         this.globalSettings?.displayFormat || this.defaultCodeSetting,
       );
      formFields =  this.setSelectedColumns(formFields)
-     console.log(formFields)
      this.disableSubmit = !entity.attributes.reduce((prev, current) => {
         return prev || current.permission === "UPDATE";
       }, false);
@@ -766,7 +765,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         : false;
       this.headers = [
         {
-          column: "",
+          column: "validation_status",
           name: "",
           canAutoResize: false,
           isSortable: false,
@@ -785,7 +784,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         globalSettings?.displayFormat || this.defaultCodeSetting
       );
       this.headers.push(...headers);
-      this.columns=headers
+      this.columns=this.headers
       this.loadEntityData(entity, criteria);
     }
   }
@@ -886,7 +885,13 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   { 
     return  array.filter((elem:any) => {
       return this.selectedColumns.some((ele:any) => {
-          return ele === elem.name.toLowerCase()
+        if(ele==="validation_status")
+         { 
+          return ele === elem.column?.toLowerCase()
+        }
+         else{
+          return ele === elem.name?.toLowerCase()
+         }
         });
       });
   }
