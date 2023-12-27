@@ -84,7 +84,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       name: "Prior Value",
       sortColumn:"prior_value",
       pipe: (data: any) => {
-        var momentDate=moment(data,true)
+        var momentDate=moment(data?.toString().replaceAll("Z",""), "YYYY-MM-DDTHH:mm:ss", true)
         if(momentDate.isValid())
         {
          return moment(data).format("MM/DD/YYYY");
@@ -103,7 +103,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
       name: "New value",
       sortColumn:"new_value",
       pipe: (data: any) => {
-        var momentDate=moment(data,true)
+        var momentDate=moment(data?.toString().replaceAll("Z",""), "YYYY-MM-DDTHH:mm:ss", true)
         if(momentDate.isValid())
         {
          return moment(data).format("MM/DD/YYYY");
