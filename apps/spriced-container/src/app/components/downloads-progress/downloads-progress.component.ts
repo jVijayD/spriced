@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatIconModule } from "@angular/material/icon";
 import { MatDialog } from "@angular/material/dialog";
-import { DownloadsDialogueComponent } from "./downloads-dialogue/downloads-dialogue.component";
+import { MfeAppPubSubService } from "@spriced-frontend/shared/spriced-shared-lib";
 
 @Component({
   selector: "sp-downloads-progress",
@@ -12,8 +12,13 @@ import { DownloadsDialogueComponent } from "./downloads-dialogue/downloads-dialo
   styleUrls: ["./downloads-progress.component.scss"],
 })
 export class DownloadsProgressComponent {
-  constructor(public dialog: MatDialog) {}
+  constructor(
+    public dialog: MatDialog,
+    private pubService: MfeAppPubSubService
+  ) {}
+
   onDownloads() {
-    this.dialog.open(DownloadsDialogueComponent, {});
+    //this.dialog.open(DownloadsDialogueComponent, {});
+    this.pubService.publish("download-background", "download-background");
   }
 }

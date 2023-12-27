@@ -67,11 +67,14 @@ import { EntityFormService } from "./entity-form.service";
 import {
   AppDataService,
   ErrorTypes,
+  MfeAppPubSubService,
 } from "@spriced-frontend/shared/spriced-shared-lib";
 import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components/directive/tool-tip-renderer.directive";
 import { CustomToolTipComponent } from "libs/spriced-ui-lib/src/lib/components/custom-tool-tip/custom-tool-tip.component";
 import { SavedFilterlistComponent } from "../../components/filter-list/saved-filterlist/saved-filterlist.component";
 import { AddFilterlistComponent } from "../../components/filter-list/add-filterlist/add-filterlist.component";
+import { EntityExportDataService } from "../../services/entity-export.service";
+import { DownloadsDialogueComponent } from "../../components/downloads-dialogue/downloads-dialogue.component";
 
 const TIMER_CONST = 300;
 @Component({
@@ -152,7 +155,9 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     private entityGridService: EntityGridService,
     private entityFormService: EntityFormService,
     private router: Router,
-    private statusPannelService: AppDataService
+    private statusPannelService: AppDataService,
+    private entityExportService: EntityExportDataService,
+    private pubService: MfeAppPubSubService
   ) {
     this.globalSettings = this.settings.getGlobalSettings();
     this.setFormData("", []);
@@ -160,6 +165,11 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
   ngOnInit(): void {
     this.subscribeToEntityDataLoadEvents();
+    this.pubService.subscribe("download-background", (data) => {
+      if ((data as any).detail === "download-background") {
+        this.dialog.open(DownloadsDialogueComponent, {});
+      }
+    });
   }
 
   subscribeToEntityDataLoadEvents() {
@@ -169,7 +179,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         if (this.rows.length === 0) {
           this.onClear();
         }
-        this.rows = this.rows.map((elm: any) => ({ ...elm, comment: '', }));
+        this.rows = this.rows.map((elm: any) => ({ ...elm, comment: "" }));
         this.totalElements = page.totalElements;
         const selectionTimer = timer(TIMER_CONST);
         if (this.rows && this.rows?.length > 0) {
@@ -192,7 +202,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.rows[selRowIndex] = row;
       //this.rows = [...this.rows];
       selectionTimer.pipe(first()).subscribe(() => {
-        this.rows = this.rows.map((elm: any) => ({ ...elm, comment: '', }));
+        this.rows = this.rows.map((elm: any) => ({ ...elm, comment: "" }));
         this.setSelectedRow(this.rows[selRowIndex]);
       });
     }
@@ -313,58 +323,58 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       displayFormat: this.globalSettings.displayFormat,
       config: null,
       query: this.query,
-      save:true
+      save: true,
     });
 
     dialogResult.afterClosed().subscribe((val) => {
       if (val) {
-        if(val.button && val.button=='save')
-        {
+        if (val.button && val.button == "save") {
           const dialogRef = this.dialog.open(AddFilterlistComponent, {
             data: {
-             item:{ filters:val as Criteria,
-              entityId:this.currentSelectedEntity?.id,
-              groupId:this.currentSelectedEntity?.groupId,
-              name:'',
-              description:''},
-              action:'Add'
+              item: {
+                filters: val as Criteria,
+                entityId: this.currentSelectedEntity?.id,
+                groupId: this.currentSelectedEntity?.groupId,
+                name: "",
+                description: "",
+              },
+              action: "Add",
             },
-            
           });
-      }
-      else
-      {
-        this.query = dialogResult.componentInstance.data.query;
-        this.addDisplayNameInFilter(this.query);
-        this.currentCriteria.filters = val;
-        this.pageNumber = 0;
-        this.currentCriteria.pager = {
-          pageNumber: this.pageNumber,
-          pageSize: this.limit
+        } else {
+          this.query = dialogResult.componentInstance.data.query;
+          this.addDisplayNameInFilter(this.query);
+          this.currentCriteria.filters = val;
+          this.pageNumber = 0;
+          this.currentCriteria.pager = {
+            pageNumber: this.pageNumber,
+            pageSize: this.limit,
+          };
+          this.loadEntityData(
+            this.currentSelectedEntity as Entity,
+            this.currentCriteria
+          );
         }
-        this.loadEntityData(
-          this.currentSelectedEntity as Entity,
-          this.currentCriteria
-        );
-    }
+      }
+    });
   }
-  })
-}
-  onSavedFilter()
-  {
-  const dialogResult = this.dialogService.openDialog(SavedFilterlistComponent,{
-    data:{entityId:this.currentSelectedEntity?.id}
-  })
+  onSavedFilter() {
+    const dialogResult = this.dialogService.openDialog(
+      SavedFilterlistComponent,
+      {
+        data: { entityId: this.currentSelectedEntity?.id },
+      }
+    );
     dialogResult.afterClosed().subscribe((val) => {
       if (val) {
-        this.onClearFilter()
+        this.onClearFilter();
         this.currentCriteria.filters = val;
         this.loadEntityData(
           this.currentSelectedEntity as Entity,
           this.currentCriteria
         );
       }
-    })
+    });
   }
 
   /**
@@ -394,9 +404,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         if (!!item) {
           el.displayName = item.name;
         }
-        if(el.field === 'is_valid')
-        {
-          el.displayName = 'Validation Status';
+        if (el.field === "is_valid") {
+          el.displayName = "Validation Status";
         }
         return;
       });
@@ -628,36 +637,40 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     //   format,
     //   this.currentSelectedEntity?.displayName as string
     // );
-    let limit=process.env["NX_DOWNLOAD_LIMIT"] as unknown as number
-  if(this.totalElements > limit )
-  {
-     this.dialogService.openInfoDialog({
-      message: "You are about to download " + this.totalElements +" records.Download limit is " +limit + 
-      '. Please filter the records before download ',
-      title: "Download limit exceeded",
-      icon: "cloud_download",
-    });
-  }
-  else
-  {
-    const dialog = this.dialogService.openConfirmDialoge({
-      message: "Do you want to download " + this.totalElements +" records ?" ,
-      title: "Download",
-      icon: "cloud_download",
-    });
+    let limit = process.env["NX_DOWNLOAD_LIMIT"] as unknown as number;
+    let limitAsync = 50000;
+    if (this.totalElements > limit) {
+      this.dialogService.openInfoDialog({
+        message:
+          "You are about to download " +
+          this.totalElements +
+          " records.Download limit is " +
+          limit +
+          ". Please filter the records before download ",
+        title: "Download limit exceeded",
+        icon: "cloud_download",
+      });
+    } else {
+      const dialog = this.dialogService.openConfirmDialoge({
+        message: "Do you want to download " + this.totalElements + " records ?",
+        title: "Download",
+        icon: "cloud_download",
+      });
 
-    dialog.afterClosed().subscribe((result) => {
-      if (result) {
-        this.entityDataService.exportToExcel(
-          this.currentSelectedEntity?.id as number,
-          `${this.currentSelectedEntity?.displayName}.xlsx`,
-          this.globalSettings?.displayFormat || this.defaultCodeSetting,
-          this.currentCriteria
-        );
-      }
-    });
+      dialog.afterClosed().subscribe(async (result) => {
+        if (result) {
+          await this.entityExportService.export(
+            this.currentSelectedEntity?.id as number,
+            this.currentSelectedEntity?.name as string,
+            `${this.currentSelectedEntity?.displayName}.xlsx`,
+            this.globalSettings?.displayFormat || this.defaultCodeSetting,
+            this.currentCriteria,
+            this.totalElements > limitAsync
+          );
+        }
+      });
+    }
   }
-}
 
   private deleteEntityData(entityDataId: number) {
     return this.entityDataService
