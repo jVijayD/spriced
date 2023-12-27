@@ -1,0 +1,46 @@
+<div
+  class="w-full bg-primary-default h-10 rounded-t-md flex flex-row items-center justify-between pl-5 pr-5"
+>
+  <span class="float-left text-white font-medium">File processing</span>
+  <div class="flex flex-row">
+    <sp-header-action
+      icon="close"
+      text="Close"
+      title="Close"
+      (actionClick)="onNoClick()"
+    >
+    </sp-header-action>
+  </div>
+</div>
+<div style="overflow-y: auto; height: 300px; min-width: 400px">
+  <div class="grid" *ngFor="let item of data">
+    <span style="text-transform: capitalize">{{ item.entityName }}</span>
+
+    <mat-progress-bar
+      mode="determinate"
+      value="{{ item.progressPercentage }}"
+    ></mat-progress-bar>
+
+    <span style="padding-left: 5px">{{ item.progressPercentage }}%</span>
+
+    <button
+      *ngIf="item.processCompleted"
+      (click)="onDownload(item.id, item.fileName, item.name)"
+      [disabled]="item.cancelled"
+    >
+      <mat-icon class="cursor"> save</mat-icon>
+    </button>
+
+    <button *ngIf="!item.processCompleted">
+      <mat-icon [style.color]="item.cancelled ? 'grey' : 'green'">
+        downloading</mat-icon
+      >
+    </button>
+    <button
+      (click)="onCancel(item.name, item.subscriberId)"
+      [disabled]="item.progressPercentage == 100 || item.cancelled"
+    >
+      <mat-icon class="cursor">close</mat-icon>
+    </button>
+  </div>
+</div>

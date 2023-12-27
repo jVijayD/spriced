@@ -1,0 +1,16 @@
+::ng-deep .mat-mdc-progress-bar .mdc-linear-progress__buffer-bar {
+  background-color: grey !important;
+  border-radius: 2px !important;
+}
+
+.grid {
+  padding: 10px;
+  min-width: 600px;
+  display: grid;
+  grid-template-columns: 30% 40% 10% 10% 10%;
+  justify-content: center;
+  align-items: center;
+}
+.cursor {
+  cursor: pointer;
+}

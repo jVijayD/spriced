@@ -1,6 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
-@Injectable()
+@Injectable({
+  providedIn: "root",
+})
 export class MfeAppPubSubService {
   public publish<T>(name: string, data: T) {
     const event = new CustomEvent<T>(name, {
