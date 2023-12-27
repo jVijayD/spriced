@@ -102,12 +102,12 @@ export class SettingsPopUpComponent {
       freeze: this.freeze,
       columns: data,
     };
-    localStorage.setItem(this.data.entity.name, JSON.stringify(value));
+    this.settings.setSettings(this.data.entity.name, value);
     let all: any = {
       displayFormat: this.displayFormat,
       showSystem: this.showSystem,
     };
-    localStorage.setItem("all_entity", JSON.stringify(all));
+    this.settings.setSettings("all_entity", all);
     this.dialogRef.close("ok");
   }
 
