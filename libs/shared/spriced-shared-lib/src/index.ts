@@ -7,5 +7,5 @@ export * from "./lib/services/error-panel.service";
 export * from "./lib/services/form-data-fetch.service";
 export * from "./lib/services/service.tokens";
 export * from "./lib/services/style-utility.service";
-
+export * from "./lib/pubsub/mfe-app-pubsub.service";
 // export * from "../../../spriced-common-lib/src/lib/services/app-data.service";
