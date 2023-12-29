@@ -367,7 +367,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     );
     dialogResult.afterClosed().subscribe((val) => {
       if (val) {
-        this.onClearFilter();
+        this.query = null;
         this.currentCriteria.filters = val;
         this.loadEntityData(
           this.currentSelectedEntity as Entity,

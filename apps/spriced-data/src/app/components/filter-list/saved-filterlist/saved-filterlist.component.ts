@@ -66,7 +66,6 @@ export class SavedFilterlistComponent {
     private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.loadFilters();
   }
   headers: Header[] = [
     {
