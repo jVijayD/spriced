@@ -57,21 +57,6 @@ export interface Criteria {
   };
 }
 
-export interface currentStorage {
-  filters?: any[];
-  sorters?: { direction: "DESC" | "ASC"; property: string }[];
-
-  pager?: {
-    pageNumber: number;
-    pageSize: number;
-  };
-  modelId?: number|null;
-  entityId?: number|null;
-  attributeId?: string|null;
-  hierarchyId?: number|null;
-  role?: any;
-}
-
 export interface PageData {
   content: any[];
   pageable: {

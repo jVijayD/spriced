@@ -66,7 +66,6 @@ export class HierarchyDefinitionComponent
     let modelId: any = this.aroute.snapshot.queryParams["model_id"] ? Number(this.aroute.snapshot.queryParams["model_id"]) : null;
     const storage = this.globalSetting.getCurrentStorage('hierarchyView');
     if(!modelId && !!storage){
-      const storage = this.globalSetting.getCurrentStorage('hierarchyView');
       modelId = storage.modelId;
     }
     let currentModel: any = null;

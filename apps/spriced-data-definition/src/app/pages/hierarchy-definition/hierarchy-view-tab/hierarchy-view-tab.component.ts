@@ -164,7 +164,7 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
 
   onModelChange(ev: { value: Model }, text?: any) {
     !!text ? this.dataGrid.defaultSorts = [] : '';
-    this.currentStorage.sorters = [];
+    !!this.currentStorage && (this.currentStorage.sorters = []);
     this.selectedModel = ev.value;
     this.loadAllHierarchies(this.selectedModel);
   }
