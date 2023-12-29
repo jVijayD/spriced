@@ -6,6 +6,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  ViewChild,
 } from "@angular/core";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatTableModule } from "@angular/material/table";
@@ -24,7 +25,7 @@ import {
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import * as moment from "moment";
 import { NgFor } from "@angular/common";
-import { Model } from "@spriced-frontend/spriced-common-lib";
+import { GlobalSettingService, Model, currentStorage } from "@spriced-frontend/spriced-common-lib";
 import { HierarchyServiceService } from "../service/hierarchy-service.service";
 import { Router } from "@angular/router";
 @Component({
@@ -47,6 +48,7 @@ import { Router } from "@angular/router";
   ],
 })
 export class HierarchyViewTabComponent implements OnInit, OnDestroy {
+  @ViewChild('dataGrid') public dataGrid!: DataGridComponent;
   @Output() onEditEventEmitter = new EventEmitter<any>();
   @Output() onDeleteEventEmitter = new EventEmitter<any>();
   @Input()
@@ -106,13 +108,24 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
 
   selectedHierarchy: Hierarchy | null = null;
   selectedModel!: Model;
+  currentStorage!: currentStorage;
+  currentSort: any = [];
 
   constructor(
     private hierarchyService: HierarchyServiceService,
     private dialogService: DialogService,
+    private globalSetting: GlobalSettingService,
     private router: Router) { }
-  ngOnDestroy() { }
-  ngOnInit() { }
+  ngOnDestroy() {
+    this.currentStorage = {...this.currentStorage, modelId: this.selectedModel.id, sorters: this.currentSort};
+    this.globalSetting.setCurrentStorage('hierarchyView', this.currentStorage);
+   }
+  ngOnInit() { 
+    const currentStorage = this.globalSetting.getCurrentStorage('hierarchyView');
+    this.currentStorage = !!currentStorage ? currentStorage : this.currentStorage;
+    this.currentSort = this.currentStorage.sorters || [];
+    window.onbeforeunload = () => this.ngOnDestroy();
+  }
   onItemSelected(e: any) {
     this.selectedHierarchy = e;
     const groupId = e.modelId;
@@ -149,9 +162,16 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
     });
   }
 
-  onModelChange(ev: { value: Model }) {
+  onModelChange(ev: { value: Model }, text?: any) {
+    !!text ? this.dataGrid.defaultSorts = [] : '';
+    this.currentStorage.sorters = [];
     this.selectedModel = ev.value;
     this.loadAllHierarchies(this.selectedModel);
+  }
+
+  onSort(event: any)
+  {
+    this.currentSort = event.sorts[0];
   }
 
   showConfirmDeleteDialogue() {

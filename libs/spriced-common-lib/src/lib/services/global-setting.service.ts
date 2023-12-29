@@ -33,4 +33,15 @@ export class GlobalSettingService {
     //   })
     // );
   }
+
+  getCurrentStorage(key: any)
+  {
+    let item: any = localStorage.getItem(key);
+    return JSON.parse(item);
+  }
+
+  setCurrentStorage(key: any, currentObject: any)
+  {
+    localStorage.setItem(key, JSON.stringify(currentObject));
+  }
 }
