@@ -187,7 +187,7 @@ export class EntityExportDataService {
     selectedColumns:any
   ) {
     const url =
-      `${this.api_url}/entity/${id}/export/excel?displayFormat=${displayFormat},filterAttributes=${selectedColumns}`
+      `${this.api_url}/entity/${id}/export/excel?displayFormat=${displayFormat}&filterAttributes=${selectedColumns}`
 
     return this.http
       .post(url,criteria,{
