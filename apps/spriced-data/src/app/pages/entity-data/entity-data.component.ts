@@ -144,7 +144,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   public showTooltip: boolean = false;
 
   defaultCodeSetting = "namecode";
-  selectedColumns: any;
+  selectedColumns: any=[];
   columns: any;
 
   constructor(
