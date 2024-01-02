@@ -275,6 +275,7 @@ export class FilterDialogComponent {
         let field: any = this.config.fields[rule];
         field.options = res.content;
         field.filteredOptions = res.content;
+        field.count = res.totalElements; 
         this.count = res.totalElements;
       }
       else {
@@ -293,8 +294,8 @@ export class FilterDialogComponent {
       width: "700px",
       height: "620px",
       data: {
-        value: this.source,
-        total: this.count,
+        value: field.options,
+        total: field.count,
         pageSize: this.pageSize,
         selectedItem: rule.selectedItem
       },
