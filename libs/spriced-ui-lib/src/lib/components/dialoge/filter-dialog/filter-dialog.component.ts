@@ -273,16 +273,14 @@ export class FilterDialogComponent {
     this.entityService.loadLookupData(id, pageNumber, this.pageSize, filters).subscribe((res: any) => {
       if (rule) {
         let field: any = this.config.fields[rule];
-        field.options = res.content;
+        field.options = res?.content;
         field.filteredOptions = res.content;
-        field.count = res.totalElements; 
-        this.count = res.totalElements;
+        field.count = res?.totalElements;
       }
       else {
-        this.source = res.content;
         this.dialogReference.componentInstance.upDatedData({
-          value: this.source,
-          total: this.count,
+          value: res?.content,
+          total: res?.totalElements,
         });
       }
     })
