@@ -5,10 +5,10 @@
     [footerHeight]="0" [columnMode]="columnMode" [virtualScroll]="true" [selectionType]="selectionType" [limit]="10"
     [isExternalPaging]="false" [isExternalSorting]="false" [sortType]="sortType" [count]="totalElements"
     (itemSelected)="onItemSelected($event)" [selected]="!!selectedHierarchy ? [selectedHierarchy] : []"
-    (action)="navigate($event)">
+    [defaultSorts]="currentSort" (action)="navigate($event)" (sort)="onSort($event)">
     <ng-container>
       <sp-header-component-wrapper title="Model">
-        <sp-select-search [model]="selectedModel" [appearance]="'fill'" (selectionChange)="onModelChange($event)"
+        <sp-select-search [model]="selectedModel" [appearance]="'fill'" (selectionChange)="onModelChange($event, 'modelChange')"
           [sorters]="[{property:'displayName'}]" [bindLabelKey]="'displayName'" [items]="modelList">
         </sp-select-search>
       </sp-header-component-wrapper>

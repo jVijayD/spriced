@@ -17,7 +17,7 @@ import { Hierarchy } from "./models/HierarchyTypes.class";
 import { Subscription } from "rxjs";
 import { EntityService } from "../../services/entity.service";
 import { ModelService } from "../../services/model.service";
-import { Model } from "@spriced-frontend/spriced-common-lib";
+import { GlobalSettingService, Model } from "@spriced-frontend/spriced-common-lib";
 import { MatSelectChange } from "@angular/material/select";
 import { KeycloakService } from "keycloak-angular";
 import { ActivatedRoute } from "@angular/router";
@@ -54,7 +54,8 @@ export class HierarchyDefinitionComponent
     private entityService: EntityService,
     private modelService: ModelService,
     protected readonly keycloak: KeycloakService,
-    private aroute: ActivatedRoute
+    private aroute: ActivatedRoute,
+    private globalSetting: GlobalSettingService
   ) { }
 
   ngOnDestroy(): void {
@@ -62,7 +63,11 @@ export class HierarchyDefinitionComponent
   }
 
   ngOnInit() {
-    const modelId: any = this.aroute.snapshot.queryParams["model_id"] ? Number(this.aroute.snapshot.queryParams["model_id"]) : null;
+    let modelId: any = this.aroute.snapshot.queryParams["model_id"] ? Number(this.aroute.snapshot.queryParams["model_id"]) : null;
+    const storage = this.globalSetting.getCurrentStorage('hierarchyView');
+    if(!modelId && !!storage){
+      modelId = storage.modelId;
+    }
     let currentModel: any = null;
     this.subscriptions.push(
       this.modelService.loadAllModels().subscribe((result: any) => {
