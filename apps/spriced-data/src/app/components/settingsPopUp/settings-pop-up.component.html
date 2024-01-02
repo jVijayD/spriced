@@ -35,11 +35,10 @@
           <mat-option>
             <ngx-mat-select-search
               placeholderLabel="Search"
-              ngModel
-              (ngModelChange)="filterSelection($event)"
+              formControlName="search"
             ></ngx-mat-select-search>
           </mat-option>
-          <mat-option (click)="toggleAll()" #all value="All">Select All </mat-option>
+          <mat-option (click)="toggleAll()" #all value="All">Restore defaults</mat-option>
           <mat-option
             (click)="tosslePerColumn()"
             *ngFor="let item of filteredlList"

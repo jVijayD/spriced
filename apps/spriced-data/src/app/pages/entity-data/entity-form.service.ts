@@ -27,6 +27,18 @@ export class EntityFormService {
       });
   }
 
+  setSelectedFields(selectedColumns: any, array: any) {
+    return array.filter((elem: any) => {
+      return selectedColumns.some((ele: any) => {
+        if (elem.name == "comment") {
+          return elem;
+        } else {
+          return ele === elem.name?.toLowerCase();
+        }
+      });
+    });
+  }
+
   public extractFormFieldsOnly(selectedItem: any, value: any) {
     let extractedFields: any = {};
 

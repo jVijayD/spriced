@@ -402,8 +402,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       column: "is_valid",
       options: undefined,
       isFilterable: true,
-      referencedTableId: null
-    }
+      referencedTableId: null,
+    };
     updatedHeaders.push(validationStatus);
 
     if (!!query && query.rules) {
@@ -547,7 +547,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onSettings() {
     const dialogResult = this.dialog.open(SettingsPopUpComponent, {
-      data:{entity:this.currentSelectedEntity,header:this.columns},
+      data: { entity: this.currentSelectedEntity, header: this.columns },
     });
 
     dialogResult.afterClosed().subscribe((val) => {
@@ -670,13 +670,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       });
       dialog.afterClosed().subscribe(async (result) => {
         if (result) {
-          let selected=[]
-    if(this.selectedColumns&&this.selectedColumns.length!=0)
-    {
-      selected = this.selectedColumns?.filter((item: any) => {
-      return item !== "validation_status" && item !== "comment";
-    });
-  }
           await this.entityExportService.export(
             this.currentSelectedEntity?.id as number,
             this.currentSelectedEntity?.name as string,
@@ -684,7 +677,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
             this.globalSettings?.displayFormat || this.defaultCodeSetting,
             this.currentCriteria,
             this.totalElements > limitAsync,
-            selected,
+            this.selectedColumns
           );
         }
       });
@@ -740,10 +733,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     if (entity) {
       formFields = this.entityFormService.getFormFieldControls(
         entity,
-        this.globalSettings?.displayFormat || this.defaultCodeSetting,
+        this.globalSettings?.displayFormat || this.defaultCodeSetting
       );
-     formFields =  this.setSelectedColumns(formFields)
-     this.disableSubmit = !entity.attributes.reduce((prev, current) => {
+      formFields = this.entityFormService.setSelectedFields(this.selectedColumns,formFields);
+      this.disableSubmit = !entity.attributes.reduce((prev, current) => {
         return prev || current.permission === "UPDATE";
       }, false);
     }
@@ -814,7 +807,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         globalSettings?.displayFormat || this.defaultCodeSetting
       );
       this.headers.push(...headers);
-      this.columns=this.headers
+      this.columns = this.headers;
       this.loadEntityData(entity, criteria);
     }
   }
@@ -843,19 +836,11 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   private loadEntityData(entity: Entity, criteria: Criteria) {
     this.currentCriteria = criteria;
     const enrichedCriteria = this.setDefaultCriteria(criteria, this.lastId);
-    let selected=[]
-    if(this.selectedColumns&&this.selectedColumns.length!=0)
-    {
-      selected = this.selectedColumns?.filter((item: any) => {
-      return item !== "validation_status" && item !== "comment";
-    });
-  }
-  
     if (entity) {
       this.applyEntitySettings(entity);
       this.subscriptions.push(
         this.entityDataService
-          .loadEntityDataFilter(entity.id, enrichedCriteria,selected)
+          .loadEntityDataFilter(entity.id, enrichedCriteria, this.selectedColumns)
           .pipe(first())
           .subscribe({
             next: (page) => {
@@ -902,43 +887,28 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   private applyEntitySettings(entity: Entity) {
     const entitySettings = this.settings.getCurrentSettings(entity.name);
     if (entitySettings) {
-      this.selectedColumns=entitySettings.columns || []
+      this.selectedColumns = entitySettings.columns || [];
       this.limit = entitySettings.noOfRecords;
       this.currentCriteria.pager = {
         pageNumber: this.pageNumber,
         pageSize: this.limit,
       };
-    this.headers= this.setSelectedColumns(this.columns)
+      if (this.selectedColumns && this.selectedColumns?.length !== 0) {
+        this.headers = this.entityGridService.setSelectedColumns(
+          this.selectedColumns,
+          this.columns
+        );
+      }
       this.headers.forEach((item, index) => {
         item.pinned = undefined;
         if (index < entitySettings.freeze) {
           item.pinned = "left";
         }
       });
+    }
   }
-  }
-  setSelectedColumns(array:any)
-{
-  if(this.selectedColumns && this.selectedColumns?.length !==0)
-  { 
-    return  array.filter((elem:any) => {
-      return this.selectedColumns.some((ele:any) => {
-        if(ele==="validation_status")
-         { 
-          return ele === elem.column?.toLowerCase()
-        }
-         else{
-          return ele === elem.name?.toLowerCase()
-         }
-        });
-      });
-  }
-  else
-  {
-    return array
-  }
-}
-    // private removeNull(data: any) {
+
+  // private removeNull(data: any) {
   //   let finalData: any = {};
   //   for (let item in data) {
   //     if (data[item] !== null && data[item] !== undefined) {

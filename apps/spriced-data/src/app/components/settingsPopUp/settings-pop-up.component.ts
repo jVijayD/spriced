@@ -24,6 +24,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { SettingsService } from "./service/settings.service";
 import { GridConstants } from "@spriced-frontend/spriced-ui-lib";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
+import { takeUntil } from "rxjs";
 
 @Component({
   selector: "sp-settings-pop-up",
@@ -46,7 +47,7 @@ import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
   templateUrl: "./settings-pop-up.component.html",
   styleUrls: ["./settings-pop-up.component.scss"],
 })
-export class SettingsPopUpComponent {
+export class SettingsPopUpComponent implements OnInit {
   settingsdata: any;
   noOfRecords = GridConstants.LIMIT;
   freeze = 0;
@@ -56,6 +57,7 @@ export class SettingsPopUpComponent {
   columnForm!: FormGroup;
 
   @ViewChild("all") private all!: MatOption;
+  initialData: any;
   constructor(
     public dialogRef: MatDialogRef<SettingsPopUpComponent>,
     private settings: SettingsService,
@@ -64,6 +66,7 @@ export class SettingsPopUpComponent {
   ) {
     this.columnForm = this.fb.group({
       column: new FormControl(""),
+      search: new FormControl(""),
     });
     let result = this.settings.getGlobalSettings();
     if (result) {
@@ -73,6 +76,7 @@ export class SettingsPopUpComponent {
     this.filteredlList = this.data.header.filter((item: any) => {
       return item.column !== "name" && item.column !== "code" && item.column !== "validation_status";
     });
+    this.initialData=this.filteredlList
     let all = this.settings.getCurrentSettings(this.data.entity.name);
     if (all) {
       this.noOfRecords = all.noOfRecords || GridConstants.LIMIT;
@@ -86,12 +90,19 @@ export class SettingsPopUpComponent {
     }
   }
 
+ngOnInit(): void {
+    this.columnForm.controls["search"].valueChanges
+      .subscribe(() => {
+        this.filterSelection();
+      });
+}
+
   closeDialog() {
     this.dialogRef.close("Cancel");
   }
   save() {
 
-   let data=['validation_status',"name", "code",'comment'];
+   let data=["name", "code"];
 
     let selected = this.columnForm.controls["column"].value.filter((item: any) => {
       return item !== "All";
@@ -111,10 +122,11 @@ export class SettingsPopUpComponent {
     this.dialogRef.close("ok");
   }
 
-  filterSelection(text: any) {
-    this.filteredlList = this.data.header.filter((item: any) => {
+  filterSelection() {
+    let text= this.columnForm.controls["search"].value
+    this.filteredlList = this.initialData.filter((item: any) => {
       return (
-        item.name.trim().toLowerCase().indexOf(text.trim().toLowerCase()) != -1
+        item.name.trim().toLowerCase().indexOf(text.trim().toLowerCase()) != -1 
       );
     });
   }
