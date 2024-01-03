@@ -259,10 +259,11 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   onSort(e: any) {
     const sorters = e.sorts.map((sort: any) => {
       const props: string[] = sort.prop.split(",");
+      let prop: any;
       if (props.length > 1) {
-        sort.prop = props.find((item) => item.endsWith("_code"));
+        prop = props.find((item) => item.endsWith("_code"));
       }
-      return { direction: sort.dir.toUpperCase(), property: sort.prop };
+      return { direction: sort.dir.toUpperCase(), property: prop };
     });
     this.dataGrid.table._offset = this.pageNumber;
     const criteria: Criteria = { ...this.currentCriteria, sorters: sorters };
