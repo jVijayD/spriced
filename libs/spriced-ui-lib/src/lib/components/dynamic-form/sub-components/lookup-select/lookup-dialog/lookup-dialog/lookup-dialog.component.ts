@@ -41,13 +41,13 @@ export class LookupDialogComponent {
       this.rows = this.item.value;
   }
   public headers: Header[] = [
-    {
-      column: "id",
-      name: "Id",
-      canAutoResize: true,
-      isSortable: true,
-      width: 100
-    },
+    // {
+    //   column: "id",
+    //   name: "Id",
+    //   canAutoResize: true,
+    //   isSortable: true,
+    //   width: 100
+    // },
     {
       column: "code",
       name: "Code",
