@@ -14,6 +14,7 @@ import { FilterDialogComponent } from "./filter-dialog/filter-dialog.component";
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 import { MatInputModule } from "@angular/material/input";
+import { MatMenuModule } from "@angular/material/menu";
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { MatInputModule } from "@angular/material/input";
     MatSelectModule,
     ReactiveFormsModule,
     NgxMatSelectSearchModule,
-    MatInputModule
+    MatInputModule,
+    MatMenuModule
   ],
   providers: [DialogService],
   exports: [ConfirmDialogComponent, InfoDialogComponent, FilterDialogComponent],

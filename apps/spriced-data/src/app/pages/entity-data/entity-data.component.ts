@@ -75,6 +75,7 @@ import { SavedFilterlistComponent } from "../../components/filter-list/saved-fil
 import { AddFilterlistComponent } from "../../components/filter-list/add-filterlist/add-filterlist.component";
 import { EntityExportDataService } from "../../services/entity-export.service";
 import { DownloadsDialogueComponent } from "../../components/downloads-dialogue/downloads-dialogue.component";
+import { FilterListService } from "../../components/filter-list/services/filter-list.service";
 
 const TIMER_CONST = 300;
 @Component({
@@ -144,6 +145,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   public showTooltip: boolean = false;
 
   defaultCodeSetting = "namecode";
+  edit=false;
+  savedFilter: any;
 
   constructor(
     private snackbarService: SnackBarService,
@@ -157,7 +160,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     private router: Router,
     private statusPannelService: AppDataService,
     private entityExportService: EntityExportDataService,
-    private pubService: MfeAppPubSubService
+    private pubService: MfeAppPubSubService,
+    private filterListService:FilterListService
   ) {
     this.globalSettings = this.settings.getGlobalSettings();
     this.setFormData("", []);
@@ -322,8 +326,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       emptyMessage: "Please select filter criteria.",
       displayFormat: this.globalSettings.displayFormat,
       config: null,
-      query: this.query,
+      query:JSON.parse(JSON.stringify(this.query)),
       save: true,
+      edit:this.edit,
+      filterName:this.savedFilter?.name
     });
 
     dialogResult.afterClosed().subscribe((val) => {
@@ -332,7 +338,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           const dialogRef = this.dialog.open(AddFilterlistComponent, {
             data: {
               item: {
-                filters: val as Criteria,
+                filterQuery:dialogResult.componentInstance.data.query,
                 entityId: this.currentSelectedEntity?.id,
                 groupId: this.currentSelectedEntity?.groupId,
                 name: "",
@@ -341,7 +347,16 @@ export class EntityDataComponent implements OnDestroy, OnInit {
               action: "Add",
             },
           });
-        } else {
+        }
+       else if (val.button && val.button == "saveExisting") {
+         this.savedFilter.filterQuery=dialogResult.componentInstance.data.query
+          this.filterListService.editFilter(this.savedFilter).subscribe({
+            next: (result) => {
+              this.snackbarService.success("Filter Updated successfully.");
+            }, 
+          })
+        }
+         else {
           this.query = dialogResult.componentInstance.data.query;
           this.addDisplayNameInFilter(this.query);
           this.currentCriteria.filters = val;
@@ -368,7 +383,11 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     dialogResult.afterClosed().subscribe((val) => {
       if (val) {
         this.onClearFilter();
-        this.currentCriteria.filters = val;
+        this.edit=val.edit
+        this.savedFilter=val.data
+        this.query=val.data.filterQuery;
+        this.addDisplayNameInFilter(this.query);
+        this.currentCriteria.filters = val.filter;
         this.loadEntityData(
           this.currentSelectedEntity as Entity,
           this.currentCriteria
@@ -471,6 +490,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onClearFilter() {
     this.query = null;
+    this.edit=false
     this.currentCriteria.filters = [];
     this.loadEntityData(
       this.currentSelectedEntity as Entity,

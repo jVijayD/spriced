@@ -3,6 +3,7 @@ import { CommonModule } from "@angular/common";
 import {
   DataGridComponent,
   DialogService,
+  FilterDialogComponent,
   Header,
   HeaderActionComponent,
   OneColComponent,
@@ -39,6 +40,7 @@ import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components
   ],
   templateUrl: "./saved-filterlist.component.html",
   styleUrls: ["./saved-filterlist.component.scss"],
+  providers: [FilterDialogComponent],
 })
 export class SavedFilterlistComponent {
   rows: any[] = [];
@@ -64,6 +66,7 @@ export class SavedFilterlistComponent {
     private filterListService: FilterListService,
     private snackbarService: SnackBarService,
     private dialogService: DialogService,
+    private filter: FilterDialogComponent,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.loadFilters();
@@ -136,7 +139,8 @@ export class SavedFilterlistComponent {
   }
 
   onApply() {
-    this.dialogRef.close(this.selectedItem.filters);
+    const filter=this.filter.convertToFilters(this.selectedItem.filterQuery)
+    this.dialogRef.close({data:this.selectedItem,filter:filter,edit:true});
   }
 
   onDelete() {

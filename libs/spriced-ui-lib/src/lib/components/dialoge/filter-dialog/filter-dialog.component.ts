@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild } from "@angular/core";
+import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 
 import { QueryBuilderConfig, QueryBuilderComponent } from "ngx-angular-query-builder";
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
@@ -10,7 +10,7 @@ import { LookupDialogComponent } from "../../dynamic-form/sub-components/lookup-
   templateUrl: "./filter-dialog.component.html",
   styleUrls: ["./filter-dialog.component.scss"],
 })
-export class FilterDialogComponent {
+export class FilterDialogComponent implements OnInit {
   @ViewChild('queryBuilder') public queryBuilder!: QueryBuilderComponent;
   form!: FormGroup;
   config!: QueryBuilderConfig;
@@ -31,6 +31,8 @@ export class FilterDialogComponent {
       value: 'false'
     }
   ];
+  initialQuery: any;
+  edited=false;
 
   constructor(
     private dialog: MatDialog,
@@ -71,6 +73,7 @@ export class FilterDialogComponent {
     this.form = this.fb.group({
       query: [data.query]
     })
+    this.initialQuery=JSON.parse(JSON.stringify(data.query))
     dialogRef.disableClose = true;
 
     //HANDLE THIS FUNCTION FOR REMOVE THE INPUT FIELD DEPENDS UPON THE OPERATOR TYPE
@@ -93,6 +96,19 @@ export class FilterDialogComponent {
       }
     };
   }
+
+  ngOnInit(): void {
+    this.form.valueChanges
+      .subscribe(() => {
+      this.edited= this.compareValues(this.initialQuery,this.form.value.query)
+      });
+}
+
+compareValues(a:any,b:any)
+{
+ return JSON.stringify(a)!==JSON.stringify(b)
+}
+
 
   // HANDLE FOR ADDING FILTER FILTERED ITEMS TO EVERY RULE 
   handleAddRule(ruleset: any, addRule: Function) {
@@ -148,7 +164,7 @@ export class FilterDialogComponent {
     });
   }
 
-  private convertToFilters(query: any) {
+  public convertToFilters(query: any) {
     let filters: Filter[] = [];
     //debugger;
     query.rules.forEach((item: any, index: number) => {
@@ -429,7 +445,9 @@ export interface FilterData {
   columns?: QueryColumns[];
   emptyMessage?: string;
   displayFormat?: string;
-  save?:boolean
+  save?:boolean;
+  edit?:boolean;
+  filterName?:string;
 }
 
 // export interface FilterGroup {
