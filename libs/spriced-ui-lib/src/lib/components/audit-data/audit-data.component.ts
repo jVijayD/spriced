@@ -225,14 +225,24 @@ export class AuditDataComponent implements OnInit, OnDestroy {
   onItemSelected(e: any) {
     this.selectedItem = e;
     const filters:Criteria =  {
-      filters: [{
-        filterType: "CONDITION",
-        key:"entity_name",
-        value:this.currentSelectedEntity.name,
-        joinType: "NONE",
-        operatorType: "EQUALS",
-        dataType:"string",
-      },],
+        filters: [
+          {
+            filterType: "CONDITION",
+            key:"entity_name",
+            value:this.currentSelectedEntity.name,
+            joinType: "NONE",
+            operatorType: "EQUALS",
+            dataType:"string",
+          },
+          {
+            filterType: "CONDITION",
+            key:"Id",
+            value:e.id,
+            joinType: "AND",
+            operatorType: "EQUALS",
+            dataType:"integer",
+          },
+        ],
       pager: {pageNumber:0,pageSize:10000},
       sorters:[{direction:"DESC",property:"updated_date"}]
     };
