@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { NgxIndexedDBService } from "ngx-indexed-db";
 import { map } from "rxjs";
+import { currentStorage } from "./generic-storage.service";
 
 @Injectable({
   providedIn: 'root'
@@ -32,5 +33,16 @@ export class GlobalSettingService {
     //     return resp;
     //   })
     // );
+  }
+
+  getCurrentStorage(key: string): currentStorage
+  {
+    let item: any = localStorage.getItem(key);
+    return JSON.parse(item);
+  }
+
+  setCurrentStorage(key: string, currentObject: any)
+  {
+    localStorage.setItem(key, JSON.stringify(currentObject));
   }
 }

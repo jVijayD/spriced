@@ -41,15 +41,6 @@ export class FilterDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<FilterDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: FilterData
   ) {
-    const validationStatus: any = {
-      dataType: "boolean",
-      displayName: "Validation Status",
-      formType: "FREE_FORM",
-      name: "is_valid",
-      options: undefined,
-      referencedTableId: null
-    }
-    data.columns?.push(validationStatus)
     this.displayProp =
       data.displayFormat === "code"
         ? "code"

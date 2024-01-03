@@ -382,7 +382,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     );
     dialogResult.afterClosed().subscribe((val) => {
       if (val) {
-        this.onClearFilter();
         this.edit=val.edit
         this.savedFilter=val.data
         this.query=val.data.filterQuery;
@@ -411,6 +410,17 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       }
       return { ...item };
     });
+
+    const validationStatus: any = {
+      dataType: "boolean",
+      name: "Validation Status",
+      formType: "FREE_FORM",
+      column: "is_valid",
+      options: undefined,
+      isFilterable: true,
+      referencedTableId: null
+    }
+    updatedHeaders.push(validationStatus);
 
     if (!!query && query.rules) {
       query.rules.forEach((el: any) => {

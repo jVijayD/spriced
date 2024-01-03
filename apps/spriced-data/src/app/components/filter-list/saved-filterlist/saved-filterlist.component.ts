@@ -69,7 +69,6 @@ export class SavedFilterlistComponent {
     private filter: FilterDialogComponent,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.loadFilters();
   }
   headers: Header[] = [
     {
