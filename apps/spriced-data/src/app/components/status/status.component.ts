@@ -12,6 +12,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityDataService } from "../../services/entity-data.service";
 import { Router, RouterModule } from "@angular/router";
+import * as moment from "moment";
 
 @Component({
   selector: "sp-status",
@@ -69,6 +70,9 @@ export class StatusComponent implements OnInit {
       canAutoResize: true,
       isSortable: true,
       width: 60,
+      pipe: (data: any) => {
+        return moment(data).format("MM/DD/YYYY HH:mm:ss");
+      },
     },
     {
       column: "",
