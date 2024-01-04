@@ -63,8 +63,8 @@
           </mat-form-field>
         </ng-container>
 
-        <ng-container *ngIf="count<=maxCount">
-          <ng-container *queryInput="let rule; let field=field; let onChange=onChange; type: 'LOOKUP'; ">
+        <ng-container *queryInput="let rule; let field=field; let onChange=onChange; type: 'LOOKUP'; ">
+          <ng-container *ngIf="field?.count <= maxCount">
             <mat-form-field appearance="outline">
               <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.value"
                 (ngModelChange)="onChange($event, rule)">
@@ -79,23 +79,17 @@
               </mat-select>
             </mat-form-field>
           </ng-container>
-
-        </ng-container>
-
-
-        <ng-container *ngIf="count>maxCount">
-          <ng-container *queryInput="let rule ; let field=field; let onChange=onChange; type: 'LOOKUP';">
+          <ng-container *ngIf="field?.count > maxCount">
             <mat-form-field appearance="outline">
               <input matInput [style.display]="'none'" [ngModelOptions]="{ standalone: true }" [(ngModel)]="rule.value"
                 (ngModelChange)="onChange($event,rule)">
               <input matInput [value]="rule?.valueName || 'select item'" [readonly]="true">
             </mat-form-field>
-            <button mat-raised-button *ngIf="count>maxCount" color="primary" class="edit-button ml-2" title="selectItem"
+            <button mat-raised-button *ngIf="field?.count > maxCount" color="primary" class="edit-button ml-2" title="selectItem"
               (click)="openPopup(rule, onChange)">
               <mat-icon>edit</mat-icon>
             </button>
           </ng-container>
-
         </ng-container>
 
         <ng-container *queryInput="let rule; let field=field; let onChange=onChange; type: 'boolean'; ">
@@ -158,10 +152,8 @@
     <button [disabled]="!form.valid" mat-raised-button color="primary" (click)="onApply('apply')" class="ml-2">
       Apply
     </button>
-    <button [matMenuTriggerFor]="menu" *ngIf="data.save && data.edit && edited"  [disabled]="!form.valid" mat-raised-button color="primary" class="ml-2">
-      <mat-icon>arrow_drop_down</mat-icon>
-    </button>
-    <button *ngIf="data.save && !data.edit" [disabled]="!form.valid" mat-raised-button color="primary" (click)="onApply('save')" class="ml-2">
+    <button *ngIf="data.save" [disabled]="!form.valid" mat-raised-button color="primary" (click)="onApply('save')"
+      class="ml-2">
       Save
     </button>
     <button *ngIf="data.save && data.edit && edited" [disabled]="!form.valid" mat-raised-button color="primary" (click)="onApply('saveExisting')" class="ml-2">

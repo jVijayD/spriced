@@ -40,7 +40,6 @@
     [externalPaging]="true"
     [virtualization]="false"
     [selectionType]="SelectionType.single"
-    [selected]="selected"
     [count]="count" 
     [offset]="offset"
     [sortType]="sortType"
@@ -49,7 +48,7 @@
     (select)='onItemSelected($event)'
     >
    
-    <ngx-datatable-column name="Id" prop="id"  [sortable]="true" [width]="100"></ngx-datatable-column>
+    <!-- <ngx-datatable-column name="Id" prop="id"  [sortable]="true" [width]="100"></ngx-datatable-column> -->
     <ngx-datatable-column name="Code" prop="code" [sortable]="true" [width]="200"></ngx-datatable-column>
     <ngx-datatable-column name="Name" prop="name" [sortable]="true" [width]="200"></ngx-datatable-column>
   

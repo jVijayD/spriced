@@ -183,16 +183,14 @@ export class EntityExportDataService {
     id: string | number,
     filename: string,
     displayFormat: string,
-    criteria: Criteria
+    criteria: Criteria,
+    selectedColumns:any
   ) {
-    const url = this.requestUtility.addCriteria(
-      `${this.api_url}/entity/${id}/export/excel?displayFormat=${displayFormat}`,
-      criteria,
-      false
-    );
+    const url =
+      `${this.api_url}/entity/${id}/export/excel?displayFormat=${displayFormat}&filterAttributes=${selectedColumns}`
 
     return this.http
-      .get(url, {
+      .post(url,criteria,{
         responseType: "blob",
       })
       .subscribe((blob) => {
@@ -209,7 +207,8 @@ export class EntityExportDataService {
     fileName: string,
     displayFormat: any,
     criteria: Criteria,
-    isAsync: boolean
+    isAsync: boolean,
+    selectedColumns:any
   ) {
     if (isAsync) {
       await this.exportToExcelAsync(
@@ -220,7 +219,7 @@ export class EntityExportDataService {
         criteria
       );
     } else {
-      this.exportToExcel(id, fileName, displayFormat, criteria);
+      this.exportToExcel(id, fileName, displayFormat, criteria,selectedColumns);
     }
   }
 

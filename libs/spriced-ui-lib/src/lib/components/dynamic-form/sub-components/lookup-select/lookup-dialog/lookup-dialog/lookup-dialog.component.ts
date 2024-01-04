@@ -4,8 +4,8 @@ import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import { Header } from "libs/spriced-ui-lib/src/lib/components/data-grid/data-grid.component";
 import { DialogService } from "libs/spriced-ui-lib/src/lib/components/dialoge/dialog.service";
 import { QueryColumns } from "libs/spriced-ui-lib/src/lib/components/dialoge/filter-dialog/filter-dialog.component";
-import { Subject } from "rxjs";
-
+import { Subject, timer } from "rxjs";
+const TIMER_CONST = 50;
 @Component({
   selector: "sp-lookup-dialog",
   templateUrl: "./lookup-dialog.component.html",
@@ -33,21 +33,15 @@ export class LookupDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: LookupDialogComponent,
     private dialogService: DialogService,
     ){
-      this.item = this.data;
-      this.count = this.item.total;
-      this.pageSize = this.item.pageSize;
-      this.selectedItem = this.item.selectedItem;
-      console.log()
-      this.rows = this.item.value;
   }
   public headers: Header[] = [
-    {
-      column: "id",
-      name: "Id",
-      canAutoResize: true,
-      isSortable: true,
-      width: 100
-    },
+    // {
+    //   column: "id",
+    //   name: "Id",
+    //   canAutoResize: true,
+    //   isSortable: true,
+    //   width: 100
+    // },
     {
       column: "code",
       name: "Code",
@@ -65,7 +59,18 @@ export class LookupDialogComponent {
   ]
  
   ngOnInit(){
-    
+    const selectionTimer = timer(TIMER_CONST);
+        if (this.data) {
+          //Since the form not completely get loaded by the time data arrived.
+          selectionTimer.subscribe(() => {
+            this.item = this.data;
+            this.count = this.item.total;
+            this.pageSize = this.item.pageSize;
+            this.selectedItem = this.item.selectedItem;
+            console.log()
+            this.rows = this.item.value;
+          });
+        }
   }
 
   public onItemSelected(event: any) {
@@ -81,7 +86,7 @@ export class LookupDialogComponent {
    upDatedData(newData:any){
     this.rows = newData.value;
     this.count = newData.total;
-    this.selectedItem = newData.selectedItem;
+    this.selectedItem = !!newData?.selectedItem ? newData.selectedItem : this.selectedItem;
    }
    onFilter(){
     const dialogResult = this.dialogService.openFilterDialog({
