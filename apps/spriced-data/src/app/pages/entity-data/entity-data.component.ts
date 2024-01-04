@@ -144,6 +144,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   public showTooltip: boolean = false;
 
   defaultCodeSetting = "namecode";
+  selectedColumns: any=[];
+  columns: any;
 
   constructor(
     private snackbarService: SnackBarService,
@@ -401,8 +403,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       column: "is_valid",
       options: undefined,
       isFilterable: true,
-      referencedTableId: null
-    }
+      referencedTableId: null,
+    };
     updatedHeaders.push(validationStatus);
 
     if (!!query && query.rules) {
@@ -546,7 +548,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onSettings() {
     const dialogResult = this.dialog.open(SettingsPopUpComponent, {
-      data: this.currentSelectedEntity,
+      data: { entity: this.currentSelectedEntity, header: this.columns },
     });
 
     dialogResult.afterClosed().subscribe((val) => {
@@ -557,7 +559,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           this.currentCriteria,
           this.globalSettings
         );
-
         this.createDynamicUIMapping(this.currentSelectedEntity);
       }
     });
@@ -668,7 +669,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         title: "Download",
         icon: "cloud_download",
       });
-
       dialog.afterClosed().subscribe(async (result) => {
         if (result) {
           await this.entityExportService.export(
@@ -677,7 +677,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
             `${this.currentSelectedEntity?.displayName}.xlsx`,
             this.globalSettings?.displayFormat || this.defaultCodeSetting,
             this.currentCriteria,
-            this.totalElements > limitAsync
+            this.totalElements > limitAsync,
+            this.selectedColumns
           );
         }
       });
@@ -711,7 +712,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.selectedItem,
       this.dynamicFormService.getFormValues()
     );
-
     const extraData = this.entityFormService.extractExtraData(
       this.selectedItem,
       this.currentSelectedEntity as Entity
@@ -736,6 +736,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         entity,
         this.globalSettings?.displayFormat || this.defaultCodeSetting
       );
+      if (this.selectedColumns && this.selectedColumns?.length !== 0) 
+      { 
+        formFields = this.entityFormService.setSelectedFields(this.selectedColumns,formFields);
+      }
       this.disableSubmit = !entity.attributes.reduce((prev, current) => {
         return prev || current.permission === "UPDATE";
       }, false);
@@ -788,7 +792,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         : false;
       this.headers = [
         {
-          column: "",
+          column: "validation_status",
           name: "",
           canAutoResize: false,
           isSortable: false,
@@ -807,6 +811,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         globalSettings?.displayFormat || this.defaultCodeSetting
       );
       this.headers.push(...headers);
+      this.columns = this.headers;
       this.loadEntityData(entity, criteria);
     }
   }
@@ -839,7 +844,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.applyEntitySettings(entity);
       this.subscriptions.push(
         this.entityDataService
-          .loadEntityData(entity.id, enrichedCriteria)
+          .loadEntityDataFilter(entity.id, enrichedCriteria, this.selectedColumns)
           .pipe(first())
           .subscribe({
             next: (page) => {
@@ -886,11 +891,18 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   private applyEntitySettings(entity: Entity) {
     const entitySettings = this.settings.getCurrentSettings(entity.name);
     if (entitySettings) {
+      this.selectedColumns = entitySettings.columns || [];
       this.limit = entitySettings.noOfRecords;
       this.currentCriteria.pager = {
         pageNumber: this.pageNumber,
         pageSize: this.limit,
       };
+      if (this.selectedColumns && this.selectedColumns?.length !== 0) {
+        this.headers = this.entityGridService.setSelectedColumns(
+          this.selectedColumns,
+          this.columns
+        );
+      }
       this.headers.forEach((item, index) => {
         item.pinned = undefined;
         if (index < entitySettings.freeze) {

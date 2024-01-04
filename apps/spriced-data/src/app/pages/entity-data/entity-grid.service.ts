@@ -62,6 +62,18 @@ export class EntityGridService {
       });
   }
 
+  setSelectedColumns(selectedColumns: any, array: any) {
+    return array.filter((elem: any) => {
+      return selectedColumns.some((ele: any) => {
+        if (elem.column == "validation_status") {
+          return elem;
+        } else {
+          return ele === elem.column?.toLowerCase();
+        }
+      });
+    });
+  }
+
   private getColumnDataType(
     attr: Attribute
   ): "string" | "number" | "date" | "category" | "boolean" {

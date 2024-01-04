@@ -13,18 +13,30 @@ const LOOKUP_PAGE_SIZE = 50;
 export class EntityFormService {
   public getFormFieldControls(
     entity: Entity,
-    codeSettings: string
+    codeSettings: string,
   ): FormFieldControls {
     return entity.attributes
-      .filter((item) => {
+      .filter((item:any) => {
         return (
           (item.permission !== "DENY" && item.editable === true) ||
           item.constraintType == "PRIMARY_KEY"
-        );
+        )
       })
       .map((attr: Attribute) => {
         return this.getType(attr, codeSettings);
       });
+  }
+
+  setSelectedFields(selectedColumns: any, array: any) {
+    return array.filter((elem: any) => {
+      return selectedColumns.some((ele: any) => {
+        if (elem.name == "comment") {
+          return elem;
+        } else {
+          return ele === elem.name?.toLowerCase();
+        }
+      });
+    });
   }
 
   public extractFormFieldsOnly(selectedItem: any, value: any) {

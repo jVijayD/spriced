@@ -31,4 +31,9 @@ export class SettingsService {
     //   })
     // );
   }
+
+  setSettings(entity:string,value:string)
+  {
+    localStorage.setItem(entity, JSON.stringify(value));
+  }
 }
