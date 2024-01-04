@@ -9,6 +9,12 @@
   @apply p-2 text-secondary-dark font-bold flex flex-row justify-between;
 }
 
+.filtername
+{
+  @apply p-2 text-secondary-dark font-bold flex flex-row; 
+
+}
+
 .footer {
   @apply p-2 flex flex-row-reverse  justify-start;
 }

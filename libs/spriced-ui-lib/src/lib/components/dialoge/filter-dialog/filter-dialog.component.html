@@ -1,5 +1,6 @@
 <div class="container">
-  <div class="header">Filter</div>
+  <div *ngIf="!data.edit" class="header">Filter</div>
+  <div *ngIf="data.edit"  class="filtername" >{{data.filterName}}<span class="ml-4 " *ngIf="edited">Edited</span></div>
   <div class="body">
     <form [formGroup]="form">
       <query-builder [config]="config" formControlName="query" [allowCollapse]="true" [allowRuleset]="true"
@@ -155,7 +156,17 @@
       class="ml-2">
       Save
     </button>
-    <button mat-raised-button color="accent" (click)="onCancel()" class="ml-2">
+    <button *ngIf="data.save && data.edit && edited" [disabled]="!form.valid" mat-raised-button color="primary" (click)="onApply('saveExisting')" class="ml-2">
+      Save
+    </button>
+    <button *ngIf="data.save && data.edit && !edited" [disabled]="!form.valid" mat-raised-button color="primary" (click)="onApply('save')" class="ml-2">
+      Save As
+    </button>
+   <mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="onApply('save')">Save As</button>
+  <button mat-menu-item (click)="onCancel()">Discard Changes</button>
+</mat-menu>
+    <button mat-raised-button color="accent" type='button' (click)="onCancel()" class="ml-2">
       Cancel
     </button>
   </div>
