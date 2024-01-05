@@ -24,6 +24,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { EntityAddComponent } from "./components/entity-add/entity-add.component";
 import * as moment from "moment";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
+import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components/directive/tool-tip-renderer.directive";
 @Component({
   selector: "sp-entity",
   standalone: true,
@@ -40,7 +41,8 @@ import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
     ReactiveFormsModule,
     FormsModule,
     MatSelectModule,
-    NgxMatSelectSearchModule
+    NgxMatSelectSearchModule,
+    ToolTipRendererDirective
   ],
   templateUrl: "./entity.component.html",
   styleUrls: ["./entity.component.scss"],
@@ -101,6 +103,7 @@ export class EntityComponent {
   totalElements = 10000;
   rows: any[] = [];
   selectedItem: any = null;
+  showTooltip: any;
 
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
@@ -269,29 +272,13 @@ export class EntityComponent {
     console.log(e);
   }
   onFilter() {
-    const columns: QueryColumns[] = [
-      {
-        name: "name",
-        displayName: "Name",
-        dataType: "string",
-      },
-      {
-        name: "updatedBy",
-        displayName: "Updated By",
-        dataType: "string",
-      },
-      {
-        name: "updatedDate",
-        displayName: "Last Updated On",
-        dataType: "string",
-      },
-    ];
+    const columns: any = this.headers.filter((el: any) => el.column !== 'id');
     const data: FilterData = {
       query: this.query,
       persistValueOnFieldChange: true,
       emptyMessage: "Please select filter criteria.",
       config: null,
-      columns: columns,
+      columns: this.getFilterColumns(columns),
     };
 
     const dialogResult = this.dialogService.openFilterDialog(data);
@@ -303,85 +290,202 @@ export class EntityComponent {
         this.rows = this.filterData;
         console.log(val);
         val.map((item: any, index: number) => {
-          switch (item.operatorType) {
-            case "LESS_THAN": {
-              var row = this.filterData.filter(function (el: any) {
-                return el[item.key] < item.value;
-              });
-              this.temp.push(...row);
-              this.rows = this.temp;
-              break;
-            }
-            case "EQUALS": {
-              var row = this.filterData.filter(function (el: any) {
-                return el[item.key] == item.value;
-              });
-
-              this.temp.push(...row);
-              this.rows = this.temp;
-              break;
-            }
-            case "GREATER_THAN": {
-              var row = this.filterData.filter(function (el: any) {
-                return el[item.key] > item.value;
-              });
-              this.temp.push(...row);
-              this.rows = this.temp;
-
-              break;
-            }
-            case "GREATER_THAN_EQUALS": {
-              var row = this.filterData.filter(function (el: any) {
-                return el[item.key] >= item.value;
-              });
-              this.temp.push(...row);
-              this.rows = this.temp;
-              break;
-            }
-            case "LESS_THAN_EQUALS": {
-              var row = this.filterData.filter(function (el: any) {
-                return el[item.key] <= item.value;
-              });
-              this.temp.push(...row);
-              this.rows = this.temp;
-
-              break;
-            }
-            case "IS_NOT_EQUAL": {
-              var row = this.filterData.filter(function (el: any) {
-                return el[item.key] != item.value;
-              });
-              this.temp.push(...row);
-              this.rows = this.temp;
-
-              break;
-            }
-            case "LIKE": {
-              var row = this.filterData.filter(function (el: any) {
-                return el[item.key].includes(item.value);
-              });
-              this.temp.push(...row);
-              this.rows = this.temp;
-              break;
-            }
-            case "ILIKE": {
-              var row = this.filterData.filter(function (el: any) {
-                return el[item.key].endsWith(item.value);
-              });
-              this.temp.push(...row);
-              this.rows = this.temp;
-
-              break;
-            }
-            default: {
-              break;
-            }
-          }
+          this.filterRows(item);
         });
 
         const result: any = [...new Set(this.rows)];
         this.rows = result;
       }
     });
+  }
+
+  public filterRows(item: any)
+  {
+    if(!!item.operatorType)
+    {
+      switch (item.operatorType) {
+        case "LESS_THAN": {
+          var row = this.filterData.filter(function (el: any) {
+            return el[item.key] < item.value;
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+          break;
+        }
+        case "EQUALS": {
+          var row = this.filterData.filter(function (el: any) {
+            return el[item.key] == item.value;
+          });
+
+          this.temp.push(...row);
+          this.rows = this.temp;
+          break;
+        }
+        case "GREATER_THAN": {
+          var row = this.filterData.filter(function (el: any) {
+            return el[item.key] > item.value;
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+
+          break;
+        }
+        case "GREATER_THAN_EQUALS": {
+          var row = this.filterData.filter(function (el: any) {
+            return el[item.key] >= item.value;
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+          break;
+        }
+        case "LESS_THAN_EQUALS": {
+          var row = this.filterData.filter(function (el: any) {
+            return el[item.key] <= item.value;
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+
+          break;
+        }
+        case "IS_NOT_EQUAL": {
+          var row = this.filterData.filter(function (el: any) {
+            return el[item.key] != item.value;
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+
+          break;
+        }
+        case "LIKE": {
+          var row = this.filterData.filter(function (el: any) {
+            return el[item.key].includes(item.value);
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+          break;
+        }
+        case "ILIKE": {
+          var row = this.filterData.filter(function (el: any) {
+            return el[item.key].endsWith(item.value);
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    }
+
+    if(!!item.filters)
+    {
+      item.filters.map((el: any) => {
+        this.filterRows(el);
+      })
+    }
+  }
+
+  /**
+ * HANDLE THIS FUNCTION FOR ADD DISPLAY NAME IN FILTER QUERY
+ * @param query any
+ */
+  public addDisplayNameInFilter(query: any) {
+    if (query.rules) {
+      query.rules.forEach((el: any) => {
+        const item: any = this.headers.find(
+          (elm: any) => elm.column === el.field
+        );
+        if (el?.rules && el?.rules.length > 0) {
+          this.addDisplayNameInFilter(el); // Recursively process sub-rules
+        }
+        if (!!item) {
+          el.displayName = item.name;
+        }
+        return;
+      });
+    }
+  }
+
+  public getToolTipTemplate(conditions: any): string {
+    this.showTooltip = !!conditions;
+    if (!conditions || conditions.length === 0) {
+      return "";
+    }
+    const text: any = this.getTooltipText(conditions);
+    return text;
+  }
+
+  public getTooltipText(items: any): string {
+    let tooltipText = "";
+    if (items.condition && items.rules && items.rules.length > 0) {
+      const lastItem = items.rules.length - 1;
+      items.rules.forEach((rule: any, index: number) => {
+        if (!rule.condition && !rule.rules) {
+          const field = this.getDisplayName(rule?.field);
+          const value = !!rule?.value ? rule?.value : "";
+          const condition = lastItem !== index ? items.condition : "";
+          tooltipText += `<strong>${field}</strong> ${rule.operator} ${value} <strong>${condition}</strong> <br>`;
+        }
+        if (!!rule.condition && !!rule.rules) {
+          tooltipText += `(`;
+          tooltipText += this.getNestedTooltipText(rule);
+          tooltipText += "<br>";
+        }
+      });
+    } else if (items.field && items.operator && items.value) {
+      tooltipText += `${items.condition} <strong>${items.field}</strong> ${items.operator} ${items.value}`;
+    }
+    return tooltipText;
+  }
+
+  public getNestedTooltipText(items: any): string {
+    let tooltipText = "";
+    if (items.condition && items.rules && items.rules.length > 0) {
+      const lastItem = items.rules.length - 1;
+      items.rules.forEach((rule: any, index: number) => {
+        if (!rule.condition && !rule.rules) {
+          const field = this.getDisplayName(rule?.field);;
+          const value = !!rule?.value ? rule?.value : "";
+          const condition = lastItem !== index ? items.condition : "";
+          tooltipText += `<strong>${field}</strong> ${rule.operator} ${value} <strong>${condition}</strong>`;
+          if (index < items.rules.length - 1) {
+            tooltipText += "<br>";
+          }
+        }
+        if (!!rule.condition && !!rule.rules) {
+          tooltipText += `(`;
+          tooltipText += this.getNestedTooltipText(rule);
+        }
+      });
+    }
+    tooltipText += ")";
+    return tooltipText;
+  }
+
+  getDisplayName(name: string) {
+    var headers: any = this.headers.filter((item) => item.column === name);
+    if (headers[0]?.column) {
+      return headers[0]?.name
+    }
+  }
+
+  onClearFilter() {
+    this.query = null;
+    this.load({ value: this.groupId });
+    this.selectedItem = null;
+  }
+
+  getFilterColumns(headers: Header[]): QueryColumns[] {
+    return headers
+      .map((col: any) => {
+        return {
+          name: col.column,
+          displayName: col.name,
+          dataType: !!col.dataType ? col.dataType : "string",
+          options: undefined,
+        };
+      });
   }
 }
