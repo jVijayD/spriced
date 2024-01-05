@@ -259,7 +259,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   onSort(e: any) {
     const sorters = e.sorts.map((sort: any) => {
       const props: string[] = sort.prop.split(",");
-      let prop: any;
+      let prop: any = props.length === 1 ? props[0] : [];
       if (props.length > 1) {
         prop = props.find((item) => item.endsWith("_code"));
       }
