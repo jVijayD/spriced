@@ -25,6 +25,25 @@
       (sort)="onSort($event)"
       [selected]="!!selectedItem ? [selectedItem] : []"
     >
+    <sp-header-component-wrapper title="Name">
+      <mat-form-field>
+        <mat-select (selectionChange)="loadByName($event)"  placeholder="Select" >
+          <mat-option>
+            <ngx-mat-select-search
+              placeholderLabel="Search"
+              ngModel
+              (ngModelChange)="filterNameSelection($event)"
+            ></ngx-mat-select-search>
+          </mat-option>
+          <mat-option
+            class="option"
+            *ngFor="let item of filteredNameList"
+            [value]="item"
+            >{{ item }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+    </sp-header-component-wrapper>
       <sp-header-action
         icon="delete"
         text="Delete Filter"
@@ -64,7 +83,7 @@
         icon="filter_list_off"
         text="Clear Filter"
         title="Clear Filter"
-        [disabled]="!this.query"
+        [disabled]="!this.query && !nameFilter"
         (actionClick)="onClearFilter()"
       ></sp-header-action>
     </sp-data-grid>

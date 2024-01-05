@@ -6,6 +6,7 @@ import {
   FilterDialogComponent,
   Header,
   HeaderActionComponent,
+  HeaderComponentWrapperComponent,
   OneColComponent,
   Paginate,
   QueryColumns,
@@ -25,6 +26,9 @@ import { Criteria } from "@spriced-frontend/spriced-common-lib";
 import * as moment from "moment";
 import { AddFilterlistComponent } from "../add-filterlist/add-filterlist.component";
 import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components/directive/tool-tip-renderer.directive";
+import { ReactiveFormsModule, FormsModule } from "@angular/forms";
+import { MatSelectModule } from "@angular/material/select";
+import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 
 @Component({
   selector: "sp-saved-filterlist",
@@ -37,6 +41,11 @@ import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components
     OneColComponent,
     HeaderActionComponent,
     ToolTipRendererDirective,
+    ReactiveFormsModule,
+    FormsModule,
+    MatSelectModule,
+    NgxMatSelectSearchModule,
+    HeaderComponentWrapperComponent,
   ],
   templateUrl: "./saved-filterlist.component.html",
   styleUrls: ["./saved-filterlist.component.scss"],
@@ -60,6 +69,9 @@ export class SavedFilterlistComponent {
   query?: any;
   public showTooltip: boolean = false;
   sortType = SortType.single;
+  filteredNameList: any = [];
+  nameFilter = false;
+  nameList: any = [];
 
   constructor(
     public dialogRef: MatDialogRef<SavedFilterlistComponent>,
@@ -68,8 +80,7 @@ export class SavedFilterlistComponent {
     private dialogService: DialogService,
     private filter: FilterDialogComponent,
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
-  }
+  ) {}
   headers: Header[] = [
     {
       column: "name",
@@ -134,12 +145,19 @@ export class SavedFilterlistComponent {
         this.rows = val.content;
         this.selectedItem = val.content[0];
         this.totalElements = val.totalElements;
+        if (this.filteredNameList.length == 0) {
+          this.loadAll();
+        }
       });
   }
 
   onApply() {
-    const filter=this.filter.convertToFilters(this.selectedItem.filterQuery)
-    this.dialogRef.close({data:this.selectedItem,filter:filter,edit:true});
+    const filter = this.filter.convertToFilters(this.selectedItem.filterQuery);
+    this.dialogRef.close({
+      data: this.selectedItem,
+      filter: filter,
+      edit: true,
+    });
   }
 
   onDelete() {
@@ -227,6 +245,7 @@ export class SavedFilterlistComponent {
     this.currentCriteria.filters = [];
     this.appliedFilters = [];
     this.loadFilters();
+    this.nameFilter = false;
   }
   /**
    * HANDLE THIS FUNCTION FOR ADD DISPLAY NAME IN FILTER QUERY
@@ -316,6 +335,59 @@ export class SavedFilterlistComponent {
       return { direction: sort.dir.toUpperCase(), property: sort.prop };
     });
     this.currentCriteria = { ...this.currentCriteria, sorters: sorters };
+    this.loadFilters();
+  }
+
+  loadAll() {
+    const criteria = {
+      filters: [
+        {
+          filterType: "CONDITION",
+          joinType: "NONE",
+          operatorType: "EQUALS",
+          key: "entity_id",
+          value: this.data.entityId,
+          dataType: "number",
+        },
+      ],
+      sorters: [],
+      pager: {
+        pageNumber: 0,
+        pageSize: this.totalElements,
+      },
+    };
+    this.filterListService.loadFilters(criteria).subscribe((val: any) => {
+      val.content.forEach((el: any) => {
+        this.filteredNameList.push(el.name);
+      });
+    });
+    this.nameList = this.filteredNameList;
+  }
+
+  filterNameSelection(text: string) {
+    this.filteredNameList = this.nameList.filter((item: any) => {
+      return item.trim().toLowerCase().indexOf(text.trim().toLowerCase()) != -1;
+    });
+  }
+
+  loadByName(event: any) {
+    this.query = null;
+    this.currentCriteria.filters = [];
+    this.currentCriteria.pager = {
+      pageNumber: 0,
+      pageSize: this.limit,
+    };
+    this.appliedFilters = [
+      {
+        filterType: "CONDITION",
+        joinType: "AND",
+        operatorType: "EQUALS",
+        key: "name",
+        value: event.value,
+        dataType: "string",
+      },
+    ];
+    this.nameFilter = true;
     this.loadFilters();
   }
 }
