@@ -32,16 +32,26 @@ export class EntityDataService {
     return this.http.post(`${this.api_url}/bulk/upload`, file);
   }
 
+  loadEntityDataFilter(
+    id: string | number,
+    criteria: Criteria,
+    columns:any
+  ): Observable<any> {
+    return this.http.post(`${this.api_url}/entity/${id}/data/filter?filterAttributes=${columns}`,
+    criteria
+  )
+  }
+
   loadEntityData(
     id: string | number,
-    criteria: Criteria
-  ): Observable<PageData> {
+    criteria: Criteria): Observable<PageData> {
     const url = this.requestUtility.addCriteria(
       `${this.api_url}/entity/${id}/data`,
       criteria
     );
     return this.http.get<PageData>(url);
   }
+
 
   loadEntityDataById(entityId: string | number, id: number): Observable<any> {
     let criteria: Criteria = {
@@ -94,16 +104,13 @@ export class EntityDataService {
     id: string | number,
     filename: string,
     displayFormat: string,
-    criteria: Criteria
+    criteria: Criteria,
+    columns:any
   ) {
-    const url = this.requestUtility.addCriteria(
-      `${this.api_url}/entity/${id}/export/excel?displayFormat=${displayFormat}`,
-      criteria,
-      false
-    );
-
+    const url = 
+      `${this.api_url}/entity/${id}/export/excel?displayFormat=${displayFormat}&filterAttributes=${columns}`
     return this.http
-      .get(url, {
+      .post(url,criteria, {
         responseType: "blob",
       })
       .subscribe((blob) => {
