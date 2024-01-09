@@ -288,9 +288,8 @@ export class EntityComponent {
 
         this.temp = [];
         this.rows = this.filterData;
-        console.log(val);
-        val.map((item: any, index: number) => {
-          this.filterRows(item);
+        val.map((item: any) => {
+          this.filteredRows(item, this.filterData);
         });
 
         const result: any = [...new Set(this.rows)];
@@ -299,13 +298,12 @@ export class EntityComponent {
     });
   }
 
-  public filterRows(item: any)
-  {
-    if(!!item.operatorType)
-    {
+  public filteredRows(item: any, filterData: any) {
+    if (!!item.operatorType) {
       switch (item.operatorType) {
         case "LESS_THAN": {
-          var row = this.filterData.filter(function (el: any) {
+          var row = filterData.filter(function (el: any) {
+
             return el[item.key] < item.value;
           });
           this.temp.push(...row);
@@ -313,7 +311,7 @@ export class EntityComponent {
           break;
         }
         case "EQUALS": {
-          var row = this.filterData.filter(function (el: any) {
+          var row = filterData.filter(function (el: any) {
             return el[item.key] == item.value;
           });
 
@@ -321,8 +319,17 @@ export class EntityComponent {
           this.rows = this.temp;
           break;
         }
+        case "IS_NOT_EQUAL": {
+          var row = filterData.filter(function (el: any) {
+            return el[item.key] != item.value;
+          });
+
+          this.temp.push(...row);
+          this.rows = this.temp;
+          break;
+        }
         case "GREATER_THAN": {
-          var row = this.filterData.filter(function (el: any) {
+          var row = filterData.filter(function (el: any) {
             return el[item.key] > item.value;
           });
           this.temp.push(...row);
@@ -331,7 +338,7 @@ export class EntityComponent {
           break;
         }
         case "GREATER_THAN_EQUALS": {
-          var row = this.filterData.filter(function (el: any) {
+          var row = filterData.filter(function (el: any) {
             return el[item.key] >= item.value;
           });
           this.temp.push(...row);
@@ -339,7 +346,7 @@ export class EntityComponent {
           break;
         }
         case "LESS_THAN_EQUALS": {
-          var row = this.filterData.filter(function (el: any) {
+          var row = filterData.filter(function (el: any) {
             return el[item.key] <= item.value;
           });
           this.temp.push(...row);
@@ -348,7 +355,7 @@ export class EntityComponent {
           break;
         }
         case "IS_NOT_EQUAL": {
-          var row = this.filterData.filter(function (el: any) {
+          var row = filterData.filter(function (el: any) {
             return el[item.key] != item.value;
           });
           this.temp.push(...row);
@@ -357,7 +364,7 @@ export class EntityComponent {
           break;
         }
         case "LIKE": {
-          var row = this.filterData.filter(function (el: any) {
+          var row = filterData.filter(function (el: any) {
             return el[item.key].includes(item.value);
           });
           this.temp.push(...row);
@@ -365,8 +372,26 @@ export class EntityComponent {
           break;
         }
         case "ILIKE": {
-          var row = this.filterData.filter(function (el: any) {
+          var row = filterData.filter(function (el: any) {
             return el[item.key].endsWith(item.value);
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+
+          break;
+        }
+        case "IS_NULL": {
+          var row = filterData.filter(function (el: any) {
+            return ['', null, undefined].includes(el[item.key]);
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+
+          break;
+        }
+        case "IS_NOT_NULL": {
+          var row = filterData.filter(function (el: any) {
+            return !['', null, undefined].includes(el[item.key]);
           });
           this.temp.push(...row);
           this.rows = this.temp;
@@ -378,13 +403,23 @@ export class EntityComponent {
         }
       }
     }
+    if (!!item.filters) {
+      let filteredResults: any;
 
-    if(!!item.filters)
-    {
-      item.filters.map((el: any) => {
-        this.filterRows(el);
-      })
+      item.filters.forEach(async (el: any) => {
+        filteredResults = this.rows;
+        if (item.joinType === 'AND') {
+          this.temp = [];
+          this.filteredRows(el, filteredResults);
+        }
+        else {
+          this.filteredRows(el, this.filterData);
+        }
+      });
+      this.temp = this.rows;
+      this.rows = this.temp;
     }
+    return row
   }
 
   /**
@@ -398,7 +433,7 @@ export class EntityComponent {
           (elm: any) => elm.column === el.field
         );
         if (el?.rules && el?.rules.length > 0) {
-          this.addDisplayNameInFilter(el); // Recursively process sub-rules
+          this.addDisplayNameInFilter(el); // Recurrsively process sub-rules
         }
         if (!!item) {
           el.displayName = item.name;
