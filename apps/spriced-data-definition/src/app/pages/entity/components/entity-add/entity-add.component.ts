@@ -33,12 +33,14 @@ import {
   DialogService,
   Header,
   HeaderActionComponent,
+  HeaderComponentWrapperComponent,
   OneColComponent,
   Paginate,
   SnackBarService,
 } from "@spriced-frontend/spriced-ui-lib";
-import {PositiveDigitDirective} from "libs/spriced-ui-lib/src/lib/components/directive/positive-digit.directive";
+import { PositiveDigitDirective } from "libs/spriced-ui-lib/src/lib/components/directive/positive-digit.directive";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
+import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 const DEFAULT_ATTRIBUTE_WIDTH = 100;
 export interface PeriodicElement {
   name: string;
@@ -48,7 +50,6 @@ export interface PeriodicElement {
   dataType: string;
   attribute: any[];
 }
-
 
 @Component({
   selector: "sp-entity-add",
@@ -72,7 +73,9 @@ export interface PeriodicElement {
     HeaderActionComponent,
     OneColComponent,
     DataGridComponent,
-    PositiveDigitDirective
+    PositiveDigitDirective,
+    HeaderComponentWrapperComponent,
+    NgxMatSelectSearchModule
   ],
   templateUrl: "./entity-add.component.html",
   styleUrls: ["./entity-add.component.scss"],
@@ -119,14 +122,18 @@ export class EntityAddComponent implements OnInit {
   isFullScreen = false;
   totalElements = 0;
   selectedItem: any = null;
-  isChangedValue: Boolean = true
+  isChangedValue: Boolean = true;
   previousEntityData: any;
   systemAtt: any;
   @ViewChild(DataGridComponent)
   dataGrid!: DataGridComponent;
-  referencedTableDisplayName: any
-  referencedTableId: any
-  pattern = "^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#\\-]+$"
+  referencedTableDisplayName: any;
+  referencedTableId: any;
+  pattern = "^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#\\-]+$";
+  filteredRows: any;
+  nameReset = "";
+  filter = false;
+  attNames: any;
   constructor(
     public dialogRef: MatDialogRef<EntityAddComponent>,
     //@Optional() is used to prevent error if no data is passed
@@ -134,7 +141,7 @@ export class EntityAddComponent implements OnInit {
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-    private snackbarService:SnackBarService
+    private snackbarService: SnackBarService
   ) {
     this.dialogRef.disableClose = true;
     this.attDetails.dataType = "STRING_VAR";
@@ -149,14 +156,11 @@ export class EntityAddComponent implements OnInit {
       this.referencedTable = this.entityList[1]?.name;
       this.referencedTableDisplayName = this.entityList[1]?.displayName;
       this.referencedTableId = this.entityList[1]?.id;
-
     } else {
-      //this.local_data.enableAuditTrial = false;
       this.attDetails.referencedTableId = this.entityList[0]?.id;
       this.referencedTable = this.entityList[0]?.name;
       this.referencedTableDisplayName = this.entityList[0]?.displayName;
       this.referencedTableId = this.entityList[0]?.id;
-
     }
 
     this.action = data.action;
@@ -168,46 +172,34 @@ export class EntityAddComponent implements OnInit {
       this.local_data.autoNumberCode = false;
     }
 
-    this.systemAtt = this.local_data?.attributes?.filter(
-      (value: any) => {
-        return value.systemAttribute;
-      }
-    );
+    this.systemAtt = this.local_data?.attributes?.filter((value: any) => {
+      return value.systemAttribute;
+    });
 
     this.filterAttributes(this.local_data);
     this.filterAttributes(this.previousEntityData);
-
-    // if (this.local_data?.attributes) {
-    //   this.local_data?.attributes.forEach((attribute: any) => {
-    //     const existingAttribute = showInFormAttributes.find((a: any) => a.name === attribute.name);
-    //     if (!existingAttribute) {
-    //       showInFormAttributes.push(attribute);
-    //     }
-    //     return showInFormAttributes
-    //   });
-    // }
-    // this.local_data.attributes = showInFormAttributes;
     this.rows = this.local_data?.attributes || [];
+    this.filteredRows = this.rows;
+    this.attNames=this.rows;
     this.totalElements = this.rows.length;
   }
-  @HostListener('window:keyup.esc',['$event'])
-  onKeyUp(){
-    if(this.action == 'Add'){
-      if(this.local_data.displayName){
+  @HostListener("window:keyup.esc", ["$event"])
+  onKeyUp() {
+    if (this.action == "Add") {
+      if (this.local_data.displayName) {
         this.showSaveDialog();
-      }else{
-        this.dialogRef.close({event:"Cancel"});
-       }
+      } else {
+        this.dialogRef.close({ event: "Cancel" });
+      }
+    } else if (this.action == "Edit") {
+      if (this.data.row.displayName !== this.local_data.displayName) {
+        this.showSaveDialog();
+      } else {
+        this.dialogRef.close({ event: "Cancel" });
+      }
+    }
   }
-  else if(this.action == 'Edit'){
-   if(this.data.row.displayName !== this.local_data.displayName){
-      this.showSaveDialog();
-   }else{
-    this.dialogRef.close({event:"Cancel"});
-   }
-  }    
-  } 
-  showSaveDialog(){
+  showSaveDialog() {
     const dialogResult = this.dialogService.openConfirmDialoge({
       title: "Confirm",
       icon: "public",
@@ -215,13 +207,12 @@ export class EntityAddComponent implements OnInit {
         "All the unsaved changes will be lost. Do you want to save the changes ?",
       maxWidth: 400,
     });
-  
+
     dialogResult.afterClosed().subscribe((val) => {
       if (val) {
-        
-      }else{
-        this.dialogRef.close({event:"Cancel"});
-      } 
+      } else {
+        this.dialogRef.close({ event: "Cancel" });
+      }
     });
   }
   ngOnInit(): void {
@@ -232,17 +223,13 @@ export class EntityAddComponent implements OnInit {
    * HANDLE THIS FUNCTION FOR FILTER THE SYSTEM ATTRIBUTES
    * @param item any
    */
-  public filterAttributes(item: any)
-  {
-    item.attributes = item?.attributes?.filter(
-      (value: any) => {
-        return !value.systemAttribute;
-      }
-    );
+  public filterAttributes(item: any) {
+    item.attributes = item?.attributes?.filter((value: any) => {
+      return !value.systemAttribute;
+    });
   }
 
   doAction() {
-    console.log(this.rows)
     this.local_data.attributes = [...this.rows];
     if (this.systemAtt) {
       this.local_data.attributes.push(...this.systemAtt);
@@ -253,31 +240,38 @@ export class EntityAddComponent implements OnInit {
     this.dataChange.emit(this.local_data);
   }
 
-  public modelChangedValue(item: any)
-  {
-    this.isChangedValue = this.areObjectsEqual(this.previousEntityData, this.local_data);
+  public modelChangedValue(item: any) {
+    this.isChangedValue = this.areObjectsEqual(
+      this.previousEntityData,
+      this.local_data
+    );
   }
 
   /**
- * HANDLE THIS FUNCTION FOR MATCHING THE TWO OBJECTS
- * @param obj1 any
- * @param obj2 any
- * @returns 
- */
+   * HANDLE THIS FUNCTION FOR MATCHING THE TWO OBJECTS
+   * @param obj1 any
+   * @param obj2 any
+   * @returns
+   */
   public areObjectsEqual(obj1: any, obj2: any): boolean {
     const keys1 = Object.keys(obj1);
     const keys2 = Object.keys(obj2);
-  
+
     if (keys1.length !== keys2.length) {
       return false;
     }
-  
+
     for (let key of keys1) {
       const val1 = obj1[key];
       const val2 = obj2[key];
-  
+
       // Check if the values are objects and recursively compare them
-      if (typeof val1 === 'object' && val1 !== null && typeof val2 === 'object' && val2 !== null) {
+      if (
+        typeof val1 === "object" &&
+        val1 !== null &&
+        typeof val2 === "object" &&
+        val2 !== null
+      ) {
         if (!this.areObjectsEqual(val1, val2)) {
           return false;
         }
@@ -286,27 +280,25 @@ export class EntityAddComponent implements OnInit {
         return false;
       }
     }
-  
+
     // All keys and values are equal
     return true;
   }
 
-
   closeDialog() {
-    if(this.action == 'Add'){
-      if(this.local_data.displayName){
+    if (this.action == "Add") {
+      if (this.local_data.displayName) {
         this.showSaveDialog();
-      }else{
-        this.dialogRef.close({event:"Cancel"});
-       }
-  }
-  else if(this.action == 'Edit'){
-   if(this.data.row.displayName !== this.local_data.displayName){
-      this.showSaveDialog();
-   }else{
-    this.dialogRef.close({event:"Cancel"});
-   }
-  }    
+      } else {
+        this.dialogRef.close({ event: "Cancel" });
+      }
+    } else if (this.action == "Edit") {
+      if (this.data.row.displayName !== this.local_data.displayName) {
+        this.showSaveDialog();
+      } else {
+        this.dialogRef.close({ event: "Cancel" });
+      }
+    }
   }
 
   radioButtonChanged(event: any) {
@@ -320,8 +312,10 @@ export class EntityAddComponent implements OnInit {
     this.attDetails.type = "FREE_FORM";
     this.attDetails.width = DEFAULT_ATTRIBUTE_WIDTH;
     this.cdr.detectChanges();
-    this.selectedItem=null
+    this.selectedItem = null;
     this.dataGrid.clearSelection();
+    this.nameReset = "";
+    this.filter=false
   }
   selectedEntity(event: any) {
     this.referencedTableDisplayName = event.source.triggerValue;
@@ -329,7 +323,6 @@ export class EntityAddComponent implements OnInit {
       if (value.id == event.source.value) {
         this.referencedTable = value.name;
         this.referencedTableId = value.id;
-
       }
     });
   }
@@ -338,88 +331,104 @@ export class EntityAddComponent implements OnInit {
       row_obj.dataType = "DECIMAL";
     }
     if (this.attAction == "Update") {
-      var update=true;
+      var update = true;
       this.local_data?.attributes?.forEach((value: any) => {
-        if(value.name.toLowerCase()==row_obj.name.toLowerCase() && this.selectedItem.name!==value.name)
-        {
-          this.snackbarService.error(value.name+ " Already Exists.");
-          update=false
+        if (
+          value.name.toLowerCase() == row_obj.name.toLowerCase() &&
+          this.selectedItem.name !== value.name
+        ) {
+          this.snackbarService.error(value.name + " Already Exists.");
+          update = false;
         }
-        if(value.displayName.toLowerCase()==row_obj.displayName.toLowerCase() && this.selectedItem.name!==value.name)
-        {
-          this.snackbarService.error(value.displayName+ " Already Exists.");
-          update=false
-        }
-      });
-if(update)
-{
-      if (row_obj.type !== "FREE_FORM")
-     { 
-      row_obj.referencedTableDisplayName=this.referencedTableDisplayName
-      row_obj.referencedTable=this.referencedTable
-      row_obj.referencedTableId=this.referencedTableId
-    }
-      this.rows.map((value: any, index: number) => {
-        if (value.name == row_obj.name) {
-          this.rows[index] = row_obj;
-        }
-        return true;
-      });
-      this.rows = [...this.rows];
-      this.isChangedValue = this.areObjectsEqual(this.previousEntityData.attributes, this.rows);
-    }
-  }
-    if (this.attAction == "Add") {
-      var add=true;
-      this.local_data?.attributes?.forEach((value: any) => {
-        if(value.name.toLowerCase()==row_obj.name.toLowerCase())
-        {
-          this.snackbarService.error(value.name+ " Already Exists.");
-          add=false
-        }
-        if(value.displayName.toLowerCase()==row_obj.displayName.toLowerCase())
-        {
-          this.snackbarService.error(value.displayName+ " Already Exists.");
-          add=false
+        if (
+          value.displayName.toLowerCase() ==
+            row_obj.displayName.toLowerCase() &&
+          this.selectedItem.name !== value.name
+        ) {
+          this.snackbarService.error(value.displayName + " Already Exists.");
+          update = false;
         }
       });
-if(add)
-{
-      if (row_obj.type == "FREE_FORM") {
-        this.rows.push({
-          id: row_obj.id,
-          name: row_obj.name,
-          displayName: row_obj.displayName || row_obj.name,
-          description: row_obj.description,
-          type: row_obj.type,
-          dataType: row_obj.dataType,
-          formatter: row_obj.formatter,
-          size: row_obj.size,
-          constraintType: this.constraintType
-            ? "UNIQUE_KEY"
-            : row_obj.constraintType,
-          width: row_obj.width || DEFAULT_ATTRIBUTE_WIDTH,
+      if (update) {
+        if (row_obj.type !== "FREE_FORM") {
+          row_obj.referencedTableDisplayName = this.referencedTableDisplayName;
+          row_obj.referencedTable = this.referencedTable;
+          row_obj.referencedTableId = this.referencedTableId;
+        }
+        this.rows.map((value: any, index: number) => {
+          if (value.name == row_obj.name) {
+            this.rows[index] = row_obj;
+          }
+          return true;
         });
-      } else {
-        this.rows.push({
-          id: row_obj.id,
-          name: row_obj.name,
-          displayName: row_obj.displayName || row_obj.name,
-          description: row_obj.description,
-          type: row_obj.type,
-          referencedTableId: this.referencedTableId,
-          referencedTable: this.referencedTable,
-          referencedTableDisplayName: this.referencedTableDisplayName,
-          width: row_obj.width || DEFAULT_ATTRIBUTE_WIDTH,
+        this.isChangedValue = this.areObjectsEqual(
+          this.previousEntityData.attributes,
+          this.rows
+        );
+        this.rows = [...this.rows];
+        let updated = this.rows.filter((elem: any) => {
+          return this.filteredRows.some((ele: any) => {
+            return ele.name === elem.name;
+          });
         });
+        this.filteredRows=[...updated]
       }
-      this.rows = [...this.rows];
-      this.totalElements = this.rows.length;
     }
-    this.isChangedValue = this.areObjectsEqual(this.previousEntityData.attributes, this.rows);
+    if (this.attAction == "Add") {
+      var add = true;
+      this.local_data?.attributes?.forEach((value: any) => {
+        if (value.name.toLowerCase() == row_obj.name.toLowerCase()) {
+          this.snackbarService.error(value.name + " Already Exists.");
+          add = false;
+        }
+        if (
+          value.displayName.toLowerCase() == row_obj.displayName.toLowerCase()
+        ) {
+          this.snackbarService.error(value.displayName + " Already Exists.");
+          add = false;
+        }
+      });
+      if (add) {
+        if (row_obj.type == "FREE_FORM") {
+          this.rows.push({
+            id: row_obj.id,
+            name: row_obj.name,
+            displayName: row_obj.displayName || row_obj.name,
+            description: row_obj.description,
+            type: row_obj.type,
+            dataType: row_obj.dataType,
+            formatter: row_obj.formatter,
+            size: row_obj.size,
+            constraintType: this.constraintType
+              ? "UNIQUE_KEY"
+              : row_obj.constraintType,
+            width: row_obj.width || DEFAULT_ATTRIBUTE_WIDTH,
+          });
+        } else {
+          this.rows.push({
+            id: row_obj.id,
+            name: row_obj.name,
+            displayName: row_obj.displayName || row_obj.name,
+            description: row_obj.description,
+            type: row_obj.type,
+            referencedTableId: this.referencedTableId,
+            referencedTable: this.referencedTable,
+            referencedTableDisplayName: this.referencedTableDisplayName,
+            width: row_obj.width || DEFAULT_ATTRIBUTE_WIDTH,
+          });
+        }
+        this.rows = [...this.rows];
+        this.filteredRows=[...this.rows]
+        this.totalElements = this.rows.length;
+      }
+      this.isChangedValue = this.areObjectsEqual(
+        this.previousEntityData.attributes,
+        this.rows
+      );
+    }
+    this.attNames=[...this.rows]
     this.clear();
   }
-}
 
   initForm() {
     if (this.action == "Edit") {
@@ -445,7 +454,6 @@ if(add)
     this.attDetails = { ...this.selectedItem };
   }
   onDelete() {
-
     const dialogRef = this.dialogService.openConfirmDialoge({
       message: "Do you want to delete?",
       title: "Delete Attribute",
@@ -456,25 +464,29 @@ if(add)
         this.rows = this.rows.filter((value: any) => {
           return value.name != this.selectedItem.name;
         });
-        this.isChangedValue = this.areObjectsEqual(this.previousEntityData.attributes, this.rows);
+        this.filteredRows = this.rows;
+        this.attNames=this.rows
+        this.isChangedValue = this.areObjectsEqual(
+          this.previousEntityData.attributes,
+          this.rows
+        );
         this.clear();
       }
-    })
+    });
   }
 
   /**
    * HANDLE THIS FUNCTION FOR CHANGE THE DATA-TYPE DROPDOWN
    * @param value string
    */
-  public handleChangeDataType(value: string)
-  {
+  public handleChangeDataType(value: string) {
     switch (value) {
-      case 'TIME_STAMP':
-        this.attDetails.formatter = 'MM/DD/YYYY';
+      case "TIME_STAMP":
+        this.attDetails.formatter = "MM/DD/YYYY";
         break;
-       
-      case 'INTEGER':
-        this.attDetails.formatter = '-####';
+
+      case "INTEGER":
+        this.attDetails.formatter = "-####";
         this.attDetails.size = 0;
         break;
     }
@@ -487,6 +499,29 @@ if(add)
   onItemSelected(e: any) {
     this.selectedItem = e;
   }
-
-  onSort(e: any) { }
+  onSort(e: any) {}
+  load(e: any) {
+    this.clear()
+    this.nameReset=e.value
+    this.filter=true
+    this.filteredRows = this.rows.filter((value: any) => {
+      return value.id == e.value;
+    });
+  }
+  filterAttSelection(e: any) {
+    this.attNames = this.rows.filter((item: any) => {
+      return (
+        item.displayName
+          .trim()
+          .toLowerCase()
+          .indexOf(e.trim().toLowerCase()) != -1
+      );
+    });
+  }
+  onClearFilter() {
+    this.clear()
+    this.filteredRows = this.rows;
+    this.attNames=this.rows
+    this.filter = false;
+  }
 }

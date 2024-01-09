@@ -20,23 +20,23 @@
                 maxlength="50"
               />
             </mat-form-field>
-              <mat-error class="error"
-                class="text-sm italic text-red-500"
-                *ngIf="
-                  entityForm.controls['name'].hasError('required') &&
-                  (entityForm.controls['name'].dirty ||
-                    entityForm.controls['name'].touched)
-                "
-                >Name is required</mat-error
-              >
+            <mat-error
+              class="error"
+              class="text-sm italic text-red-500"
+              *ngIf="
+                entityForm.controls['name'].hasError('required') &&
+                (entityForm.controls['name'].dirty ||
+                  entityForm.controls['name'].touched)
+              "
+              >Name is required</mat-error
+            >
 
-              <mat-error class="error"
-                class="text-sm italic text-red-500"
-                *ngIf="
-                  entityForm.controls['name'].hasError('pattern')
-                "
-                >Invalid Name</mat-error
-              >
+            <mat-error
+              class="error"
+              class="text-sm italic text-red-500"
+              *ngIf="entityForm.controls['name'].hasError('pattern')"
+              >Invalid Name</mat-error
+            >
           </div>
         </form>
       </div>
@@ -53,19 +53,21 @@
           />
         </mat-form-field>
 
-          <mat-error class="error"
-            class="text-sm italic text-red-500"
-            *ngIf="uname.hasError('pattern')"
-            >Invalid Display Name</mat-error
-          >
+        <mat-error
+          class="error"
+          class="text-sm italic text-red-500"
+          *ngIf="uname.hasError('pattern')"
+          >Invalid Display Name</mat-error
+        >
 
-          <mat-error class="error"
-            class="text-sm italic text-red-500"
-            *ngIf="
-                  local_data.displayName=='' || local_data.displayName==undefined
-                "
-            >Display Name is required</mat-error
-          >
+        <mat-error
+          class="error"
+          class="text-sm italic text-red-500"
+          *ngIf="
+            local_data.displayName == '' || local_data.displayName == undefined
+          "
+          >Display Name is required</mat-error
+        >
       </div>
       <div class="ml-2">
         <mat-form-field appearance="outline" class="mb-2">
@@ -78,7 +80,6 @@
           />
         </mat-form-field>
       </div>
-     
 
       <div class="autoCheck">
         <mat-checkbox
@@ -88,14 +89,17 @@
           color="primary"
           >Auto generate Code</mat-checkbox
         >
-        <mat-checkbox [(ngModel)]="local_data.enableAuditTrial" (ngModelChange)="modelChangedValue($event)" color="primary"
+        <mat-checkbox
+          [(ngModel)]="local_data.enableAuditTrial"
+          (ngModelChange)="modelChangedValue($event)"
+          color="primary"
           >Enable Change Tracking</mat-checkbox
         >
       </div>
     </div>
 
     <mat-card
-      style="padding: 7px; height: 453px; overflow-y: auto;"
+      style="padding: 7px; height: 453px; overflow-y: auto"
       class="drop-shadow"
     >
       <div class="box">
@@ -107,7 +111,7 @@
             [enableRowIndex]="false"
             [isArray]="false"
             [headers]="headers"
-            [rows]="rows"
+            [rows]="filteredRows"
             [rowHeight]="20"
             [headerHeight]="30"
             [footerHeight]="20"
@@ -124,13 +128,39 @@
             (sort)="onSort($event)"
           >
             <ng-container>
+              <sp-header-component-wrapper title="Name">
+                <mat-form-field>
+                  <mat-select (selectionChange)="load($event)" [(value)]="nameReset">
+                    <mat-option>
+                      <ngx-mat-select-search
+                        placeholderLabel="Search"
+                        ngModel
+                        (ngModelChange)="filterAttSelection($event)"
+                      ></ngx-mat-select-search>
+                    </mat-option>
+                    <mat-option value="" class="option">--Select--</mat-option>
+                    <mat-option
+                      class="option"
+                      *ngFor="let item of attNames"
+                      [value]="item.id"
+                      >{{ item.displayName }}</mat-option
+                    >
+                  </mat-select>
+                </mat-form-field>
+              </sp-header-component-wrapper>
+
+              <sp-header-action
+                icon="filter_list_off"
+                text="Clear Filter"
+                title="Clear Filter"
+                [disabled]="!filter"
+                (actionClick)="onClearFilter()"
+              ></sp-header-action>
               <sp-header-action
                 icon="edit"
                 text="Edit"
                 title="Edit Attribute"
-                [disabled]="
-                  selectedItem == null 
-                "
+                [disabled]="selectedItem == null"
                 (actionClick)="onEdit()"
               ></sp-header-action>
 
@@ -158,18 +188,18 @@
               maxlength="50"
             />
           </mat-form-field>
-            <mat-error class="error"
-              class="text-sm italic text-red-500"
-              *ngIf="aname.hasError('pattern')"
-              >Invalid Name</mat-error
-            >
-            <mat-error class="error"
-              class="text-sm italic text-red-500"
-              *ngIf="
-         attDetails.name=='' ||  attDetails.name==undefined
-        "
-              >Name is required</mat-error
-            >
+          <mat-error
+            class="error"
+            class="text-sm italic text-red-500"
+            *ngIf="aname.hasError('pattern')"
+            >Invalid Name</mat-error
+          >
+          <mat-error
+            class="error"
+            class="text-sm italic text-red-500"
+            *ngIf="attDetails.name == '' || attDetails.name == undefined"
+            >Name is required</mat-error
+          >
           <mat-form-field appearance="outline" class="mt-2">
             <mat-label>Display Name</mat-label>
             <input
@@ -180,18 +210,21 @@
               maxlength="50"
             />
           </mat-form-field>
-            <mat-error class="error"
-              class="text-sm italic text-red-500"
-              *ngIf="dname.hasError('pattern')"
-              >Invalid Display Name</mat-error
-            >
-            <mat-error class="error"
-              class="text-sm italic text-red-500"
-              *ngIf="
-         attDetails.displayName=='' ||  attDetails.displayName==undefined
-        "
-              >Display Name is required</mat-error
-            >
+          <mat-error
+            class="error"
+            class="text-sm italic text-red-500"
+            *ngIf="dname.hasError('pattern')"
+            >Invalid Display Name</mat-error
+          >
+          <mat-error
+            class="error"
+            class="text-sm italic text-red-500"
+            *ngIf="
+              attDetails.displayName == '' ||
+              attDetails.displayName == undefined
+            "
+            >Display Name is required</mat-error
+          >
           <mat-form-field appearance="outline" class="mt-2">
             <mat-label>Description</mat-label>
             <input
@@ -233,10 +266,9 @@
                 attDetails?.onlyDisplayNameEditable && attAction === 'Update'
               "
             >
-              <mat-option
-                *ngFor="let item of entityList"
-                [value]="item.id"
-                >{{ item.displayName }}</mat-option>
+              <mat-option *ngFor="let item of entityList" [value]="item.id">{{
+                item.displayName
+              }}</mat-option>
             </mat-select>
           </mat-form-field>
           <!-- [disabled]="local_data.id === item.id" -->
@@ -296,12 +328,12 @@
               attDetails.dataType === 'INTEGER' &&
               attDetails.type === 'FREE_FORM'
             "
-            style="display: contents;"
+            style="display: contents"
           >
             <mat-form-field appearance="outline" class="mt-2">
               <mat-label>Decimals</mat-label
               ><input
-              spPositiveDigit
+                spPositiveDigit
                 matInput
                 type="number"
                 min="0"
@@ -319,7 +351,7 @@
               attDetails.dataType === 'TIME_STAMP' &&
               attDetails.type === 'FREE_FORM'
             "
-            style="display: contents;"
+            style="display: contents"
           >
             <mat-form-field appearance="outline" class="mt-2"
               ><mat-label>Input Mask</mat-label>
@@ -390,16 +422,16 @@
         type="button"
         color="primary"
         class="savebtn"
-        style="width: 9rem;"
+        style="width: 9rem"
         (click)="updateRowData(attDetails)"
         [disabled]="
           attDetails.name === '' ||
           attDetails.name === undefined ||
           attDetails.editable === false ||
-          aname.hasError('pattern')||
-          dname.hasError('pattern')||
-          attDetails.displayName==='' ||
-          attDetails.displayName === undefined 
+          aname.hasError('pattern') ||
+          dname.hasError('pattern') ||
+          attDetails.displayName === '' ||
+          attDetails.displayName === undefined
         "
       >
         {{ attAction }} Attribute
@@ -421,7 +453,12 @@
       color="primary"
       type="submit"
       (click)="doAction()"
-      [disabled]="entityForm.invalid && action !== 'Edit' || local_data.displayName=='' || local_data.displayName==undefined || isChangedValue"
+      [disabled]="
+        (entityForm.invalid && action !== 'Edit') ||
+        local_data.displayName == '' ||
+        local_data.displayName == undefined ||
+        isChangedValue
+      "
     >
       Save
     </button>
