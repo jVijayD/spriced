@@ -84,7 +84,7 @@ export class SettingsPopUpComponent implements OnInit {
       this.columnForm.controls["column"].patchValue(all.columns);
     } else {
       this.columnForm.controls["column"].patchValue([
-        ...this.filteredlList.map((item: any) => item.column),
+        ...this.filteredlList.map((item: any) => item.name),
         "All",
       ]);
     }
@@ -134,7 +134,7 @@ ngOnInit(): void {
   toggleAll() {
     if (this.all.selected) {
       this.columnForm.controls["column"].patchValue([
-        ...this.filteredlList.map((item: any) => item.column),
+        ...this.filteredlList.map((item: any) => item.name),
         "All",
       ]);
     } else {
