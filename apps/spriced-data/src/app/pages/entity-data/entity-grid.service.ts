@@ -68,7 +68,7 @@ export class EntityGridService {
         if (elem.column == "validation_status") {
           return elem;
         } else {
-          return ele === elem.column?.toLowerCase();
+          return ele === elem.name?.toLowerCase();
         }
       });
     });
