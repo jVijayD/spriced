@@ -74,13 +74,13 @@ export class StatusComponent implements OnInit {
         return moment(data).format("MM/DD/YYYY HH:mm:ss");
       },
     },
-    {
-      column: "",
-      name: "Download",
-      canAutoResize: true,
-      isSortable: true,
-      width: 60,
-    },
+    // {
+    //   column: "",
+    //   name: "Download",
+    //   canAutoResize: true,
+    //   isSortable: true,
+    //   width: 60,
+    // },
   ];
   columnMode: ColumnMode = ColumnMode.force;
   selectionType: SelectionType = SelectionType.single;
