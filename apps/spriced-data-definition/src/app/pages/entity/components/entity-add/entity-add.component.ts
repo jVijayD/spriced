@@ -372,11 +372,13 @@ export class EntityAddComponent implements OnInit {
           });
         });
         this.filteredRows=[...updated]
+        this.attNames=[...this.rows]
+
       }
     }
     if (this.attAction == "Add") {
       var add = true;
-      this.local_data?.attributes?.forEach((value: any) => {
+      this.filteredRows.forEach((value: any) => {
         if (value.name.toLowerCase() == row_obj.name.toLowerCase()) {
           this.snackbarService.error(value.name + " Already Exists.");
           add = false;
@@ -420,13 +422,13 @@ export class EntityAddComponent implements OnInit {
         this.rows = [...this.rows];
         this.filteredRows=[...this.rows]
         this.totalElements = this.rows.length;
+        this.attNames=[...this.rows]
       }
       this.isChangedValue = this.areObjectsEqual(
         this.previousEntityData.attributes,
         this.rows
       );
     }
-    this.attNames=[...this.rows]
     this.clear();
   }
 
@@ -502,10 +504,11 @@ export class EntityAddComponent implements OnInit {
   onSort(e: any) {}
   load(e: any) {
     this.clear()
+    console.log(e.value)
     this.nameReset=e.value
     this.filter=true
     this.filteredRows = this.rows.filter((value: any) => {
-      return value.id == e.value;
+      return value.name == e.value;
     });
   }
   filterAttSelection(e: any) {
