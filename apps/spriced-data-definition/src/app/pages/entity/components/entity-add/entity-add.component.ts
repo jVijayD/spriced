@@ -378,7 +378,7 @@ export class EntityAddComponent implements OnInit {
     }
     if (this.attAction == "Add") {
       var add = true;
-      this.filteredRows.forEach((value: any) => {
+      this.rows.forEach((value: any) => {
         if (value.name.toLowerCase() == row_obj.name.toLowerCase()) {
           this.snackbarService.error(value.name + " Already Exists.");
           add = false;
