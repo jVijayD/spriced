@@ -6,13 +6,14 @@
     title="Model List"
     [enableRowIndex]="false"
     [isArray]="false"
+    [virtualScroll]="false"
     [headers]="headers"
     [rows]="rows"
     [rowHeight]="20"
     [headerHeight]="30"
     [footerHeight]="0"
     [columnMode]="columnMode"
-    [virtualScroll]="true"
+    [virtualScroll]="false"
     [selectionType]="selectionType"
     [limit]="10"
     [isExternalPaging]="true"
@@ -31,6 +32,31 @@
         title="Add Model"
         (actionClick)="onAdd()"
       ></sp-header-action>
+
+      <sp-header-action
+      icon="filter_list"
+      [text]="!query ? 'Filter' : ''"
+      (actionClick)="onFilter()"
+      [disabled]="this.headers.length === 0"
+      spToolTipRenderer
+      [contentTemplate]="template"
+      [customPosition]="true"
+      [showToolTip]="!!query"
+    ></sp-header-action>
+
+    <ng-template #template>
+      <div [innerHTML]="getToolTipTemplate(query)"></div>
+    </ng-template>
+
+    <sp-header-action
+      icon="filter_list_off"
+      text="Clear Filter"
+      title="Clear Filter"
+      [disabled]="
+        !this.query
+      "
+      (actionClick)="onClearFilter()"
+    ></sp-header-action>
 
       <sp-header-action
         icon="edit"
