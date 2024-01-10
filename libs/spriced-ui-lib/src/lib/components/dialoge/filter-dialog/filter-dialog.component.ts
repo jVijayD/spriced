@@ -168,11 +168,12 @@ compareValues(a:any,b:any)
           condition: item.condition,
         })
         : undefined;
+      const conditionType = !!item.condition ? item.condition : query.condition;
       const filter: Filter = {
         filterType: item.rules
           ? FilterType.CONDITIONGROUP
           : FilterType.CONDITION,
-        joinType: index == 0 ? JoinType.NONE : this.getJoinType(item.condition),
+        joinType: index == 0 ? JoinType.NONE : this.getJoinType(conditionType),
         operatorType: operatorType,
         key: item.field,
         value: item.value ? item.value : this.getDefaultValue(dataTypeType),
