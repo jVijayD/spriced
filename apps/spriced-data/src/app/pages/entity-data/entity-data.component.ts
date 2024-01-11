@@ -459,15 +459,17 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     if (items.condition && items.rules && items.rules.length > 0) {
       const lastItem = items.rules.length - 1;
       items.rules.forEach((rule: any, index: number) => {
+        let item = items.rules[index + 1];
         if (!rule.condition && !rule.rules) {
           const field = rule?.displayName;
           const value = !!rule?.value ? rule?.value : "";
-          const condition = lastItem !== index ? items.condition : "";
+          const condition = lastItem !== index && !item?.rules ? items.condition : !!item && item?.rules ? item.condition : "";
           tooltipText += `<strong>${field}</strong> ${rule.operator} ${value} <strong>${condition}</strong> <br>`;
         }
         if (!!rule.condition && !!rule.rules) {
+          const conditionType = !!item ? items.condition : "";
           tooltipText += `(`;
-          tooltipText += this.getNestedTooltipText(rule);
+          tooltipText += this.getNestedTooltipText(rule, conditionType);
           tooltipText += "<br>";
         }
       });
@@ -477,27 +479,31 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     return tooltipText;
   }
 
-  public getNestedTooltipText(items: any): string {
+  public getNestedTooltipText(items: any, parentItem: any): string {
     let tooltipText = "";
+    let type = "";
     if (items.condition && items.rules && items.rules.length > 0) {
       const lastItem = items.rules.length - 1;
       items.rules.forEach((rule: any, index: number) => {
+        let item = items.rules[index + 1];
         if (!rule.condition && !rule.rules) {
+          type = lastItem === index ? parentItem : "";
           const field = rule?.displayName;
           const value = !!rule?.value ? rule?.value : "";
-          const condition = lastItem !== index ? items.condition : "";
+          const condition = lastItem !== index && !item?.rules ? items.condition : !!item && item?.rules ? item.condition : "";
           tooltipText += `<strong>${field}</strong> ${rule.operator} ${value} <strong>${condition}</strong>`;
           if (index < items.rules.length - 1) {
             tooltipText += "<br>";
           }
         }
         if (!!rule.condition && !!rule.rules) {
+          const conditionType = !!item ? items.condition : "";
           tooltipText += `(`;
-          tooltipText += this.getNestedTooltipText(rule);
+          tooltipText += this.getNestedTooltipText(rule, conditionType);
         }
       });
     }
-    tooltipText += ")";
+    tooltipText += `) <strong>${type}</strong> `;
     return tooltipText;
   }
 
