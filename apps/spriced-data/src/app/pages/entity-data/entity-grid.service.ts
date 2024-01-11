@@ -46,6 +46,7 @@ export class EntityGridService {
                 : `${attr.name}_name,${attr.name}_code`
               : attr.name,
           name: attr.displayName || attr.name,
+          selectColumn:attr.name,
           canAutoResize: true,
           isSortable: true,
           isFilterable: true,
@@ -68,7 +69,7 @@ export class EntityGridService {
         if (elem.column == "validation_status") {
           return elem;
         } else {
-          return ele === elem.name?.toLowerCase();
+          return ele === elem.selectColumn?.toLowerCase();
         }
       });
     });
