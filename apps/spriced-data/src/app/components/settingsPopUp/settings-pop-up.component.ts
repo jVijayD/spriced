@@ -81,13 +81,23 @@ export class SettingsPopUpComponent implements OnInit {
     if (all) {
       this.noOfRecords = all.noOfRecords || GridConstants.LIMIT;
       this.freeze = all.freeze || 0;
+      if(all.columns.length!==0)
+      {
       this.columnForm.controls["column"].patchValue(all.columns);
+      }
+      else {
+        this.columnForm.controls["column"].patchValue([
+          ...this.filteredlList.map((item: any) => item.selectColumn),
+          "All",
+        ]);
+      } 
     } else {
       this.columnForm.controls["column"].patchValue([
-        ...this.filteredlList.map((item: any) => item.name),
+        ...this.filteredlList.map((item: any) => item.selectColumn),
         "All",
       ]);
     }
+    console.log(this.filteredlList)
   }
 
 ngOnInit(): void {
@@ -103,15 +113,18 @@ ngOnInit(): void {
   save() {
 
    let data=["name", "code"];
-
-    let selected = this.columnForm.controls["column"].value.filter((item: any) => {
-      return item !== "All";
+   let selected =this.columnForm.controls["column"].value;
+    selected.push(...data)
+     this.columnForm.controls["column"].value.filter((item: any) => {
+      if(item === "All")
+      {
+       selected=[]
+      }
     });
-    data.push(...selected)
     let value: any = {
       noOfRecords: this.noOfRecords,
       freeze: this.freeze,
-      columns: data,
+      columns: selected,
     };
     this.settings.setSettings(this.data.entity.name, value);
     let all: any = {
@@ -126,7 +139,7 @@ ngOnInit(): void {
     let text= this.columnForm.controls["search"].value
     this.filteredlList = this.initialData.filter((item: any) => {
       return (
-        item.name.trim().toLowerCase().indexOf(text.trim().toLowerCase()) != -1 
+        item.selectColumn.trim().toLowerCase().indexOf(text.trim().toLowerCase()) != -1 
       );
     });
   }
@@ -134,7 +147,7 @@ ngOnInit(): void {
   toggleAll() {
     if (this.all.selected) {
       this.columnForm.controls["column"].patchValue([
-        ...this.filteredlList.map((item: any) => item.name),
+        ...this.filteredlList.map((item: any) => item.selectColumn),
         "All",
       ]);
     } else {

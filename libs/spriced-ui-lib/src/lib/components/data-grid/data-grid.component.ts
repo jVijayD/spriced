@@ -255,6 +255,7 @@ export interface Header {
   isLink?: boolean;
   sortColumn?: any;
   className?: string;
+  selectColumn?:string;
 }
 
 export interface Paginate {
