@@ -186,9 +186,13 @@ export class EntityExportDataService {
     criteria: Criteria,
     selectedColumns:any
   ) {
-    const url =
-      `${this.api_url}/entity/${id}/export/excel?displayFormat=${displayFormat}&filterAttributes=${selectedColumns}`
-
+    
+    let url;
+    if (selectedColumns.length == 0) {
+      url = `${this.api_url}/entity/${id}/export/excel?displayFormat=${displayFormat}`;
+    } else {
+      url = `${this.api_url}/entity/${id}/export/excel?displayFormat=${displayFormat}&filterAttributes=${selectedColumns}`;
+    }
     return this.http
       .post(url,criteria,{
         responseType: "blob",
