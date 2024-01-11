@@ -90,6 +90,7 @@ export class EntityAddComponent implements OnInit {
   type = "FREE_FORM";
   dataType = "STRING_VAR";
   entityList: any;
+  filteredEntityList: any;
   referencedTable: any;
   @Output() dataChange = new EventEmitter<any>();
   constraintType = false;
@@ -150,6 +151,7 @@ export class EntityAddComponent implements OnInit {
     this.local_data = { ...data.row };
     this.previousEntityData = { ...data.row };
     this.entityList = data.entities;
+    this.filteredEntityList = this.entityList;
 
     if (this.local_data.id == this.entityList[0]?.id) {
       this.attDetails.referencedTableId = this.entityList[1]?.id;
@@ -523,5 +525,16 @@ export class EntityAddComponent implements OnInit {
     this.filteredRows = this.rows;
     this.attNames=this.rows
     this.filter = false;
+  }
+
+  filterEntitySelection(text: string) {
+    this.filteredEntityList = this.entityList.filter((item: any) => {
+      return (
+        item.displayName
+          .trim()
+          .toLowerCase()
+          .indexOf(text.trim().toLowerCase()) != -1
+      );
+    });
   }
 }

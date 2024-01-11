@@ -266,7 +266,15 @@
                 attDetails?.onlyDisplayNameEditable && attAction === 'Update'
               "
             >
-              <mat-option *ngFor="let item of entityList" [value]="item.id">{{
+            <mat-option>
+              <ngx-mat-select-search
+                placeholderLabel="Search"
+                ngModel
+                (ngModelChange)="filterEntitySelection($event)"
+              ></ngx-mat-select-search>
+            </mat-option>
+            <mat-option value="" class="option">--Select--</mat-option>
+              <mat-option *ngFor="let item of filteredEntityList" [value]="item.id">{{
                 item.displayName
               }}</mat-option>
             </mat-select>
