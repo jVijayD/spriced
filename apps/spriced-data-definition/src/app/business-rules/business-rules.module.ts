@@ -50,6 +50,7 @@ import { DateAdapterService } from "@spriced-frontend/spriced-common-lib";
 import { headerInterceptor } from "libs/shared/spriced-shared-lib/src/lib/auth/header-interceptor";
 import { MessageService } from "./services/message.service";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
+import { ToolTipRendererDirective } from "libs/spriced-ui-lib/src/lib/components/directive/tool-tip-renderer.directive";
 
 const MY_DATE_FORMAT = {
   parse: {
@@ -107,7 +108,8 @@ const NGX_DATE_FORMAT = {
     BusinessRuleListComponent,
     BusinessactionsComponent,
     ElseactionComponent,
-    NgxMatSelectSearchModule
+    NgxMatSelectSearchModule,
+    ToolTipRendererDirective,
   ],
   providers: [
     HttpClient,

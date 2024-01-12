@@ -110,6 +110,32 @@
             (actionClick)="addNewRule()"
             ></sp-header-action>
 
+            <sp-header-action
+            icon="filter_list"
+            [text]="!query ? 'Filter' : ''"
+            (actionClick)="onFilter()"
+            [disabled]="this.headers.length === 0"
+            spToolTipRenderer
+            [contentTemplate]="template"
+            [customPosition]="true"
+            [showToolTip]="!!query"
+            [selected]="!!query"
+          ></sp-header-action>
+      
+          <ng-template #template>
+            <div [innerHTML]="getToolTipTemplate(query)"></div>
+          </ng-template>
+          <sp-header-action
+            icon="filter_list_off"
+            text="Clear Filter"
+            title="Clear Filter"
+            [disabled]="
+              !this.query
+            "
+            (actionClick)="onClearFilter()"
+          ></sp-header-action>
+
+
         <sp-header-action 
             icon="sync" 
             text="Refresh"  

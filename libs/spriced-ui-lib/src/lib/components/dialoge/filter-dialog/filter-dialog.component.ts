@@ -278,7 +278,11 @@ compareValues(a:any,b:any)
   public handleLookupData(item: any, rule?: any) {
     rule ? (rule.valueName = '', rule.selectedItem = '') : null;
     let field: any = this.config.fields[item];
-    if (item === "is_valid") {
+    if(field?.options)
+  {   
+     field.filteredOptions=field.options
+  }    
+if (item === "is_valid") {
       field.filteredOptions = this.status;
     }
     if (field?.type === 'LOOKUP' && !!field?.entity) {

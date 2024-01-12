@@ -1,47 +1,56 @@
-import { DatePipe } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, Output, OnDestroy, ViewChild, TemplateRef, ChangeDetectorRef } from '@angular/core';
+import { DatePipe } from "@angular/common";
+import { HttpClient } from "@angular/common/http";
+import {
+  Component,
+  OnInit,
+  Output,
+  OnDestroy,
+  ViewChild,
+  TemplateRef,
+  ChangeDetectorRef,
+} from "@angular/core";
 import {
   FormBuilder,
   FormControl,
   FormGroup,
   Validators,
-} from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
-import * as moment from 'moment';
+} from "@angular/forms";
+import { MatDialog } from "@angular/material/dialog";
+import { MatPaginator } from "@angular/material/paginator";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatTableDataSource } from "@angular/material/table";
+import { ActivatedRoute, Router } from "@angular/router";
+import * as moment from "moment";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {
   AppDataService,
-  ErrorPanelService
-} from '@spriced-frontend/shared/spriced-shared-lib';
-import { BusinessruleService } from '@spriced-frontend/spriced-common-lib';
+  ErrorPanelService,
+} from "@spriced-frontend/shared/spriced-shared-lib";
+import {
+  BusinessruleService,
+  Criteria,
+} from "@spriced-frontend/spriced-common-lib";
 import {
   DataGridComponent,
+  DialogService,
   DialogboxComponent,
+  FilterData,
   Header,
   Paginate,
+  QueryColumns,
   SnackBarService,
-} from '@spriced-frontend/spriced-ui-lib';
-import { ColumnMode, SelectionType, SortType } from '@swimlane/ngx-datatable';
-import {
-  Subject,
-  debounceTime,
-  forkJoin,
-  takeUntil
-} from 'rxjs';
-import { MessageService } from './../services/message.service';
+} from "@spriced-frontend/spriced-ui-lib";
+import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
+import { Subject, debounceTime, forkJoin, takeUntil } from "rxjs";
+import { MessageService } from "./../services/message.service";
 @Component({
   selector: "sp-list",
   templateUrl: "./list.component.html",
   styleUrls: ["./list.component.scss"],
 })
 export class ListComponent implements OnInit, OnDestroy {
-  @ViewChild('pagination') paginator!: MatPaginator;
-  @ViewChild('dataGrid') dataGrid!: DataGridComponent;
+  @ViewChild("pagination") paginator!: MatPaginator;
+  @ViewChild("dataGrid") dataGrid!: DataGridComponent;
   public subscription: any;
   public notifier$: Subject<boolean> = new Subject();
   public listForm!: FormGroup;
@@ -49,7 +58,7 @@ export class ListComponent implements OnInit, OnDestroy {
   public entities: any = [];
   public attributes: any = [];
   public defaultAttribute: any;
-  public memberTypes = [{ value: 'Leaf', viewValue: 'Leaf' }];
+  public memberTypes = [{ value: "Leaf", viewValue: "Leaf" }];
   public filterData: any;
   public entityId: any;
   public modelId: any;
@@ -62,20 +71,20 @@ export class ListComponent implements OnInit, OnDestroy {
   public currentDataSource: any = [];
   public defaultModel: any;
   public defaultEntity: any;
-  public currentAttributeId: string = '';
+  public currentAttributeId: string = "";
   public filteredModels: any;
   public filteredAttributes: any;
   public filteredEntites: any;
   displayedColumns: string[] = [
-    'Priority',
-    'Excluded',
-    'Name',
-    'Description',
-    'Expression',
-    'Status',
-    'Notification',
-    'Modified_Date',
-    'Action',
+    "Priority",
+    "Excluded",
+    "Name",
+    "Description",
+    "Expression",
+    "Status",
+    "Notification",
+    "Modified_Date",
+    "Action",
   ];
 
   headers: Header[] = [
@@ -84,7 +93,7 @@ export class ListComponent implements OnInit, OnDestroy {
       name: "Priority",
       canAutoResize: true,
       isSortable: true,
-      width: 100
+      width: 100,
     },
     {
       column: "isExcluded",
@@ -92,22 +101,23 @@ export class ListComponent implements OnInit, OnDestroy {
       canAutoResize: true,
       isSortable: true,
       checkbox: true,
-      disableCheckbox: (row: any) => !['Active', 'Excluded'].includes(row.status),
-      width: 100
+      disableCheckbox: (row: any) =>
+        !["Active", "Excluded"].includes(row.status),
+      width: 100,
     },
     {
       column: "name",
       name: "Name",
       canAutoResize: true,
       isSortable: true,
-      width: 200
+      width: 200,
     },
     {
       column: "description",
       name: "Description",
       canAutoResize: true,
       isSortable: true,
-      width: 200
+      width: 200,
     },
     {
       column: "expression",
@@ -116,16 +126,16 @@ export class ListComponent implements OnInit, OnDestroy {
       isSortable: true,
       tooltip: true,
       tooltipTemplate: (row: any) => this.getExpressionTooltip(row),
-      imgsrc: 'assets/images/file.png',
+      imgsrc: "assets/images/file.png",
       width: 100,
-      showtooltip:true
+      showtooltip: true,
     },
     {
       column: "status",
       name: "Status",
       canAutoResize: true,
       isSortable: true,
-      width: 150
+      width: 150,
     },
     // {
     //   column: "notification",
@@ -143,7 +153,7 @@ export class ListComponent implements OnInit, OnDestroy {
       pipe: (data: any) => {
         return moment(data).format("MM/DD/YYYY HH:mm:ss");
       },
-    }
+    },
   ];
   columnMode: ColumnMode = ColumnMode.force;
   selectionType: SelectionType = SelectionType.single;
@@ -154,7 +164,11 @@ export class ListComponent implements OnInit, OnDestroy {
   public attributeId: any;
   public domainAttributes: any = [];
   public defaultSorts: any;
-  
+  query: any;
+  showTooltip: any;
+  temp: any = [];
+  initialRow: any[] = [];
+
   constructor(
     private businessRuleService: BusinessruleService,
     private route: Router,
@@ -168,11 +182,13 @@ export class ListComponent implements OnInit, OnDestroy {
     private errorPanelService: ErrorPanelService,
     private msgSrv: SnackBarService,
     private activeRoute: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialogService: DialogService
   ) {
-    this.entityId = +this.activeRoute?.snapshot?.queryParams?.['entity_id'];
-    this.modelId = +this.activeRoute?.snapshot?.queryParams?.['model_id'];
-    this.attributeId = this.activeRoute?.snapshot?.queryParams?.['attribute_id'];
+    this.entityId = +this.activeRoute?.snapshot?.queryParams?.["entity_id"];
+    this.modelId = +this.activeRoute?.snapshot?.queryParams?.["model_id"];
+    this.attributeId =
+      this.activeRoute?.snapshot?.queryParams?.["attribute_id"];
     const { sort } = window.history.state;
     this.defaultSorts = !!sort ? JSON.parse(sort) : [];
     this.currentAttributeId = this.attributeId;
@@ -197,13 +213,16 @@ export class ListComponent implements OnInit, OnDestroy {
     this.getRulesAndModelsData();
     this.handleRulesData();
 
-    this.listForm.valueChanges.pipe(
-      debounceTime(500)
-    ).subscribe((item: any) => {
-      this.filteredModels = this.filterItems(this.models, item.modelFilter);
-      this.filteredEntites = this.filterItems(this.entities, item.entityFilter);
-      this.filterAttributeSelection(item.attributeFilter);
-    })
+    this.listForm.valueChanges
+      .pipe(debounceTime(500))
+      .subscribe((item: any) => {
+        this.filteredModels = this.filterItems(this.models, item.modelFilter);
+        this.filteredEntites = this.filterItems(
+          this.entities,
+          item.entityFilter
+        );
+        this.filterAttributeSelection(item.attributeFilter);
+      });
   }
 
   public async handleRulesData() {
@@ -232,7 +251,6 @@ export class ListComponent implements OnInit, OnDestroy {
     //   this.dataSource = rules;
     // }
     if (models) {
-
       this.models = models;
       this.filteredModels = models;
       this.filterData = this.dataSource;
@@ -252,18 +270,18 @@ export class ListComponent implements OnInit, OnDestroy {
    */
   public formbuild() {
     this.listForm = this.fb.group({
-      model: new FormControl('', [Validators.required]),
-      modelFilter: new FormControl(''),
-      entity: new FormControl('', [Validators.required]),
-      entityFilter: new FormControl(''),
-      attrubute: new FormControl('', [Validators.required]),
-      attributeFilter: new FormControl('')
+      model: new FormControl("", [Validators.required]),
+      modelFilter: new FormControl(""),
+      entity: new FormControl("", [Validators.required]),
+      entityFilter: new FormControl(""),
+      attrubute: new FormControl("", [Validators.required]),
+      attributeFilter: new FormControl(""),
     });
   }
 
   /**
- * HANDLE THIS FUNCTION FOR GET ALL THE RULES
- */
+   * HANDLE THIS FUNCTION FOR GET ALL THE RULES
+   */
   public getAllRulesApi(): Promise<any> {
     return new Promise((resolve, rejects) => {
       this.businessRuleService.getAllRules().subscribe(
@@ -288,9 +306,7 @@ export class ListComponent implements OnInit, OnDestroy {
    */
   public async getALlApis(): Promise<any> {
     return new Promise((resolve, rejects) => {
-      forkJoin([
-        this.businessRuleService.getAllModles(),
-      ]).subscribe(
+      forkJoin([this.businessRuleService.getAllModles()]).subscribe(
         ([models]: any) => {
           resolve({
             models,
@@ -311,26 +327,32 @@ export class ListComponent implements OnInit, OnDestroy {
    * @param attributeId string
    */
   public handleFilterRuleByAttribute(attributeId: any, text?: any) {
-    !!text ? this.dataGrid.defaultSorts = [] : '';
+    !!text ? (this.dataGrid.defaultSorts = []) : "";
     this.currentAttributeId = attributeId;
-    if (attributeId !== 'ALL') {
+    if (attributeId !== "ALL") {
       let filteredRules = [];
       for (const rule of this.dataSource) {
-        if (this.ruleContainsAttributeId(rule, attributeId) || this.actionContainsAttributeId(rule, attributeId) || this.elseActionContainsAttributeId(rule, attributeId)) {
+        if (
+          this.ruleContainsAttributeId(rule, attributeId) ||
+          this.actionContainsAttributeId(rule, attributeId) ||
+          this.elseActionContainsAttributeId(rule, attributeId)
+        ) {
           filteredRules.push(rule);
         }
       }
       this.rows = filteredRules;
-      return
+      this.initialRow = this.rows;
+      return;
     }
     this.rows = this.currentDataSource;
+    this.initialRow = this.rows;
   }
 
   /**
    * HANDLE THIS FOR FILTER THE CONDTIONS BY ATTRIBUTEID
    * @param rule any
    * @param id string
-   * @returns 
+   * @returns
    */
   ruleContainsAttributeId(rule: any, id: string): boolean {
     for (const condition of rule.condition) {
@@ -345,7 +367,7 @@ export class ListComponent implements OnInit, OnDestroy {
    * HANDLE THIS FOR FILTER THE IF ACTIONS BY ATTRIBUTEID
    * @param rule any
    * @param id string
-   * @returns 
+   * @returns
    */
   actionContainsAttributeId(rule: any, id: string): boolean {
     for (const action of rule.conditionalAction.ifActions) {
@@ -360,7 +382,7 @@ export class ListComponent implements OnInit, OnDestroy {
    * HANDLE THIS FOR FILTER THE ELSE ACTIONS BY ATTRIBUTEID
    * @param rule any
    * @param id string
-   * @returns 
+   * @returns
    */
   elseActionContainsAttributeId(rule: any, id: string): boolean {
     for (const action of rule.conditionalAction.elseActions) {
@@ -376,8 +398,8 @@ export class ListComponent implements OnInit, OnDestroy {
    */
   public addNewRule() {
     this.route.navigate([`/spriced-data-definition/rules/business-rule`], {
-      queryParams: { model_id: this.modelId, entity_id: this.entityId},
-      state: {sort: JSON.stringify(this.defaultSorts)}
+      queryParams: { model_id: this.modelId, entity_id: this.entityId },
+      state: { sort: JSON.stringify(this.defaultSorts) },
     });
   }
 
@@ -392,19 +414,21 @@ export class ListComponent implements OnInit, OnDestroy {
       id: event.item.id,
       isExcluded: excluded,
     };
-    let message: any = !event.item.isExcluded ? 'The rule is not going to be <strong>Excluded!</strong> Are you sure?' : 'Are you sure you want to <b>Exclude</b> the <b>rule?</b>'
+    let message: any = !event.item.isExcluded
+      ? "The rule is not going to be <strong>Excluded!</strong> Are you sure?"
+      : "Are you sure you want to <b>Exclude</b> the <b>rule?</b>";
     // OPEN DIALOG BOX
     const dialogRef = this.dialog.open(DialogboxComponent, {
-      minWidth: '330px',
-      maxWidth: '100%',
-      width: 'auto',
-      height: '140px',
+      minWidth: "330px",
+      maxWidth: "100%",
+      width: "auto",
+      height: "140px",
       disableClose: true,
       data: {
         message: message,
         button: {
-          confirmation: 'Yes',
-          cancel: 'No',
+          confirmation: "Yes",
+          cancel: "No",
         },
       },
     });
@@ -423,12 +447,12 @@ export class ListComponent implements OnInit, OnDestroy {
               (res: any) => {
                 this.loading = false;
                 this.errorPanelService.init();
-                this.msgSrv.success('Excluded is updated successfully!');
+                this.msgSrv.success("Excluded is updated successfully!");
                 this.onRefresh();
               },
               (error: any) => {
                 this.loading = false;
-                console.log('Error occurred during API request:', error);
+                console.log("Error occurred during API request:", error);
               }
             );
         } else {
@@ -441,10 +465,9 @@ export class ListComponent implements OnInit, OnDestroy {
    *  HANDLE THIS FUNCTION FOR SORTING THE TABLE COLUMN
    * @param event any
    */
-  public onSort(event: any)
-  {
+  public onSort(event: any) {
     this.defaultSorts = event.sorts[0];
-    localStorage.setItem('sorts', JSON.stringify(this.defaultSorts));
+    localStorage.setItem("sorts", JSON.stringify(this.defaultSorts));
   }
 
   /**
@@ -454,15 +477,15 @@ export class ListComponent implements OnInit, OnDestroy {
   public deleteRule(item: any) {
     // OPEN DIALOG BOX
     const dialogRef = this.dialog.open(DialogboxComponent, {
-      minWidth: '330px',
-      maxWidth: '100%',
-      width: 'auto',
-      height: '140px',
+      minWidth: "330px",
+      maxWidth: "100%",
+      width: "auto",
+      height: "140px",
       data: {
         message: `Are you sure want to delete <strong>${item.name}</strong>?`,
         button: {
-          confirmation: 'Delete',
-          cancel: 'Cancel',
+          confirmation: "Delete",
+          cancel: "Cancel",
         },
       },
     });
@@ -486,13 +509,13 @@ export class ListComponent implements OnInit, OnDestroy {
                 //   duration: 3000,
                 // });
                 this.errorPanelService.init();
-                this.msgSrv.success('Rule is deleted successfully!');
+                this.msgSrv.success("Rule is deleted successfully!");
                 this.getRulesAndModelsData();
                 this.onRefresh();
               },
               (error: any) => {
                 this.loading = false;
-                console.log('Error occurred during API request:', error);
+                console.log("Error occurred during API request:", error);
               }
             );
         }
@@ -531,71 +554,95 @@ export class ListComponent implements OnInit, OnDestroy {
    * @param text string
    */
   public async editBusinessRule(item: any, text?: string) {
-    const routePath = text === 'preview' ? `${item.id}/preview` : item.id;
-    this.route.navigate([`/spriced-data-definition/rules/business-rule/${routePath}`], {
-       queryParams: { model_id: this.modelId, entity_id: this.entityId, attribute_id: this.currentAttributeId },
-       state: {sort: JSON.stringify(this.defaultSorts)}
-      });
+    const routePath = text === "preview" ? `${item.id}/preview` : item.id;
+    this.route.navigate(
+      [`/spriced-data-definition/rules/business-rule/${routePath}`],
+      {
+        queryParams: {
+          model_id: this.modelId,
+          entity_id: this.entityId,
+          attribute_id: this.currentAttributeId,
+        },
+        state: { sort: JSON.stringify(this.defaultSorts) },
+      }
+    );
   }
   /**
    * HANDLE FOR ENTITIES BY MODEL ID
    * @param id any
    */
   public handleEntityByModels(id: any, text?: any) {
-    !!text ? this.dataGrid.defaultSorts = [] : '';
+    !!text ? (this.dataGrid.defaultSorts = []) : "";
     this.businessRuleService
       .getAllEntitesByModuleId(id)
       .pipe(takeUntil(this.notifier$))
       .subscribe((res: any) => {
         this.entities = res;
         this.filteredEntites = res;
-        const entity = res.find((el: any) => el.groupId === this.defaultModel)
-        this.defaultEntity = this.entityId && !text ? this.entityId : entity?.id;
+        const entity = res.find((el: any) => el.groupId === this.defaultModel);
+        this.defaultEntity =
+          this.entityId && !text ? this.entityId : entity?.id;
         this.modelId = id;
         this.handleAttributeByEntity(this.defaultEntity);
       });
   }
-
 
   /**
    * HANDLE FOR ATTRIBUTES BY ENTITY ID
    * @param id number
    */
   public async handleAttributeByEntity(id: any, text?: any) {
-    !!text ? this.dataGrid.defaultSorts = [] : '';
+    !!text ? (this.dataGrid.defaultSorts = []) : "";
     this.entityId = id;
     this.loading = true;
     if (id) {
       const entity = this.entities.find((item: any) => item.id == id);
       this.attributes = [];
-      const attributeList = entity.attributes.filter((el: any) => !el.systemAttribute);
+      const attributeList = entity.attributes.filter(
+        (el: any) => !el.systemAttribute
+      );
       this.domainAttributes = attributeList;
-      const relatedRefreneceTableEntity = entity.attributes.filter((el: any) => !!el.referencedTableId);
+      const relatedRefreneceTableEntity = entity.attributes.filter(
+        (el: any) => !!el.referencedTableId
+      );
       // Handle for nested attribute
-      if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
+      if (
+        relatedRefreneceTableEntity &&
+        relatedRefreneceTableEntity.length > 0
+      ) {
         // Use Promise.all to wait for all promises to resolve
         await Promise.all(
-           relatedRefreneceTableEntity.map(async (el: any) => {
-            const { entityData } = await this.getEntityById(el.referencedTableId);
-            const attributes = entityData?.attributes.filter((el: any) => !el.systemAttribute);
-            const nestedProcessedAttributes = this.processNestedAttributes(attributes, el);
+          relatedRefreneceTableEntity.map(async (el: any) => {
+            const { entityData } = await this.getEntityById(
+              el.referencedTableId
+            );
+            const attributes = entityData?.attributes.filter(
+              (el: any) => !el.systemAttribute
+            );
+            const nestedProcessedAttributes = this.processNestedAttributes(
+              attributes,
+              el
+            );
             this.domainAttributes.push(...nestedProcessedAttributes);
           })
-        )
+        );
       }
       this.attributes = [
         {
-          displayName: 'All',
-          name: 'All',
-          id: 'ALL',
+          displayName: "All",
+          name: "All",
+          id: "ALL",
         },
         ...this.domainAttributes,
       ];
       this.filteredAttributes = this.attributes;
-      this.defaultAttribute = this.attributeId ? this.attributeId : 'ALL';
+      this.defaultAttribute = this.attributeId ? this.attributeId : "ALL";
       // this.attributes = entity.attributes;
-      this.filterData = this.dataSource.filter((res: any) => res.entityId === id);
+      this.filterData = this.dataSource.filter(
+        (res: any) => res.entityId === id
+      );
       this.rows = this.filterData;
+      this.initialRow = this.rows;
       this.currentDataSource = this.filterData.slice(
         this.pageIndex,
         this.pageIndex + this.pageSize
@@ -604,6 +651,7 @@ export class ListComponent implements OnInit, OnDestroy {
       this.loading = false;
     } else {
       this.rows = [];
+      this.initialRow = this.rows;
       this.filterData = [];
       this.attributes = [];
       this.loading = false;
@@ -613,36 +661,35 @@ export class ListComponent implements OnInit, OnDestroy {
   /**
    * HANDLE THIS FUNCTION FOR GET ENTITY BY IDS
    * @param entityId number
-   * @returns 
+   * @returns
    */
   public getEntityById(entityId: number, retryCount = 3): Promise<any> {
     return new Promise((resolve, reject) => {
-        const fetchData = () => {
-            this.businessRuleService.getAllEntitesById(entityId).subscribe(
-                (entityData: any) => {
-                    resolve({ entityData });
-                },
-                (err) => {
-                    if (retryCount > 0) {
-                        fetchData();
-                        retryCount--;
-                    } else {
-                        reject({ entityData: [] });
-                    }
-                }
-            );
-        };
-        fetchData(); 
+      const fetchData = () => {
+        this.businessRuleService.getAllEntitesById(entityId).subscribe(
+          (entityData: any) => {
+            resolve({ entityData });
+          },
+          (err) => {
+            if (retryCount > 0) {
+              fetchData();
+              retryCount--;
+            } else {
+              reject({ entityData: [] });
+            }
+          }
+        );
+      };
+      fetchData();
     });
   }
 
-
   /**
-  * HANDLE THIS FUNCTION FOR EDIT THE NESTEDATTRIBUTES
-  * @param nestedAttributes any
-  * @param parentAttribute string
-  * @returns 
-  */
+   * HANDLE THIS FUNCTION FOR EDIT THE NESTEDATTRIBUTES
+   * @param nestedAttributes any
+   * @param parentAttribute string
+   * @returns
+   */
   public processNestedAttributes(nestedAttributes: any, parentAttribute: any) {
     const processedAttributes: any = [];
     if (nestedAttributes) {
@@ -650,7 +697,7 @@ export class ListComponent implements OnInit, OnDestroy {
         const processedAttribute = {
           ...el,
           displayName: `${parentAttribute?.displayName}.${el.displayName}`,
-          name: `${parentAttribute?.displayName}.${el.displayName}`
+          name: `${parentAttribute?.displayName}.${el.displayName}`,
         };
         processedAttributes.push(processedAttribute);
       });
@@ -664,7 +711,6 @@ export class ListComponent implements OnInit, OnDestroy {
    * @param event any
    */
   public onPageChange(event: any) {
-
     const index = event.pageIndex * event.pageSize;
     this.currentDataSource = this.filterData.slice(
       index,
@@ -673,10 +719,10 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   /**
-     * HANDLE THIS FUNCTION FOR EXPRESSION TOOLTIP
-     * @param element any
-     * @returns
-     */
+   * HANDLE THIS FUNCTION FOR EXPRESSION TOOLTIP
+   * @param element any
+   * @returns
+   */
   getExpressionTooltip(element: any): string {
     let tooltipText = `${this.getConditionTooltipText(element.condition, 3)}`;
     tooltipText += this.getActionTooltipText(element.conditionalAction);
@@ -701,10 +747,15 @@ export class ListComponent implements OnInit, OnDestroy {
         let attribute = this.attributes.find(
           (item: any) => item.id === condition.attributeId
         );
-        attribute = !!attribute ? attribute : {name: 'code', displayName: 'Code', id: '1234'};
-        if (attribute && attribute.name.includes('_') || condition?.operatorType.includes('_')) {
-          attribute.name = attribute?.name.replace(/_/g, ' ');
-          condition.operatorType = condition?.operatorType.replace(/_/g, ' ');
+        attribute = !!attribute
+          ? attribute
+          : { name: "code", displayName: "Code", id: "1234" };
+        if (
+          (attribute && attribute.name.includes("_")) ||
+          condition?.operatorType.includes("_")
+        ) {
+          attribute.name = attribute?.name.replace(/_/g, " ");
+          condition.operatorType = condition?.operatorType.replace(/_/g, " ");
         }
         const conditionType =
           condition?.conditionType !== "NONE" ? condition?.conditionType : "";
@@ -718,7 +769,10 @@ export class ListComponent implements OnInit, OnDestroy {
           );
           operand = operand?.name;
         } else if (
-          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute?.dataType) && condition.operandType === 'CONSTANT' && condition?.operand !== '' && !!condition?.operand
+          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute?.dataType) &&
+          condition.operandType === "CONSTANT" &&
+          condition?.operand !== "" &&
+          !!condition?.operand
         ) {
           const dateTimes = condition?.operand.split(","); // Split the input string by commas
 
@@ -728,11 +782,13 @@ export class ListComponent implements OnInit, OnDestroy {
           const joinedString = formattedDates.join(" & ");
           const finalArray = [`${joinedString}`];
           operand = finalArray;
-        }
-        else {
+        } else {
           operand = condition?.operand;
         }
-        operand = !!condition?.operand && condition?.operand !== "" ? `to ${operand}` : '';
+        operand =
+          !!condition?.operand && condition?.operand !== ""
+            ? `to ${operand}`
+            : "";
 
         tooltipConditionText += `${conditionType} ${attribute?.name.toLowerCase()}  
         ${condition?.operatorType.toLowerCase()} ${operand}`;
@@ -767,10 +823,15 @@ export class ListComponent implements OnInit, OnDestroy {
         let attribute = this.attributes.find(
           (item: any) => item.id === condition.attributeId
         );
-        attribute = !!attribute ? attribute : {name: 'code', displayName: 'Code', id: '1234'};
-        if (attribute && attribute.name.includes('_') || condition.operatorType.includes('_')) {
-          attribute.name = attribute?.name.replace(/_/g, ' ');
-          condition.operatorType = condition?.operatorType.replace(/_/g, ' ');
+        attribute = !!attribute
+          ? attribute
+          : { name: "code", displayName: "Code", id: "1234" };
+        if (
+          (attribute && attribute.name.includes("_")) ||
+          condition.operatorType.includes("_")
+        ) {
+          attribute.name = attribute?.name.replace(/_/g, " ");
+          condition.operatorType = condition?.operatorType.replace(/_/g, " ");
         }
         const conditionType =
           condition?.conditionType !== "NONE" ? condition?.conditionType : "";
@@ -784,7 +845,10 @@ export class ListComponent implements OnInit, OnDestroy {
           );
           operand = operand?.name;
         } else if (
-          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute?.dataType) && condition.operandType === 'CONSTANT' && condition?.operand !== '' && !!condition?.operand
+          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute?.dataType) &&
+          condition.operandType === "CONSTANT" &&
+          condition?.operand !== "" &&
+          !!condition?.operand
         ) {
           const dateTimes = condition?.operand.split(","); // Split the input string by commas
 
@@ -794,14 +858,17 @@ export class ListComponent implements OnInit, OnDestroy {
           const joinedString = formattedDates.join(" & ");
           const finalArray = [`${joinedString}`];
           operand = finalArray;
-        }
-        else {
+        } else {
           operand = condition?.operand;
         }
-        operand = !!condition?.operand && condition?.operand !== "" ? `to ${operand}` : '';
+        operand =
+          !!condition?.operand && condition?.operand !== ""
+            ? `to ${operand}`
+            : "";
 
-        subConditionText += `${conditionType} ${attribute.name
-          } ${condition?.operatorType.toLowerCase()} ${operand}`;
+        subConditionText += `${conditionType} ${
+          attribute.name
+        } ${condition?.operatorType.toLowerCase()} ${operand}`;
         if (condition.subConditions && condition.subConditions.length > 0) {
           subConditionText += ` ${subConditionType} (`;
           subConditionText += this.getSubConditionText(
@@ -857,7 +924,7 @@ export class ListComponent implements OnInit, OnDestroy {
   ): string {
     let tooltipActionConditionsText = `<b>${type}</b><br>`;
     tooltipActionConditionsText += this.getIndent(depth);
-    let operand: any = '';
+    let operand: any = "";
 
     if (actions && actions.length > 0) {
       actions.forEach((action: any, index: number) => {
@@ -866,19 +933,26 @@ export class ListComponent implements OnInit, OnDestroy {
         let attribute = this.attributes.find(
           (item: any) => item.id === action.attributeId
         );
-        attribute = !!attribute ? attribute : {name: 'code', displayName: 'Code', id: '1234'};
-        if (attribute && attribute.name.includes('_') || action.actionType.includes('_')) {
-          attribute.name = attribute?.name.replace(/_/g, ' ');
-          action.actionType = action?.actionType.replace(/_/g, ' ')
+        attribute = !!attribute
+          ? attribute
+          : { name: "code", displayName: "Code", id: "1234" };
+        if (
+          (attribute && attribute.name.includes("_")) ||
+          action.actionType.includes("_")
+        ) {
+          attribute.name = attribute?.name.replace(/_/g, " ");
+          action.actionType = action?.actionType.replace(/_/g, " ");
         }
         if (action.operandType === "ATTRIBUTE") {
           operand = this.attributes.find(
             (item: any) => item.id === action.operand
           );
           operand = operand?.name;
-        }
-        else if (
-          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute?.dataType) && action?.operandType === 'CONSTANT' && action?.operand !== '' && !!action?.operand
+        } else if (
+          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute?.dataType) &&
+          action?.operandType === "CONSTANT" &&
+          action?.operand !== "" &&
+          !!action?.operand
         ) {
           const dateTimes = action?.operand.split(","); // Split the input string by commas
 
@@ -888,21 +962,27 @@ export class ListComponent implements OnInit, OnDestroy {
           const joinedString = formattedDates.join(" & ");
           const finalArray = [`${joinedString}`];
           operand = finalArray;
-        }
-        else {
+        } else {
           operand = action?.operand;
         }
-        if (action.actionType.toLowerCase().trim().endsWith('to')) {
-          const lastindex = action.actionType.toLowerCase().lastIndexOf('to');
+        if (action.actionType.toLowerCase().trim().endsWith("to")) {
+          const lastindex = action.actionType.toLowerCase().lastIndexOf("to");
           if (
-            (lastindex > -1) && (lastindex === 0 || action.actionType[lastindex - 1] === ' ')
+            lastindex > -1 &&
+            (lastindex === 0 || action.actionType[lastindex - 1] === " ")
           ) {
-            action.actionType = action.actionType.substring(0, lastindex)
+            action.actionType = action.actionType.substring(0, lastindex);
           }
-        };
-        operand = !!action?.operand && action?.operand !== "" ? `to ${operand}` : !['IS REQUIRED', 'IS NOT VALID'].includes(action?.actionType) ? ` " "` : '';
-        tooltipActionConditionsText += `${attribute.name
-          } ${action.actionType.toLowerCase()} ${operand}`;
+        }
+        operand =
+          !!action?.operand && action?.operand !== ""
+            ? `to ${operand}`
+            : !["IS REQUIRED", "IS NOT VALID"].includes(action?.actionType)
+            ? ` " "`
+            : "";
+        tooltipActionConditionsText += `${
+          attribute.name
+        } ${action.actionType.toLowerCase()} ${operand}`;
         const lastAction = actions.length - 1;
         lastAction != index ? (tooltipActionConditionsText += "<br>") : "";
       });
@@ -932,6 +1012,7 @@ export class ListComponent implements OnInit, OnDestroy {
     const data = this.getData(e.limit, e.offset);
     this.filterData = data.filter((res: any) => res.entityId === this.entityId);
     this.rows = this.filterData;
+    this.initialRow = this.rows;
   }
 
   /**
@@ -952,4 +1033,268 @@ export class ListComponent implements OnInit, OnDestroy {
     this.notifier$.next(true);
     this.notifier$.complete();
   }
+
+  onFilter() {
+    const data: FilterData = {
+      query: this.query,
+      persistValueOnFieldChange: true,
+      emptyMessage: "Please select filter criteria.",
+      config: null,
+      columns: this.getFilterColumns(),
+    };
+
+    const dialogResult = this.dialogService.openFilterDialog(data);
+    dialogResult.afterClosed().subscribe((val) => {
+      if (val !== null) {
+        this.query = dialogResult.componentInstance.data.query;
+        this.temp = [];
+        this.rows = this.filterData;
+        val.map((item: any) => {
+          this.filteredRows(item, this.filterData);
+        });
+        const result: any = [...new Set(this.rows)];
+        this.rows = result;
+      }
+    });
+  }
+
+  public filteredRows(item: any, filterData: any) {
+    if (!!item.operatorType) {
+      switch (item.operatorType) {
+        case "LESS_THAN": {
+          var row = filterData.filter(function (el: any) {
+
+            return el[item.key] < item.value;
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+          break;
+        }
+        case "EQUALS": {
+          var row = filterData.filter(function (el: any) {
+            return el[item.key] == item.value;
+          });
+
+          this.temp.push(...row);
+          this.rows = this.temp;
+          break;
+        }
+        case "IS_NOT_EQUAL": {
+          var row = filterData.filter(function (el: any) {
+            return el[item.key] != item.value;
+          });
+
+          this.temp.push(...row);
+          this.rows = this.temp;
+          break;
+        }
+        case "GREATER_THAN": {
+          var row = filterData.filter(function (el: any) {
+            return el[item.key] > item.value;
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+
+          break;
+        }
+        case "GREATER_THAN_EQUALS": {
+          var row = filterData.filter(function (el: any) {
+            return el[item.key] >= item.value;
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+          break;
+        }
+        case "LESS_THAN_EQUALS": {
+          var row = filterData.filter(function (el: any) {
+            return el[item.key] <= item.value;
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+
+          break;
+        }
+        case "IS_NOT_EQUAL": {
+          var row = filterData.filter(function (el: any) {
+            return el[item.key] != item.value;
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+
+          break;
+        }
+        case "LIKE": {
+          var row = filterData.filter(function (el: any) {
+            return el[item.key].includes(item.value);
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+          break;
+        }
+        case "ILIKE": {
+          var row = filterData.filter(function (el: any) {
+            return el[item.key].endsWith(item.value);
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+
+          break;
+        }
+        case "IS_NULL": {
+          var row = filterData.filter(function (el: any) {
+            return ['', null, undefined].includes(el[item.key]);
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+
+          break;
+        }
+        case "IS_NOT_NULL": {
+          var row = filterData.filter(function (el: any) {
+            return !['', null, undefined].includes(el[item.key]);
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    }
+    if (!!item.filters) {
+      let filteredResults: any;
+
+      item.filters.forEach(async (el: any) => {
+        filteredResults = this.rows;
+        if (item.joinType === 'AND') {
+          this.temp = [];
+          this.filteredRows(el, filteredResults);
+        }
+        else {
+          this.filteredRows(el, this.filterData);
+        }
+      });
+      this.temp = this.rows;
+      this.rows = this.temp;
+    }
+    return row
+  }
+
+  getFilterColumns(): QueryColumns[] {
+    return [
+      {
+        name: "priority",
+        displayName: "Priority",
+        dataType: "number",
+        options: undefined,
+      },
+      {
+        name: "isExcluded",
+        displayName: "Excluded",
+        dataType: "boolean",
+        options: [
+          { name: "Yes", value: true },
+          { name: "No", value: false },
+        ],
+      },
+      {
+        name: "name",
+        displayName: "Name",
+        dataType: "string",
+        options: undefined,
+      },
+      {
+        name: "description",
+        displayName: "Description",
+        dataType: "string",
+        options: undefined,
+      },
+      {
+        name: "status",
+        displayName: "Status",
+        dataType: "boolean",
+        options: [
+          { name: "Active", value: "Active" },
+          { name: "Excluded", value: "Excluded" },
+          { name: "Yet to Publish", value: "Yet to Publish" },
+        ],
+      },
+      {
+        name: "updatedDate",
+        displayName: "Last Updated On",
+        dataType: "date",
+        options: undefined,
+      },
+    ];
+  }
+
+  onClearFilter() {
+    this.query = null;
+    this.rows = this.initialRow;
+  }
+  public getToolTipTemplate(conditions: any): string {
+    this.showTooltip = !!conditions;
+    if (!conditions || conditions.length === 0) {
+      return "";
+    }
+    const text: any = this.getTooltipText(conditions);
+    return text;
+  }
+
+  public getTooltipText(items: any): string {
+    let tooltipText = "";
+    if (items.condition && items.rules && items.rules.length > 0) {
+      const lastItem = items.rules.length - 1;
+      items.rules.forEach((rule: any, index: number) => {
+        if (!rule.condition && !rule.rules) {
+          const field = this.getDisplayName(rule?.field);
+          const value = !!rule?.value ? rule?.value : "";
+          const condition = lastItem !== index ? items.condition : "";
+          tooltipText += `<strong>${field}</strong> ${rule.operator} ${value} <strong>${condition}</strong> <br>`;
+        }
+        if (!!rule.condition && !!rule.rules) {
+          tooltipText += `(`;
+          tooltipText += this.getNestedTooltipText(rule);
+          tooltipText += "<br>";
+        }
+      });
+    } else if (items.field && items.operator && items.value) {
+      tooltipText += `${items.condition} <strong>${items.field}</strong> ${items.operator} ${items.value}`;
+    }
+    return tooltipText;
+  }
+
+  public getNestedTooltipText(items: any): string {
+    let tooltipText = "";
+    if (items.condition && items.rules && items.rules.length > 0) {
+      const lastItem = items.rules.length - 1;
+      items.rules.forEach((rule: any, index: number) => {
+        if (!rule.condition && !rule.rules) {
+          const field = this.getDisplayName(rule?.field);;
+          const value = !!rule?.value ? rule?.value : "";
+          const condition = lastItem !== index ? items.condition : "";
+          tooltipText += `<strong>${field}</strong> ${rule.operator} ${value} <strong>${condition}</strong>`;
+          if (index < items.rules.length - 1) {
+            tooltipText += "<br>";
+          }
+        }
+        if (!!rule.condition && !!rule.rules) {
+          tooltipText += `(`;
+          tooltipText += this.getNestedTooltipText(rule);
+        }
+      });
+    }
+    tooltipText += ")";
+    return tooltipText;
+  }
+
+  getDisplayName(name: string) {
+    var headers: any = this.headers.filter((item) => item.column === name);
+    if (headers[0]?.column) {
+      return headers[0]?.name
+    }
+  }
+
 }
