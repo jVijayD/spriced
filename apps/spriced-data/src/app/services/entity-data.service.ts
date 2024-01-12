@@ -35,9 +35,10 @@ export class EntityDataService {
   loadEntityDataFilter(
     id: string | number,
     criteria: Criteria,
-    columns: any
+    columns: any,
+    filterApplied?:boolean
   ): Observable<any> {
-    if (columns.length == 0) {
+    if (columns.length == 0 || filterApplied) {
       return this.http.post(`${this.api_url}/entity/${id}/data/filter`, criteria);
     } else {
       return this.http.post(
