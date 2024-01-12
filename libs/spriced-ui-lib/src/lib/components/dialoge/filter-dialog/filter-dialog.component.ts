@@ -278,7 +278,7 @@ compareValues(a:any,b:any)
   public handleLookupData(item: any, rule?: any) {
     rule ? (rule.valueName = '', rule.selectedItem = '') : null;
     let field: any = this.config.fields[item];
-    if(field.options)
+    if(field?.options)
   {   
      field.filteredOptions=field.options
   }    
