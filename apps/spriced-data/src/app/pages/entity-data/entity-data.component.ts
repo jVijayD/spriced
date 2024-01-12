@@ -403,7 +403,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
    * @param query any
    */
   public addDisplayNameInFilter(query?: any) {
-    const updatedHeaders = this.headers.map((item: any) => {
+    const updatedHeaders = this.columns.map((item: any) => {
       const res = item.column.split(",");
       if (res.length > 1) {
         const col = res.find((el: any) => el.endsWith("_code"));
@@ -863,13 +863,14 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   private loadEntityData(entity: Entity, criteria: Criteria) {
+    const filterApplied=!!this.query
     this.currentCriteria = criteria;
     const enrichedCriteria = this.setDefaultCriteria(criteria, this.lastId);
     if (entity) {
       this.applyEntitySettings(entity);
       this.subscriptions.push(
         this.entityDataService
-          .loadEntityDataFilter(entity.id, enrichedCriteria, this.selectedColumns)
+          .loadEntityDataFilter(entity.id, enrichedCriteria, this.selectedColumns,filterApplied)
           .pipe(first())
           .subscribe({
             next: (page) => {
