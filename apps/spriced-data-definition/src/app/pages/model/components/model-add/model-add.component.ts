@@ -100,7 +100,7 @@ export class ModelAddComponent {
       subType: "text",
       name: "displayName",
       value: this.data.value?.displayName || "",
-      placeholder: "DisplayName",
+      placeholder: "Display Name",
       // icon: "schema",
       label: "DisplayName",
       validations: [
