@@ -102,11 +102,11 @@ export class ModelAddComponent {
       value: this.data.value?.displayName || "",
       placeholder: "Display Name",
       // icon: "schema",
-      label: "DisplayName",
+      label: "Display Name",
       validations: [
         {
           name: "required",
-          message: "DisplayName is required.",
+          message: "Display Name is required.",
           validator: Validators.required,
         },
         {
