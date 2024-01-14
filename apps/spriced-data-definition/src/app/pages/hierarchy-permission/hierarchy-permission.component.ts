@@ -106,6 +106,8 @@ export class HierarchyPermissionComponent implements OnInit {
       isSortable: false,
     },
   ];
+  filteredRoleList: any;
+  allRoleList: any;
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -124,7 +126,8 @@ export class HierarchyPermissionComponent implements OnInit {
     this.listForm = this.fb.group({
       modelFilter: new FormControl(''),
       entityFilter: new FormControl(''),
-      hierarchyFilter: new FormControl('')
+      hierarchyFilter: new FormControl(''),
+      roleFilter:new FormControl('')
     });
   }
 
@@ -136,6 +139,7 @@ export class HierarchyPermissionComponent implements OnInit {
       this.roleList = roles.map((m: any) => {
         return { name: m } as RoleDTO;
       });
+      this.roleList
       this.selectedRole = this.roleList[0].name;
     }
     this.getAllModels();
@@ -146,6 +150,10 @@ export class HierarchyPermissionComponent implements OnInit {
       this.filteredModels = this.filterItems(this.modelList, item.modelFilter);
       this.filteredEntities = this.filterItems(this.entityList, item.entityFilter);
       this.filteredHierarchy = this.filterItems(this.hierarchyList, item.hierarchyFilter);
+    })
+    this.allRoleList=this.roleList
+    this.listForm.controls['roleFilter'].valueChanges.subscribe((item: any) => {
+      this.roleList = this.filterItems(this.allRoleList, item);
     })
   }
 

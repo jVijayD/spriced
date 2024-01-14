@@ -69,10 +69,10 @@
             <div class="col-span-6 ml-2">
                 <mat-form-field [appearance]="'outline'" class="full-width ">
                     <mat-select matNativeControl (selectionChange)="onSelectRole($event)" [(value)]="selectedRole">
-                        <!-- <mat-option>
+                        <mat-option>
                             <ngx-mat-select-search placeholderLabel="Search"
-                                formControlName="hierarchyFilter"></ngx-mat-select-search>
-                        </mat-option> -->
+                                formControlName="roleFilter"></ngx-mat-select-search>
+                        </mat-option>
                         <!-- <mat-option value="" class="option">--Select--</mat-option> -->
                         <mat-option *ngFor="let role of roleList" [value]="role.name">
                             {{role.name}}
