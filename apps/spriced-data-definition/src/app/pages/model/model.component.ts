@@ -263,6 +263,7 @@ export class ModelComponent implements OnInit, OnDestroy {
   }
 
   public filteredRows(item: any, filterData: any) {
+    console.log(item)
     if (!!item.operatorType) {
       switch (item.operatorType) {
         case "LESS_THAN": {
@@ -327,9 +328,17 @@ export class ModelComponent implements OnInit, OnDestroy {
 
           break;
         }
-        case "LIKE": {
+        case "CONTAINS": {
           var row = filterData.filter(function (el: any) {
             return el[item.key].includes(item.value);
+          });
+          this.temp.push(...row);
+          this.rows = this.temp;
+          break;
+        }
+        case "NOT_CONTAINS": {
+          var row = filterData.filter(function (el: any) {
+            return !el[item.key].includes(item.value);
           });
           this.temp.push(...row);
           this.rows = this.temp;
