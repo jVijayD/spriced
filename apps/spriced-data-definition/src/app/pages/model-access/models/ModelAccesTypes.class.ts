@@ -129,7 +129,6 @@ export class EntityDTO extends TreeNode {
       d.treeStatus = "disabled";
       d.expandable = false;
       d.parentId = this.id;
-      d.displayName = d.name;
       d.icon = "view_column";
       attribPermissions.add(d.permission);
       return new AttributeDTO().parse(d);

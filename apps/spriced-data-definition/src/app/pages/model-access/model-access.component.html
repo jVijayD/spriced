@@ -49,9 +49,9 @@
         <ng-template let-row="row" let-value="value" let-rowIndex="rowIndex" ngx-datatable-cell-template>
           <span style="display: inline-flex" class="ml-5">
             <mat-icon>{{ row.icon }}</mat-icon>
-            <span class="ml-2" *ngIf="row.level < 2">
+            <span class="ml-2">
               {{ row.displayName }}</span>
-            <span class="ml-2" *ngIf="row.level === 2"> {{ row.name }}</span>
+            <!-- <span class="ml-2" *ngIf="row.level === 2"> {{ row.displayName }}</span> -->
           </span>
         </ng-template>
       </ngx-datatable-column>
