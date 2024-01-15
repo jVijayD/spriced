@@ -278,7 +278,7 @@ export class EntityComponent {
       persistValueOnFieldChange: true,
       emptyMessage: "Please select filter criteria.",
       config: null,
-      columns: this.getFilterColumns(columns),
+      columns: this.getFilterColumns(),
     };
 
     const dialogResult = this.dialogService.openFilterDialog(data);
@@ -297,14 +297,19 @@ export class EntityComponent {
       }
     });
   }
-
   public filteredRows(item: any, filterData: any) {
+    if (item.dataType == "date") {
+      item.value = moment(item.value).format("MM/DD/YYYY");
+    }
     if (!!item.operatorType) {
       switch (item.operatorType) {
         case "LESS_THAN": {
           var row = filterData.filter(function (el: any) {
-
-            return el[item.key] < item.value;
+            if (item.dataType== "date") {
+              return moment(el[item.key]).format("MM/DD/YYYY") < item.value;
+            } else {
+              return el[item.key] < item.value;
+            }
           });
           this.temp.push(...row);
           this.rows = this.temp;
@@ -312,7 +317,11 @@ export class EntityComponent {
         }
         case "EQUALS": {
           var row = filterData.filter(function (el: any) {
-            return el[item.key] == item.value;
+            if (item.dataType== "date") {
+              return moment(el[item.key]).format("MM/DD/YYYY") == item.value;
+            } else {
+              return el[item.key] == item.value;
+            }
           });
 
           this.temp.push(...row);
@@ -321,7 +330,11 @@ export class EntityComponent {
         }
         case "IS_NOT_EQUAL": {
           var row = filterData.filter(function (el: any) {
-            return el[item.key] != item.value;
+            if (item.dataType== "date") {
+              return moment(el[item.key]).format("MM/DD/YYYY") != item.value;
+            } else {
+              return el[item.key] != item.value;
+            }
           });
 
           this.temp.push(...row);
@@ -330,7 +343,11 @@ export class EntityComponent {
         }
         case "GREATER_THAN": {
           var row = filterData.filter(function (el: any) {
-            return el[item.key] > item.value;
+            if (item.dataType== "date") {
+              return moment(el[item.key]).format("MM/DD/YYYY") > item.value;
+            } else {
+              return el[item.key] > item.value;
+            }
           });
           this.temp.push(...row);
           this.rows = this.temp;
@@ -339,7 +356,11 @@ export class EntityComponent {
         }
         case "GREATER_THAN_EQUALS": {
           var row = filterData.filter(function (el: any) {
-            return el[item.key] >= item.value;
+            if (item.dataType== "date") {
+              return moment(el[item.key]).format("MM/DD/YYYY") >= item.value;
+            } else {
+              return el[item.key] >= item.value;
+            }
           });
           this.temp.push(...row);
           this.rows = this.temp;
@@ -347,7 +368,11 @@ export class EntityComponent {
         }
         case "LESS_THAN_EQUALS": {
           var row = filterData.filter(function (el: any) {
-            return el[item.key] <= item.value;
+            if (item.dataType== "date") {
+              return moment(el[item.key]).format("MM/DD/YYYY") <= item.value;
+            } else {
+              return el[item.key] <= item.value;
+            }
           });
           this.temp.push(...row);
           this.rows = this.temp;
@@ -356,7 +381,11 @@ export class EntityComponent {
         }
         case "IS_NOT_EQUAL": {
           var row = filterData.filter(function (el: any) {
-            return el[item.key] != item.value;
+            if (item.dataType== "date") {
+              return moment(el[item.key]).format("MM/DD/YYYY") != item.value;
+            } else {
+              return el[item.key] != item.value;
+            }
           });
           this.temp.push(...row);
           this.rows = this.temp;
@@ -381,7 +410,13 @@ export class EntityComponent {
         }
         case "ILIKE": {
           var row = filterData.filter(function (el: any) {
-            return el[item.key].endsWith(item.value);
+            if (item.dataType== "date") {
+              return moment(el[item.key])
+                .format("MM/DD/YYYY")
+                .endsWith(item.value);
+            } else {
+              return el[item.key].endsWith(item.value);
+            }
           });
           this.temp.push(...row);
           this.rows = this.temp;
@@ -390,7 +425,13 @@ export class EntityComponent {
         }
         case "IS_NULL": {
           var row = filterData.filter(function (el: any) {
-            return ['', null, undefined].includes(el[item.key]);
+            if (item.dataType== "date") {
+              return ["", null, undefined].includes(
+                moment(el[item.key]).format("MM/DD/YYYY")
+              );
+            } else {
+              return ["", null, undefined].includes(el[item.key]);
+            }
           });
           this.temp.push(...row);
           this.rows = this.temp;
@@ -399,7 +440,13 @@ export class EntityComponent {
         }
         case "IS_NOT_NULL": {
           var row = filterData.filter(function (el: any) {
-            return !['', null, undefined].includes(el[item.key]);
+            if (item.dataType== "date") {
+              return !["", null, undefined].includes(
+                moment(el[item.key]).format("MM/DD/YYYY")
+              );
+            } else {
+              return !["", null, undefined].includes(el[item.key]);
+            }
           });
           this.temp.push(...row);
           this.rows = this.temp;
@@ -520,15 +567,39 @@ export class EntityComponent {
     this.selectedItem = null;
   }
 
-  getFilterColumns(headers: Header[]): QueryColumns[] {
-    return headers
-      .map((col: any) => {
-        return {
-          name: col.column,
-          displayName: col.name,
-          dataType: !!col.dataType ? col.dataType : "string",
-          options: undefined,
-        };
-      });
+  getFilterColumns(): QueryColumns[] {
+    return [
+      {
+        name: "name",
+        displayName: "Name",
+        dataType: "string",
+        options: undefined,
+      },
+      {
+        name: "displayName",
+        displayName: "Display Name",
+        dataType: "string",
+        options: undefined,
+      },
+      {
+        name: "updatedBy",
+        displayName: "Updated By",
+        dataType: "string",
+        options: undefined,
+      },
+      {
+        name: "updatedDate",
+        displayName: "Last Updated On",
+        dataType: "date",
+        options: undefined,
+      },
+      {
+        name: "description",
+        displayName: "Description",
+        dataType: "string",
+        options: undefined,
+      }
+    ];
   }
-}
+  }
+
