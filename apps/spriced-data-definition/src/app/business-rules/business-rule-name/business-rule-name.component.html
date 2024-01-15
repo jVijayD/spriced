@@ -45,6 +45,10 @@
                     *ngIf="myForm.get('priority')!.hasError('min') || myForm.get('priority')!.hasError('max')">
                     Number must be between 1 and 1000
                 </mat-error>
+                <mat-error class="text-sm italic text-red-500"
+                *ngIf="myForm.get('priority')!.hasError('invalidPriority')">
+                    Rule with same priority already exists
+                </mat-error>
             </div>
 
 

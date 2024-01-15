@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit, Output, Renderer2, Vie
 import { MatTable } from '@angular/material/table';
 import { AppDataService } from '@spriced-frontend/shared/spriced-shared-lib';
 import { BusinessruleService } from '@spriced-frontend/spriced-common-lib';
-import { FormGroup, Validators, FormArray, FormBuilder } from '@angular/forms';
+import { FormGroup, Validators, FormArray, FormBuilder, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, forkJoin, takeUntil } from 'rxjs';
 import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
@@ -66,6 +66,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
   public modelName: any;
   public entities: any = [];
   public sorts: any;
+  public allRules: any;
 
   isValueChanged: boolean=true;
   previousValue: any;
@@ -104,7 +105,6 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
    */
   async ngOnInit() {
     this.loading = true;
-    this.formbuild();
 
     // Handling initial data for Edit Rule
     const ruleId = this.activeRoute?.snapshot?.params?.['id'];
@@ -118,6 +118,11 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     this.previewField = !['', undefined, null].includes(previewRule);
     this.modelId = model_id;
     this.entityId = entity_id;
+
+    const {rules} = await this.getAllRulesApi();
+    this.allRules = !!ruleId ? rules.filter((el:any) => el.id !== +ruleId) : rules;
+
+    this.formbuild();
 
     /**
      * Handling edit rule when rule id is present
@@ -145,7 +150,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     {
       
     this.isValueChanged= this.compareValue(this.myForm.value,this.previousValue)
-    if(this.rulesData.status !=='Yet to Publish')
+    if(this.rulesData?.status !=='Yet to Publish')
     {
       this.publishButton=this.isValueChanged
     }
@@ -270,6 +275,27 @@ return JSON.stringify(a)===JSON.stringify(b)
   }
 
   /**
+   * HANDLE THIS FUNCTION FOR GET ALL THE RULES
+   */
+  public getAllRulesApi(): Promise<any> {
+    return new Promise((resolve, rejects) => {
+      this.businessRuleService.getAllRules().subscribe(
+        (rules: any) => {
+          resolve({
+            rules,
+          });
+        },
+        (err) => {
+          this.loading = false;
+          rejects({
+            rules: [],
+          });
+        }
+      );
+    });
+  }
+
+  /**
    * HANDLE FOR GET ALL ENUM APIS
    * @returns promise<any>
    */
@@ -342,7 +368,7 @@ return JSON.stringify(a)===JSON.stringify(b)
   public formbuild() {
     this.myForm = this.formbuilder.group({
       name: ['', [Validators.required]],
-      priority: ['', [Validators.required, Validators.min(1), Validators.max(1000)]],
+      priority: ['', [Validators.required, Validators.min(1), Validators.max(1000), this.samePriorityValidator(this.allRules)]],
       description: ['', [Validators.required]],
       notification: [''],
       group: ['DEFAULT_VALUE_ACTION', [Validators.required]],
@@ -350,6 +376,18 @@ return JSON.stringify(a)===JSON.stringify(b)
       action: this.formbuilder.array([], Validators.required),
       elseaction: this.formbuilder.array([]),
     });
+  }
+
+  samePriorityValidator(item: any) {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value as any; // Assuming the value is a number
+      const priority = item.find((el: any) => el.priority === value);
+      if (!!priority) {
+        return { invalidPriority: true };
+      }
+      const returnValue: any = !['',undefined,null].includes(value) ? value : null;
+      return returnValue;
+    };
   }
 
   // GET CONDITION FORM GROUP
@@ -393,7 +431,7 @@ return JSON.stringify(a)===JSON.stringify(b)
     this.ruleId = res?.id;
     this.myForm = this.formbuilder.group({
       name: [res.name, Validators.required],
-      priority: [res.priority, [Validators.required, Validators.min(1), Validators.max(1000)]],
+      priority: [res.priority, [Validators.required, Validators.min(1), Validators.max(1000), this.samePriorityValidator(this.allRules)]],
       description: [res.description, [Validators.required]],
       notification: [res.notification],
       group: [res.group],
@@ -456,7 +494,7 @@ this.previousValue.elseaction?.forEach((item:any)=>{
   delete  item.min_value;
   delete  item.max_value;
 })
-this.publishButton=this.rulesData.status !=='Yet to Publish' ? true :false
+this.publishButton=this.rulesData?.status !=='Yet to Publish' ? true :false
 console.log(this.publishButton,this.myForm.value)
   }
 
