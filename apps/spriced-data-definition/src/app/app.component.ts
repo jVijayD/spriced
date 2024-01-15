@@ -32,9 +32,9 @@ export class AppComponent {
       path: "/spriced-data-definition/rules/rule-management",
     },
     {
-      name: "Model Permission",
+      name: "Derived Hierarchy",
       active: false,
-      path: "/spriced-data-definition/model-access",
+      path: "/spriced-data-definition/hierarchy-definition",
     },
     {
       name: "Functions Permission",
@@ -42,19 +42,19 @@ export class AppComponent {
       path: "/spriced-data-definition/app-access",
     },
     {
-      name: "Transactions",
+      name: "Model Permission",
       active: false,
-      path: "/spriced-data-definition/view-transactions",
-    },
-    {
-      name: "Derived Hierarchy",
-      active: false,
-      path: "/spriced-data-definition/hierarchy-definition",
+      path: "/spriced-data-definition/model-access",
     },
     {
       name: "Hierarchy Permission",
       active: false,
       path: "/spriced-data-definition/hierarchy-permission",
+    },
+    {
+      name: "Transactions",
+      active: false,
+      path: "/spriced-data-definition/view-transactions",
     },
   ];
   constructor(private appDataService: AppDataService,

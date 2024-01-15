@@ -100,13 +100,13 @@ export class ModelAddComponent {
       subType: "text",
       name: "displayName",
       value: this.data.value?.displayName || "",
-      placeholder: "DisplayName",
+      placeholder: "Display Name",
       // icon: "schema",
-      label: "DisplayName",
+      label: "Display Name",
       validations: [
         {
           name: "required",
-          message: "DisplayName is required.",
+          message: "Display Name is required.",
           validator: Validators.required,
         },
         {

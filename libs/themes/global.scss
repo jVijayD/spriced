@@ -357,7 +357,7 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
 }
 .mat-mdc-option .mdc-list-item__primary-text {
   width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  // overflow: hidden;
+  // text-overflow: ellipsis;
+  overflow-wrap: break-word;
 }
