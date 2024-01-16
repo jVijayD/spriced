@@ -38,6 +38,7 @@ import { Subject, forkJoin } from "rxjs";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { FormsModule } from "@angular/forms";
+import { group } from "console";
 @Component({
   selector: "sp-view-transactions-admin",
   standalone: true,
@@ -59,7 +60,7 @@ import { FormsModule } from "@angular/forms";
     NgxMatSelectSearchModule,
     OrderByPipe,
     FormsModule,
-    SnackbarModule
+    SnackbarModule,
   ],
   providers: [DialogService],
   templateUrl: "./view-transactions-admin.component.html",
@@ -92,6 +93,8 @@ export class ViewTransactionsAdminComponent {
   };
   filteredModelList: any;
   appliedFilters: any=[];
+  selectedEntity: any;
+  filteredEntityList: any[]=[];
 
   constructor(
     private modelService: ModelService,
@@ -186,15 +189,43 @@ export class ViewTransactionsAdminComponent {
     },
   ];
 
-  onModelChange(ev: MatSelectChange) {
-    this.currentCriteria.pager= {
+  onModelChange(ev: any) {
+    this.reset();
+    this.selectedModel = ev.value;
+    this.enitityService
+      .loadEntityByModel(this.selectedModel)
+      .subscribe((result: any) => {
+        this.entityList = result;
+        this.filteredEntityList = result;
+        this.selectedEntity = result[0]?.id;
+        this.appliedFilters = [];
+        this.onEntitySelectionChange({ value: this.selectedEntity });
+      });
+  }
+
+  onEntitySelectionChange(entity: any) {
+    this.reset();
+    this.selectedEntity = entity.value;
+    this.appliedFilters = [];
+    if (this.selectedEntity) {
+      this.loadTransactionsData();
+    }
+  }
+
+  reset() {
+    this.selectedItem = null;
+    this.currentCriteria.pager = {
       pageNumber: 0,
       pageSize: this.limit,
-    }
-    this.onClearFilter()
-    this.selectedItem=null
-    this.selectedModel = ev.value;
+    };
+    this.pageNumber = 0;
+    this.totalElements = 0;
+    this.selectedEntity = undefined;
+    this.query = null;
+    this.currentCriteria.filters = [];
+    this.appliedFilters = [];
   }
+
   onPaginate(e: Paginate) {
     this.pageNumber = e.offset;
     if (
@@ -203,7 +234,7 @@ export class ViewTransactionsAdminComponent {
       this.currentCriteria.pager
     ) {
       this.currentCriteria.pager.pageNumber = e.offset;
-      this.loadTransactionsData(this.selectedModel);
+      this.loadTransactionsData();
     }
   }
 
@@ -216,7 +247,7 @@ export class ViewTransactionsAdminComponent {
       return { direction: sort.dir.toUpperCase(), property: sort.prop };
     });
     this.currentCriteria = { ...this.currentCriteria, sorters: sorters };
-    this.loadTransactionsData(this.selectedModel);
+    this.loadTransactionsData();
   }
 
   ngOnInit() {
@@ -224,14 +255,14 @@ export class ViewTransactionsAdminComponent {
       this.modelService.loadAllModels().subscribe((result: any) => {
         this.modelList = result;
         this.filteredModelList = this.modelList;
-        this.selectedModel = this.modelList[0].id;
-        this.loadTransactionsData(this.selectedModel);
+        this.selectedModel = this.modelList[0]?.id;
+        this.onModelChange({value:this.selectedModel})
       })
     );
   }
-  loadTransactionsData(modelId: number) {
+  loadTransactionsData() {
    this.rows = [];
-   this.currentCriteria.filters =this.createFilters("group_id",modelId,"number");
+   this.currentCriteria.filters =this.createFilters();
    this.currentCriteria.filters?.push(...this.appliedFilters);
     this.transactionService.loadTransactionsData(this.currentCriteria).subscribe({
       next:(res:any)=>{
@@ -260,7 +291,7 @@ export class ViewTransactionsAdminComponent {
       this.addDisplayNameInFilter(this.query);
       this.appliedFilters = val;
       this.appliedFilters?.length==0 ?this.query = null:'';
-      this.loadTransactionsData(this.selectedModel)
+      this.loadTransactionsData()
     }
     });
    }
@@ -282,7 +313,7 @@ export class ViewTransactionsAdminComponent {
     this.query = null;
     this.currentCriteria.filters = [];
     this.appliedFilters=[]
-    this.loadTransactionsData(this.selectedModel);
+    this.loadTransactionsData();
    }
    /**
    * HANDLE THIS FUNCTION FOR ADD DISPLAY NAME IN FILTER QUERY
@@ -368,14 +399,22 @@ export class ViewTransactionsAdminComponent {
     return tooltipText;
   }
 
-  createFilters(key:string,value:any,type:string){
+  createFilters(){
     return [{
       filterType: "CONDITION",
-      key: key,
-      value: value,
+      key: "group_id",
+      value: this.selectedModel,
       joinType: "AND",
       operatorType: "EQUALS",
-      dataType: type,
+      dataType: "number",
+    },
+    {
+      filterType: "CONDITION",
+      key: "entity_id",
+      value: this.selectedEntity,
+      joinType: "AND",
+      operatorType: "EQUALS",
+      dataType: "number",
     },
     {
       "filterType": "CONDITION",
@@ -457,6 +496,16 @@ export class ViewTransactionsAdminComponent {
       );
     });
   }
+  filterEntitySelection(text: any) {
+    this.filteredEntityList = this.entityList.filter((item: any) => {
+      return (
+        item.displayName
+          .trim()
+          .toLowerCase()
+          .indexOf(text.trim().toLowerCase()) != -1
+      );
+    });
+  }
 onRevert()
 {
   let criteria:Criteria=
@@ -489,7 +538,7 @@ onRevert()
         this.transactionService.auditReversal(this.selectedItem,criteria).subscribe({
           next:(res:any)=>{
             this.snackbarService.success(res);
-            this.loadTransactionsData(this.selectedModel);
+            this.loadTransactionsData();
           },
           error:(err:any)=>{
             this.snackbarService.error("The selected row cannot be reversed");
