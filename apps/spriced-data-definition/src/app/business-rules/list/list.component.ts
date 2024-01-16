@@ -89,11 +89,25 @@ export class ListComponent implements OnInit, OnDestroy {
 
   headers: Header[] = [
     {
+      column: "name",
+      name: "Name",
+      canAutoResize: true,
+      isSortable: true,
+      width: 200,
+    },
+    {
       column: "priority",
       name: "Priority",
       canAutoResize: true,
       isSortable: true,
       width: 100,
+    },
+    {
+      column: "status",
+      name: "Status",
+      canAutoResize: true,
+      isSortable: true,
+      width: 150,
     },
     {
       column: "isExcluded",
@@ -104,20 +118,6 @@ export class ListComponent implements OnInit, OnDestroy {
       disableCheckbox: (row: any) =>
         !["Active", "Excluded"].includes(row.status),
       width: 100,
-    },
-    {
-      column: "name",
-      name: "Name",
-      canAutoResize: true,
-      isSortable: true,
-      width: 200,
-    },
-    {
-      column: "description",
-      name: "Description",
-      canAutoResize: true,
-      isSortable: true,
-      width: 200,
     },
     {
       column: "expression",
@@ -131,20 +131,6 @@ export class ListComponent implements OnInit, OnDestroy {
       showtooltip: true,
     },
     {
-      column: "status",
-      name: "Status",
-      canAutoResize: true,
-      isSortable: true,
-      width: 150,
-    },
-    // {
-    //   column: "notification",
-    //   name: "Notification",
-    //   canAutoResize: true,
-    //   isSortable: true,
-    //   width: 120
-    // },
-    {
       column: "updatedDate",
       name: "Last Updated On",
       canAutoResize: true,
@@ -154,6 +140,23 @@ export class ListComponent implements OnInit, OnDestroy {
         return moment(data).format("MM/DD/YYYY HH:mm:ss");
       },
     },
+    {
+      column: "description",
+      name: "Description",
+      canAutoResize: true,
+      isSortable: true,
+      width: 200,
+    },
+   
+   
+    // {
+    //   column: "notification",
+    //   name: "Notification",
+    //   canAutoResize: true,
+    //   isSortable: true,
+    //   width: 120
+    // },
+  
   ];
   columnMode: ColumnMode = ColumnMode.force;
   selectionType: SelectionType = SelectionType.single;
