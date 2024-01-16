@@ -169,12 +169,13 @@ export class ModelListComponent {
         } else {
           let attributes = row.attributes?.filter(
             (value: any) => {
-              if (value.name != 'updated_date') {
-                return !value.systemAttribute;
-              }
-              else {
-                return true
-              }
+              return !value.systemAttribute;
+              // if (value.name != 'updated_date') {
+                // return !value.systemAttribute;
+              // }
+              // else {
+              //   return true
+              // }
             }
           );
           this.entities = attributes.map((d: any) => {
