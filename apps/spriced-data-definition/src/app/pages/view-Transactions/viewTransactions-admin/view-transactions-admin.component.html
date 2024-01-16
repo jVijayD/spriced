@@ -67,7 +67,7 @@
             </mat-option>
             <mat-option
               *ngFor="
-                let item of this.filteredEntityList | orderBy : 'displayName' : 'asc'
+                let item of this.filteredEntityList 
               "
               [value]="item.id"
               class="option"

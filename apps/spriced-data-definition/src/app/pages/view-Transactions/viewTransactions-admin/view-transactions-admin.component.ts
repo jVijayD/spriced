@@ -94,7 +94,7 @@ export class ViewTransactionsAdminComponent {
   filteredModelList: any;
   appliedFilters: any=[];
   selectedEntity: any;
-  filteredEntityList: any[]=[];
+  filteredEntityList: any
 
   constructor(
     private modelService: ModelService,
@@ -197,7 +197,8 @@ export class ViewTransactionsAdminComponent {
       .subscribe((result: any) => {
         this.entityList = result;
         this.filteredEntityList = result;
-        this.selectedEntity = result[0]?.id;
+        this.filteredEntityList.sort((a:any,b:any) => a.displayName.localeCompare(b.displayName));
+        this.selectedEntity = this.filteredEntityList[0]?.id;
         this.appliedFilters = [];
         this.onEntitySelectionChange({ value: this.selectedEntity });
       });
