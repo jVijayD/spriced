@@ -38,6 +38,7 @@
                 placeholderLabel="Search"
                 ngModel
                 (ngModelChange)="filterModelSelection($event)"
+                noEntriesFoundLabel="Not found"
               ></ngx-mat-select-search>
             </mat-option>
             <mat-option
@@ -52,6 +53,31 @@
           </mat-select>
         </mat-form-field>
       </sp-header-component-wrapper>
+
+      <sp-header-component-wrapper title="Entity">
+        <mat-form-field>
+          <mat-select (selectionChange)="onEntitySelectionChange($event)" [(value)]="selectedEntity">
+            <mat-option>
+              <ngx-mat-select-search
+                placeholderLabel="Search"
+                ngModel
+                (ngModelChange)="filterEntitySelection($event)"
+                noEntriesFoundLabel="Not found"
+              ></ngx-mat-select-search>
+            </mat-option>
+            <mat-option
+              *ngFor="
+                let item of this.filteredEntityList | orderBy : 'displayName' : 'asc'
+              "
+              [value]="item.id"
+              class="option"
+            >
+              {{ item.displayName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </sp-header-component-wrapper>
+
       <sp-header-action
       icon="filter_list"
       [text]="!query ? 'Filter' : ''"
