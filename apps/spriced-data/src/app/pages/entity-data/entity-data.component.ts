@@ -523,6 +523,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.currentCriteria.sorters = [];
       this.currentCriteria.pager = { pageNumber: 0, pageSize: this.limit };
     }
+    this.totalElements=0;
   }
 
   onEdit() {
