@@ -318,4 +318,17 @@ export class ModelAccessComponent {
       this.updateChildren(node);
     });
   }
+  getPermissionDisplayName(item: string) {
+    switch (item) {
+      case "READ":
+        return "Read-only";
+      case "UPDATE":
+        return "Update";
+      case "DENY":
+        return "Deny";
+      case "PARTIAL":
+        return "Partial"; 
+      default:return item
+    }
+  }
 }

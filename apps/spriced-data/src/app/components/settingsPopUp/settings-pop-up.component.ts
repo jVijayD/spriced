@@ -161,7 +161,7 @@ ngOnInit(): void {
     }
     if (
       this.columnForm.controls["column"].value.length ==
-      this.filteredlList.length
+      this.initialData.length
     )
       this.all.select();
     return;

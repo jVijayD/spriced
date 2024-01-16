@@ -14,6 +14,10 @@ export const remoteRoutes: Route[] = [
         component: HomeComponent,
       },
       {
+        path: "",
+        component: HomeComponent,
+      },
+      {
         path: "report/:dashboardId",
         component: ReportComponent,
       },

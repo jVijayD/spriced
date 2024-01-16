@@ -235,7 +235,7 @@ export class EntityFormService {
         name: `pattern`,
         message: `Invalid data`,
         validator:  Validators.pattern(
-          "^[0-9]{0,131072}\.[0-9]{0,16383}$"
+          "^-?[0-9]{0,131072}\.[0-9]{0,16383}$"
           
         ),
       });
