@@ -6,7 +6,7 @@
             <mat-label>Attribute</mat-label>
             <div class="flex attribute-input" [ngClass]="preview ? 'disableMenu' : ''"
                 [matMenuTriggerFor]="!preview ? attributeMenu : null" (menuOpened)="matMenuOpen(searchAttributeParent)"
-                (menuClosed)="matMenuClosed(searchAttributeParent)">
+                >
                 <input style="display: none;" [readonly]="true" [readonly]="preview" matInput placeholder="Add Value"
                     formControlName="attributeId" [disabled]="isFieldDisabled">
                 <input [readonly]="true" [readonly]="preview" matInput placeholder="Add Value" required
@@ -25,13 +25,14 @@
         <mat-form-field appearance="outline" class="w-full">
             <input matInput #searchAttributeParent class="p-2" name="search" [ngModelOptions]="{standalone:true}"
                 ngModel (click)="$event.stopPropagation()"
+                autocomplete="off"
                 (ngModelChange)="filterAttributes(searchAttributeParent.value,searchAttributeParent,'Parent')"
                 placeholder="Search...">
         </mat-form-field>
         <button mat-menu-item *ngIf="filteredAttributes.length === 0"> No record found </button>
         <ng-container *ngFor="let attribute of filteredAttributes">
             <button [ngClass]="{'selected-item': selectedAttribute.split('.')[0] === attribute?.displayName}"
-                mat-menu-item (click)="selectAttribute(attribute)" (menuClosed)="matMenuClosed(searchAttributeParent)">
+                mat-menu-item (click)="selectAttribute(attribute)" >
                 {{ attribute.displayName }}
             </button>
             <!-- <mat-menu #nestedMenu="matMenu">
@@ -140,8 +141,7 @@
                 *ngIf="!valueConstant">
                 <mat-label>Attribute</mat-label>
                 <div class="flex attribute-input" [ngClass]="preview ? 'disableMenu' : ''"
-                    [matMenuTriggerFor]="!preview ? operandMenu : null" (menuOpened)="matMenuOpen(searchOperandParent)"
-                    (menuClosed)="matMenuClosed(searchOperandParent)">
+                    [matMenuTriggerFor]="!preview ? operandMenu : null" (menuOpened)="matMenuOpen(searchOperandParent)">
                     <input style="display: none;" [readonly]="true" [readonly]="preview" matInput
                         placeholder="Add Value" formControlName="operand" [disabled]="isFieldDisabled">
                     <input [readonly]="true" [readonly]="preview" matInput placeholder="Add Value" required
@@ -162,6 +162,7 @@
                 <mat-form-field appearance="outline" class="w-full">
                     <input matInput #searchOperandParent class="p-2" name="search" [ngModelOptions]="{standalone:true}"
                         ngModel (click)="$event.stopPropagation()"
+                        autocomplete="off"
                         (ngModelChange)="filterAttributes(searchOperandParent.value,searchOperandParent,'Parent')"
                         placeholder="Search...">
                 </mat-form-field>
@@ -169,8 +170,7 @@
                 <ng-container *ngFor="let attribute of filteredAttributes">
                     <button [ngClass]="{'selected-item': selectedOperand.split('.')[0] === attribute?.displayName}"
                         [matMenuTriggerFor]="attribute.attributes ? nestedMenu : null" mat-menu-item
-                        (click)="selectAttribute(attribute, '', 'operand')"
-                        (menuClosed)="matMenuClosed(searchOperandParent)">
+                        (click)="selectAttribute(attribute, '', 'operand')">
                         {{ attribute.displayName }}
                     </button>
                     <mat-menu #nestedMenu="matMenu">
