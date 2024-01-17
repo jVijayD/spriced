@@ -486,21 +486,23 @@ export class BusinessRuleListComponent
     }
     setTimeout(() => {
     control.focus({
-      preventScroll: true
+      preventScroll: false
     });
     },200);
   }
 
   matMenuOpen(control:any)
   {
+    control.value = '';
+    this.filterAttributes('',control);
     control.focus({
       preventScroll: true
     });
   }
-  matMenuClosed(control:any){
-    control.value = '';
-    this.filterAttributes('',control);
-  }
+  // matMenuClosed(control:any){
+  //   control.value = '';
+  //   this.filterAttributes('',control);
+  // }
 
   
 
