@@ -64,13 +64,6 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
       flexGrow: 2,
     },
     {
-      column: "description",
-      name: "Description",
-      canAutoResize: true,
-      isSortable: false,
-      flexGrow: 5,
-    },
-    {
       column: "updatedBy",
       name: "Updated By",
       canAutoResize: true,
@@ -88,13 +81,20 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
       },
     },
     {
-      column: "action",
-      name: "Action",
+      column: "description",
+      name: "Description",
       canAutoResize: true,
-      isSortable: true,
+      isSortable: false,
+      flexGrow: 5,
+    },
+    {
+      column: "action",
+      name: "Hierarchy Grid",
+      canAutoResize: true,
+      isSortable: false,
       action: true,
       imgsrc: 'assets/images/eye.png',
-      width: 100
+      flexGrow: 1,
     },
   ];
   // displayedColumns = ["name", "description", "view"];
