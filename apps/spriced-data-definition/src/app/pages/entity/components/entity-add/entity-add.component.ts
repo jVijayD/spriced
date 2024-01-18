@@ -130,7 +130,7 @@ export class EntityAddComponent implements OnInit {
   dataGrid!: DataGridComponent;
   referencedTableDisplayName: any;
   referencedTableId: any;
-  pattern = "^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#\\-]+$";
+  pattern = "^(?=[a-zA-Z0-9])[a-zA-Z0-9_#\\-]+$";
   filteredRows: any;
   nameReset = "";
   filter = false;
