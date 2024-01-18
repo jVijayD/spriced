@@ -47,23 +47,25 @@ export class DownloadsDialogueComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.downloadItemMap.forEach((value) => {
       this.data.push(value);
-      let subscription = this.entityExportService
-        .getDownloadObservable(value.entityName)
-        ?.subscribe((item) => {
-          const downloadItem = this.downloadItemMap.get(value.subscriberId);
-          if (downloadItem) {
-            const data = JSON.parse(item.data);
-            console.log(data);
-            downloadItem.fileCompleted =
-              data.Stage == "excel_file_creation_completed";
+      let observable = this.entityExportService.getDownloadObservable(
+        value.entityName
+      );
 
-            downloadItem.processCompleted =
-              data.Stage == "excel_data_processing_completed" ||
-              data.Stage == "excel_file_creation_completed";
+      let subscription = observable?.subscribe((item) => {
+        const downloadItem = this.downloadItemMap.get(value.subscriberId);
+        if (downloadItem) {
+          const data = item.data;
+          console.log(data);
+          downloadItem.fileCompleted =
+            data.Stage == "excel_file_creation_completed";
 
-            downloadItem.progressPercentage = Number.parseInt(data.Percentage);
-          }
-        });
+          downloadItem.processCompleted =
+            data.Stage == "excel_data_processing_completed" ||
+            data.Stage == "excel_file_creation_completed";
+
+          downloadItem.progressPercentage = Number.parseInt(data.Percentage);
+        }
+      });
       if (subscription) {
         this.subscriptionList.push(subscription);
       }
@@ -75,6 +77,7 @@ export class DownloadsDialogueComponent implements OnInit, OnDestroy {
   }
 
   private initDownload() {
+    debugger;
     this.entityExportService.getAllDownloads().forEach((item: any, value) => {
       this.downloadItemMap.set(value, {
         entityName: item.name,

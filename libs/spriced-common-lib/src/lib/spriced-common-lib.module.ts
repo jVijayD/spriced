@@ -5,6 +5,7 @@ import { EntityService } from "./services/entity.service";
 import { ModelService } from "./services/model.service";
 import { RequestUtilityService } from "./services/utility/request-utility.service";
 import { UserAccessService } from "./services/user-access.service";
+import { SseUtilityService } from "./services/utility/sse-utility.service";
 
 @NgModule({
   imports: [CommonModule],
@@ -14,6 +15,7 @@ import { UserAccessService } from "./services/user-access.service";
     UserAccessService,
     ModelService,
     RequestUtilityService,
+    SseUtilityService,
   ],
 })
 export class SpricedCommonLibModule {}

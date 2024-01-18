@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import {
   Criteria,
   RequestUtilityService,
+  SseUtilityService,
 } from "@spriced-frontend/spriced-common-lib";
 import { KeycloakService } from "keycloak-angular";
 import { Observable, Subject } from "rxjs";
@@ -33,75 +34,131 @@ export class EntityExportDataService {
   constructor(
     private http: HttpClient,
     private requestUtility: RequestUtilityService,
+    private sseUtilityService: SseUtilityService,
     private keycloakService: KeycloakService
   ) {
     this.api_url = process.env["NX_API_DATA_URL"] as string;
   }
 
+  // private connectToSSE(
+  //   url: string,
+  //   token: string,
+  //   name: string,
+  //   controller: AbortController
+  // ) {
+  //   let retryCount = 0;
+  //   const self = this;
+
+  //   fetchEventSource(url, {
+  //     method: "GET",
+  //     headers: {
+  //       Accept: EventStreamContentType,
+  //       Authorization: `Bearer ` + token,
+  //     },
+  //     signal: controller.signal,
+  //     async onopen(response) {
+  //       if (
+  //         response.ok &&
+  //         response.headers.get("content-type") === EventStreamContentType
+  //       ) {
+  //         console.log("Connection -opend-", Date.now());
+  //         return;
+  //       } else if (response.status == 401) {
+  //         throw new RetryError();
+  //       } else if (response.status >= 400 && response.status < 500) {
+  //         throw new Error();
+  //       }
+  //     },
+  //     onmessage(msg) {
+  //       debugger;
+  //       const user = self.keycloakService.getUsername();
+  //       const subscriberId = name + "_" + user;
+  //       const subjectMapValue = self.sseDataSubjectMap.get(subscriberId);
+  //       subjectMapValue?.subject?.next(msg);
+  //     },
+  //     onclose() {
+  //       //self.clearSseDataSubject(name);
+  //       console.log("Connection -closed-", Date.now());
+  //     },
+  //     onerror(err) {
+  //       self.clearSseDataSubject(name);
+  //       console.log("Log Error-", err);
+  //       throw err;
+  //     },
+  //   }).catch((err) => {
+  //     if (
+  //       err instanceof RetryError &&
+  //       retryCount < EntityExportDataService.MAX_RETRIES
+  //     ) {
+  //       console.log("retry");
+  //       this.keycloakService
+  //         .updateToken()
+  //         .then(() => {
+  //           return this.keycloakService.getToken();
+  //         })
+  //         .then((newToken) => {
+  //           self.connectToSSE(url, newToken, name, controller);
+  //           retryCount++;
+  //         })
+  //         .catch((err) => {
+  //           console.log(err);
+  //         });
+  //     }
+  //   });
+  // }
+
   private connectToSSE(
     url: string,
     token: string,
     name: string,
+    criteria: Criteria,
     controller: AbortController
   ) {
-    let retryCount = 0;
+    //let retryCount = 0;
     const self = this;
-
-    fetchEventSource(url, {
-      method: "GET",
-      headers: {
-        Accept: EventStreamContentType,
-        Authorization: `Bearer ` + token,
+    return this.sseUtilityService.postSseEvent(
+      url,
+      { criteria: criteria },
+      token,
+      controller,
+      this.onOpen.bind(self),
+      (value: any, response: any) => {
+        console.log("SSE Close-" + name);
+        //this.clearSseDataSubject.apply(self, [name]);
       },
-      signal: controller.signal,
-      async onopen(response) {
-        if (
-          response.ok &&
-          response.headers.get("content-type") === EventStreamContentType
-        ) {
-          console.log("Connection -opend-", Date.now());
-          return;
-        } else if (response.status == 401) {
-          throw new RetryError();
-        } else if (response.status >= 400 && response.status < 500) {
-          throw new Error();
-        }
+      (value: any, response: any) => {
+        this.onMessage.apply(self, [value, response, name]);
       },
-      onmessage(msg) {
-        const user = self.keycloakService.getUsername();
-        const subscriberId = name + "_" + user;
-        const subjectMapValue = self.sseDataSubjectMap.get(subscriberId);
-        subjectMapValue?.subject?.next(msg);
-      },
-      onclose() {
-        //self.clearSseDataSubject(name);
-        console.log("Connection -closed-", Date.now());
-      },
-      onerror(err) {
-        self.clearSseDataSubject(name);
-        console.log("Log Error-", err);
-        throw err;
-      },
-    }).catch((err) => {
-      if (
-        err instanceof RetryError &&
-        retryCount < EntityExportDataService.MAX_RETRIES
-      ) {
-        console.log("retry");
-        this.keycloakService
-          .updateToken()
-          .then(() => {
-            return this.keycloakService.getToken();
-          })
-          .then((newToken) => {
-            self.connectToSSE(url, newToken, name, controller);
-            retryCount++;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+      (err: any) => {
+        this.onError.apply(self, [err, name]);
       }
-    });
+    );
+  }
+
+  private onOpen(value: any, response: Response) {
+    if (
+      response.ok &&
+      response.headers.get("content-type") === EventStreamContentType
+    ) {
+      console.log("SSE Connection Opend");
+    } else if (response.status == 401) {
+      console.log("Auth Error");
+    } else if (response.status >= 400 && response.status < 500) {
+      console.log("Un-Known Error");
+    }
+  }
+
+  private onMessage(value: any, response: any, name: string) {
+    debugger;
+    const user = this.keycloakService.getUsername();
+    const subscriberId = name + "_" + user;
+    const subjectMapValue = this.sseDataSubjectMap.get(subscriberId);
+    subjectMapValue?.subject?.next(value);
+  }
+
+  private onError(err: any, name: string) {
+    this.clearSseDataSubject(name);
+    console.log(err);
   }
 
   public getDownloadObservable(name: string): Observable<any> | null {
@@ -158,12 +215,12 @@ export class EntityExportDataService {
     const token = await this.keycloakService.getToken();
     const user = this.keycloakService.getUsername();
     const subscriberId = name + "_" + user;
-    const url = this.requestUtility.addCriteria(
-      `${this.api_url}/entity/${id}/export/excel/event?displayFormat=${displayFormat}&subscriberId=${subscriberId}`,
-      criteria,
-      false
-    );
-    debugger;
+    // const url = this.requestUtility.addCriteria(
+    //   `${this.api_url}/entity/${id}/export/excel/event?displayFormat=${displayFormat}&subscriberId=${subscriberId}`,
+    //   criteria,
+    //   false
+    // );
+
     let subjectMapValue = this.sseDataSubjectMap.get(subscriberId);
     if (!subjectMapValue) {
       const subject = new Subject();
@@ -175,7 +232,18 @@ export class EntityExportDataService {
         name: name,
         fileName: fileName,
       });
-      this.connectToSSE(url, token, name, controller);
+
+      //this.connectToSSE(url, token, name, controller);
+      this.connectToSSE(
+        `${this.api_url}/entity/${id}/export/excel/event?displayFormat=${displayFormat}&subscriberId=${subscriberId}`,
+        //url,
+        token,
+        name,
+        criteria,
+        controller
+      ).catch((err) => {
+        console.log(err);
+      });
     }
   }
 
