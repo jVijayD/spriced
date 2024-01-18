@@ -108,30 +108,9 @@ export class ViewTransactionsAdminComponent {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
-      column: "entityName",
-      name: "Entity",
-      sortColumn:"entity_name"
-    },
-
-    {
-      canAutoResize: true,
-      isSortable: true,
-      isFilterable: true,
       column: "columnName",
       name: "Attribute",
-      sortColumn:"column_name"
-
-    },
-    {
-      canAutoResize: true,
-      isSortable: true,
-      isFilterable: true,
-      column: "updatedDate",
-      name: "Last Updated On",
-      pipe: (data: any) => {
-        return moment(data).format("MM/DD/YYYY HH:mm:ss");
-      },
-      sortColumn:"updated_date"
+      sortColumn:"column_name",
     },
     {
       canAutoResize: true,
@@ -175,9 +154,20 @@ export class ViewTransactionsAdminComponent {
       canAutoResize: true,
       isSortable: true,
       isFilterable: true,
+      column: "updatedDate",
+      name: "Last Updated On",
+      pipe: (data: any) => {
+        return moment(data).format("MM/DD/YYYY HH:mm:ss");
+      },
+      sortColumn:"updated_date",
+    },
+    {
+      canAutoResize: true,
+      isSortable: true,
+      isFilterable: true,
       column: "updatedBy",
       name: "User",
-      sortColumn:"updated_by"
+      sortColumn:"updated_by",
     },
     {
       canAutoResize: true,
@@ -185,7 +175,7 @@ export class ViewTransactionsAdminComponent {
       isFilterable: true,
       column: "transactionType",
       name: "Transaction",
-      sortColumn:"transaction_type"
+      sortColumn:"transaction_type",
     },
   ];
 
