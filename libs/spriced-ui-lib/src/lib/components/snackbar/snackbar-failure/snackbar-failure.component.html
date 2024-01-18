@@ -2,7 +2,7 @@
   class="flex flex-row bg-error-default text-white p-5 justify-evenly rounded"
 >
   <mat-icon class="font-semibold">error</mat-icon>
-  <div class="w-80 font-light pl-2 pr-2">{{ data }}</div>
+  <div class="w-80 font-light pl-2 pr-2">{{ render(data) }}</div>
   <div (click)="onClose()" class="cursor-pointer">
     <mat-icon class="font-thin text-base absolute right-2">close</mat-icon>
   </div>

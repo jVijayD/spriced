@@ -677,7 +677,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     //   this.currentSelectedEntity?.displayName as string
     // );
     let limit = process.env["NX_DOWNLOAD_LIMIT"] as unknown as number;
-    let limitAsync = 50000;
+    let limitAsync = 20000;
     if (this.totalElements > limit) {
       this.dialogService.openInfoDialog({
         message:
@@ -893,23 +893,34 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   private setDefaultCriteria(criteria: Criteria, lastId: number): Criteria {
-    let id = this.lastId;
-
     if (!criteria.sorters || criteria.sorters.length == 0) {
       const sort: any = { direction: "DESC", property: "id" };
       criteria.sorters = [sort];
     }
 
-    // if ((!criteria.filters || criteria.filters.length == 0) && id != 0) {
+    // if (
+    //   criteria.sorters.length === 1 &&
+    //   criteria.sorters[0].direction === "DESC" &&
+    //   criteria.sorters[0].property === "id" &&
+    //   lastId &&
+    //   lastId != 0
+    // ) {
     //   const filter: any = {
     //     filterType: "CONDITION",
     //     joinType: "NONE",
     //     operatorType: "LESS_THAN",
     //     key: "id",
-    //     value: id,
+    //     value: lastId,
     //     dataType: "number",
     //   };
-    //   criteria.filters = [filter];
+
+    //   if (
+    //     !criteria.filters ||
+    //     criteria.filters.length === 0 ||
+    //     (criteria.filters.length === 1 && criteria.filters[0].key === "id")
+    //   ) {
+    //     criteria.filters = [filter];
+    //   }
     // }
 
     return criteria;
@@ -1029,27 +1040,13 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     let errorMessage = "";
     item.ruleValidations.forEach((rulVal: any) => {
       rulVal.ruleResults.forEach((rulResult: any) => {
-        errorMessage += rulResult.message;
+        if (!rulResult.success) {
+          errorMessage = rulResult.message;
+        }
       });
     });
-    const sepStart = "{SEP}";
-    const sepEnd = "{/SEP}";
 
-    let firstMessage = "";
-    const startIndex = errorMessage.indexOf(sepStart);
-    const endIndex = errorMessage.indexOf(sepEnd);
-
-    if (startIndex !== -1 && endIndex !== -1 && startIndex < endIndex) {
-      firstMessage = errorMessage
-        .substring(startIndex + sepStart.length, endIndex)
-        .trim();
-      errorMessage = firstMessage
-        .replace(/:\s/g, ":\n")
-        .replace(/\b(IF|THEN|ELSE)\b\s/g, "\n$1 ");
-      this.snackbarService.error(errorMessage);
-    } else {
-      this.snackbarService.error(errorMessage);
-    }
+    this.snackbarService.error(errorMessage);
     this.statusPannelService.setErrors([
       {
         type: ErrorTypes.ERROR,
