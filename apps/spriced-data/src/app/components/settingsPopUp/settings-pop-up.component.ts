@@ -74,7 +74,7 @@ export class SettingsPopUpComponent implements OnInit {
       this.showSystem = result.showSystem;
     }
     this.filteredlList = this.data.header.filter((item: any) => {
-      return item.column !== "name" && item.column !== "code" && item.column !== "validation_status";
+      return item.column !== "name" && item.column !== "code" && item.column !== "validation_status" && item.systemAttribute == false;
     });
     this.initialData=this.filteredlList
     let all = this.settings.getCurrentSettings(this.data.entity.name);
@@ -97,7 +97,6 @@ export class SettingsPopUpComponent implements OnInit {
         "All",
       ]);
     }
-    console.log(this.filteredlList)
   }
 
 ngOnInit(): void {
@@ -139,7 +138,7 @@ ngOnInit(): void {
     let text= this.columnForm.controls["search"].value
     this.filteredlList = this.initialData.filter((item: any) => {
       return (
-        item.selectColumn.trim().toLowerCase().indexOf(text.trim().toLowerCase()) != -1 
+        item.name.trim().toLowerCase().indexOf(text.trim().toLowerCase()) != -1 
       );
     });
   }

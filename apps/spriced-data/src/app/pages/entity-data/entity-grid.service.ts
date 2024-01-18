@@ -54,6 +54,7 @@ export class EntityGridService {
           options: this.getOptions(attr),
           width: attr.width || 0,
           formType: attr.type,
+          systemAttribute:attr.systemAttribute,
           referencedTableId: attr?.referencedTableId || null,
           pipe: (data: any) => {
             return this.getTransform(data, attr);
@@ -66,7 +67,7 @@ export class EntityGridService {
   setSelectedColumns(selectedColumns: any, array: any) {
     return array.filter((elem: any) => {
       return selectedColumns.some((ele: any) => {
-        if (elem.column == "validation_status") {
+        if (elem.column == "validation_status" || elem.systemAttribute == true) {
           return elem;
         } else {
           return ele === elem.selectColumn?.toLowerCase();
