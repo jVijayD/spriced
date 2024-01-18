@@ -256,6 +256,7 @@ export interface Header {
   sortColumn?: any;
   className?: string;
   selectColumn?:string;
+  systemAttribute?:boolean
 }
 
 export interface Paginate {
