@@ -61,21 +61,18 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
       name: "Name",
       canAutoResize: true,
       isSortable: true,
-      flexGrow: 2,
     },
     {
       column: "updatedBy",
       name: "Updated By",
       canAutoResize: true,
       isSortable: true,
-      flexGrow: 2,
     },
     {
       column: "updatedDate",
       name: "Last Updated On",
       canAutoResize: true,
       isSortable: true,
-      flexGrow: 2,
       pipe: (data: any) => {
         return moment(data).format("MM/DD/YYYY HH:mm:ss");
       },
@@ -85,7 +82,7 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
       name: "Description",
       canAutoResize: true,
       isSortable: false,
-      flexGrow: 5,
+      flexGrow:1.3
     },
     {
       column: "action",
@@ -94,7 +91,7 @@ export class HierarchyViewTabComponent implements OnInit, OnDestroy {
       isSortable: false,
       action: true,
       imgsrc: 'assets/images/eye.png',
-      flexGrow: 1,
+      flexGrow:0.4
     },
   ];
   // displayedColumns = ["name", "description", "view"];
