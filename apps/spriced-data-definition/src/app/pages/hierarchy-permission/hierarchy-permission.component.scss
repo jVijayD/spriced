@@ -12,3 +12,20 @@
   cursor: pointer;
   font-weight: bold;
 }
+::ng-deep .cdk-overlay-pane .custom-tooltip .mdc-tooltip__surface{
+  background-color: #fff;
+  color: #000;
+  border: 1px solid;
+  border-radius: 0px;
+  width: auto;
+  max-width: 230px;
+  min-width: 5px;
+  font-size: 12px;
+  padding: 0px;
+  padding-left: 4px;
+  padding-right: 4px;
+  display: flex;
+  align-items: center;
+  height:auto;
+  min-height: 10px;
+}

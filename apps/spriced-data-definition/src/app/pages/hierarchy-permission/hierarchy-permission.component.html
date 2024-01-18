@@ -74,7 +74,7 @@
                                 formControlName="roleFilter"></ngx-mat-select-search>
                         </mat-option>
                         <!-- <mat-option value="" class="option">--Select--</mat-option> -->
-                        <mat-option *ngFor="let role of roleList" [value]="role.name">
+                        <mat-option matTooltipClass="custom-tooltip" matTooltipDisabled="{{role.name.length < 25}}" matTooltipPosition="right" matTooltip="{{role.name}}"  *ngFor="let role of roleList" [value]="role.name">
                             {{role.name}}
                         </mat-option>
                     </mat-select>
