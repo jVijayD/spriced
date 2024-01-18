@@ -81,7 +81,7 @@ export class ModelAddComponent {
         {
           name: "pattern",
           message: "Invalid Name",
-          validator: Validators.pattern('^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#-]+$'),
+          validator: Validators.pattern('^(?=[a-zA-Z0-9])[a-zA-Z0-9_#-]+$'),
         },
         {
           name: "minlength",
