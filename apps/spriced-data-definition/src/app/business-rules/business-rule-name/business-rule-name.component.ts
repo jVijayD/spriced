@@ -121,6 +121,10 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
 
     const {rules} = await this.getAllRulesApi();
     this.allRules = rules.filter((el:any) => el.entityId === +this.entityId);
+    if(!!ruleId)
+    {
+      this.allRules = this.allRules.filter((el:any) => el.id !== +ruleId);
+    }
 
     this.formbuild();
 
