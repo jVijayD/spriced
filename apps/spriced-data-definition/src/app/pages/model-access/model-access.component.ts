@@ -40,6 +40,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { UserAccessService } from "@spriced-frontend/spriced-common-lib";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { MatTooltipModule } from "@angular/material/tooltip";
 const POPULATE_ATTRIBUTES = false;
 @Component({
   selector: "sp-model-access",
@@ -59,7 +60,8 @@ const POPULATE_ATTRIBUTES = false;
     DialogueModule,
     NgxMatSelectSearchModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatTooltipModule
   ],
   providers: [HttpClient, UserAccessService, DialogService, SnackBarService],
   templateUrl: "./model-access.component.html",

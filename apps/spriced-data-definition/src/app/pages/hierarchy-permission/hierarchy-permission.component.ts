@@ -15,11 +15,12 @@ import { MatIconModule } from "@angular/material/icon";
 import { KeycloakService } from "keycloak-angular";
 import { MatMenuModule } from "@angular/material/menu";
 import { RoleDTO } from "../model-access/models/ModelAccesTypes.class";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
   selector: "sp-hierarchy-permission",
   standalone: true,
-  imports: [CommonModule, MatFormFieldModule, MatSelectModule, MatOptionModule, NgxMatSelectSearchModule, DataGridComponent, FormsModule, ReactiveFormsModule, NgxDatatableModule, MatIconModule, MatMenuModule],
+  imports: [CommonModule, MatFormFieldModule, MatSelectModule, MatOptionModule, NgxMatSelectSearchModule, DataGridComponent, FormsModule, ReactiveFormsModule, NgxDatatableModule, MatIconModule, MatMenuModule,MatTooltipModule],
   templateUrl: "./hierarchy-permission.component.html",
   styleUrls: ["./hierarchy-permission.component.scss"],
 })

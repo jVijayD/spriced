@@ -11,7 +11,7 @@
           ></ngx-mat-select-search>
         </mat-option>
         <mat-option value="" class="option">--Select--</mat-option>
-        <mat-option *ngFor="let item of filteredRoleList" [value]="item">{{item.name}}</mat-option>
+        <mat-option matTooltipClass="custom-tooltip" matTooltipDisabled="{{item.name.length < 25}}" matTooltipPosition="right" matTooltip="{{item.name}}" *ngFor="let item of filteredRoleList" [value]="item">{{item.name}}</mat-option>
       </mat-select>
     </mat-form-field>
     <!-- <mat-form-field appearance="outline">

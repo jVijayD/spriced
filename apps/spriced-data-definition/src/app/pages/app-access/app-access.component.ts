@@ -32,6 +32,7 @@ import { AppDataService } from "@spriced-frontend/shared/spriced-shared-lib";
 import { UserAccessService } from "@spriced-frontend/spriced-common-lib";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
+import { MatTooltipModule } from "@angular/material/tooltip";
 const POPULATE_ATTRIBUTES = false;
 @Component({
     selector: "sp-app-access",
@@ -56,7 +57,8 @@ const POPULATE_ATTRIBUTES = false;
         MatCheckboxModule,
         SnackbarModule,
         CommonModule,
-        DialogueModule
+        DialogueModule,
+        MatTooltipModule
     ]
 })
 export class AppAccessComponent {
