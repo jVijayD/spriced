@@ -19,6 +19,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { RouterModule } from '@angular/router';
 import { MatMenuModule} from '@angular/material/menu';
 import { Subscription } from "rxjs";
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 const MY_DATE_FORMAT = {
   parse: {
@@ -70,7 +71,8 @@ const sToken = new ServiceTokens();
     NgxMatDatetimePickerModule,
     NgxMatTimepickerModule,
     MatMomentDateModule,
-    MatMenuModule
+    MatMenuModule,
+    NgxMatSelectSearchModule
   ],
   providers: [
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMAT },
@@ -111,6 +113,7 @@ export class BusinessRuleListComponent
   public lookupInput: boolean = false;
   public lookupAllAttributeData: any = [];
   public lookupSourceData: any = [];
+  public filteredLookupList: any = [];
   public prop: string = "code|name";
   subscriptions: Subscription[] = [];
   @Input() public set connectedDropListsIds(ids: string[]) {
@@ -212,6 +215,7 @@ export class BusinessRuleListComponent
       next: (res: any) => {
         this.lookupAllAttributeData.push(res.content);
         this.lookupSourceData = res.content;
+        this.filteredLookupList = this.lookupSourceData
       },
       error: (err) => {
         console.log(err)
@@ -503,6 +507,18 @@ export class BusinessRuleListComponent
   //   control.value = '';
   //   this.filterAttributes('',control);
   // }
+
+  public filterLookupData(text: string)
+  {
+    const newData = this.lookupSourceData.map((item: any) => ({ ...item, code: item.code.toString() }));
+    this.filteredLookupList = newData.filter((item: any) => {
+      return (
+        item.code.trim()
+          .toLowerCase()
+          .indexOf(text.trim().toLowerCase()) != -1
+      );
+    });
+  }
 
   
 

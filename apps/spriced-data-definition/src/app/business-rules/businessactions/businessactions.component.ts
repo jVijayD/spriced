@@ -18,6 +18,7 @@ import { DynamicFormService, FORM_DATA_SERVICE, SnackBarService } from '@spriced
 import { RouterModule } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatRadioModule } from '@angular/material/radio';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 const MY_DATE_FORMAT = {
   parse: {
@@ -69,7 +70,8 @@ const sToken = new ServiceTokens();
     NgxMatTimepickerModule,
     MatMomentDateModule,
     MatMenuModule,
-    MatRadioModule
+    MatRadioModule,
+    NgxMatSelectSearchModule
   ],
   providers: [
     {
@@ -121,6 +123,7 @@ export class BusinessactionsComponent implements OnInit {
   public selectedOperand: any = '';
   public lookupInput: boolean = false;
   public lookupSourceData: any = [];
+  public filteredLookupList: any = [];
   public prop: string = "code|name";
 
   constructor(
@@ -306,6 +309,7 @@ export class BusinessactionsComponent implements OnInit {
     this.businessruleservice.loadLookupData(id).subscribe({
       next: (res: any) => {
         this.lookupSourceData = res.content;
+        this.filteredLookupList = this.lookupSourceData;
       },
       error: (err) => {
         console.log(err)
@@ -540,5 +544,17 @@ export class BusinessactionsComponent implements OnInit {
     }
 
     return new RegExp(pattern);
+  }
+
+  public filterLookupData(text: string)
+  {
+    const newData = this.lookupSourceData.map((item: any) => ({ ...item, code: item.code.toString() }));
+    this.filteredLookupList = newData.filter((item: any) => {
+      return (
+        item.code.trim()
+          .toLowerCase()
+          .indexOf(text.trim().toLowerCase()) != -1
+      );
+    });
   }
 }
