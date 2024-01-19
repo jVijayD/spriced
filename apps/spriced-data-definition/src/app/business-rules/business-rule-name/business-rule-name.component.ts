@@ -188,7 +188,7 @@ return JSON.stringify(a)===JSON.stringify(b)
         for (const el of relatedRefreneceTableEntity) {
           const { entityData } = await this.getEntityById(el.referencedTableId);
           let filteredAttributes = entityData?.attributes.filter((attr: any) => attr.name !== 'id');
-          // filteredAttributes = entityData?.attributes.filter((attr: any) => attr.name !== 'code');
+          filteredAttributes = entityData?.attributes.filter((attr: any) => attr.name !== 'code');
           entityData.attributes = filteredAttributes.filter((attr: any) => !attr.systemAttribute);
           await this.processNestedAttributes(entityData.attributes, el);
         }
