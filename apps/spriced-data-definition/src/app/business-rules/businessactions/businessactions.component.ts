@@ -466,7 +466,7 @@ export class BusinessactionsComponent implements OnInit {
     }
     setTimeout(() => {
       control.focus({
-        preventScroll: true
+        preventScroll: false
       });
       },200);
     }
