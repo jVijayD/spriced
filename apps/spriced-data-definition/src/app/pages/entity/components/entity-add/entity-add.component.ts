@@ -131,6 +131,7 @@ export class EntityAddComponent implements OnInit {
   referencedTableDisplayName: any;
   referencedTableId: any;
   pattern = "^(?=[a-zA-Z0-9])[a-zA-Z0-9_#\\-]+$";
+  displayNamePattern = "^(?=[a-zA-Z0-9])[a-zA-Z0-9 _#\\-]+$";
   filteredRows: any;
   nameReset = "";
   filter = false;

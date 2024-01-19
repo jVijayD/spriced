@@ -48,7 +48,7 @@
             [(ngModel)]="local_data.displayName"
             (ngModelChange)="modelChangedValue($event)"
             max="50"
-            [pattern]="pattern"
+            [pattern]="displayNamePattern"
             #uname="ngModel"
           />
         </mat-form-field>
@@ -205,7 +205,7 @@
             <input
               matInput
               [(ngModel)]="attDetails.displayName"
-              [pattern]="pattern"
+              [pattern]="displayNamePattern"
               #dname="ngModel"
               maxlength="50"
             />
