@@ -18,6 +18,7 @@ import { NGX_MAT_DATE_FORMATS, NgxMatDateAdapter, NgxMatDatetimePickerModule, Ng
 import { RouterModule } from '@angular/router';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatMenuModule } from '@angular/material/menu';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 
 const MY_DATE_FORMAT = {
@@ -70,7 +71,8 @@ const sToken = new ServiceTokens();
     NgxMatTimepickerModule,
     MatMomentDateModule,
     MatRadioModule,
-    MatMenuModule
+    MatMenuModule,
+    NgxMatSelectSearchModule
   ],
   providers: [
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMAT },
@@ -116,6 +118,7 @@ export class ElseactionComponent {
   public selectedAttribute: any = '';
   public selectedOperand: any = '';
   public lookupSourceData: any = [];
+  public filteredLookupList: any = [];
   public lookupInput: boolean = false;
   public prop: string = "code|name";
 
@@ -302,6 +305,7 @@ export class ElseactionComponent {
     this.businessruleservice.loadLookupData(id).subscribe({
       next: (res: any) => {
         this.lookupSourceData = res.content;
+        this.filteredLookupList = this.lookupSourceData;
       },
       error: (err) => {
         console.log(err)
@@ -538,6 +542,18 @@ export class ElseactionComponent {
     }
 
     return new RegExp(pattern);
+  }
+
+  public filterLookupData(text: string)
+  {
+    const newData = this.lookupSourceData.map((item: any) => ({ ...item, code: item.code.toString() }));
+    this.filteredLookupList = newData.filter((item: any) => {
+      return (
+        item.code.trim()
+          .toLowerCase()
+          .indexOf(text.trim().toLowerCase()) != -1
+      );
+    });
   }
 
 }

@@ -94,7 +94,16 @@
                 appearance="outline">
                 <mat-label>Value</mat-label>
                 <mat-select [panelClass]="preview ? 'hideOption' : ''" formControlName="operand">
-                    <mat-option *ngFor="let item of lookupSourceData" [value]="item?.id">
+                    <mat-option>
+                        <ngx-mat-select-search
+                          placeholderLabel="Search"
+                          [ngModelOptions]="{standalone:true}"
+                          ngModel
+                          (ngModelChange)="filterLookupData($event)"
+                        ></ngx-mat-select-search>
+                      </mat-option>
+                      <mat-option value="" class="option">--Select--</mat-option>
+                    <mat-option *ngFor="let item of filteredLookupList" [value]="item?.id">
                         <p>{{item.code}}</p>
                     </mat-option>
                 </mat-select>
