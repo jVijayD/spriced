@@ -1,13 +1,38 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
-import { MatTable } from '@angular/material/table';
-import { AppDataService } from '@spriced-frontend/shared/spriced-shared-lib';
-import { BusinessruleService } from '@spriced-frontend/spriced-common-lib';
-import { FormGroup, Validators, FormArray, FormBuilder, AbstractControl, ValidationErrors } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, forkJoin, takeUntil } from 'rxjs';
-import { CdkDrag, CdkDragDrop, CdkDragEnter, CdkDragExit, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  Output,
+  Renderer2,
+  ViewChild,
+} from "@angular/core";
+import { MatTable } from "@angular/material/table";
+import { AppDataService } from "@spriced-frontend/shared/spriced-shared-lib";
+import { BusinessruleService } from "@spriced-frontend/spriced-common-lib";
+import {
+  FormGroup,
+  Validators,
+  FormArray,
+  FormBuilder,
+  AbstractControl,
+  ValidationErrors,
+} from "@angular/forms";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Subject, forkJoin, takeUntil } from "rxjs";
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDragEnter,
+  CdkDragExit,
+  moveItemInArray,
+  transferArrayItem,
+} from "@angular/cdk/drag-drop";
 import { MessageService } from "./../services/message.service";
-import { DialogService, SnackBarService } from '@spriced-frontend/spriced-ui-lib';
+import {
+  DialogService,
+  SnackBarService,
+} from "@spriced-frontend/spriced-ui-lib";
 
 @Component({
   selector: "sp-business-rule-name",
@@ -22,32 +47,32 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
 
   public column_schema = [
     {
-      key: 'Condition',
-      type: 'text',
-      label: 'Condition'
+      key: "Condition",
+      type: "text",
+      label: "Condition",
     },
     {
-      key: 'Attribute',
-      type: 'text',
-      label: 'Attribute'
+      key: "Attribute",
+      type: "text",
+      label: "Attribute",
     },
     {
-      key: 'Operator',
-      type: 'text',
-      label: 'Condition'
-    }
-  ]
+      key: "Operator",
+      type: "text",
+      label: "Condition",
+    },
+  ];
   public sendNotificationData: any = [
     {
-      name: 'user',
-      groupId: 1
+      name: "user",
+      groupId: 1,
     },
     {
-      name: 'user2',
-      groupId: 2
-    }
-  ]
-  displayedColumns: string[] = this.column_schema.map(col => col.key);
+      name: "user2",
+      groupId: 2,
+    },
+  ];
+  displayedColumns: string[] = this.column_schema.map((col) => col.key);
   public saveButton: boolean = false;
   public loading: boolean = false;
   public rulesData: any;
@@ -68,15 +93,14 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
   public sorts: any;
   public allRules: any;
 
-  isValueChanged: boolean=true;
+  isValueChanged: boolean = true;
   previousValue: any;
-  publishButton:boolean=false
+  publishButton: boolean = false;
   // DEMO LIST CODE
   public get connectedBRDropListsIds(): string[] {
     // We reverse ids here to respect items nesting hierarchy
     return this.getBRIdsRecursive(this.item).reverse();
   }
-
 
   constructor(
     private businessRuleService: BusinessruleService,
@@ -88,7 +112,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     private cdRef: ChangeDetectorRef,
     private appStore: AppDataService,
     private snackbarService: SnackBarService,
-    private dialogService:DialogService
+    private dialogService: DialogService
   ) {
     // HANDLE THIS FOR WHEN REMOVE THE SUBCONDITIONS
     this.appStore.subConditionForm.subscribe((res: any) => {
@@ -107,24 +131,23 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
     this.loading = true;
 
     // Handling initial data for Edit Rule
-    const ruleId = this.activeRoute?.snapshot?.params?.['id'];
-    this.attributeId = this.activeRoute?.snapshot?.queryParams?.['attribute_id'];
-    const previewRule = this.activeRoute?.snapshot?.params?.['preview'];
-    const entity_id = this.activeRoute?.snapshot?.queryParams?.['entity_id'];
-    const model_id = this.activeRoute?.snapshot?.queryParams?.['model_id'];
-    const sorts = localStorage.getItem('sorts') || null;
+    const ruleId = this.activeRoute?.snapshot?.params?.["id"];
+    this.attributeId =
+      this.activeRoute?.snapshot?.queryParams?.["attribute_id"];
+    const previewRule = this.activeRoute?.snapshot?.params?.["preview"];
+    const entity_id = this.activeRoute?.snapshot?.queryParams?.["entity_id"];
+    const model_id = this.activeRoute?.snapshot?.queryParams?.["model_id"];
+    const sorts = localStorage.getItem("sorts") || null;
     const { sort } = window.history.state;
     this.sorts = !!sorts ? sorts : sort;
-    this.previewField = !['', undefined, null].includes(previewRule);
+    this.previewField = !["", undefined, null].includes(previewRule);
     this.modelId = model_id;
     this.entityId = entity_id;
 
-    const {rules} = await this.getAllRulesApi();
-    this.allRules = rules.filter((el:any) => el.entityId === +this.entityId);
-    if(!!ruleId)
-    {
-      this.allRules = this.allRules.filter((el:any) => el.id !== +ruleId);
-    }
+    const { rules } = await this.getAllRulesApi();
+    this.allRules = !!ruleId
+      ? rules.filter((el: any) => el.id !== +ruleId)
+      : rules;
 
     this.formbuild();
 
@@ -132,45 +155,53 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
      * Handling edit rule when rule id is present
      */
     if (!!ruleId) {
-      this.businessRuleService.getAllRulesById(ruleId).pipe(takeUntil(this.notifier$)).subscribe(async (res: any) => {
-        this.entityId = res.entityId;
-        this.rulesData = res;
-      });
+      this.businessRuleService
+        .getAllRulesById(ruleId)
+        .pipe(takeUntil(this.notifier$))
+        .subscribe(async (res: any) => {
+          this.entityId = res.entityId;
+          this.rulesData = res;
+        });
     }
     this.patchEnumTypes(this.entityId);
 
     this.item = {
-      value: { id: 'parent', subConditions: this.conditions },
+      value: { id: "parent", subConditions: this.conditions },
       controls: {
-        id: 'parent', subConditions: this.conditions
-      }
+        id: "parent",
+        subConditions: this.conditions,
+      },
     };
   }
 
-
-  valueChanged()
-  {
-    this.myForm.valueChanges.subscribe(()=> 
-    {
-      
-    this.isValueChanged= this.compareValue(this.myForm.value,this.previousValue)
-    if(this.rulesData?.status !=='Yet to Publish')
-    {
-      this.publishButton=this.isValueChanged
-    }
-
-    })
+  valueChanged() {
+    this.myForm.valueChanges.subscribe(() => {
+      this.isValueChanged = this.compareValue(
+        this.myForm.value,
+        this.previousValue
+      );
+      if (this.rulesData?.status !== "Yet to Publish") {
+        this.publishButton = this.isValueChanged;
+      }
+    });
   }
 
-compareValue(a:any,b:any)
-{
-return JSON.stringify(a)===JSON.stringify(b)
-}
+  compareValue(a: any, b: any) {
+    return JSON.stringify(a) === JSON.stringify(b);
+  }
   /**
    * HANDLE THIS FUNCTION FOR GET ALL ENUMS TYPES
    */
   public async patchEnumTypes(id?: any) {
-    let { conditions, operands, operators, datatypes, actionEnum, entity, model } = await this.getAllDataEnum(id);
+    let {
+      conditions,
+      operands,
+      operators,
+      datatypes,
+      actionEnum,
+      entity,
+      model,
+    } = await this.getAllDataEnum(id);
     if (model?.length > 0) {
       const modelData = model.find((el: any) => el.id == this.modelId);
       this.modelName = modelData.displayName;
@@ -179,23 +210,32 @@ return JSON.stringify(a)===JSON.stringify(b)
       this.entityName = entity.displayName;
       const action = actionEnum;
       let attributeList: any = [];
-      const relatedRefreneceTableEntity = [...entity.attributes].filter((el: any) => !!el.referencedTableId);
+      const relatedRefreneceTableEntity = [...entity.attributes].filter(
+        (el: any) => !!el.referencedTableId
+      );
       attributeList = entity.attributes;
       // Handle for nested attribute
-      if (relatedRefreneceTableEntity && relatedRefreneceTableEntity.length > 0) {
+      if (
+        relatedRefreneceTableEntity &&
+        relatedRefreneceTableEntity.length > 0
+      ) {
         this.entities = [];
 
         for (const el of relatedRefreneceTableEntity) {
           const { entityData } = await this.getEntityById(el.referencedTableId);
-          let filteredAttributes = entityData?.attributes.filter((attr: any) => attr.name !== 'id');
-          filteredAttributes = entityData?.attributes.filter((attr: any) => attr.name !== 'code');
-          entityData.attributes = filteredAttributes.filter((attr: any) => !attr.systemAttribute);
+          let filteredAttributes = entityData?.attributes.filter(
+            (attr: any) => attr.name !== "id"
+          );
+          //filteredAttributes = entityData?.attributes.filter((attr: any) => attr.name !== 'code');
+          entityData.attributes = filteredAttributes.filter(
+            (attr: any) => !attr.systemAttribute
+          );
           await this.processNestedAttributes(entityData.attributes, el);
         }
       }
 
       attributeList = attributeList.filter((el: any) => !el.systemAttribute);
-      attributeList = attributeList.filter((el: any) => el.name !== 'id');
+      attributeList = attributeList.filter((el: any) => el.name !== "id");
       this.conditionsData = {
         ...action,
         attributes: attributeList,
@@ -203,7 +243,10 @@ return JSON.stringify(a)===JSON.stringify(b)
         operators: this.transformObjectToKeyValueArray(operators),
         operands: this.transformObjectToKeyValueArray(operands),
       };
-      this.conditionsData.ruleTypes = this.conditionsData?.ruleTypes.slice(0, 3);
+      this.conditionsData.ruleTypes = this.conditionsData?.ruleTypes.slice(
+        0,
+        3
+      );
 
       // Define the names of items to exclude
       const excludedNames = [
@@ -218,16 +261,18 @@ return JSON.stringify(a)===JSON.stringify(b)
         "does_not_contain_subset",
         "is_between",
         "is_not_between",
-        "has_not_changed"
+        "has_not_changed",
       ];
 
       // Filter the array to exclude items with names in the excludedNames array
-      this.conditionsData.operators = this.conditionsData?.operators.filter((item: any) => !excludedNames.includes(item.name));
+      this.conditionsData.operators = this.conditionsData?.operators.filter(
+        (item: any) => !excludedNames.includes(item.name)
+      );
 
       if (!!this.rulesData) {
         this.patchForm(this.rulesData);
       }
-      const ruleType = this.myForm.get('group')?.value;
+      const ruleType = this.myForm.get("group")?.value;
       this.handleRuleType(ruleType);
       this.loading = false;
     }
@@ -235,7 +280,9 @@ return JSON.stringify(a)===JSON.stringify(b)
 
   public handleAttributeNames(attributes: any, parentName?: any) {
     attributes.forEach((attribute: any) => {
-      const nestedName = parentName ? `${parentName}.${attribute.name}` : attribute.name;
+      const nestedName = parentName
+        ? `${parentName}.${attribute.name}`
+        : attribute.name;
       attribute.displayName = nestedName;
 
       if (attribute.attributes) {
@@ -245,11 +292,11 @@ return JSON.stringify(a)===JSON.stringify(b)
   }
 
   /**
-  * HANDLE THIS FUNCTION FOR EDIT THE NESTEDATTRIBUTES
-  * @param nestedAttributes any
-  * @param parentAttribute string
-  * @returns 
-  */
+   * HANDLE THIS FUNCTION FOR EDIT THE NESTEDATTRIBUTES
+   * @param nestedAttributes any
+   * @param parentAttribute string
+   * @returns
+   */
   public processNestedAttributes(nestedAttributes: any, parentEntity: any) {
     const processedAttributes: any = [];
     if (nestedAttributes) {
@@ -261,9 +308,11 @@ return JSON.stringify(a)===JSON.stringify(b)
   /**
    * HANDLE THIS FUNCTION FOR TRANSFORM OBJECT TO KEY VALUE ARRAY
    * @param obj string
-   * @returns 
+   * @returns
    */
-  public transformObjectToKeyValueArray(obj: Record<string, string>): { name: string; value: string }[] {
+  public transformObjectToKeyValueArray(
+    obj: Record<string, string>
+  ): { name: string; value: string }[] {
     return Object.entries(obj).map(([value, name]) => ({ name, value }));
   }
 
@@ -275,7 +324,7 @@ return JSON.stringify(a)===JSON.stringify(b)
     this.actionType = this.conditionsData?.actions[value];
     this.actions.clear();
     this.elseAction.clear();
-    this.valueChanged()
+    this.valueChanged();
   }
 
   /**
@@ -314,7 +363,15 @@ return JSON.stringify(a)===JSON.stringify(b)
         this.businessRuleService.getAllEntitesById(entityId),
         this.businessRuleService.getAllModles(),
       ]).subscribe(
-        ([conditions, operands, operators, datatypes, actionEnum, entity, model]: any) => {
+        ([
+          conditions,
+          operands,
+          operators,
+          datatypes,
+          actionEnum,
+          entity,
+          model,
+        ]: any) => {
           resolve({
             conditions,
             operands,
@@ -334,7 +391,7 @@ return JSON.stringify(a)===JSON.stringify(b)
             datatypes: [],
             actionEnum: [],
             entity: [],
-            model: []
+            model: [],
           });
         }
       );
@@ -344,22 +401,22 @@ return JSON.stringify(a)===JSON.stringify(b)
   /**
    * HANDLE THIS FUNCTION FOR GET ENTITY BY IDS
    * @param entityId number
-   * @returns 
+   * @returns
    */
   public getEntityById(entityId: number): Promise<any> {
     return new Promise((resolve, rejects) => {
       forkJoin([
-        this.businessRuleService.getAllEntitesById(entityId)
+        this.businessRuleService.getAllEntitesById(entityId),
       ]).subscribe(
         ([entityData]: any) => {
           resolve({
-            entityData
+            entityData,
           });
         },
         (err) => {
           this.loading = false;
           rejects({
-            entityData: []
+            entityData: [],
           });
         }
       );
@@ -371,11 +428,19 @@ return JSON.stringify(a)===JSON.stringify(b)
    */
   public formbuild() {
     this.myForm = this.formbuilder.group({
-      name: ['', [Validators.required]],
-      priority: ['', [Validators.required, Validators.min(1), Validators.max(1000), this.samePriorityValidator(this.allRules)]],
-      description: ['', [Validators.required]],
-      notification: [''],
-      group: ['DEFAULT_VALUE_ACTION', [Validators.required]],
+      name: ["", [Validators.required]],
+      priority: [
+        "",
+        [
+          Validators.required,
+          Validators.min(1),
+          Validators.max(1000),
+          this.samePriorityValidator(this.allRules),
+        ],
+      ],
+      description: ["", [Validators.required]],
+      notification: [""],
+      group: ["DEFAULT_VALUE_ACTION", [Validators.required]],
       condition: this.formbuilder.array([]),
       action: this.formbuilder.array([], Validators.required),
       elseaction: this.formbuilder.array([]),
@@ -389,7 +454,9 @@ return JSON.stringify(a)===JSON.stringify(b)
       if (!!priority) {
         return { invalidPriority: true };
       }
-      const returnValue: any = !['',undefined,null].includes(value) ? value : null;
+      const returnValue: any = !["", undefined, null].includes(value)
+        ? value
+        : null;
       return returnValue;
     };
   }
@@ -406,13 +473,13 @@ return JSON.stringify(a)===JSON.stringify(b)
 
   //HANDLE TO GET ELSE CONDITION GROUP
   get elseAction(): FormArray {
-    return this.myForm.get('elseaction') as FormArray
+    return this.myForm.get("elseaction") as FormArray;
   }
 
   // HANDLE TO GET SUBCONDITIONS GROUP
   public get subConditions(): FormArray {
-    const condition = this.myForm.get('condition') as FormArray;
-    return condition.controls[0].get('subConditions') as FormArray;
+    const condition = this.myForm.get("condition") as FormArray;
+    return condition.controls[0].get("subConditions") as FormArray;
   }
 
   /**
@@ -423,7 +490,7 @@ return JSON.stringify(a)===JSON.stringify(b)
     if (id) {
       this.businessRuleService.getAllEntitesById(id).subscribe((res: any) => {
         this.conditionsData.attributes = res.attributes;
-      })
+      });
     }
   }
 
@@ -435,7 +502,15 @@ return JSON.stringify(a)===JSON.stringify(b)
     this.ruleId = res?.id;
     this.myForm = this.formbuilder.group({
       name: [res.name, Validators.required],
-      priority: [res.priority, [Validators.required, Validators.min(1), Validators.max(1000), this.samePriorityValidator(this.allRules)]],
+      priority: [
+        res.priority,
+        [
+          Validators.required,
+          Validators.min(1),
+          Validators.max(1000),
+          this.samePriorityValidator(this.allRules),
+        ],
+      ],
       description: [res.description, [Validators.required]],
       notification: [res.notification],
       group: [res.group],
@@ -460,13 +535,18 @@ return JSON.stringify(a)===JSON.stringify(b)
      * PUSH DATA IN CONDITIONS FORM ARRAY
      */
     await res.condition.forEach((condition: any) => {
-      this.conditions.push(this.patchConditionAndActionForm('condition', condition));
+      this.conditions.push(
+        this.patchConditionAndActionForm("condition", condition)
+      );
     });
 
     const lastIndex = this.conditions.controls.length - 1;
-    const conditionTypeControl = this.conditions?.controls.length > 0 && lastIndex ? this.conditions?.controls[lastIndex].get('conditionType') : null;
-    if (conditionTypeControl?.value !== 'NONE') {
-      conditionTypeControl?.patchValue('NONE');
+    const conditionTypeControl =
+      this.conditions?.controls.length > 0 && lastIndex
+        ? this.conditions?.controls[lastIndex].get("conditionType")
+        : null;
+    if (conditionTypeControl?.value !== "NONE") {
+      conditionTypeControl?.patchValue("NONE");
     }
     /**
      * PUSH DATA IN ACTIONS FORM ARRAY
@@ -474,70 +554,112 @@ return JSON.stringify(a)===JSON.stringify(b)
     await Object.entries(res.conditionalAction).map((action: any) => {
       action[1].forEach((item: any) => {
         switch (action[0]) {
-          case 'ifActions':
-            this.actions.push(this.patchConditionAndActionForm('action', item));
+          case "ifActions":
+            this.actions.push(this.patchConditionAndActionForm("action", item));
             break;
 
-          case 'elseActions':
-            this.elseAction.push(this.patchConditionAndActionForm('action', item));
+          case "elseActions":
+            this.elseAction.push(
+              this.patchConditionAndActionForm("action", item)
+            );
             break;
         }
       });
     });
 
-this.previousValue=this.myForm.value
-this.previousValue.condition?.forEach((item:any)=>{
-  delete  item.min_value;
-  delete  item.max_value;
-})
-this.previousValue.action?.forEach((item:any)=>{
-  delete  item.min_value;
-  delete  item.max_value;
-})
-this.previousValue.elseaction?.forEach((item:any)=>{
-  delete  item.min_value;
-  delete  item.max_value;
-})
-this.publishButton=this.rulesData?.status !=='Yet to Publish' ? true :false
-console.log(this.publishButton,this.myForm.value)
+    this.previousValue = this.myForm.value;
+    this.previousValue.condition?.forEach((item: any) => {
+      delete item.min_value;
+      delete item.max_value;
+    });
+    this.previousValue.action?.forEach((item: any) => {
+      delete item.min_value;
+      delete item.max_value;
+    });
+    this.previousValue.elseaction?.forEach((item: any) => {
+      delete item.min_value;
+      delete item.max_value;
+    });
+    this.publishButton =
+      this.rulesData?.status !== "Yet to Publish" ? true : false;
+    console.log(this.publishButton, this.myForm.value);
   }
 
   /**
    *  HANDLE FOR PATCH CONDITIONS ACTIONS GROUP FORM
    * @param text string
    * @param item any
-   * @returns 
+   * @returns
    */
   public patchConditionAndActionForm(text: string, item: any): FormGroup {
     const type = typeof item?.operand;
-    const value = type !== 'number' && item?.operand ? item?.operand.split(',') : item?.operand;
+    const value =
+      type !== "number" && item?.operand
+        ? item?.operand.split(",")
+        : item?.operand;
     const form: FormGroup = this.formbuilder.group({
       id: [this.generateRandomIds()],
-      conditionType: item?.conditionType ? [item.conditionType, Validators.required] : ['', Validators.required],
-      attributeId: item?.attributeId ? [item.attributeId, Validators.required] : ['', Validators.required],
-      actionType: item?.actionType ? [item.actionType, Validators.required] : ['', Validators.required],
-      operatorType: item?.operatorType ? [item.operatorType, Validators.required] : ['', Validators.required],
-      operand: item?.operand?.toString() ? [item.operand, Validators.required] : ['', Validators.required],
-      max_value: value && value[1] ? [value[1], Validators.required] : ['', Validators.required],
-      min_value: value && value[0] ? [value[0], Validators.required] : ['', Validators.required],
-      operandType: item?.operandType ? [item.operandType, Validators.required] : ['ATTRIBUTE', Validators.required],
-      subConditionType: item?.subConditionType ? [item.subConditionType] : ['NONE', Validators.required],
-      parentAttributeId: item?.parentAttributeId ? [item.parentAttributeId] : [''],
-      attributeName: item?.attributeName ? [item.attributeName] : [''],
-      attributeDisplayName: item?.attributeDisplayName ? [item.attributeDisplayName] : [''],
-      parentAttributeName: item?.parentAttributeName ? [item.parentAttributeName] : [''],
-      parentAttributeDisplayName: item?.parentAttributeDisplayName ? [item.parentAttributeDisplayName] : [''],
-      attributeTableName: item?.attributeTableName ? [item.attributeTableName] : [''],
-      parentOperandId: item?.parentOperandId ? [item.parentOperandId] : [''],
-      operandName: item?.operandName ? [item.operandName] : [''],
-      operandDisplayName: item?.operandDisplayName ? [item.operandDisplayName] : [''],
-      parentOperandName: item?.parentOperandName ? [item.parentOperandName] : [''],
-      parentOperandDisplayName: item?.parentOperandDisplayName ? [item.parentOperandDisplayName] : [''],
-      operandTableName: item?.operandTableName ? [item.operandTableName] : [''],
-      subConditions: this.formbuilder.array([])
+      conditionType: item?.conditionType
+        ? [item.conditionType, Validators.required]
+        : ["", Validators.required],
+      attributeId: item?.attributeId
+        ? [item.attributeId, Validators.required]
+        : ["", Validators.required],
+      actionType: item?.actionType
+        ? [item.actionType, Validators.required]
+        : ["", Validators.required],
+      operatorType: item?.operatorType
+        ? [item.operatorType, Validators.required]
+        : ["", Validators.required],
+      operand: item?.operand?.toString()
+        ? [item.operand, Validators.required]
+        : ["", Validators.required],
+      max_value:
+        value && value[1]
+          ? [value[1], Validators.required]
+          : ["", Validators.required],
+      min_value:
+        value && value[0]
+          ? [value[0], Validators.required]
+          : ["", Validators.required],
+      operandType: item?.operandType
+        ? [item.operandType, Validators.required]
+        : ["ATTRIBUTE", Validators.required],
+      subConditionType: item?.subConditionType
+        ? [item.subConditionType]
+        : ["NONE", Validators.required],
+      parentAttributeId: item?.parentAttributeId
+        ? [item.parentAttributeId]
+        : [""],
+      attributeName: item?.attributeName ? [item.attributeName] : [""],
+      attributeDisplayName: item?.attributeDisplayName
+        ? [item.attributeDisplayName]
+        : [""],
+      parentAttributeName: item?.parentAttributeName
+        ? [item.parentAttributeName]
+        : [""],
+      parentAttributeDisplayName: item?.parentAttributeDisplayName
+        ? [item.parentAttributeDisplayName]
+        : [""],
+      attributeTableName: item?.attributeTableName
+        ? [item.attributeTableName]
+        : [""],
+      parentOperandId: item?.parentOperandId ? [item.parentOperandId] : [""],
+      operandName: item?.operandName ? [item.operandName] : [""],
+      operandDisplayName: item?.operandDisplayName
+        ? [item.operandDisplayName]
+        : [""],
+      parentOperandName: item?.parentOperandName
+        ? [item.parentOperandName]
+        : [""],
+      parentOperandDisplayName: item?.parentOperandDisplayName
+        ? [item.parentOperandDisplayName]
+        : [""],
+      operandTableName: item?.operandTableName ? [item.operandTableName] : [""],
+      subConditions: this.formbuilder.array([]),
     });
 
-    const subConditionsArray = form.get('subConditions') as FormArray; // Get the FormArray control
+    const subConditionsArray = form.get("subConditions") as FormArray; // Get the FormArray control
 
     if (!!item.subConditions && item.subConditions.length > 0) {
       // Loop through subConditions and push each subcondition form group to the subConditions array
@@ -548,20 +670,21 @@ console.log(this.publishButton,this.myForm.value)
     }
 
     switch (text) {
-      case 'condition':
-        form.removeControl('actionType');
+      case "condition":
+        form.removeControl("actionType");
         break;
 
-      case 'action':
+      case "action":
         this.removeControls(form);
         break;
     }
 
     this.item = {
-      value: { id: 'parent', subConditions: this.conditions },
+      value: { id: "parent", subConditions: this.conditions },
       controls: {
-        id: 'parent', subConditions: this.conditions
-      }
+        id: "parent",
+        subConditions: this.conditions,
+      },
     };
     return form;
   }
@@ -571,39 +694,74 @@ console.log(this.publishButton,this.myForm.value)
    * @param subcondition any
    */
   public patchsubConditionsForm(item: any): FormGroup {
-    const sepStart = '.';
-    const type = typeof item.operand
-    const startIndex = type === 'string' ? item.operand.indexOf(sepStart) : -1;
+    const sepStart = ".";
+    const type = typeof item.operand;
+    const startIndex = type === "string" ? item.operand.indexOf(sepStart) : -1;
     let value: any = item?.operand;
     if (startIndex !== -1) {
-      value = item?.operand ? item?.operand.split(',') : '';
+      value = item?.operand ? item?.operand.split(",") : "";
     }
     const form: FormGroup = this.formbuilder.group({
       id: [this.generateRandomIds()],
-      conditionType: item?.conditionType ? [item.conditionType, Validators.required] : ['', Validators.required],
-      attributeId: item?.attributeId ? [item.attributeId, Validators.required] : ['', Validators.required],
-      operatorType: item?.operatorType ? [item.operatorType, Validators.required] : ['', Validators.required],
-      operand: item?.operand && !item?.operand?.max ? [item.operand, Validators.required] : ['', Validators.required],
-      max_value: value && value[1] ? [value[1], Validators.required] : ['', Validators.required],
-      min_value: value && value[0] ? [value[0], Validators.required] : ['', Validators.required],
-      operandType: item?.operandType ? [item.operandType, Validators.required] : ['ATTRIBUTE', Validators.required],
-      attributeName: item?.attributeName ? [item.attributeName] : [''],
-      attributeDisplayName: item?.attributeDisplayName ? [item.attributeDisplayName] : [''],
-      parentAttributeId: item?.parentAttributeId ? [item.parentAttributeId] : [''],
-      parentAttributeName: item?.parentAttributeName ? [item.parentAttributeName] : [''],
-      parentAttributeDisplayName: item?.parentAttributeDisplayName ? [item.parentAttributeDisplayName] : [''],
-      attributeTableName: item?.attributeTableName ? [item.attributeTableName] : [''],
-      parentOperandId: item?.parentOperandId ? [item.parentOperandId] : [''],
-      operandName: item?.operandName ? [item.operandName] : [''],
-      operandDisplayName: item?.operandDisplayName ? [item.operandDisplayName] : [''],
-      parentOperandName: item?.parentOperandName ? [item.parentOperandName] : [''],
-      parentOperandDisplayName: item?.parentOperandDisplayName ? [item.parentOperandDisplayName] : [''],
-      operandTableName: item?.operandTableName ? [item.operandTableName] : [''],
-      subConditionType: item?.subConditionType ? [item.subConditionType] : ['NONE', Validators.required],
-      subConditions: this.formbuilder.array([])
+      conditionType: item?.conditionType
+        ? [item.conditionType, Validators.required]
+        : ["", Validators.required],
+      attributeId: item?.attributeId
+        ? [item.attributeId, Validators.required]
+        : ["", Validators.required],
+      operatorType: item?.operatorType
+        ? [item.operatorType, Validators.required]
+        : ["", Validators.required],
+      operand:
+        item?.operand && !item?.operand?.max
+          ? [item.operand, Validators.required]
+          : ["", Validators.required],
+      max_value:
+        value && value[1]
+          ? [value[1], Validators.required]
+          : ["", Validators.required],
+      min_value:
+        value && value[0]
+          ? [value[0], Validators.required]
+          : ["", Validators.required],
+      operandType: item?.operandType
+        ? [item.operandType, Validators.required]
+        : ["ATTRIBUTE", Validators.required],
+      attributeName: item?.attributeName ? [item.attributeName] : [""],
+      attributeDisplayName: item?.attributeDisplayName
+        ? [item.attributeDisplayName]
+        : [""],
+      parentAttributeId: item?.parentAttributeId
+        ? [item.parentAttributeId]
+        : [""],
+      parentAttributeName: item?.parentAttributeName
+        ? [item.parentAttributeName]
+        : [""],
+      parentAttributeDisplayName: item?.parentAttributeDisplayName
+        ? [item.parentAttributeDisplayName]
+        : [""],
+      attributeTableName: item?.attributeTableName
+        ? [item.attributeTableName]
+        : [""],
+      parentOperandId: item?.parentOperandId ? [item.parentOperandId] : [""],
+      operandName: item?.operandName ? [item.operandName] : [""],
+      operandDisplayName: item?.operandDisplayName
+        ? [item.operandDisplayName]
+        : [""],
+      parentOperandName: item?.parentOperandName
+        ? [item.parentOperandName]
+        : [""],
+      parentOperandDisplayName: item?.parentOperandDisplayName
+        ? [item.parentOperandDisplayName]
+        : [""],
+      operandTableName: item?.operandTableName ? [item.operandTableName] : [""],
+      subConditionType: item?.subConditionType
+        ? [item.subConditionType]
+        : ["NONE", Validators.required],
+      subConditions: this.formbuilder.array([]),
     });
 
-    const subConditionsArray = form.get('subConditions') as FormArray; // Get the FormArray control
+    const subConditionsArray = form.get("subConditions") as FormArray; // Get the FormArray control
 
     if (!!item.subConditions && item.subConditions.length > 0) {
       // Loop through subConditions and push each subcondition form group to the subConditions array
@@ -624,56 +782,58 @@ console.log(this.publishButton,this.myForm.value)
     // ADD CONDITIONS AND ACTIONS FORM GROUP AND PUSH FORM
     let formGroup: FormGroup = this.formbuilder.group({
       id: [this.generateRandomIds()],
-      attributeId: ['', Validators.required],
-      attributeName: [''],
-      attributeDisplayName: [''],
-      parentAttributeId: [''],
-      parentAttributeName: [''],
-      parentAttributeDisplayName: [''],
-      attributeTableName: [''],
-      operand: ['', Validators.required],
-      operandName: [''],
-      operandDisplayName: [''],
-      parentOperandId: [''],
-      parentOperandName: [''],
-      parentOperandDisplayName: [''],
-      operandTableName: [''],
-      max_value: ['', Validators.required],
-      min_value: ['', Validators.required],
-      conditionType: ['', Validators.required],
-      operatorType: ['', Validators.required],
-      actionType: ['', Validators.required],
-      operandType: ['ATTRIBUTE', Validators.required],
-      subConditionType: ['NONE', Validators.required],
-      subConditions: this.formbuilder.array([])
+      attributeId: ["", Validators.required],
+      attributeName: [""],
+      attributeDisplayName: [""],
+      parentAttributeId: [""],
+      parentAttributeName: [""],
+      parentAttributeDisplayName: [""],
+      attributeTableName: [""],
+      operand: ["", Validators.required],
+      operandName: [""],
+      operandDisplayName: [""],
+      parentOperandId: [""],
+      parentOperandName: [""],
+      parentOperandDisplayName: [""],
+      operandTableName: [""],
+      max_value: ["", Validators.required],
+      min_value: ["", Validators.required],
+      conditionType: ["", Validators.required],
+      operatorType: ["", Validators.required],
+      actionType: ["", Validators.required],
+      operandType: ["ATTRIBUTE", Validators.required],
+      subConditionType: ["NONE", Validators.required],
+      subConditions: this.formbuilder.array([]),
     });
-
 
     // add nesteddrop id's
     const index = this.conditions.length;
-    this.nestedIds.push(formGroup.get('id')!.value);
+    this.nestedIds.push(formGroup.get("id")!.value);
 
     /**
      * ADD CONTROLS DEPENDS ON FORM CONDITION
      */
     switch (text) {
-      case 'condition':
-        formGroup.removeControl('actionType');
+      case "condition":
+        formGroup.removeControl("actionType");
         this.conditions.push(formGroup);
         this.conditions.controls.forEach((item: any, i: number) => {
           if (index !== i) {
-            item.get('conditionType')?.value !== 'NONE' ? item.get('conditionType')?.value : item.get('conditionType')?.patchValue('');
+            item.get("conditionType")?.value !== "NONE"
+              ? item.get("conditionType")?.value
+              : item.get("conditionType")?.patchValue("");
+          } else {
+            this.conditions.controls[index]
+              .get("conditionType")
+              ?.patchValue("NONE");
           }
-          else {
-            this.conditions.controls[index].get('conditionType')?.patchValue('NONE');
-          }
-        })
+        });
         break;
-      case 'action':
+      case "action":
         this.removeControls(formGroup);
         this.actions.push(formGroup);
         break;
-      case 'elseaction':
+      case "elseaction":
         this.removeControls(formGroup);
         this.elseAction.push(formGroup);
         break;
@@ -686,10 +846,10 @@ console.log(this.publishButton,this.myForm.value)
   // Common method to remove controls
   public removeControls(formGroup: FormGroup): void {
     const controlNames = [
-      'conditionType',
-      'operatorType',
-      'subConditions',
-      'subConditionType'
+      "conditionType",
+      "operatorType",
+      "subConditions",
+      "subConditionType",
     ];
 
     controlNames.forEach((controlName) => {
@@ -704,15 +864,15 @@ console.log(this.publishButton,this.myForm.value)
    */
   public removeRow(text: any, index?: any) {
     switch (text) {
-      case 'condition':
+      case "condition":
         this.conditions.removeAt(index);
         break;
 
-      case 'action':
+      case "action":
         this.actions.removeAt(index);
         break;
 
-      case 'elseaction':
+      case "elseaction":
         this.elseAction.removeAt(index);
         break;
       default:
@@ -741,22 +901,24 @@ console.log(this.publishButton,this.myForm.value)
     }
   }
 
-
   /**
    * Predicate function that only allows even numbers to be
    * sorted into even indices and odd numbers at odd indices.
    */
   sortPredicate(index: number, item: CdkDrag<number>) {
-    return true
+    return true;
   }
 
   public generateRandomIds() {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_-'
-    let result = '';
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_-";
+    let result = "";
     for (let i = 0; i < 20; i++) {
-      result += characters.charAt(Math.floor(Math.random() * characters.length));
+      result += characters.charAt(
+        Math.floor(Math.random() * characters.length)
+      );
     }
-    return result
+    return result;
   }
 
   /**
@@ -765,14 +927,13 @@ console.log(this.publishButton,this.myForm.value)
    */
   // event: CdkDragDrop<any>
   onDragDropBusinessRule(event: any) {
-    event.container.element.nativeElement.classList.remove('active');
+    event.container.element.nativeElement.classList.remove("active");
     if (this.canBRBeDropped(event)) {
       const movingItem: any = event.item.data;
       event.container.data.controls.subConditions.push(movingItem);
       this.removeConditions(event.previousContainer.data, movingItem.value.id);
       this.addControlSubConditionType(this.conditions);
       this.conditionsPatchValue(this.conditions);
-
     } else {
       moveItemInArray(
         event.container.data.controls.subConditions,
@@ -792,13 +953,14 @@ console.log(this.publishButton,this.myForm.value)
     let lastIndex = conditions.length - 1;
     conditions.controls.forEach((element: any, index: number) => {
       if (lastIndex !== index) {
-        element.get('conditionType')?.value !== 'NONE' ? element.get('conditionType')?.value : element.get('conditionType')?.patchValue('');
-      }
-      else {
-        conditions.controls[lastIndex].get('conditionType')?.patchValue('NONE');
+        element.get("conditionType")?.value !== "NONE"
+          ? element.get("conditionType")?.value
+          : element.get("conditionType")?.patchValue("");
+      } else {
+        conditions.controls[lastIndex].get("conditionType")?.patchValue("NONE");
       }
       if (!!element.value.subConditions.length) {
-        this.conditionsPatchValue(element.get('subConditions'));
+        this.conditionsPatchValue(element.get("subConditions"));
       }
     });
     this.businessRuleService.ruleChageDetection.next(true);
@@ -807,11 +969,12 @@ console.log(this.publishButton,this.myForm.value)
   public addControlSubConditionType(conditions: any) {
     conditions.controls.forEach((element: any) => {
       if (!!element.value.subConditions.length) {
-        ['NONE', ''].includes(element.value.subConditionType) ? element.get('subConditionType')?.patchValue('AND') : '';
-        this.addControlSubConditionType(element.get('subConditions'));
-      }
-      else {
-        element.get('subConditionType')?.patchValue('NONE');
+        ["NONE", ""].includes(element.value.subConditionType)
+          ? element.get("subConditionType")?.patchValue("AND")
+          : "";
+        this.addControlSubConditionType(element.get("subConditions"));
+      } else {
+        element.get("subConditionType")?.patchValue("NONE");
       }
     });
   }
@@ -819,7 +982,7 @@ console.log(this.publishButton,this.myForm.value)
   /**
    * HANDLE THIS FUNCTION FOR REMOVE FORMARRAY
    * @param data any
-   * @param id string 
+   * @param id string
    */
   removeConditions(data: any, id: string) {
     const index = data.controls.subConditions.value.findIndex(
@@ -841,11 +1004,11 @@ console.log(this.publishButton,this.myForm.value)
    * HANDLE THIS FUNCTION FOR REMOVE FORMGROUP BY ID RECURSIVE METHOD
    * @param formGroup formgroup
    * @param id string
-   * @returns 
+   * @returns
    */
   removeFormGroupById(formGroup: FormGroup | FormArray, id: string) {
     if (formGroup instanceof FormGroup) {
-      if (formGroup.get('id')?.value === id) {
+      if (formGroup.get("id")?.value === id) {
         // Remove the matching form group from its parent
         const parentArray = formGroup.parent as FormArray;
         if (parentArray) {
@@ -858,15 +1021,15 @@ console.log(this.publishButton,this.myForm.value)
       }
 
       // Recursively call for subConditions form control
-      const subConditionsControl = formGroup.get('subConditions') as FormArray;
+      const subConditionsControl = formGroup.get("subConditions") as FormArray;
       if (subConditionsControl instanceof FormArray) {
-        subConditionsControl.controls.forEach(control => {
+        subConditionsControl.controls.forEach((control) => {
           this.removeFormGroupById(control as FormGroup, id);
         });
       }
     } else if (formGroup instanceof FormArray) {
       // Recursively call for each control in the FormArray
-      formGroup.controls.forEach(control => {
+      formGroup.controls.forEach((control) => {
         this.removeFormGroupById(control as FormGroup | FormArray, id);
       });
     }
@@ -874,9 +1037,10 @@ console.log(this.publishButton,this.myForm.value)
     let lastIndex = this.conditions.controls.length - 1;
     lastIndex = lastIndex ? lastIndex : 0;
     if (lastIndex >= 0) {
-      const conditionTypeControl = this.conditions.controls[lastIndex].get('conditionType');
-      if (conditionTypeControl?.value !== 'NONE') {
-        conditionTypeControl?.patchValue('NONE');
+      const conditionTypeControl =
+        this.conditions.controls[lastIndex].get("conditionType");
+      if (conditionTypeControl?.value !== "NONE") {
+        conditionTypeControl?.patchValue("NONE");
       }
     }
     this.businessRuleService.ruleChageDetection.next(true);
@@ -884,13 +1048,15 @@ console.log(this.publishButton,this.myForm.value)
 
   /**
    * HANDLE RECURSIVE IDS FOR SUBCONDITIONS
-   * @param element 
-   * @returns 
+   * @param element
+   * @returns
    */
   private getBRIdsRecursive(element: any): string[] {
     this.idsBr = [element.value.id];
     element.value.subConditions.controls.forEach((childItem: any) => {
-      this.idsBr = this.idsBr.concat(this.getBRIdconditionsRecursive(childItem));
+      this.idsBr = this.idsBr.concat(
+        this.getBRIdconditionsRecursive(childItem)
+      );
     });
     return this.idsBr;
   }
@@ -898,7 +1064,9 @@ console.log(this.publishButton,this.myForm.value)
   private getBRIdconditionsRecursive(element: any): string[] {
     this.idsBr = [element.value.id];
     element.controls.subConditions.controls.forEach((childItem: any) => {
-      this.idsBr = this.idsBr.concat(this.getBRIdconditionsRecursive(childItem));
+      this.idsBr = this.idsBr.concat(
+        this.getBRIdconditionsRecursive(childItem)
+      );
     });
     return this.idsBr;
   }
@@ -926,15 +1094,17 @@ console.log(this.publishButton,this.myForm.value)
     );
     return hasChild
       ? true
-      : parentItem.subConditions.some((item: any) => this.hasBRChild(item, childItem));
+      : parentItem.subConditions.some((item: any) =>
+          this.hasBRChild(item, childItem)
+        );
   }
 
   /**
-* HANDLE THIS FUNCTION FOR FIND THE ATTRIBUTE ARRAY
-* @param id string
-* @param array any
-* @returns 
-*/
+   * HANDLE THIS FUNCTION FOR FIND THE ATTRIBUTE ARRAY
+   * @param id string
+   * @param array any
+   * @returns
+   */
   private findAttributeInArray(id: any, array: any[]): any {
     return array ? array.find((elm: any) => elm.id === id) : null;
   }
@@ -942,17 +1112,20 @@ console.log(this.publishButton,this.myForm.value)
   /**
    * HANDLE THIS FUNCTION FOR FIND THE ATTRIBUTE BY ID
    * @param id string
-   * @returns 
+   * @returns
    */
   private findAttributeById(id: any): any {
-    if (id === '') {
+    if (id === "") {
       return null;
     }
 
     let attributeItem: any = null;
 
     // Look for the attribute directly in the attributes array
-    attributeItem = this.findAttributeInArray(id, this.conditionsData?.attributes);
+    attributeItem = this.findAttributeInArray(
+      id,
+      this.conditionsData?.attributes
+    );
 
     // If not found, search within nested attributes
     if (!attributeItem) {
@@ -979,19 +1152,20 @@ console.log(this.publishButton,this.myForm.value)
       const seconds = date.getSeconds();
 
       // Create a formatted date string
-      const formattedDate = `${year}-${this.pad(month)}-${this.pad(day)} ${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
+      const formattedDate = `${year}-${this.pad(month)}-${this.pad(
+        day
+      )} ${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
 
-      console.log(formattedDate, '>>');
+      console.log(formattedDate, ">>");
       return formattedDate;
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
     }
   }
 
   // Function to pad single-digit numbers with a leading zero
   private pad(num: number): string {
-    return (num < 10 ? '0' : '') + num;
+    return (num < 10 ? "0" : "") + num;
   }
 
   /**
@@ -1000,9 +1174,13 @@ console.log(this.publishButton,this.myForm.value)
    */
   public conditionAndSubcondition(conditions: any) {
     conditions.forEach(async (condition: any) => {
-      condition.operand = condition.operandType === 'BLANK' ? '' : condition.operand;
+      condition.operand =
+        condition.operandType === "BLANK" ? "" : condition.operand;
       const attribute = this.findAttributeById(condition.attributeId);
-      if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute?.dataType) && condition?.operandType === 'CONSTANT') {
+      if (
+        ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute?.dataType) &&
+        condition?.operandType === "CONSTANT"
+      ) {
         const d1 = new Date(condition.operand);
         const minD = new Date(condition.min_value);
         const maxD = new Date(condition.max_value);
@@ -1011,14 +1189,24 @@ console.log(this.publishButton,this.myForm.value)
         condition.min_value = await this.unixTimeStamp(minD);
         condition.max_value = await this.unixTimeStamp(maxD);
       }
-      if (['DECIMAL', 'INTEGER'].includes(attribute?.dataType) && condition?.operandType === 'CONSTANT' && !!condition?.operand && condition?.operand !== '') {
+      if (
+        ["DECIMAL", "INTEGER"].includes(attribute?.dataType) &&
+        condition?.operandType === "CONSTANT" &&
+        !!condition?.operand &&
+        condition?.operand !== ""
+      ) {
         condition.operand = +condition.operand;
       }
-      if (['MUST_BE_BETWEEN', 'IS_BETWEEN', 'IS_NOT_BETWEEN'].includes(condition.operatorType) && condition?.operandType === 'CONSTANT') {
+      if (
+        ["MUST_BE_BETWEEN", "IS_BETWEEN", "IS_NOT_BETWEEN"].includes(
+          condition.operatorType
+        ) &&
+        condition?.operandType === "CONSTANT"
+      ) {
         condition.operand = `${condition.min_value},${condition.max_value}`;
-      } else if (['NONE'].includes(condition?.operatorType)) {
-        condition.operand = '';
-        condition.operandType = 'BLANK';
+      } else if (["NONE"].includes(condition?.operatorType)) {
+        condition.operand = "";
+        condition.operandType = "BLANK";
       }
       delete condition.min_value;
       delete condition.max_value;
@@ -1034,44 +1222,56 @@ console.log(this.publishButton,this.myForm.value)
    */
   public async onSubmit(item: any, text?: any) {
     // ADD PARAM
-    const dataItem: any = item = {
+    const dataItem: any = (item = {
       name: item.name,
       priority: item.priority,
       description: item.description,
-      notification: '',
+      notification: "",
       group: item.group,
       condition: item.condition,
       entityId: +this.entityId,
-      isExcluded: this.rulesData && text !== 'save' ? this.rulesData.isExcluded : false,
-      status: this.rulesData ? this.rulesData.status : 'In Progress',
+      isExcluded:
+        this.rulesData && text !== "save" ? this.rulesData.isExcluded : false,
+      status: this.rulesData ? this.rulesData.status : "In Progress",
       conditionalAction: {
         ifActions: item.action,
-        elseActions: item.elseaction
+        elseActions: item.elseaction,
       },
-      id: this.ruleId
-    }
+      id: this.ruleId,
+    });
     this.saveButton = true;
     // EDIT FOR ACTIONS VALUE
     Object.entries(dataItem.conditionalAction).map((action: any) => {
-      action[1].forEach(async(item: any) => {
+      action[1].forEach(async (item: any) => {
         item.actionGroup = dataItem.group;
         const attribute = this.findAttributeById(item.attributeId);
-        if (['DATE', 'TIME_STAMP', 'DATE_TIME'].includes(attribute?.dataType) && item?.operandType === 'CONSTANT') {
+        if (
+          ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute?.dataType) &&
+          item?.operandType === "CONSTANT"
+        ) {
           const d1 = new Date(item.operand);
           const minD = new Date(item.min_value);
           const maxD = new Date(item.max_value);
 
-          item.operand = await this.unixTimeStamp(d1);;
+          item.operand = await this.unixTimeStamp(d1);
           item.min_value = await this.unixTimeStamp(minD);
           item.max_value = await this.unixTimeStamp(maxD);
         }
-        if (['DECIMAL', 'INTEGER'].includes(attribute?.dataType) && item?.operandType === 'CONSTANT' && !!item?.operand && item?.operand !== '') {
+        if (
+          ["DECIMAL", "INTEGER"].includes(attribute?.dataType) &&
+          item?.operandType === "CONSTANT" &&
+          !!item?.operand &&
+          item?.operand !== ""
+        ) {
           item.operand = +item.operand;
         }
-        if (item?.actionType === 'MUST_BE_BETWEEN' && item?.operandType === 'CONSTANT') {
+        if (
+          item?.actionType === "MUST_BE_BETWEEN" &&
+          item?.operandType === "CONSTANT"
+        ) {
           item.operand = `${item.min_value},${item.max_value}`;
-        } else if (['IS_REQUIRED', 'IS_NOT_VALID'].includes(item?.actionType)) {
-          item.operand = '';
+        } else if (["IS_REQUIRED", "IS_NOT_VALID"].includes(item?.actionType)) {
+          item.operand = "";
         }
         delete item.min_value;
         delete item.max_value;
@@ -1085,73 +1285,91 @@ console.log(this.publishButton,this.myForm.value)
     const updateParam = { ...param, id: this.ruleId };
 
     // CALL BUSINESSRULE UPDATE AND INSERT POST API
-    (this.ruleId && text !== 'save' ? this.businessRuleService.updateBusinessRule(this.ruleId, updateParam) : !this.ruleId && text === 'save' ? this.businessRuleService.saveBusinessRule(updateParam) : !!this.ruleId && text === 'save' ? this.businessRuleService.updateSaveBusinessRule(this.ruleId, updateParam) : this.businessRuleService.insertBusinessRule(param)).subscribe((res: any) => {
-      const message: any = this.ruleId ? 'Rule is updated successfully!' : 'Rule is created successfully!';
-      this.messageservice.snackMessage.next(message);
-      if(text!=='save')
-     { 
-      this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
-        queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId },
-        state: {sort: this.sorts}
-      });
-    }
-    },
+    (this.ruleId && text !== "save"
+      ? this.businessRuleService.updateBusinessRule(this.ruleId, updateParam)
+      : !this.ruleId && text === "save"
+      ? this.businessRuleService.saveBusinessRule(updateParam)
+      : !!this.ruleId && text === "save"
+      ? this.businessRuleService.updateSaveBusinessRule(
+          this.ruleId,
+          updateParam
+        )
+      : this.businessRuleService.insertBusinessRule(param)
+    ).subscribe(
+      (res: any) => {
+        const message: any = this.ruleId
+          ? "Rule is updated successfully!"
+          : "Rule is created successfully!";
+        this.messageservice.snackMessage.next(message);
+        if (text !== "save") {
+          this.router.navigate(
+            ["/spriced-data-definition/rules/rule-management"],
+            {
+              queryParams: {
+                entity_id: this.entityId,
+                model_id: this.modelId,
+                attribute_id: this.attributeId,
+              },
+              state: { sort: this.sorts },
+            }
+          );
+        }
+      },
       // Handle the api error as needed
       (err: any) => {
         if (err.error.errorCode == "DB_UK-008") {
-          this.snackbarService.error('Rule Already Exists');
-        }
-        else {
-          console.log('Api error:', err);
-          this.snackbarService.error('Rule Creation Failed.');
+          this.snackbarService.error("Rule Already Exists");
+        } else {
+          console.log("Api error:", err);
+          this.snackbarService.error("Rule Creation Failed.");
         }
         // this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
         //   queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId },
         // });
         this.saveButton = false;
-      });
+      }
+    );
   }
 
   public backToListpage() {
-    if(!this.isValueChanged && !this.saveButton)
-    {
+    if (!this.isValueChanged && !this.saveButton) {
       const dialogRef = this.dialogService.openConfirmDialoge({
-        message: "Once discarded,you cannot recover the rule.Are you sure you want to continue?",
+        message:
+          "Once discarded,you cannot recover the rule.Are you sure you want to continue?",
         title: "Discard Changes",
         icon: "warning",
       });
       dialogRef.afterClosed().subscribe((result: any) => {
         if (result == true) {
-          this.back()
-
-      }
-        })
-      }
-     if(!this.isValueChanged && this.saveButton)
-      {
-        const dialogRef = this.dialogService.openConfirmDialoge({
-          message: "Rule is not published. Are you sure you want to continue??",
-          title: "Confirm",
-          icon: "warning",
-        });
-        dialogRef.afterClosed().subscribe((result: any) => {
-          if (result == true) {
-            this.back()
-
+          this.back();
         }
-          })
-      }
-     if(this.isValueChanged)
-      {
-       this.back()
-      }
+      });
+    }
+    if (!this.isValueChanged && this.saveButton) {
+      const dialogRef = this.dialogService.openConfirmDialoge({
+        message: "Rule is not published. Are you sure you want to continue??",
+        title: "Confirm",
+        icon: "warning",
+      });
+      dialogRef.afterClosed().subscribe((result: any) => {
+        if (result == true) {
+          this.back();
+        }
+      });
+    }
+    if (this.isValueChanged) {
+      this.back();
+    }
   }
 
-  back()
-  {
-    this.router.navigate(['/spriced-data-definition/rules/rule-management'], {
-      queryParams: { entity_id: this.entityId, model_id: this.modelId, attribute_id: this.attributeId },
-      state: {sort: this.sorts}
+  back() {
+    this.router.navigate(["/spriced-data-definition/rules/rule-management"], {
+      queryParams: {
+        entity_id: this.entityId,
+        model_id: this.modelId,
+        attribute_id: this.attributeId,
+      },
+      state: { sort: this.sorts },
     });
   }
 
@@ -1163,7 +1381,6 @@ console.log(this.publishButton,this.myForm.value)
     this.router.navigate([], { queryParams: {} });
     this.notifier$.next(true);
     this.notifier$.complete();
-    localStorage.removeItem('sorts');
+    localStorage.removeItem("sorts");
   }
-
 }
