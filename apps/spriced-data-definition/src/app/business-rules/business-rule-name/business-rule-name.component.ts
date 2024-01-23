@@ -592,6 +592,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
    * @returns
    */
   public patchConditionAndActionForm(text: string, item: any): FormGroup {
+    debugger;
     const type = typeof item?.operand;
     const value =
       type !== "number" && item?.operand
