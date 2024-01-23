@@ -78,6 +78,7 @@
 title="add"
 class=" h-full flex text-white cursor-pointer p-3 bg-primary-default rounded-full"
 (click)="onAdd(inputField.value)"
+[disabled]="this.totalElements==0 || inputField.value==''"
 >
 <mat-icon class="mt-auto">add</mat-icon>
 </button>
