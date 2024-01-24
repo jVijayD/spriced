@@ -18,6 +18,7 @@ import {
   EntityService,
   Model,
   Entity,
+  GlobalSettingService,
 } from "@spriced-frontend/spriced-common-lib";
 import { Subscription } from "rxjs";
 import { OrderByPipe } from "@spriced-frontend/spriced-ui-lib";
@@ -57,7 +58,8 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
   constructor(
     private modelService: ModelService,
     private entityService: EntityService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private globalSettings: GlobalSettingService
   ) {}
 
   ngOnDestroy(): void {
@@ -65,8 +67,9 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const modelId = Number(this.route.snapshot.paramMap.get("modelId"));
-    const entityId = Number(this.route.snapshot.paramMap.get("entityId"));
+    const item = this.globalSettings.getCurrentStorage('explorerStorage');
+    const modelId = Number(this.route.snapshot.paramMap.get("modelId") || item?.modelId);
+    const entityId = Number(this.route.snapshot.paramMap.get("entityId") || item?.entityId);
 
     this.subscriptions.push(
       this.modelService.loadAllModels().subscribe({

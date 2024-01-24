@@ -42,6 +42,7 @@ import {
   Criteria,
   Entity,
   EntityService,
+  GlobalSettingService,
 } from "@spriced-frontend/spriced-common-lib";
 import { Validators } from "@angular/forms";
 import { EntityDataService } from "../../services/entity-data.service";
@@ -163,7 +164,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     private statusPannelService: AppDataService,
     private entityExportService: EntityExportDataService,
     private pubService: MfeAppPubSubService,
-    private filterListService: FilterListService
+    private filterListService: FilterListService,
+    private globalSetting: GlobalSettingService
   ) {
     this.globalSettings = this.settings.getGlobalSettings();
     this.setFormData("", []);
@@ -247,6 +249,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach((item) => item.unsubscribe());
+    localStorage.removeItem('explorerStorage');
   }
 
   onPaginate(e: Paginate) {
@@ -641,6 +644,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       },
       this.settings.getGlobalSettings()
     );
+    const currentStorage = {modelId: this.currentSelectedEntity?.groupId, entityId: this.currentSelectedEntity?.id};
+    this.globalSetting.setCurrentStorage('explorerStorage', currentStorage);
     this.createDynamicUIMapping(entity as Entity);
     this.lastId = 0;
     this.loadRelatedEntity();

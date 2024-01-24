@@ -28,7 +28,9 @@ mat-accordion.mat-accordion {
 .elipsis
 {
         display: inline-block;
-        width: 150px;
+        min-width: 150px;
+        width: auto;
+        max-width: 350px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
