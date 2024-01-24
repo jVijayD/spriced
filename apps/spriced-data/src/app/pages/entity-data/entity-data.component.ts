@@ -943,6 +943,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   private applyEntitySettings(entity: Entity) {
+    this.selectedColumns=[]
     const entitySettings = this.settings.getCurrentSettings(entity.name);
     if (entitySettings) {
       this.selectedColumns = entitySettings.columns || [];
