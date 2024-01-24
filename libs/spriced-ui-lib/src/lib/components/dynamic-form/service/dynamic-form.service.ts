@@ -69,6 +69,10 @@ export class DynamicFormService {
     return this.parentForm?.value;
   }
 
+  getFormRowValues() {
+    return this.parentForm?.getRawValue();
+  }
+
   getFormItemValue(item: any) {
     return this.parentForm?.get(item);
   }
