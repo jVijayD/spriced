@@ -78,6 +78,7 @@ export class LookupDialogComponent {
   }
   public onSubmit(){
     this.dialogRef.close({ event: "Update", data: this.selectedItem });
+    this.dialogEventSubject.next({ pageNubmer:this.pageNumber, filters: [] });
   }
   onPage(e: any) {
     this.pageNumber = e.offset;
@@ -99,7 +100,7 @@ export class LookupDialogComponent {
     dialogResult.afterClosed().subscribe((val) => {
       this.query = dialogResult.componentInstance.data.query;
       this.filters = val;
-       this.dialogEventSubject.next({ pageNubmer:this.pageNumber, filters:this.filters });
+      this.dialogEventSubject.next({ pageNubmer:this.pageNumber, filters:this.filters });
     });
    }
 

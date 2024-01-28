@@ -88,11 +88,14 @@ export class LookupSelectComponent
         if (this.dialogReference) {
           this.dialogReference.componentInstance.upDatedData({
             value: items,
-            total: this.totalCount,
+            total: this.count,
             selectedItem:this.selectedItem
           });
         }
-        this.totalCount = this.count;
+        else
+        {
+        this.totalCount = this.count
+        }
         this.loading = false;
         if (this.totalCount > this.pageSize && !this.dialogReference) {
           this.openPopup();
