@@ -7,7 +7,7 @@
 
   <!-- Right elements -->
   <div class="flex">
-    <span class="text-white mt-1">Hi, {{ user }} </span>
+    <span class="text-white mt-1">Hi, {{ user.profile?.firstName || user.profile?.username }} {{ user.profile?.lastName || '' }}  </span>
     <div class="vl"></div>
     <button mat-icon-button class="btn" aria-label="" routerLink="/">
       <mat-icon class="icon-size_home">home</mat-icon>

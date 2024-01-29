@@ -26,6 +26,7 @@ export class LandingPageComponent implements OnInit {
   labels: any;
   apps: Application[] = [];
   user = "";
+  userDetails: any;
   constructor(
     private keycloakService: KeycloakService,
     private aroute: ActivatedRoute,
@@ -50,7 +51,9 @@ export class LandingPageComponent implements OnInit {
     }
   }
   private initializeUserOptions(): void {
-    this.user = this.keycloakService.getUsername();
+  this.user = this.keycloakService.getUsername();
+  this.userDetails=this.keycloakService.getKeycloakInstance() 
+   console.log(this.userDetails.profile)
     if (!!this.user) {
       if (!!this.user && this.aroute.snapshot.queryParams['returnUrl']) {
         const returnUrl = this.aroute.snapshot.queryParams['returnUrl'];
