@@ -28,13 +28,12 @@ export class HeaderComponent {
   @Input() username = "username@gmail.com";
   @Input() appname = "username@gmail.com";
   @Input() menuData: any;
-  user = "";
+  user:any;
   constructor(
     private keycloakService: KeycloakService, //  private dbService: NgxIndexedDBService,
     private httpClient: HttpClient
   ) {
-    this.user = this.keycloakService.getUsername();
-    this.user = this.capitalizeFirstLetter(this.user);
+    this.user = this.keycloakService.getKeycloakInstance();
   }
 
   public logOut(e: any) {
