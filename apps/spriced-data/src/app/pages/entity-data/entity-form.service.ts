@@ -13,14 +13,14 @@ const LOOKUP_PAGE_SIZE = 50;
 export class EntityFormService {
   public getFormFieldControls(
     entity: Entity,
-    codeSettings: string,
+    codeSettings: string
   ): FormFieldControls {
     return entity.attributes
-      .filter((item:any) => {
+      .filter((item: any) => {
         return (
           (item.permission !== "DENY" && item.editable === true) ||
           item.constraintType == "PRIMARY_KEY"
-        )
+        );
       })
       .map((attr: Attribute) => {
         return this.getType(attr, codeSettings);
@@ -53,7 +53,9 @@ export class EntityFormService {
   public extractExtraData(selectedItem: any, selectedEntity: Entity) {
     let extraData: Map<string, object> = new Map<string, object>();
     selectedEntity.attributes
-      .filter((item) => item.type == "LOOKUP" && item.permission == "UPDATE")
+      //BUG FIX: Author - Shabeeb, Issue - Read Only Permission domain entities are not populating.
+      //.filter((item) => item.type == "LOOKUP" && item.permission == "UPDATE")
+      .filter((item) => item.type == "LOOKUP")
       .forEach((attribute) => {
         const attribute_name = `${attribute.name}_name`;
         const attribute_code = `${attribute.name}_code`;
@@ -124,18 +126,19 @@ export class EntityFormService {
             validations: this.getValidations(attr),
             readOnly: attr.permission === "READ" ? true : false,
           };
-        case "INTEGER": return {
-          type: "numeric",
-          subType: "text",
-          name: attr.name,
-          placeholder: attr.displayName || attr.name,
-          label: attr.displayName || attr.name,
-          decimalCount: attr.size,
-          maxLength: 16,
-          hint: 'Maximum length is 16',
-          validations: this.getValidations(attr),
-          readOnly: attr.permission === "READ" ? true : false,
-        };
+        case "INTEGER":
+          return {
+            type: "numeric",
+            subType: "text",
+            name: attr.name,
+            placeholder: attr.displayName || attr.name,
+            label: attr.displayName || attr.name,
+            decimalCount: attr.size,
+            maxLength: 16,
+            hint: "Maximum length is 16",
+            validations: this.getValidations(attr),
+            readOnly: attr.permission === "READ" ? true : false,
+          };
 
         case "DECIMAL":
           //debugger;
@@ -148,7 +151,7 @@ export class EntityFormService {
             decimalCount: attr.size,
             maxLength: 16,
             validations: this.getValidations(attr),
-            hint: 'Maximum length is 16',
+            hint: "Maximum length is 16",
             readOnly: attr.permission === "READ" ? true : false,
           };
 
@@ -222,22 +225,19 @@ export class EntityFormService {
       validations.push({
         name: `max`,
         message: `Maximum value exceeded`,
-        validator: Validators.max(9223372036854775807)
+        validator: Validators.max(9223372036854775807),
       });
       validations.push({
         name: `min`,
         message: `Minimum value exceeded`,
-        validator: Validators.min(-9223372036854775808)
+        validator: Validators.min(-9223372036854775808),
       });
     }
     if (attr.dataType === "DECIMAL") {
       validations.push({
         name: `pattern`,
         message: `Invalid data`,
-        validator:  Validators.pattern(
-          "^-?[0-9]{0,131072}\.[0-9]{0,16383}$"
-          
-        ),
+        validator: Validators.pattern("^-?[0-9]{0,131072}.[0-9]{0,16383}$"),
       });
     }
     return validations;
