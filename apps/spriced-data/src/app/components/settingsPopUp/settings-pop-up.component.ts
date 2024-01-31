@@ -159,13 +159,14 @@ export class SettingsPopUpComponent implements OnInit {
         },
         type: "entity",
       };
+      console.log(this.currentSettings, current);
       if (
         current?.settingsData.noOfRecords !==
-          this.currentSettings?.settingsData.noOfRecords &&
+          this.currentSettings?.settingsData.noOfRecords ||
         current?.settingsData.freeze !==
-          this.currentSettings?.settingsData.freeze &&
+          this.currentSettings?.settingsData.freeze ||
         JSON.stringify(current?.settingsData.columns) !==
-        JSON.stringify(this.currentSettings?.settingsData.columns)
+          JSON.stringify(this.currentSettings?.settingsData.columns)
       ) {
         this.settings
           .putSettings(this.currentSettings)
@@ -182,14 +183,16 @@ export class SettingsPopUpComponent implements OnInit {
         },
         type: "entity",
       };
+
       if (
         current?.settingsData.noOfRecords !==
-          this.currentSettings?.settingsData.noOfRecords &&
+          this.currentSettings?.settingsData.noOfRecords ||
         current?.settingsData.freeze !==
-          this.currentSettings?.settingsData.freeze &&
-          JSON.stringify(current?.settingsData.columns)  !==
+          this.currentSettings?.settingsData.freeze ||
+        JSON.stringify(current?.settingsData.columns) !==
           JSON.stringify(this.currentSettings?.settingsData.columns)
       ) {
+        console.log("eneterd");
         this.settings
           .setSettings(this.currentSettings)
           .subscribe((result: any) => {});
@@ -207,16 +210,14 @@ export class SettingsPopUpComponent implements OnInit {
       };
       if (
         global?.settingsData.displayFormat !==
-          this.globalSettings?.settingsData.displayFormat &&
+          this.globalSettings?.settingsData.displayFormat ||
         global?.settingsData.showSystem !==
           this.globalSettings?.settingsData.showsystem
       ) {
         this.settings
           .putSettings(this.globalSettings)
-          .subscribe((result: any) => {
-          });
+          .subscribe((result: any) => {});
       }
-
     } else {
       this.globalSettings = {
         settingsData: {
@@ -227,7 +228,7 @@ export class SettingsPopUpComponent implements OnInit {
       };
       if (
         global?.settingsData.displayFormat !==
-          this.globalSettings?.settingsData.displayFormat &&
+          this.globalSettings?.settingsData.displayFormat ||
         global?.settingsData.showSystem !==
           this.globalSettings?.settingsData.showsystem
       ) {
