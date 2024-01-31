@@ -1,6 +1,9 @@
 .full-width {
   @apply w-full;
 }
-:host ::ng-deep mat-form-field .mat-mdc-form-field-subscript-wrapper{
-  display: block;
-}
+// :host ::ng-deep mat-form-field .mat-mdc-form-field-subscript-wrapper{
+//   display: block;
+// } author 
+
+//BUG FIX: Author - Anu, SM-1402 remove hint: commented hint css
+
