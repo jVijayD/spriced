@@ -164,8 +164,8 @@ export class SettingsPopUpComponent implements OnInit {
           this.currentSettings?.settingsData.noOfRecords &&
         current?.settingsData.freeze !==
           this.currentSettings?.settingsData.freeze &&
-        current?.settingsData.columns !==
-          this.currentSettings?.settingsData.columns
+        JSON.stringify(current?.settingsData.columns) !==
+        JSON.stringify(this.currentSettings?.settingsData.columns)
       ) {
         this.settings
           .putSettings(this.currentSettings)
@@ -187,8 +187,8 @@ export class SettingsPopUpComponent implements OnInit {
           this.currentSettings?.settingsData.noOfRecords &&
         current?.settingsData.freeze !==
           this.currentSettings?.settingsData.freeze &&
-        current?.settingsData.columns !==
-          this.currentSettings?.settingsData.columns
+          JSON.stringify(current?.settingsData.columns)  !==
+          JSON.stringify(this.currentSettings?.settingsData.columns)
       ) {
         this.settings
           .setSettings(this.currentSettings)
