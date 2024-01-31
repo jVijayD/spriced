@@ -9,18 +9,20 @@
     [ngClass]="frmControl.errors ? 'error' : ''"
     class="full-width"
   >
+  <!-- [placeholder]="control.placeholder || ''"  Author:Anu Removed placeholder-->
 
     <input
       spNumeric
       [decimals]="control.decimalCount"
       matInput
       [maxLength]="control.maxLength ? control.maxLength : 50"
-      [placeholder]="control.placeholder || ''"
       autocomplete="off"
       [type]="control.subType"
       [disabled]="control.readOnly || disabled"
       [(ngModel)]="value"
       (blur)="onValidate()"
+      matTooltipClass="custom-tooltip" 
+      [matTooltip]="convertToString(value)"
     />
     <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
     <mat-hint align="start" *ngIf="control.hint && !control.readOnly && convert(value).length > 15">{{ control.hint }}</mat-hint>

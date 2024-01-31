@@ -9,7 +9,7 @@
           <mat-form-field class="flex-grow" appearance="outline" [ngClass]="frmControl.errors ? 'error' : ''"
             [floatLabel]="value ? 'always' : 'auto'">
 
-            <mat-select class="flex items-center select-dropdown" matNativeControl (blur)="onTouched()"
+            <mat-select  [matTooltip]="getSelectedDisplayProp()" matTooltipClass="custom-tooltip" class="flex items-center select-dropdown" matNativeControl (blur)="onTouched()"
               [(ngModel)]="value" [disabled]="control.readOnly || disabled" (click)="onClick()">
               <mat-option>
                 <ngx-mat-select-search placeholderLabel="Search" ngModel
@@ -35,8 +35,8 @@
           <mat-form-field class="flex-grow h-8" appearance="outline" [ngClass]="frmControl.errors ? 'error' : ''"
             [floatLabel]="value ? 'always' : 'auto'">
             <!-- <div>{{ getSelectedDisplayProp() }}</div> -->
-            <input matInput [value]="getSelectedDisplayProp()" [disabled]="true"/>
-            <input [style.display]="'none'" matInput [(ngModel)]="value" />
+            <input matInput [value]="getSelectedDisplayProp()"  matTooltipClass="custom-tooltip" [matTooltip]="getSelectedDisplayProp()" [disabled]="true"/>
+            <input [style.display]="'none'"  matInput [(ngModel)]="value" />
             <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
             <mat-hint align="start" *ngIf="control.hint">
               {{ control.hint }}</mat-hint>
