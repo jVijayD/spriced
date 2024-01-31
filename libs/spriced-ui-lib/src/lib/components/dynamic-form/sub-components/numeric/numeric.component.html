@@ -9,13 +9,13 @@
     [ngClass]="frmControl.errors ? 'error' : ''"
     class="full-width"
   >
+  <!-- [placeholder]="control.placeholder || ''"  Author:Anu Removed placeholder-->
 
     <input
       spNumeric
       [decimals]="control.decimalCount"
       matInput
       [maxLength]="control.maxLength ? control.maxLength : 50"
-      [placeholder]="control.placeholder || ''"
       autocomplete="off"
       [type]="control.subType"
       [disabled]="control.readOnly || disabled"

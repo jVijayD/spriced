@@ -5,9 +5,9 @@
     </div>
     <div class="col-span-3">
       <mat-form-field [appearance]="'outline'" [ngClass]="frmControl.errors ? 'error' : ''" class="full-width ">
-
+        <!-- [placeholder]="control.placeholder || ''" Author:Anu Removed placeholder -->
         <input matInput [maxLength]="control.maxLength ? control.maxLength : 50"
-          [placeholder]="control.placeholder || ''" autocomplete="off" [type]="control.subType"
+           autocomplete="off" [type]="control.subType"
           [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
         <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
         <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
