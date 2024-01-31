@@ -7,7 +7,6 @@
       <mat-form-field [appearance]="'outline'" [ngClass]="frmControl.errors ? 'error' : ''" class="full-width ">
         <!-- [placeholder]="control.placeholder || ''" Author:Anu Removed placeholder -->
         <input matInput [maxLength]="control.maxLength ? control.maxLength : 50"
-           autocomplete="off" [type]="control.subType"
           matTooltipClass="custom-tooltip" [matTooltip]="convertToString(value)"
           autocomplete="off" [type]="control.subType"
           [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
