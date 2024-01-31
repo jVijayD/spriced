@@ -160,11 +160,11 @@ export class SettingsPopUpComponent implements OnInit {
         type: "entity",
       };
       if (
-        current?.settingsData.noOfRecords ==
+        current?.settingsData.noOfRecords !==
           this.currentSettings?.settingsData.noOfRecords &&
-        current?.settingsData.freeze ==
+        current?.settingsData.freeze !==
           this.currentSettings?.settingsData.freeze &&
-        current?.settingsData.columns ==
+        current?.settingsData.columns !==
           this.currentSettings?.settingsData.columns
       ) {
         this.settings
@@ -183,11 +183,11 @@ export class SettingsPopUpComponent implements OnInit {
         type: "entity",
       };
       if (
-        current?.settingsData.noOfRecords ==
+        current?.settingsData.noOfRecords !==
           this.currentSettings?.settingsData.noOfRecords &&
-        current?.settingsData.freeze ==
+        current?.settingsData.freeze !==
           this.currentSettings?.settingsData.freeze &&
-        current?.settingsData.columns ==
+        current?.settingsData.columns !==
           this.currentSettings?.settingsData.columns
       ) {
         this.settings
@@ -206,9 +206,9 @@ export class SettingsPopUpComponent implements OnInit {
         type: "global",
       };
       if (
-        global?.settingsData.displayFormat ==
+        global?.settingsData.displayFormat !==
           this.globalSettings?.settingsData.displayFormat &&
-        global?.settingsData.showSystem ==
+        global?.settingsData.showSystem !==
           this.globalSettings?.settingsData.showsystem
       ) {
         this.settings
@@ -226,9 +226,9 @@ export class SettingsPopUpComponent implements OnInit {
         type: "global",
       };
       if (
-        global?.settingsData.displayFormat ==
+        global?.settingsData.displayFormat !==
           this.globalSettings?.settingsData.displayFormat &&
-        global?.settingsData.showSystem ==
+        global?.settingsData.showSystem !==
           this.globalSettings?.settingsData.showsystem
       ) {
         this.settings
