@@ -7,6 +7,7 @@
       <mat-form-field [appearance]="'outline'" [ngClass]="frmControl.errors ? 'error' : ''" class="full-width ">
 
         <input matInput [maxLength]="control.maxLength ? control.maxLength : 50"
+          matTooltipClass="custom-tooltip" [matTooltip]="convertToString(value)"
           [placeholder]="control.placeholder || ''" autocomplete="off" [type]="control.subType"
           [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
         <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>

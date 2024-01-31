@@ -248,4 +248,13 @@ export abstract class BaseComponent implements ControlValueAccessor {
   onDestroy() {
     this._subscriptions.forEach((item) => item.unsubscribe());
   }
+
+  //Added tooltip: Author - Anu, convert value to string since its type is unknown
+  convertToString(value:any)
+  {
+  if(value)
+  {
+    return value.toString()
+  }
+  }
 }

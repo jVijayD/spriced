@@ -28,6 +28,7 @@
       (blur)="onTouched()"
       [(ngModel)]="value"
       [disabled]="disabled"
+      matTooltipClass="custom-tooltip" [matTooltip]="convertToString(value)"
     >
       <option [value]="control.placeholder.value" *ngIf="control.placeholder">
         {{ control.placeholder.displayText }}
