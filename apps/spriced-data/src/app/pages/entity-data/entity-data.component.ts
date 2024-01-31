@@ -133,7 +133,13 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   //Dynamic Form
   appForm!: AppForm;
   currentCriteria!: Criteria;
-  globalSettings!: any;
+  globalSettings: any = {
+    settingsData: {
+      displayFormat: "namecode",
+      showsystem: false,
+    },
+    type: "global",
+  };
   query?: any;
   lastId = 0;
   entityDataLoadCompleted$ = new Subject();
@@ -167,9 +173,24 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     private filterListService: FilterListService,
     private globalSetting: GlobalSettingService
   ) {
-    this.globalSettings = this.settings.getGlobalSettings();
+    this.globalSettings=this.getSettingsData() 
     this.setFormData("", []);
     this.subscribeToFormEvents();
+  }
+
+  getSettingsData()
+  {
+    this.settings.getGlobalSettings().subscribe((results:any)=>
+     {
+      if(results?.settingsData)
+      {
+       return results
+      }
+      else
+      {
+        return {settingsData:{displayFormat:"namecode",showSytem:false},type:'global'}
+      }
+     })
   }
   ngOnInit(): void {
     this.subscribeToEntityDataLoadEvents();
@@ -330,7 +351,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       persistValueOnFieldChange: true,
       columns: this.entityGridService.getFilterColumns(headers),
       emptyMessage: "Please select filter criteria.",
-      displayFormat: this.globalSettings.displayFormat,
+      displayFormat: this.globalSettings?.settingsData?.displayFormat || 'namecode',
       config: null,
       query: JSON.parse(JSON.stringify(this.query)),
       save: true,
@@ -586,12 +607,12 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onSettings() {
     const dialogResult = this.dialog.open(SettingsPopUpComponent, {
-      data: { entity: this.currentSelectedEntity, header: this.columns },
+      data: { entity: this.currentSelectedEntity, header: this.columns,global:this.globalSettings },
     });
 
     dialogResult.afterClosed().subscribe((val) => {
-      if (val === "ok") {
-        this.globalSettings = this.settings.getGlobalSettings();
+      if (val.event == "ok") {
+        this.globalSettings =val.value
         this.createDynamicGrid(
           this.currentSelectedEntity as Entity,
           this.currentCriteria,
@@ -642,7 +663,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       {
         pager: { pageNumber: 0, pageSize: this.limit },
       },
-      this.settings.getGlobalSettings()
+      this.globalSettings?.settingsData
     );
     const currentStorage = {modelId: this.currentSelectedEntity?.groupId, entityId: this.currentSelectedEntity?.id};
     this.globalSetting.setCurrentStorage('explorerStorage', currentStorage);
@@ -715,7 +736,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
             this.currentSelectedEntity?.id as number,
             this.currentSelectedEntity?.name as string,
             `${this.currentSelectedEntity?.displayName}.xlsx`,
-            this.globalSettings?.displayFormat || this.defaultCodeSetting,
+            this.globalSettings?.settingsData?.displayFormat || this.defaultCodeSetting,
             this.currentCriteria,
             this.totalElements > limitAsync,
             this.selectedColumns
@@ -774,7 +795,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     if (entity) {
       formFields = this.entityFormService.getFormFieldControls(
         entity,
-        this.globalSettings?.displayFormat || this.defaultCodeSetting
+        this.globalSettings?.settingsData?.displayFormat || this.defaultCodeSetting
       );
       if (this.selectedColumns && this.selectedColumns?.length !== 0) {
         formFields = this.entityFormService.setSelectedFields(
@@ -829,8 +850,9 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     globalSettings: any
   ) {
     if (entity) {
+      console.log(this.globalSettings)
       const showSystemAttributes = globalSettings
-        ? globalSettings.showSystem
+        ? globalSettings?.settingsData?.showSystem
         : false;
       this.headers = [
         {
@@ -850,7 +872,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       let headers: Header[] = this.entityGridService.getGridHeaders(
         entity,
         showSystemAttributes,
-        globalSettings?.displayFormat || this.defaultCodeSetting
+        globalSettings?.settingsData?.displayFormat || this.defaultCodeSetting
       );
       this.headers.push(...headers);
       this.columns = this.headers;
@@ -948,11 +970,11 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   private applyEntitySettings(entity: Entity) {
-    this.selectedColumns=[]
-    const entitySettings = this.settings.getCurrentSettings(entity.name);
-    if (entitySettings) {
-      this.selectedColumns = entitySettings.columns || [];
-      this.limit = entitySettings.noOfRecords;
+   this.selectedColumns=[]
+   this.settings.getCurrentSettings(entity).subscribe((entitySettings:any)=>{
+    if (entitySettings?.settingsData) {
+      this.selectedColumns = entitySettings.settingsData.columns || [];
+      this.limit = entitySettings.settingsData.noOfRecords;
       this.currentCriteria.pager = {
         pageNumber: this.pageNumber,
         pageSize: this.limit,
@@ -965,11 +987,12 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       }
       this.headers.forEach((item, index) => {
         item.pinned = undefined;
-        if (index < entitySettings.freeze) {
+        if (index < entitySettings.settingsData.freeze) {
           item.pinned = "left";
         }
       });
     }
+  })
   }
 
   // private removeNull(data: any) {
