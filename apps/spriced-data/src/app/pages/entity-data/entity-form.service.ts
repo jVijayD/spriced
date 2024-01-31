@@ -135,7 +135,7 @@ export class EntityFormService {
             label: attr.displayName || attr.name,
             decimalCount: attr.size,
             maxLength: 16,
-            // hint: "Maximum length is 16",
+            hint: "Maximum length is 16",
             validations: this.getValidations(attr),
             readOnly: attr.permission === "READ" ? true : false,
           };
@@ -151,7 +151,7 @@ export class EntityFormService {
             decimalCount: attr.size,
             maxLength: 16,
             validations: this.getValidations(attr),
-            // hint: "Maximum length is 16",
+            hint: "Maximum length is 16",
             readOnly: attr.permission === "READ" ? true : false,
           };
 

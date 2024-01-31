@@ -23,7 +23,7 @@
       (blur)="onValidate()"
     />
     <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
-    <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
+    <mat-hint align="start" *ngIf="control.hint && !control.readOnly && convert(value).length > 15">{{ control.hint }}</mat-hint>
   </mat-form-field>
   </div>
   <ng-container>
