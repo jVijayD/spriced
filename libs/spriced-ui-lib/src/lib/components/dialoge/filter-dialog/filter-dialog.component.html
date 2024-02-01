@@ -64,7 +64,7 @@
         </ng-container>
 
         <ng-container *queryInput="let rule; let field=field; let onChange=onChange; type: 'LOOKUP'; ">
-          <ng-container *ngIf="field?.count <= maxCount">
+          <ng-container *ngIf="field?.count <= pageSize">
             <mat-form-field appearance="outline">
               <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.value"
                 (ngModelChange)="onChange($event, rule)">
@@ -79,13 +79,13 @@
               </mat-select>
             </mat-form-field>
           </ng-container>
-          <ng-container *ngIf="field?.count > maxCount">
+          <ng-container *ngIf="field?.count > pageSize">
             <mat-form-field appearance="outline">
               <input matInput [style.display]="'none'" [ngModelOptions]="{ standalone: true }" [(ngModel)]="rule.value"
                 (ngModelChange)="onChange($event,rule)">
               <input matInput [value]="rule?.valueName || 'select item'" [readonly]="true">
             </mat-form-field>
-            <button mat-raised-button *ngIf="field?.count > maxCount" color="primary" class="edit-button ml-2" title="selectItem"
+            <button mat-raised-button *ngIf="field?.count > pageSize" color="primary" class="edit-button ml-2" title="selectItem"
               (click)="openPopup(rule, onChange)">
               <mat-icon>edit</mat-icon>
             </button>
