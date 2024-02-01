@@ -19,7 +19,7 @@ export class FilterDialogComponent implements OnInit {
   dialogReference: any = null;
   maxCount: number = 50;
   count!: number;
-  pageSize: number = 30;
+  pageSize: number = 50;
   source: any;
   status: any[] = [
     {
