@@ -600,20 +600,20 @@ export class UploadErrorComponent implements OnDestroy, OnInit {
   }
 
   private applyEntitySettings(entity: Entity) {
-    const entitySettings = this.settings.getCurrentSettings(entity.name);
-    if (entitySettings) {
-      this.limit = entitySettings.noOfRecords;
-      this.currentCriteria.pager = {
-        pageNumber: this.pageNumber,
-        pageSize: this.limit,
-      };
-      this.headers.forEach((item, index) => {
-        item.pinned = undefined;
-        if (index < entitySettings.freeze) {
-          item.pinned = "left";
-        }
-      });
-    }
+    // const entitySettings = this.settings.getCurrentSettings(entity.name);
+    // if (entitySettings) {
+    //   this.limit = entitySettings.noOfRecords;
+    //   this.currentCriteria.pager = {
+    //     pageNumber: this.pageNumber,
+    //     pageSize: this.limit,
+    //   };
+    //   this.headers.forEach((item, index) => {
+    //     item.pinned = undefined;
+    //     if (index < entitySettings.freeze) {
+    //       item.pinned = "left";
+    //     }
+    //   });
+    // }
   }
 
   // private removeNull(data: any) {

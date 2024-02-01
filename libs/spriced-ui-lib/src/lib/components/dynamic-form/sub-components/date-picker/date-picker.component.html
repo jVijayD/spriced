@@ -6,7 +6,7 @@
     <div class="col-span-3" *ngIf="control.format == 'MM/DD/YY'">
       <mat-form-field  appearance="outline"
         [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatMMDDYY>
-        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+        <input matInput [matDatepicker]="picker" 
           [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
@@ -17,7 +17,7 @@
     <div class="col-span-3" *ngIf="control.format == 'MM/DD/YYYY'">
       <mat-form-field  appearance="outline"
         [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatMMDDYYYY>
-        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+        <input matInput [matDatepicker]="picker" 
           [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
@@ -28,7 +28,7 @@
     <div class="col-span-3" *ngIf="control.format == 'DD/MM/YY'">
       <mat-form-field  appearance="outline"
         [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatDDMMYY>
-        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+        <input matInput [matDatepicker]="picker" 
           [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
@@ -39,7 +39,7 @@
     <div class="col-span-3" *ngIf="control.format == 'DD/MM/YYYY'">
       <mat-form-field  appearance="outline"
         [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatDDMMYYYY>
-        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+        <input matInput [matDatepicker]="picker" 
           [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
@@ -50,7 +50,7 @@
     <div class="col-span-3" *ngIf="control.format == 'YY/MM/DD'">
       <mat-form-field  appearance="outline"
         [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatYYMMDD>
-        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+        <input matInput [matDatepicker]="picker" 
           [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
@@ -61,7 +61,7 @@
     <div class="col-span-3" *ngIf="control.format == 'DD-MM-YY'">
       <mat-form-field  appearance="outline"
         [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatDD__MM__YY>
-        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+        <input matInput [matDatepicker]="picker" 
           [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
@@ -72,7 +72,7 @@
     <div class="col-span-3" *ngIf="control.format == 'DD-MM-YYYY'">
       <mat-form-field  appearance="outline"
         [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatDD__MM__YYYY>
-        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+        <input matInput [matDatepicker]="picker" 
           [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
@@ -83,7 +83,7 @@
     <div class="col-span-3" *ngIf="control.format == 'YYYY/MM/DD'">
       <mat-form-field  appearance="outline"
         [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateformatYYYYMMDD>
-        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+        <input matInput [matDatepicker]="picker" 
           [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
@@ -94,7 +94,7 @@
     <div class="col-span-3" *ngIf="control.format == 'YY-MM-DD'">
       <mat-form-field  appearance="outline"
         [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatYY__MM__DD>
-        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+        <input matInput [matDatepicker]="picker" 
           [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
@@ -105,7 +105,7 @@
     <div class="col-span-3" *ngIf="control.format == 'YYYY-MM-DD'">
       <mat-form-field  appearance="outline"
         [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatYYYY__MM__DD>
-        <input matInput [matDatepicker]="picker" [placeholder]="control.placeholder || ''"
+        <input matInput [matDatepicker]="picker" 
           [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
