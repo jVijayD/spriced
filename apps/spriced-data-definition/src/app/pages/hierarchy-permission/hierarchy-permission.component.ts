@@ -541,7 +541,7 @@ export class HierarchyPermissionComponent implements OnInit {
   setPreviewRootNode(entity: Entity) {
     this.hierarchyPreviewNodes = [];
     this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes, {
-      "id": 0, "treeStatus": "collapsed", "column": "", loaded: false, "name": "ROOT", level: 0, code: "", grpId: this.hierarchyDetails.length + "",
+      "id": 0, "treeStatus": "collapsed", "column": "", loaded: false, "name": "Root", level: 0, code: "", grpId: this.hierarchyDetails.length + "",
       tableId: entity.id
     }];
   }
@@ -591,7 +591,7 @@ export class HierarchyPermissionComponent implements OnInit {
   public setPermissions(value: string, data: any) {
     let level = this.hierarchyDetails.length - (data.level);
     let hierarchyDtlId: any = this.hierarchyDetails.find((el: any) => el.groupLevel === level);
-    if (data.name === 'ROOT' && data.level === 0) {
+    if (data.name === 'Root' && data.level === 0) {
       const maxGroupLevel = Math.max(...this.hierarchyDetails.map(elm => elm.groupLevel));
       hierarchyDtlId = this.hierarchyDetails.find((res: any) => res.groupLevel === maxGroupLevel);
       // hierarchyDtlId = this.hierarchyDetails[index];

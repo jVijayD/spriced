@@ -103,7 +103,7 @@ export class HierarchyTreeviewComponent {
           array.push(item);
           return
         });
-        array = array.filter((el: any) => el.name !== 'ROOT');
+        array = array.filter((el: any) => el.name !== 'Root');
         const uniqueIds = this.filterUniqueById(array);
         if (uniqueIds && uniqueIds.length > 0) {
           uniqueIds.forEach((item: any) => {
@@ -174,7 +174,7 @@ export class HierarchyTreeviewComponent {
     this.filterHierarchyPreviewNodes = [];
     const entityData: any = this.hierarchyDetails.filter((el: any) => el.groupLevel === 0);
     this.filterHierarchyPreviewNodes = [...previewNodes, {
-      "id": 0, "treeStatus": status, "column": "", loaded: true, "name": "ROOT", level: 0, code: "", grpId: this.hierarchyDetails.length + "",
+      "id": 0, "treeStatus": status, "column": "", loaded: true, "name": "Root", level: 0, code: "", grpId: this.hierarchyDetails.length + "",
       tableId: entity.id
     }];
   }
@@ -185,7 +185,7 @@ export class HierarchyTreeviewComponent {
     this.currentEntity = entity;
     const entityData: any = this.hierarchyDetails.filter((el: any) => el.groupLevel === 0);
     this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes, {
-      "id": 0, "treeStatus": "collapsed", "column": "", loaded: false, "name": "ROOT", level: 0, code: "", grpId: this.hierarchyDetails.length + "",
+      "id": 0, "treeStatus": "collapsed", "column": "", loaded: false, "name": "Root", level: 0, code: "", grpId: this.hierarchyDetails.length + "",
       tableId: entity.id
     }];
     this.filterHierarchyPreviewNodes = this.hierarchyPreviewNodes;

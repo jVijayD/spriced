@@ -235,7 +235,7 @@ export class HierarchyNewTabComponent {
   setPreviewRootNode(entity: Entity) {
     this.hierarchyPreviewNodes = [];
     this.hierarchyPreviewNodes = [...this.hierarchyPreviewNodes, {
-      "id": 0, "treeStatus": "collapsed", "column": "", loaded: false, "name": "ROOT", level: 0, code: "", grpId: this.hierarchyDetails.length + "",
+      "id": 0, "treeStatus": "collapsed", "column": "", loaded: false, "name": "Root", level: 0, code: "", grpId: this.hierarchyDetails.length + "",
       tableId: entity.id
     }];
   }
