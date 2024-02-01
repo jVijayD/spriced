@@ -25,12 +25,17 @@
       [matTooltip]="convertToString(value)"
     />
     <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>
-    <mat-hint align="start" *ngIf="control.hint">{{ control.hint }}</mat-hint>
   </mat-form-field>
+  </div>
   </div>
   <ng-container>
     <div class="grid grid-cols-4">
       <div class="col-span-1"></div>
+      <mat-hint  class="col-span-3" 
+      *ngIf="control.hint && !control.readOnly && convertToString(value)?.length >= 16">
+      {{ control.hint }}
+      </mat-hint>
+      <div *ngIf="control.hint && !control.readOnly && convertToString(value)?.length >= 16" class="col-span-1"></div>
       <div class="col-span-3">
     <sp-error
       *ngIf="frmControl.errors"
@@ -41,5 +46,4 @@
     </div>
     <!-- <div *ngIf="!frmControl.errors" style="visibility: hidden">*</div> -->
   </ng-container>
-  </div>
 </ng-container>
