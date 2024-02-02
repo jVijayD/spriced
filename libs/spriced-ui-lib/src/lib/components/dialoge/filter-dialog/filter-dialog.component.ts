@@ -416,6 +416,8 @@ if (item === "is_valid") {
           "Is less than",
           "Is greater than or equal to",
           "Is less than or equal to",
+          "Is NULL",
+          "Is not NULL",
         ];
       case "boolean":
         return ["Is equal to", "Is not equal to"];
