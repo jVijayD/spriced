@@ -156,6 +156,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   savedFilter: any;
   selectedColumns: any = [];
   columns: any;
+  freeze: number=0;
 
   constructor(
     private snackbarService: SnackBarService,
@@ -612,7 +613,14 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
     dialogResult.afterClosed().subscribe((val) => {
       if (val.event == "ok") {
-        this.globalSettings =val.value
+        this.globalSettings =val.global
+        this.selectedColumns=val.current.settingsData.columns || [];
+        this.limit =val.current.settingsData.noOfRecords;
+        this.freeze=val.current.settingsData.freeze;
+        this.currentCriteria.pager = {
+          pageNumber: this.pageNumber,
+          pageSize: this.limit,
+        }
         this.createDynamicGrid(
           this.currentSelectedEntity as Entity,
           this.currentCriteria,
@@ -658,16 +666,32 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.dataGrid.table._internalColumns = [...[]];
     this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);
     this.clearCriteria();
-    this.createDynamicGrid(
-      this.currentSelectedEntity,
-      {
-        pager: { pageNumber: 0, pageSize: this.limit },
-      },
-      this.globalSettings?.settingsData
-    );
+    this.selectedColumns=[]
+    this.freeze=0
+    this.limit=GridConstants.LIMIT
+    this.settings
+      .getCurrentSettings(entity)
+      .subscribe((entitySettings: any) => {
+        if (entitySettings?.settingsData) {
+          this.selectedColumns = entitySettings.settingsData.columns || [];
+          this.limit = entitySettings.settingsData.noOfRecords;
+          this.freeze = entitySettings.settingsData.freeze;
+          this.currentCriteria.pager = {
+            pageNumber: this.pageNumber,
+            pageSize: this.limit,
+          };
+        }
+        this.createDynamicGrid(
+          this.currentSelectedEntity,
+          {
+            pager: { pageNumber: 0, pageSize: this.limit },
+          },
+          this.globalSettings?.settingsData
+        );
+        this.createDynamicUIMapping(entity as Entity);
+      });
     const currentStorage = {modelId: this.currentSelectedEntity?.groupId, entityId: this.currentSelectedEntity?.id};
     this.globalSetting.setCurrentStorage('explorerStorage', currentStorage);
-    this.createDynamicUIMapping(entity as Entity);
     this.lastId = 0;
     this.loadRelatedEntity();
   }
@@ -850,7 +874,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     globalSettings: any
   ) {
     if (entity) {
-      console.log(this.globalSettings)
       const showSystemAttributes = globalSettings
         ? globalSettings?.settingsData?.showSystem
         : false;
@@ -970,15 +993,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   private applyEntitySettings(entity: Entity) {
-   this.selectedColumns=[]
-   this.settings.getCurrentSettings(entity).subscribe((entitySettings:any)=>{
-    if (entitySettings?.settingsData) {
-      this.selectedColumns = entitySettings.settingsData.columns || [];
-      this.limit = entitySettings.settingsData.noOfRecords;
-      this.currentCriteria.pager = {
-        pageNumber: this.pageNumber,
-        pageSize: this.limit,
-      };
       if (this.selectedColumns && this.selectedColumns?.length !== 0) {
         this.headers = this.entityGridService.setSelectedColumns(
           this.selectedColumns,
@@ -987,13 +1001,11 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       }
       this.headers.forEach((item, index) => {
         item.pinned = undefined;
-        if (index < entitySettings.settingsData.freeze) {
+        if (index < this.freeze) {
           item.pinned = "left";
         }
       });
     }
-  })
-  }
 
   // private removeNull(data: any) {
   //   let finalData: any = {};

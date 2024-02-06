@@ -139,10 +139,10 @@ export class SettingsPopUpComponent implements OnInit {
     let current = this.currentSettings;
     let data = ["name", "code"];
     let selected = this.columnForm.controls["column"].value;
-    selected.push(...data);
+    data.push(...selected);
     this.columnForm.controls["column"].value.filter((item: any) => {
       if (item === "All") {
-        selected = [];
+        data = [];
       }
     });
     if (this.currentSettings?.id) {
@@ -153,7 +153,7 @@ export class SettingsPopUpComponent implements OnInit {
         settingsData: {
           noOfRecords: this.noOfRecords,
           freeze: this.freeze,
-          columns: selected,
+          columns: data,
           displayFormat: this.displayFormat,
           showSystem: this.showSystem,
         },
@@ -179,7 +179,7 @@ export class SettingsPopUpComponent implements OnInit {
         settingsData: {
           noOfRecords: this.noOfRecords,
           freeze: this.freeze,
-          columns: selected,
+          columns: data,
         },
         type: "entity",
       };
@@ -237,9 +237,11 @@ export class SettingsPopUpComponent implements OnInit {
           .subscribe((result: any) => {});
       }
     }
+    console.log(this.currentSettings)
     this.dialogRef.close({
       event: "ok",
-      value: this.globalSettings,
+      global: this.globalSettings,
+      current:this.currentSettings
     });
   }
 
