@@ -59,10 +59,11 @@ export class AuthGuard extends KeycloakAuthGuard {
         this.apps$.subscribe({
           next: (appList) => {
             if (appList !== null) {
+              const url = route.url[0];
               let retVal =
                 appList
                   .map((app) => app.path)
-                  .filter((path) => route.url.toString().indexOf(path) > -1)
+                  .filter((path) => path === url.path)
                   .length > 0;
               if (!retVal) {
                 this.router.navigate([`/unauthorized`]);
