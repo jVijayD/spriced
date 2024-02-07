@@ -708,11 +708,17 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         })
     );
   }
-  onSubmitEntityData(data: any) {
+ async onSubmitEntityData(data: any) {
     if (this.headers.length < 1) {
       this.snackbarService.warn("Please check whether user has permission.");
     } else {
       if (data.valid) {
+        for (const prop in data.value) {
+          if (data.value.hasOwnProperty(prop) && moment.isMoment(data.value[prop])) {
+            const formattedData = new Date(data.value[prop]);
+            data.value[prop] = await this.unixTimeStamp(formattedData);
+          }
+        }
         const entityId = this.currentSelectedEntity?.id as number;
         //const finalData = this.removeNull(data.value);
         const finalData = {
@@ -728,6 +734,36 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         this.snackbarService.warn("Invalid record data.");
       }
     }
+  }
+
+  public async unixTimeStamp(timestamp: any): Promise<any> {
+    try {
+      // const timestamp = 1458601200000; // Unix timestamp in milliseconds
+      const date = new Date(timestamp);
+
+      // Get the components of the date (year, month, day, etc.)
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1; // Months are zero-based, so add 1
+      const day = date.getDate();
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const seconds = date.getSeconds();
+
+      // Create a formatted date string
+      const formattedDate = `${year}-${this.pad(month)}-${this.pad(
+        day
+      )} ${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
+
+      console.log(formattedDate, ">>");
+      return formattedDate;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+   // Function to pad single-digit numbers with a leading zero
+   private pad(num: number): string {
+    return (num < 10 ? "0" : "") + num;
   }
 
   onExport(format: "csv" | "xlsx" | "pdf") {
