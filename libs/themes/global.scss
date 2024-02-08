@@ -23,6 +23,7 @@
   --white: #ffffff;
   --black: #000000;
   --disabled: rgba(113, 103, 103, 0.604);
+  --readonly:#E5E4E2;
 }
 
 ::-webkit-scrollbar {
@@ -345,7 +346,7 @@ ngx-datatable.material .datatable-header .datatable-header-cell {
   -webkit-font-smoothing: antialiased;
 }
 .mat-form-field-disabled {
-  background-color: lightgray;
+  background-color: var(--readonly);
   border: 1px solid black;
   border-radius: 4px;
 }
