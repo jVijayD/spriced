@@ -714,12 +714,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.snackbarService.warn("Please check whether user has permission.");
     } else {
       if (data.valid) {
-        for (const prop in data.value) {
-          if (data.value.hasOwnProperty(prop) && moment.isMoment(data.value[prop])) {
-            const formattedData = new Date(data.value[prop]);
-            data.value[prop] = await unixTimeStamp(formattedData);
-          }
-        }
         const entityId = this.currentSelectedEntity?.id as number;
         //const finalData = this.removeNull(data.value);
         const finalData = {
