@@ -26,6 +26,6 @@ export const unixTimeStamp = (timestamp: any): any => {
 }
 
 // Function to pad single-digit numbers with a leading zero
-export const pad = (num: number): string => {
+const pad = (num: number): string => {
   return (num < 10 ? "0" : "") + num;
 }
