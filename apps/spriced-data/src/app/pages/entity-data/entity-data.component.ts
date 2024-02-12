@@ -43,7 +43,6 @@ import {
   Entity,
   EntityService,
   GlobalSettingService,
-  unixTimeStamp,
 } from "@spriced-frontend/spriced-common-lib";
 import { Validators } from "@angular/forms";
 import { EntityDataService } from "../../services/entity-data.service";
@@ -709,7 +708,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         })
     );
   }
- async onSubmitEntityData(data: any) {
+ onSubmitEntityData(data: any) {
     if (this.headers.length < 1) {
       this.snackbarService.warn("Please check whether user has permission.");
     } else {
