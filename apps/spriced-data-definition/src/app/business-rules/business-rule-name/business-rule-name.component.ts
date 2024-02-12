@@ -1303,6 +1303,7 @@ export class BusinessRuleNameComponent implements OnInit, OnDestroy {
           ? "Rule is updated successfully!"
           : "Rule is created successfully!";
         this.messageservice.snackMessage.next(message);
+        this.ruleId = res?.id;
         if (text !== "save") {
           this.router.navigate(
             ["/spriced-data-definition/rules/rule-management"],
