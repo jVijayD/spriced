@@ -6,10 +6,10 @@
       </div>
       <div class="col-span-3 flex gap-1" style="margin:0;">
         <ng-container *ngIf="totalCount <= pageSize">
-          <mat-form-field class="flex-grow" appearance="outline" [ngClass]="frmControl.errors ? 'error' : ''"
+          <mat-form-field [matTooltip]="getSelectedDisplayProp()" matTooltipClass="custom-tooltip" class="flex-grow" appearance="outline" [ngClass]="frmControl.errors ? 'error' : ''"
             [floatLabel]="value ? 'always' : 'auto'">
 
-            <mat-select  [matTooltip]="getSelectedDisplayProp()" matTooltipClass="custom-tooltip" class="flex items-center select-dropdown" matNativeControl (blur)="onTouched()"
+            <mat-select   class="flex items-center select-dropdown" matNativeControl (blur)="onTouched()"
               [(ngModel)]="value" [disabled]="control.readOnly || disabled" (click)="onClick()">
               <mat-option>
                 <ngx-mat-select-search placeholderLabel="Search" ngModel
