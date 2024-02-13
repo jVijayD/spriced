@@ -450,7 +450,8 @@ export class ListComponent implements OnInit, OnDestroy {
               (res: any) => {
                 this.loading = false;
                 this.errorPanelService.init();
-                this.msgSrv.success("Excluded is updated successfully!");
+                const message = event.item.isExcluded ? 'Rule excluded successfully.' : 'Rule included successfully.';
+                this.msgSrv.success(message);
                 this.onRefresh();
               },
               (error: any) => {
