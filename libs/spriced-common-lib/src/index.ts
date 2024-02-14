@@ -11,3 +11,4 @@ export * from "./lib/services/data-entity.service";
 export * from "./lib/services/global-setting.service";
 export * from "./lib/services/generic-storage.service";
 export * from "./lib/services/utility/sse-utility.service";
+export * from "./lib/services/utility/moment-date-format.service";

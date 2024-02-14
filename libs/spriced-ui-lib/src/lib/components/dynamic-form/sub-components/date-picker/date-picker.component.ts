@@ -12,6 +12,7 @@ import { NG_VALUE_ACCESSOR } from "@angular/forms";
 import { BaseComponent } from "../../base.component";
 import { DateControl, GenericControl } from "../../dynamic-form.types";
 import { DynamicFormService } from "../../service/dynamic-form.service";
+import { unixTimeStamp } from "@spriced-frontend/spriced-common-lib";
 
 @Component({
   selector: "sp-date-picker",
@@ -62,5 +63,11 @@ export class DatePickerComponent
   private _initControlData(dateControl: GenericControl) {
     this.addRule(dateControl.rule);
     this.setControlAccess();
+  }
+
+  // HANDLE THIS FUNCTION FOR CHANGE THE TIME STAMP
+  public changeTimeStamp(date: any)
+  {
+    this.value = unixTimeStamp(date);
   }
 }

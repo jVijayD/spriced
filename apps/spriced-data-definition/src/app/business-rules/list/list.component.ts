@@ -213,8 +213,8 @@ export class ListComponent implements OnInit, OnDestroy {
     });
 
     // HANDLE THIS FOR GET RULES AND MODELS APIS
+    await this.handleRulesData();
     this.getRulesAndModelsData();
-    this.handleRulesData();
 
     this.listForm.valueChanges
       .pipe(debounceTime(500))
@@ -450,7 +450,8 @@ export class ListComponent implements OnInit, OnDestroy {
               (res: any) => {
                 this.loading = false;
                 this.errorPanelService.init();
-                this.msgSrv.success("Excluded is updated successfully!");
+                const message = event.item.isExcluded ? 'Rule excluded successfully.' : 'Rule included successfully.';
+                this.msgSrv.success(message);
                 this.onRefresh();
               },
               (error: any) => {
