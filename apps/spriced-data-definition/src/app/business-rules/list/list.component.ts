@@ -213,8 +213,8 @@ export class ListComponent implements OnInit, OnDestroy {
     });
 
     // HANDLE THIS FOR GET RULES AND MODELS APIS
+    await this.handleRulesData();
     this.getRulesAndModelsData();
-    this.handleRulesData();
 
     this.listForm.valueChanges
       .pipe(debounceTime(500))
