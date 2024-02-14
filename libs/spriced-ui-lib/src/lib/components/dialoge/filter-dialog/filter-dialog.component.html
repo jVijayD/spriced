@@ -107,6 +107,20 @@
             </mat-select>
           </mat-form-field>
         </ng-container>
+
+
+        <ng-container *queryInput="let rule; let field=field; let onChange=onChange; type: 'date'; ">
+          <mat-form-field appearance="outline">
+          <input [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.value"
+          (ngModelChange)="onChange($event, rule)" matInput [matDatepicker]="picker" 
+          (dateChange)="rule.value=changeTimeStamp(rule.value)">
+          <mat-label>MM/DD/YYYY</mat-label>
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        </ng-container>
+
+
         <!-- <input  *ngIf="field.lookupItem && field.lookupItem.code" matInput [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.value" (ngModelChange)="onChange($event, rule)"/> -->
 
         <!-- <ng-container *querySwitchGroup="let ruleset; let onChange = onChange">
