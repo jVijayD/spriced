@@ -676,10 +676,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           this.selectedColumns = entitySettings.settingsData.columns || [];
           this.limit = entitySettings.settingsData.noOfRecords;
           this.freeze = entitySettings.settingsData.freeze;
-          this.currentCriteria.pager = {
-            pageNumber: this.pageNumber,
-            pageSize: this.limit,
-          };
         }
         this.createDynamicGrid(
           this.currentSelectedEntity,
