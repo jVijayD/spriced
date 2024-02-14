@@ -1,9 +1,18 @@
+import * as moment from "moment";
 
 export const unixTimeStamp = (timestamp: any): any => {
   // public async unixTimeStamp(timestamp: any): Promise<any> {
   try {
     // const timestamp = 1458601200000; // Unix timestamp in milliseconds
-    const date = new Date(timestamp);
+    const selectedDate = new Date(timestamp);
+    const currentDate = new Date();
+
+    selectedDate.setHours(currentDate.getHours());
+    selectedDate.setMinutes(currentDate.getMinutes());
+    selectedDate.setSeconds(currentDate.getSeconds());
+
+    const dateWithTimeStamp: any = moment(selectedDate);
+    const date = new Date(dateWithTimeStamp);
 
     // Get the components of the date (year, month, day, etc.)
     const year = date.getFullYear();
