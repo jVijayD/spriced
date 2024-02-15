@@ -45,7 +45,7 @@ export class NumericDirective {
     if (val.length > 1) {
       decimalCount = val[1].length;
     }
-    if (
+    if (!(event.ctrlKey && event.key === 'v') && 
       [
         "0",
         "1",
