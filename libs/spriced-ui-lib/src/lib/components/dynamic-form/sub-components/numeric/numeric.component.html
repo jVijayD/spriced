@@ -14,6 +14,7 @@
     <input
       spNumeric
       [decimals]="control.decimalCount"
+      (value)="updateValue($event)"
       matInput
       [maxLength]="control.maxLength ? control.maxLength : 50"
       autocomplete="off"

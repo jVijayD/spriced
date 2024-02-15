@@ -66,4 +66,11 @@ export class NumericComponent
       this.value = Number(this.value);
     }
   }
+
+  //Handle this function when we change the value then update the value
+  updateValue(event: any)
+  {
+    event = [undefined, null].includes(event) ? '' : event;
+    this.value = event;
+  }
 }
