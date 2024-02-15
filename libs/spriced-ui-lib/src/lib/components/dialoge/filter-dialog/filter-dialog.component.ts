@@ -3,7 +3,7 @@ import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { QueryBuilderConfig, QueryBuilderComponent } from "ngx-angular-query-builder";
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { FormGroup, FormBuilder } from "@angular/forms";
-import { DataEntityService } from "@spriced-frontend/spriced-common-lib";
+import { DataEntityService, unixTimeStamp } from "@spriced-frontend/spriced-common-lib";
 import { LookupDialogComponent } from "../../dynamic-form/sub-components/lookup-select/lookup-dialog/lookup-dialog/lookup-dialog.component";
 @Component({
   selector: "sp-filter",
@@ -432,8 +432,11 @@ if (item === "is_valid") {
     }
     return [];
   }
+  public changeTimeStamp(date: any)
+  {
+   return unixTimeStamp(date)
 }
-
+}
 export interface FilterData {
   config: QueryBuilderConfig | null;
   query?: any | null;
