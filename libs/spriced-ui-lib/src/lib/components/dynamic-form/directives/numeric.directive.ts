@@ -26,7 +26,7 @@ export class NumericDirective {
       // This regex check only numbers, decimal numbers and negative numbers.
       const validNumberRegex = new RegExp(/^-?\d*\.?\d*$/);
       const number = validNumberRegex.test(this.el.nativeElement.value);
-      this.el.nativeElement.value = !number || !this.check(this.el.nativeElement.value) ? oldValue : this.el.nativeElement.value;
+      this.el.nativeElement.value = !number || (this.decimals === 0 && !this.check(this.el.nativeElement.value)) ? oldValue : this.el.nativeElement.value;
       this.value.emit(this.el.nativeElement.value);
       // const currentValue = this.el.nativeElement.value;  
       // if (currentValue !== "" && !this.check(currentValue)) {
