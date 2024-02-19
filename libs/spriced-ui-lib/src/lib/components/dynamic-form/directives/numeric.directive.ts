@@ -1,10 +1,11 @@
-import { Directive, ElementRef, HostListener, Input } from "@angular/core";
+import { Directive, ElementRef, EventEmitter, HostListener, Input, Output } from "@angular/core";
 
 @Directive({
   selector: "[spNumeric]",
 })
 export class NumericDirective {
   @Input() decimals = 0;
+  @Output() value: EventEmitter<any> = new EventEmitter<any>();
 
   private check(value: string) {
     if (this.decimals <= 0) {
@@ -22,11 +23,16 @@ export class NumericDirective {
 
   private run(oldValue: string) {
     setTimeout(() => {
-      const currentValue = this.el.nativeElement.value;
-      if (currentValue !== "" && !this.check(currentValue)) {
-        this.el.nativeElement.value = oldValue;
-        //(this.el.nativeElement as HTMLInputElement).value = oldValue;
-      }
+      // This regex check only numbers, decimal numbers and negative numbers.
+      const validNumberRegex = new RegExp(/^-?\d*\.?\d*$/);
+      const number = validNumberRegex.test(this.el.nativeElement.value);
+      this.el.nativeElement.value = !number || (this.decimals === 0 && !this.check(this.el.nativeElement.value)) ? oldValue : this.el.nativeElement.value;
+      this.value.emit(this.el.nativeElement.value);
+      // const currentValue = this.el.nativeElement.value;  
+      // if (currentValue !== "" && !this.check(currentValue)) {
+      //   // this.el.nativeElement.value = oldValue;
+      //   //(this.el.nativeElement as HTMLInputElement).value = oldValue;
+      // }
     });
   }
 
@@ -39,7 +45,7 @@ export class NumericDirective {
     if (val.length > 1) {
       decimalCount = val[1].length;
     }
-    if (
+    if (!(event.ctrlKey && event.key === 'v') && 
       [
         "0",
         "1",
