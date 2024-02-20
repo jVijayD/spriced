@@ -212,6 +212,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         this.rows = this.rows.map((elm: any) => ({ ...elm, comment: "" }));
         this.totalElements = page.totalElements;
         const selectionTimer = timer(TIMER_CONST);
+        this.dataGrid.table._offsetX.next(0);
         if (this.rows && this.rows?.length > 0) {
           //Since the form not completely get loaded by the time data arrived.
           selectionTimer.pipe(first()).subscribe(() => {
