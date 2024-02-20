@@ -5,6 +5,7 @@ import {
   Output,
   EventEmitter,
   ViewEncapsulation,
+  Input,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
@@ -48,6 +49,7 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
 
   selectedModelValue: string | number = "";
   selectedEntity: string | Entity = "";
+  @Input() enableRightClick: boolean = false;
 
   @Output()
   entitySelectionEvent: EventEmitter<Entity | string> = new EventEmitter();
@@ -161,5 +163,24 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
       this.selectedEntity = curSelectedEntity;
       this.entitySelectionEvent.emit(this.selectedEntity);
     });
+  }
+
+  // Handled this function when we click the right click from the mouse
+  public handleRightClick(item: any)
+  {
+    if(this.enableRightClick)
+    {
+      const pathParams: any = {
+        modelId: this.selectedModelValue,
+        entityId: item.id,
+      };
+      let pathname: any = window.location.pathname.split('/');
+      pathname = pathname[1];
+      const pathSegments = Object.keys(pathParams)
+        .map((key) => encodeURIComponent(pathParams[key]))
+        .join("/");
+      const url = `${window.location.origin}/${pathname}/${pathSegments}`; // Replace this with the desired URL
+      window.open(url, "_blank");
+    }
   }
 }

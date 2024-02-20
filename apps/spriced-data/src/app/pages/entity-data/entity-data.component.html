@@ -52,6 +52,7 @@
           ></sp-header-action> -->
           <sp-header-component-wrapper>
             <sp-entity-select
+              [enableRightClick]="true"
               (entitySelectionEvent)="onEntitySelectionChange($event)"
               (modelSelectionEvent)="onModelSelectionChange()"
             ></sp-entity-select>
