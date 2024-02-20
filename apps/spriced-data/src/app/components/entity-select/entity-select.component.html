@@ -45,6 +45,7 @@
         "
         [value]="item"
         class="option"
+        (contextmenu)="handleRightClick(item); $event.stopPropagation();"
       >
         {{ item.displayName }}
       </mat-option>
