@@ -14,20 +14,11 @@ export const unixTimeStamp = (timestamp: any): any => {
     const dateWithTimeStamp: any = moment(selectedDate);
     const date = new Date(dateWithTimeStamp);
 
-    // Get the components of the date (year, month, day, etc.)
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1; // Months are zero-based, so add 1
-    const day = date.getDate();
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const seconds = date.getSeconds();
-
     // Create a formatted date string
-    const formattedDate = `${year}-${pad(month)}-${pad(
-      day
-    )} ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-
-    console.log(formattedDate, ">>");
+    // const formattedDate = `${year}-${pad(month)}-${pad(
+    //   day
+    // )} ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    const formattedDate = date.toISOString();
     return formattedDate;
   } catch (error) {
     console.log(error);
