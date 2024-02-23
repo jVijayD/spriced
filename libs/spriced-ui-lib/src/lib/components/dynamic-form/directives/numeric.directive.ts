@@ -27,6 +27,19 @@ export class NumericDirective {
       const validNumberRegex = new RegExp(/^-?\d*\.?\d*$/);
       const number = validNumberRegex.test(this.el.nativeElement.value);
       this.el.nativeElement.value = !number || (this.decimals === 0 && !this.check(this.el.nativeElement.value)) ? oldValue : this.el.nativeElement.value;
+
+      // Handle this when user enter 9 number 16th times then last digit change with subtract 1
+      const val = this.el.nativeElement.value;
+      if (val.length == 16 && val[val.length - 1] === '9') {
+        // Find the index of the last occurrence of '9'
+        const lastIndex = val.lastIndexOf('9');
+
+        // If '9' is found, replace it with '8'
+        if (lastIndex !== -1) {
+          this.el.nativeElement.value = val.substring(0, lastIndex) + '8' + val.substring(lastIndex + 1);
+        }
+      }
+      
       this.value.emit(this.el.nativeElement.value);
       // const currentValue = this.el.nativeElement.value;  
       // if (currentValue !== "" && !this.check(currentValue)) {
