@@ -1,0 +1,32 @@
+.container {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 22% 22% 50%;
+  column-gap: 2rem;
+  height: 100%;
+}
+.drop-box {
+  background-color: whitesmoke;
+  padding: 0.5rem;
+  cursor: move;
+  box-shadow: 4px 4px 4px 4px lightgray;
+  margin: 1rem;
+}
+.drop-box:hover {
+  background-color: var(--secondary-light);
+}
+.drop-box:-moz-drag-over {
+  background-color: var(--secondary-light);
+}
+.drop-container {
+  overflow: auto;
+  height: 24rem;
+  box-shadow: 4px 4px 4px 4px #00000026;
+}
+.header
+{
+  background-color: var(--primary-default);
+  color:white;
+  padding:0.5rem;
+  border-radius: 4px 4px 0 0;
+}

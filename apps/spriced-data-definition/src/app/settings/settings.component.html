@@ -1,0 +1,13 @@
+  <mat-drawer-container class="h-full ">
+    <mat-drawer mode="side" opened class="drawer">
+      <div >
+        <span class="font-bold">Settings</span>
+        <button onclick="menuChanged('entityOrder')" class="flex justify-items-center menu mt-2">
+          <mat-icon class="mr-1" style="transform: rotate(90deg)">compare_arrows</mat-icon><span class="mt-1">Entity Order</span>
+        </button>
+      </div>
+    </mat-drawer>
+    <mat-drawer-content class="p-8 h-full"
+      ><sp-entity-order></sp-entity-order
+    ></mat-drawer-content>
+  </mat-drawer-container>
