@@ -3,7 +3,6 @@
   width: 100%;
   grid-template-columns: 22% 22% 50%;
   column-gap: 2rem;
-  height: 100%;
 }
 .drop-box {
   background-color: whitesmoke;
@@ -20,8 +19,8 @@
 }
 .drop-container {
   overflow: auto;
-  height: 24rem;
   box-shadow: 4px 4px 4px 4px #00000026;
+  height:calc(100vh - 4rem - 13px - 10rem);
 }
 .header
 {

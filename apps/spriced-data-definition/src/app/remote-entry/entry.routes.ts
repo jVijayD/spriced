@@ -9,7 +9,7 @@ import { ViewTransactionsAdminComponent } from "../pages/view-Transactions/viewT
 import { HierarchyDefinitionComponent } from "../pages/hierarchy-definition/hierarchy-definition.component";
 import { HierarchyPermissionComponent } from "../pages/hierarchy-permission/hierarchy-permission.component";
 import { DerivedHierarchyComponent } from "../pages/derived-hierarchy/derived-hierarchy.component";
-import { SettingsComponent } from "../settings/settings.component";
+import { SettingsComponent } from "../pages/settings/settings.component";
 
 export const remoteRoutes: Route[] = [
   {

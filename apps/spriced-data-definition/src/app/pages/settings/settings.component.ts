@@ -1,9 +1,9 @@
 import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatSidenavModule } from "@angular/material/sidenav";
-import { EntityOrderComponent } from "./entity-order/entity-order.component";
 import { OneColComponent } from "@spriced-frontend/spriced-ui-lib";
 import { MatIconModule } from "@angular/material/icon";
+import { EntityOrderComponent } from "./entity-order/entity-order.component";
 @Component({
   selector: "sp-settings",
   standalone: true,
