@@ -31,8 +31,9 @@ export class ErrorCatchingInterceptor implements HttpInterceptor {
         return res;
       }),
       catchError((error: HttpErrorResponse) => {
-        if(error.error.requestURI !== '/api/v1/data-api/error')
-        {this.handleError(request,error)}
+        if (error.url !== `${this.api_url}/error`) {
+          this.handleError(request, error);
+        }
         let errorMsg = "";
         if (error.error instanceof ErrorEvent) {
           errorMsg = `Error: ${error.error.message}`;
