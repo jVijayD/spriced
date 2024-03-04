@@ -1,0 +1,20 @@
+.grid
+{
+    display: grid;
+    grid-template-columns: 60% 30%;
+    column-gap: 2rem;
+}
+.box
+{
+    height:calc(100vh - 4rem - 13px - 16rem) ;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+.header
+{
+  background-color: var(--primary-default);
+  color:white;
+  padding:0.5rem;
+  border-radius: 4px 4px 0 0;
+}

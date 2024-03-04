@@ -1,0 +1,123 @@
+<div class="grid">
+  <div>
+    <sp-data-grid
+      class="w-full h-full"
+      #dataGrid
+      title="Model List"
+      [enableRowIndex]="false"
+      [isArray]="false"
+      [virtualScroll]="false"
+      [headers]="headers"
+      [rows]="rows"
+      [rowHeight]="20"
+      [headerHeight]="30"
+      [footerHeight]="0"
+      [columnMode]="columnMode"
+      [virtualScroll]="false"
+      [selectionType]="selectionType"
+      [limit]="10"
+      [isExternalPaging]="true"
+      [isExternalSorting]="false"
+      [count]="totalElements"
+      (itemSelected)="onItemSelected($event)"
+      [selected]="!!selectedItem ? [selectedItem] : []"
+    >
+      <ng-container>
+        <sp-header-component-wrapper title="Model">
+          <mat-form-field>
+            <mat-select
+              (selectionChange)="onModelChange($event)"
+              [(value)]="selectedModel"
+            >
+              <mat-option>
+                <ngx-mat-select-search
+                  placeholderLabel="Search"
+                  ngModel
+                  (ngModelChange)="filterModelSelection($event)"
+                  noEntriesFoundLabel="Not found"
+                ></ngx-mat-select-search>
+              </mat-option>
+              <mat-option
+                *ngFor="let item of this.filteredModelList"
+                [value]="item.id"
+                class="option"
+              >
+                {{ item.displayName }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </sp-header-component-wrapper>
+
+        <sp-header-component-wrapper title="Entity">
+          <mat-form-field>
+            <mat-select
+              (selectionChange)="onEntitySelectionChange($event)"
+              [(value)]="selectedEntity"
+            >
+              <mat-option>
+                <ngx-mat-select-search
+                  placeholderLabel="Search"
+                  ngModel
+                  (ngModelChange)="filterEntitySelection($event)"
+                  noEntriesFoundLabel="Not found"
+                ></ngx-mat-select-search>
+              </mat-option>
+              <mat-option
+                *ngFor="let item of this.filteredEntityList"
+                [value]="item.id"
+                class="option"
+              >
+                {{ item.displayName }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </sp-header-component-wrapper>
+
+        <sp-header-action
+          icon="add_box"
+          text="Add"
+          title="Add"
+          (actionClick)="onAdd()"
+        ></sp-header-action>
+
+        <sp-header-action
+          icon="edit"
+          text="Edit"
+          title="Edit Model"
+          [disabled]="selectedItem == null"
+          (actionClick)="onEdit()"
+        ></sp-header-action>
+
+        <sp-header-action
+          icon="delete"
+          text="Delete"
+          title="Delete Model"
+          [disabled]="selectedItem == null"
+          (actionClick)="onDelete()"
+        ></sp-header-action>
+      </ng-container>
+    </sp-data-grid>
+  </div>
+  <div>
+    <div class="header">Entity</div>
+    <div class="box">
+      <mat-checkbox
+        (change)="updateCheckedOptions(item, $event)"
+        *ngFor="let item of entityList"
+        >{{ item.displayName }}</mat-checkbox
+      >
+    </div>
+    <div class="mt-2 flex justify-end">
+        <button mat-raised-button color="primary">Save</button>
+        <button
+          mat-raised-button
+          color="accent"
+          type="button"
+          (click)="onCancel()"
+          class="ml-2"
+        >
+          Cancel
+        </button>
+      </div>
+  </div>
+</div>
