@@ -3,9 +3,17 @@
   width: 100%;
   grid-template-columns: 22% 22% 50%;
   column-gap: 2rem;
+  padding: 0.5rem;
 }
 .drop-box {
-  background-color: whitesmoke;
+  background-color: white;
+  padding: 0.5rem;
+  cursor: move;
+  box-shadow: 4px 4px 4px 4px lightgray;
+  margin: 1rem;
+}
+.drop-box-disabled {
+  background-color: var(--readonly);
   padding: 0.5rem;
   cursor: move;
   box-shadow: 4px 4px 4px 4px lightgray;

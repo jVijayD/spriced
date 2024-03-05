@@ -3,7 +3,7 @@
     <sp-data-grid
       class="w-full h-full"
       #dataGrid
-      title="Model List"
+      title="Key Combination"
       [enableRowIndex]="false"
       [isArray]="false"
       [virtualScroll]="false"
@@ -99,7 +99,7 @@
     </sp-data-grid>
   </div>
   <div>
-    <div class="header">Entity</div>
+    <div class="header">Attribute</div>
     <div class="box">
       <mat-checkbox
         (change)="updateCheckedOptions(item, $event)"
@@ -107,7 +107,7 @@
         >{{ item.displayName }}</mat-checkbox
       >
     </div>
-    <div class="mt-2 flex justify-end">
+    <div class="p-4 flex justify-center">
         <button mat-raised-button color="primary">Save</button>
         <button
           mat-raised-button
