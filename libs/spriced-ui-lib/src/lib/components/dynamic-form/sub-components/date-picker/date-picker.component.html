@@ -7,7 +7,7 @@
       <mat-form-field  appearance="outline"
         [ngClass]="frmControl.errors ? 'error' : ''" class="full-width" spDateFormatMMDDYY>
         <input matInput [matDatepicker]="picker" 
-          [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" />
+          [disabled]="control.readOnly || disabled" [(ngModel)]="value" (blur)="onTouched()" (dateChange)="changeTimeStamp(value)" />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker [startView]="control.startView" [startAt]="control.startDate"></mat-datepicker>
         <mat-icon matSuffix *ngIf="control.icon">{{ control.icon }}</mat-icon>

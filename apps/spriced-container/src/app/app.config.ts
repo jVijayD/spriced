@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom } from "@angular/core";
+import { ApplicationConfig, ErrorHandler, importProvidersFrom } from "@angular/core";
 import {
   provideAnimations,
   provideNoopAnimations,
@@ -24,6 +24,7 @@ import {
 import { loaderInterceptor } from "./interceptors/loader.interceptor";
 import { ErrorCatchingInterceptor } from "./interceptors/http-error-interceptor";
 import { AuthGuard } from "./guards/auth.guard";
+import { GlobalErrorHandler } from "./services/error-handler.service";
 const loaderService = new LoaderService();
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -35,6 +36,10 @@ export const appConfig: ApplicationConfig = {
       provide: HTTP_INTERCEPTORS,
       useClass: KeycloakBearerInterceptor,
       multi: true,
+    },
+    {
+      provide: ErrorHandler,
+      useClass: GlobalErrorHandler
     },
     AuthGuard,
     {

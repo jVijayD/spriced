@@ -66,8 +66,9 @@ export class DatePickerComponent
   }
 
   // HANDLE THIS FUNCTION FOR CHANGE THE TIME STAMP
-  public changeTimeStamp(date: any)
-  {
-    this.value = unixTimeStamp(date);
+  public changeTimeStamp(date: any) {
+    if (!!date) {
+      this.value = unixTimeStamp(date);
+    }
   }
 }
