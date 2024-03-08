@@ -94,6 +94,7 @@ export class EntityOrderComponent {
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result == true) {
         this.entityList = [...this.initialList];
+        this.sortOrder = 'asc';
       }
     });
   }

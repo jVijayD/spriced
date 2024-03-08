@@ -120,12 +120,14 @@ export class UniquekeyAttributeComponent {
       );
     });
   }
-  updateCheckedOptions(event:any,value:any)
+  updateCheckedOptions(value:any,event:any)
   {
     console.log(event,value)
+    
   }
   onCancel()
   {
 
   }
+
 }
