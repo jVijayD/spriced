@@ -177,6 +177,9 @@ export class HierarchyPermissionComponent implements OnInit {
 
   // Generic filtering function
   filterItems(items: any[], searchText: string): any[] {
+    if (searchText === '') {
+      return items;
+    }
     return items.filter((item: any) => {
       return (item.displayName || item.name)
         .trim()
@@ -571,7 +574,10 @@ export class HierarchyPermissionComponent implements OnInit {
       pageNumber: event.offset,
       pageSize: this.pageSize
     };
-    this.loadHeirarchysummaryByModelId(this.model, this.selectedRole, this.currentCriteria);
+    if(!!this.model)
+    {
+      this.loadHeirarchysummaryByModelId(this.model, this.selectedRole, this.currentCriteria);
+    }
   }
   onSort(event: any) {
 

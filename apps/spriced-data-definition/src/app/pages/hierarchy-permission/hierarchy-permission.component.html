@@ -54,7 +54,7 @@
                                 formControlName="hierarchyFilter"></ngx-mat-select-search>
                         </mat-option>
                         <mat-option value="" class="option">--Select--</mat-option>
-                        <mat-option *ngFor="let hierarchy of hierarchyList" [value]="hierarchy.id">
+                        <mat-option *ngFor="let hierarchy of filteredHierarchy" [value]="hierarchy.id">
                             {{hierarchy.name}}
                         </mat-option>
                     </mat-select>
@@ -89,8 +89,8 @@
 <div class="flex grid grid-cols-5 gap-4">
     <div class="col-span-2">
         <ngx-datatable
-         #table 
-        style="min-width: 300px; min-height: calc(100vh - 10rem);"              class="material striped tableScroll"
+            #table 
+            style="min-width: 300px; min-height: calc(100vh - 10rem);" class="material striped tableScroll"
             [columnMode]="ColumnMode.flex"  
             [headerHeight]="50" 
             [footerHeight]="0" 
@@ -98,6 +98,7 @@
             [rows]="hierarchyPreviewNodes" 
             [scrollbarV]="true" 
             [scrollbarH]="true" 
+            [virtualization]="false"
             [treeFromRelation]="'parentGrpId'"
             (treeAction)="onTreeActionPreview($event)" 
             [treeToRelation]="'grpId'">
