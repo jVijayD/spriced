@@ -41,18 +41,26 @@ export class EntityOrderComponent {
   groupId: any;
   sortOrder = "asc";
   initialList: any;
+  selectedModel: any;
   constructor(
     private entityService: EntityService,
     private modelService: ModelService,
     private dialogService: DialogService,
     private snackbarService: SnackBarService
   ) {}
-  load() {
+  load(event: any) {
+    this.selectedModel = event.value;
+    this.sortOrder =
+      this.selectedModel.orderType == null
+        ? "asc"
+        : this.selectedModel.orderType;
     this.entityService
-      .loadEntityByModelWithOutAttributes(this.groupId)
+      .loadEntityByModelWithOutAttributes(this.selectedModel.id)
       .subscribe((results: any) => {
         this.initialList = results;
-        this.sortOrder = results[0].orderType || 'asc';
+        this.entityList = results.sort((a: any, b: any) =>
+          a.displayName.localeCompare(b.displayName)
+        );
         this.entityList = results.sort((a: any, b: any) => a.order - b.order);
       });
   }
@@ -60,8 +68,8 @@ export class EntityOrderComponent {
     this.modelService.loadAllModels().subscribe((result: any) => {
       this.modelList = result;
       this.filteredModelList = this.modelList;
-      this.groupId = result[0]?.id;
-      this.load();
+      this.selectedModel = result[0];
+      this.load({ value: this.selectedModel });
     });
   }
   filterModelsSelection(text: any) {
@@ -95,6 +103,7 @@ export class EntityOrderComponent {
     this.entityList.forEach((element: any, index: number) => {
       element.order = index + 1;
     });
+    this.selectedModel.orderType = this.sortOrder;
     this.entityService
       .addEntityOrder(this.entityList, this.sortOrder)
       .subscribe({
