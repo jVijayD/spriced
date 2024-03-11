@@ -177,6 +177,9 @@ export class HierarchyPermissionComponent implements OnInit {
 
   // Generic filtering function
   filterItems(items: any[], searchText: string): any[] {
+    if (searchText === '') {
+      return items;
+    }
     return items.filter((item: any) => {
       return (item.displayName || item.name)
         .trim()
