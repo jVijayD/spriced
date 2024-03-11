@@ -97,8 +97,7 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
       this.entityService.loadEntityByModelWithOutAttributes(modelId).subscribe({
         next: (items) => {
           if (items) {
-            items.sort((a,b) => a.displayName.localeCompare(b.displayName));
-            items.sort((a:any, b:any) => a.order - b.order);
+            
             this.entities = items
             this.filteredEntities =items
             if (this.entities.length) {

@@ -58,10 +58,13 @@ export class EntityOrderComponent {
       .loadEntityByModelWithOutAttributes(this.selectedModel.id)
       .subscribe((results: any) => {
         this.initialList = results;
-        this.entityList = results.sort((a: any, b: any) =>
-          a.displayName.localeCompare(b.displayName)
-        );
-        this.entityList = results.sort((a: any, b: any) => a.order - b.order);
+        if (this.selectedModel.orderType == "custom") {
+          this.entityList = results.sort((a: any, b: any) =>
+            a.displayName.localeCompare(b.displayName)
+          );
+        } else {
+          this.entityList = results.sort((a: any, b: any) => a.order - b.order);
+        }
       });
   }
   ngOnInit(): void {
@@ -100,9 +103,11 @@ export class EntityOrderComponent {
     }
   }
   onSave() {
-    this.entityList.forEach((element: any, index: number) => {
-      element.order = index + 1;
-    });
+    if (this.sortOrder == "custom") {
+      this.entityList.forEach((element: any, index: number) => {
+        element.order = index + 1;
+      });
+    }
     this.selectedModel.orderType = this.sortOrder;
     this.entityService
       .addEntityOrder(this.entityList, this.sortOrder)
@@ -124,7 +129,7 @@ export class EntityOrderComponent {
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result == true) {
         this.entityList = [...this.initialList];
-        this.sortOrder = "asc";
+        this.sortOrder = this.selectedModel.sortOrder;
       }
     });
   }
