@@ -571,7 +571,10 @@ export class HierarchyPermissionComponent implements OnInit {
       pageNumber: event.offset,
       pageSize: this.pageSize
     };
-    this.loadHeirarchysummaryByModelId(this.model, this.selectedRole, this.currentCriteria);
+    if(!!this.model)
+    {
+      this.loadHeirarchysummaryByModelId(this.model, this.selectedRole, this.currentCriteria);
+    }
   }
   onSort(event: any) {
 
