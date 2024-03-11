@@ -55,7 +55,7 @@ export class EntityOrderComponent {
         ? "asc"
         : this.selectedModel.orderType;
     this.entityService
-      .loadEntityByModelWithOutAttributes(this.selectedModel.id)
+      .loadEntityByModel(this.selectedModel.id)
       .subscribe((results: any) => {
         this.initialList = results;
         if (this.selectedModel.orderType == "custom") {
