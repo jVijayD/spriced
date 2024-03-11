@@ -10,7 +10,11 @@ import {
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { DragDropModule, moveItemInArray } from "@angular/cdk/drag-drop";
 import { MatButtonModule } from "@angular/material/button";
-import { DialogService, SnackBarService, SnackbarModule } from "@spriced-frontend/spriced-ui-lib";
+import {
+  DialogService,
+  SnackBarService,
+  SnackbarModule,
+} from "@spriced-frontend/spriced-ui-lib";
 
 @Component({
   selector: "sp-entity-order",
@@ -24,10 +28,10 @@ import { DialogService, SnackBarService, SnackbarModule } from "@spriced-fronten
     FormsModule,
     DragDropModule,
     MatButtonModule,
-    SnackbarModule
+    SnackbarModule,
   ],
   templateUrl: "./entity-order.component.html",
-  providers: [DialogService,SnackBarService ],
+  providers: [DialogService, SnackBarService],
   styleUrls: ["./entity-order.component.scss"],
 })
 export class EntityOrderComponent {
@@ -41,16 +45,15 @@ export class EntityOrderComponent {
     private entityService: EntityService,
     private modelService: ModelService,
     private dialogService: DialogService,
-    private snackbarService:SnackBarService
+    private snackbarService: SnackBarService
   ) {}
   load() {
     this.entityService
-      .loadEntityByModel(this.groupId)
+      .loadEntityByModelWithOutAttributes(this.groupId)
       .subscribe((results: any) => {
         this.initialList = results;
-        this.entityList = results.sort((a: any, b: any) =>
-          a.displayName.localeCompare(b.displayName)
-        );
+        this.sortOrder = results[0].orderType || 'asc';
+        this.entityList = results.sort((a: any, b: any) => a.order - b.order);
       });
   }
   ngOnInit(): void {
@@ -73,7 +76,6 @@ export class EntityOrderComponent {
   }
   drop(event: any) {
     moveItemInArray(this.entityList, event.previousIndex, event.currentIndex);
-    console.log(this.entityList);
   }
   sortOrderChange(event: any) {
     this.sortOrder = event.value;
@@ -94,15 +96,15 @@ export class EntityOrderComponent {
       element.order = index + 1;
     });
     this.entityService
-      .addEntityOrder(this.entityList,this.sortOrder)
+      .addEntityOrder(this.entityList, this.sortOrder)
       .subscribe({
-            next: (result) => {
-              this.snackbarService.success("Succesfully Created");
-            },
-            error: (err) => {
-              this.snackbarService.error("Order Creation Failed");
-            },
-          });
+        next: (result) => {
+          this.snackbarService.success("Succesfully Created");
+        },
+        error: (err) => {
+          this.snackbarService.error("Order Creation Failed");
+        },
+      });
   }
   onCancel() {
     const dialogRef = this.dialogService.openConfirmDialoge({

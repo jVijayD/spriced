@@ -10,7 +10,7 @@
         ></ngx-mat-select-search>
       </mat-option>
       <mat-option value="" class="option">--Select--</mat-option>
-      <mat-option *ngFor="let item of filteredModelList" [value]="item">{{
+      <mat-option *ngFor="let item of filteredModelList" [value]="item.id">{{
         item.displayName
       }}</mat-option>
     </mat-select>
