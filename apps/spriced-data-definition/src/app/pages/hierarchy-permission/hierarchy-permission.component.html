@@ -54,7 +54,7 @@
                                 formControlName="hierarchyFilter"></ngx-mat-select-search>
                         </mat-option>
                         <mat-option value="" class="option">--Select--</mat-option>
-                        <mat-option *ngFor="let hierarchy of hierarchyList" [value]="hierarchy.id">
+                        <mat-option *ngFor="let hierarchy of filteredHierarchy" [value]="hierarchy.id">
                             {{hierarchy.name}}
                         </mat-option>
                     </mat-select>
