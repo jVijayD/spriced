@@ -10,7 +10,7 @@
         ></ngx-mat-select-search>
       </mat-option>
       <mat-option value="" class="option">--Select--</mat-option>
-      <mat-option *ngFor="let item of filteredModelList" [value]="item.id">{{
+      <mat-option *ngFor="let item of filteredModelList" [value]="item">{{
         item.displayName
       }}</mat-option>
     </mat-select>
@@ -36,7 +36,7 @@
       </div>
     </div>
     <div class="p-4 flex justify-center">
-      <button mat-raised-button color="primary">Save</button>
+      <button mat-raised-button color="primary" (click)="onSave()">Save</button>
       <button
         mat-raised-button
         color="accent"

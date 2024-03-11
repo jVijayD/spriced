@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatSidenavModule } from "@angular/material/sidenav";
-import { OneColComponent } from "@spriced-frontend/spriced-ui-lib";
+import { OneColComponent, SnackBarService } from "@spriced-frontend/spriced-ui-lib";
 import { MatIconModule } from "@angular/material/icon";
 import { EntitySettingsComponent } from "./entity-settings/entity-settings.component";
 @Component({
@@ -12,7 +12,7 @@ import { EntitySettingsComponent } from "./entity-settings/entity-settings.compo
     MatSidenavModule,
     OneColComponent,
     MatIconModule,
-    EntitySettingsComponent
+    EntitySettingsComponent,
   ],
   templateUrl: "./settings.component.html",
   styleUrls: ["./settings.component.scss"],
