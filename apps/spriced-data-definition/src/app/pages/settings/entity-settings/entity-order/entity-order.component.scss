@@ -16,7 +16,7 @@
   background-color: var(--readonly);
   padding: 0.5rem;
   cursor: move;
-  box-shadow: 4px 4px 4px 4px lightgray;
+  // box-shadow: 4px 4px 4px 4px lightgray;
   margin: 1rem;
 }
 .drop-box:hover {
@@ -27,8 +27,8 @@
 }
 .drop-container {
   overflow: auto;
-  box-shadow: 4px 4px 4px 4px #00000026;
-  height:calc(100vh - 4rem - 13px - 16rem);
+  box-shadow: 2px 2px 2px 2px #00000026;
+  height:calc(100vh - 4rem - 13px - 13rem);
 }
 .header
 {

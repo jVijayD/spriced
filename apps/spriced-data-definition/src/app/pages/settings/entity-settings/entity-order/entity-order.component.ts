@@ -59,11 +59,15 @@ export class EntityOrderComponent {
       .subscribe((results: any) => {
         this.initialList = results;
         if (this.selectedModel.orderType == "custom") {
+          this.entityList = results.sort((a: any, b: any) => a.order - b.order);
+        } else if (this.selectedModel.orderType == "desc") {
+          this.entityList = results.sort((a: any, b: any) =>
+            a.displayName.localeCompare(b.displayName)
+          ).reverse();
+        } else {
           this.entityList = results.sort((a: any, b: any) =>
             a.displayName.localeCompare(b.displayName)
           );
-        } else {
-          this.entityList = results.sort((a: any, b: any) => a.order - b.order);
         }
       });
   }
@@ -129,7 +133,7 @@ export class EntityOrderComponent {
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result == true) {
         this.entityList = [...this.initialList];
-        this.sortOrder = this.selectedModel.sortOrder;
+        this.sortOrder = this.selectedModel.orderType;
       }
     });
   }
