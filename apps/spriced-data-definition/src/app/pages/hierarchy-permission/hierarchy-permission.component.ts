@@ -6,7 +6,7 @@ import { MatOptionModule } from "@angular/material/core";
 import { MatSelectSearchComponent, NgxMatSelectSearchModule } from "ngx-mat-select-search";
 import { ColumnMode, DatatableComponent, NgxDatatableModule, SelectionType, SortType } from "@swimlane/ngx-datatable";
 import { DataGridComponent } from "@spriced-frontend/spriced-ui-lib";
-import { Criteria, Entity, EntityService, ModelService, Model, UserAccessService } from "@spriced-frontend/spriced-common-lib";
+import { Criteria, Entity, EntityService, ModelService, Model, UserAccessService, sortService } from "@spriced-frontend/spriced-common-lib";
 import { HierarchyServiceService } from "../hierarchy-definition/service/hierarchy-service.service";
 import { Subject, debounceTime } from "rxjs";
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
@@ -202,6 +202,7 @@ export class HierarchyPermissionComponent implements OnInit {
 
   public getEntityByGroupId(id: any) {
     this.entityService.loadEntityByModel(id).subscribe((el: any) => {
+      el=sortService(this.modelList,id,el);
       this.filteredEntities = [{
         displayName: 'All',
         id: 'ALL'

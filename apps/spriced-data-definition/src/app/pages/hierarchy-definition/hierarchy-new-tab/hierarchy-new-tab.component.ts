@@ -20,6 +20,7 @@ import {
   Entity,
   EntityService, Criteria,
   Model,
+  sortService,
 } from "@spriced-frontend/spriced-common-lib";
 import { MatListModule } from "@angular/material/list";
 import { CommonModule, NgFor } from "@angular/common";
@@ -282,6 +283,7 @@ export class HierarchyNewTabComponent {
   getEntitiesByModel(model: Model, entityId?: number, hie?: Hierarchy, isOnBind: boolean = false) {
     this.entityList = [];
     this.entityService.loadEntityByModel(model.id).forEach((a) => {
+      a=sortService(this.modelList,model.id,a);
       this.entityList.push(...a);
       this.EntityListCallBack(entityId ? entityId : 0, hie ? hie : {} as Hierarchy);
     });

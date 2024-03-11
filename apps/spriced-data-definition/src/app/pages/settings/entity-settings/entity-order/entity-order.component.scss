@@ -1,0 +1,39 @@
+.container {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 22% 22% 50%;
+  column-gap: 2rem;
+  padding: 0.5rem;
+}
+.drop-box {
+  background-color: white;
+  padding: 0.5rem;
+  cursor: move;
+  box-shadow: 4px 4px 4px 4px lightgray;
+  margin: 1rem;
+}
+.drop-box-disabled {
+  background-color: var(--readonly);
+  padding: 0.5rem;
+  cursor: move;
+  // box-shadow: 4px 4px 4px 4px lightgray;
+  margin: 1rem;
+}
+.drop-box:hover {
+  background-color: var(--secondary-light);
+}
+.drop-box:-moz-drag-over {
+  background-color: var(--secondary-light);
+}
+.drop-container {
+  overflow: auto;
+  box-shadow: 2px 2px 2px 2px #00000026;
+  height:calc(100vh - 4rem - 13px - 13rem);
+}
+.header
+{
+  background-color: var(--primary-default);
+  color:white;
+  padding:0.5rem;
+  border-radius: 4px 4px 0 0;
+}

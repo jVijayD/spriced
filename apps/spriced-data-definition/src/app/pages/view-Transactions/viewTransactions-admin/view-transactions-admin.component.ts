@@ -32,6 +32,7 @@ import {
   Criteria,
   Entity,
   EntityService,
+  sortService,
 } from "@spriced-frontend/spriced-common-lib";
 import { ModelService } from "../../../services/model.service";
 import { Subject, forkJoin } from "rxjs";
@@ -185,9 +186,9 @@ export class ViewTransactionsAdminComponent {
     this.enitityService
       .loadEntityByModel(this.selectedModel)
       .subscribe((result: any) => {
+        result=sortService(this.modelList,this.selectedModel,result);
         this.entityList = result;
         this.filteredEntityList = result;
-        this.filteredEntityList.sort((a:any,b:any) => a.displayName.localeCompare(b.displayName));
         this.selectedEntity = this.filteredEntityList[0]?.id;
         this.appliedFilters = [];
         this.onEntitySelectionChange({ value: this.selectedEntity });

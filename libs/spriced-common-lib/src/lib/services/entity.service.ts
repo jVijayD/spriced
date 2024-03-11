@@ -31,6 +31,10 @@ export class EntityService {
       `${this.api_url}/models/${id}/entities?skipAttributes=true`
     );
   }
+  addEntityOrder(entity:any,sortOrder:any)
+  {
+    return this.http.put(`${this.api_url}/entities/order?type=${sortOrder}&groupId=${entity[0].groupId}`,entity);
+  }
 }
 
 export interface Entity {
@@ -45,6 +49,8 @@ export interface Entity {
   name: string;
   updatedBy: string;
   updatedDate: string;
+  order?:number;
+  orderType?:string;
 }
 
 export interface Attribute {

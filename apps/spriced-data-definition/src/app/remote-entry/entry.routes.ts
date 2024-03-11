@@ -9,6 +9,7 @@ import { ViewTransactionsAdminComponent } from "../pages/view-Transactions/viewT
 import { HierarchyDefinitionComponent } from "../pages/hierarchy-definition/hierarchy-definition.component";
 import { HierarchyPermissionComponent } from "../pages/hierarchy-permission/hierarchy-permission.component";
 import { DerivedHierarchyComponent } from "../pages/derived-hierarchy/derived-hierarchy.component";
+import { SettingsComponent } from "../pages/settings/settings.component";
 
 export const remoteRoutes: Route[] = [
   {
@@ -25,7 +26,9 @@ export const remoteRoutes: Route[] = [
       { path: "hierarchy-definition", component: HierarchyDefinitionComponent },
       { path: "hierarchy-permission", component: HierarchyPermissionComponent },
       { path: "derived-hierarchy/:hierarchyId/:modelId/:entityId", component: DerivedHierarchyComponent },
-      { path: "rules", loadChildren: () => import('../business-rules/business-rules.module').then( m => m.BusinessRulesModule)}
+      { path: "rules", loadChildren: () => import('../business-rules/business-rules.module').then( m => m.BusinessRulesModule)},
+      { path: "settings", component: SettingsComponent },
+
     ],
   },
 ];

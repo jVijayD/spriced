@@ -1,0 +1,51 @@
+<div class="container">
+  <mat-form-field appearance="outline" class="h-4">
+    <mat-label>Model</mat-label>
+    <mat-select matNativeControl (selectionChange)="load($event)" [(value)]="selectedModel">
+      <mat-option>
+        <ngx-mat-select-search
+          placeholderLabel="Search"
+          ngModel
+          (ngModelChange)="filterModelsSelection($event)"
+        ></ngx-mat-select-search>
+      </mat-option>
+      <mat-option value="" class="option">--Select--</mat-option>
+      <mat-option *ngFor="let item of filteredModelList" [value]="item">{{
+        item.displayName
+      }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="h-4">
+    <mat-label>Order Options</mat-label>
+    <mat-select
+      (selectionChange)="sortOrderChange($event)"
+      [(value)]="sortOrder"
+    >
+      <mat-option value="asc">Ascending (Default)</mat-option>
+      <mat-option value="desc">Descending</mat-option>
+      <mat-option value="custom">Custom</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div>
+    <div class="header">Entity</div>
+    <div cdkDropList class="drop-container"   (cdkDropListDropped)="drop($event)">
+      <div *ngFor="let item of entityList" class="{{sortOrder!=='custom'? 'drop-box-disabled' :'drop-box' }}" cdkDrag  [cdkDragDisabled]="sortOrder!=='custom'">
+        {{ item.displayName }}
+      </div>
+    </div>
+    <div class="p-4 flex justify-center">
+      <button mat-raised-button color="primary" (click)="onSave()">Save</button>
+      <button
+        mat-raised-button
+        color="accent"
+        type="button"
+        (click)="onCancel()"
+        class="ml-2"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>

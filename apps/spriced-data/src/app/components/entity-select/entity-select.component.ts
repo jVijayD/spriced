@@ -20,10 +20,10 @@ import {
   Model,
   Entity,
   GlobalSettingService,
+  sortService,
 } from "@spriced-frontend/spriced-common-lib";
 import { Subscription } from "rxjs";
 import { OrderByPipe } from "@spriced-frontend/spriced-ui-lib";
-
 @Component({
   selector: "sp-entity-select",
   standalone: true,
@@ -97,16 +97,13 @@ export class EntitySelectComponent implements OnInit, OnDestroy {
       this.entityService.loadEntityByModelWithOutAttributes(modelId).subscribe({
         next: (items) => {
           if (items) {
-            this.entities = items;
-            this.filteredEntities = items;
+            items=sortService(this.models,modelId,items);
+            this.entities = items
+            this.filteredEntities =items
             if (this.entities.length) {
               // this.selectedEntity =
               //   this.entities.find((item) => item.id === entityId) ||
               //   this.entities[0];
-
-              this.entities.sort((a,b) => a.displayName.localeCompare(b.displayName));
-              this.filteredEntities.sort((a,b) => a.displayName.localeCompare(b.displayName));
-              
               const curSelectedEntity =
                 this.entities.find((item) => item.id === entityId) ||
                 this.entities[0];

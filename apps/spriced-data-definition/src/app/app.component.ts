@@ -56,6 +56,11 @@ export class AppComponent {
       active: false,
       path: "/spriced-data-definition/view-transactions",
     },
+    {
+      name: "Settings",
+      active: false,
+      path: "/spriced-data-definition/settings",
+    },
   ];
   constructor(private appDataService: AppDataService,
     private router:Router

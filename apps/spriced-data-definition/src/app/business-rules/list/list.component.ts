@@ -29,6 +29,7 @@ import {
 import {
   BusinessruleService,
   Criteria,
+  sortService,
 } from "@spriced-frontend/spriced-common-lib";
 import {
   DataGridComponent,
@@ -581,6 +582,7 @@ export class ListComponent implements OnInit, OnDestroy {
       .getAllEntitesByModuleId(id)
       .pipe(takeUntil(this.notifier$))
       .subscribe((res: any) => {
+        res=sortService(this.filteredModels,id,res);
         this.entities = res;
         this.filteredEntites = res;
         const entity = res.find((el: any) => el.groupId === this.defaultModel);
