@@ -24,7 +24,7 @@ import {
 import { loaderInterceptor } from "./interceptors/loader.interceptor";
 import { ErrorCatchingInterceptor } from "./interceptors/http-error-interceptor";
 import { AuthGuard } from "./guards/auth.guard";
-import { GlobalErrorHandler } from "./services/error-handler.service";
+// import { GlobalErrorHandler } from "./services/error-handler.service";
 const loaderService = new LoaderService();
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -37,10 +37,10 @@ export const appConfig: ApplicationConfig = {
       useClass: KeycloakBearerInterceptor,
       multi: true,
     },
-    {
-      provide: ErrorHandler,
-      useClass: GlobalErrorHandler
-    },
+    // {
+    //   provide: ErrorHandler,
+    //   useClass: GlobalErrorHandler
+    // },
     AuthGuard,
     {
       provide: HTTP_INTERCEPTORS,
