@@ -40,7 +40,7 @@
       </div>
     </div>
     <div class="p-4 flex justify-center">
-      <button mat-raised-button color="primary" (click)="onSave()">Save</button>
+      <button mat-raised-button color="primary" (click)="onSave()" [disabled]="entityList?.length==0">Save</button>
       <button
         mat-raised-button
         color="accent"

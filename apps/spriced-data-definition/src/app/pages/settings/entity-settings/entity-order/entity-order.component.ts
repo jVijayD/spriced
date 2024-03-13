@@ -135,7 +135,7 @@ export class EntityOrderComponent {
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result == true) {
         this.entityList = [...this.initialList];
-        this.sortOrder = this.selectedModel.orderType = null
+        this.sortOrder = this.selectedModel.orderType == null
           ? "asc"
           : this.selectedModel.orderType;
       }
