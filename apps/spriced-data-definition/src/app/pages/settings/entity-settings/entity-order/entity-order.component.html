@@ -1,5 +1,6 @@
 <div class="container">
-  <mat-form-field appearance="outline" class="h-4">
+  <div style="height: 3rem !important;">
+  <mat-form-field appearance="outline" style="height: 3rem !important;">
     <mat-label>Model</mat-label>
     <mat-select matNativeControl (selectionChange)="load($event)" [(value)]="selectedModel">
       <mat-option>
@@ -15,8 +16,10 @@
       }}</mat-option>
     </mat-select>
   </mat-form-field>
+</div>
 
-  <mat-form-field appearance="outline" class="h-4">
+<div style="height: 3rem !important;">
+  <mat-form-field appearance="outline" style="height: 3rem !important;">
     <mat-label>Order Options</mat-label>
     <mat-select
       (selectionChange)="sortOrderChange($event)"
@@ -27,6 +30,7 @@
       <mat-option value="custom">Custom</mat-option>
     </mat-select>
   </mat-form-field>
+</div>
 
   <div>
     <div class="header">Entity</div>
