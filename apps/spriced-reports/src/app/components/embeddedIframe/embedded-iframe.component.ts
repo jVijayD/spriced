@@ -20,15 +20,16 @@ export class EmbeddedIframeComponent implements OnInit {
   @Input()
   set dashboardId(value: string) {
     this._dashboardId = value;
-    this.embed();
   }
-
   error: boolean = false;
   constructor(private httpClient: HttpClient) {}
 
-  ngOnInit(): void {console.log(this.quotedPriceId)}
+  ngOnInit(): void {
+    this.embed();
+  }
 
   private embed() {
+    console.log(this.quotedPriceId)
     this.error = false;
     embedDashboard({
       id: this._dashboardId, // given by the Superset embedding UI
