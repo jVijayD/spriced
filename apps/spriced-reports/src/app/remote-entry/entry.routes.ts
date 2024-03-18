@@ -2,7 +2,6 @@ import { Route } from "@angular/router";
 import { HomeComponent } from "../pages/home/home.component";
 import { AppComponent } from "../app.component";
 import { ReportComponent } from "../pages/report/report.component";
-import { ReportFilterComponent } from "../pages/report-filter/report-filter.component";
 
 export const remoteRoutes: Route[] = [
   {
@@ -21,10 +20,6 @@ export const remoteRoutes: Route[] = [
       {
         path: "report/:dashboardId",
         component: ReportComponent,
-      },
-      {
-        path: "report/:dashboardId/:quotedPriceId",
-        component: ReportFilterComponent,
       },
     ],
   },
