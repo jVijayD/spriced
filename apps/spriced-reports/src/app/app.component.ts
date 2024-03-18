@@ -60,7 +60,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterContentChecked {
         next: (menuItems) => {
           this.appDataService.setMenuData(menuItems);
           this.loaderService.hide();
-          this.router.navigate(["/spriced-reports/1"]);
+          // this.router.navigate(["/spriced-reports/1"]);
         },
         error: (err) => {
           this.loaderService.hide();
