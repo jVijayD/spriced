@@ -15,6 +15,8 @@ import { MatIconModule } from "@angular/material/icon";
 })
 export class EmbeddedIframeComponent implements OnInit {
   _dashboardId: string = "abc";
+  @Input() quotedPriceId: any;
+
   @Input()
   set dashboardId(value: string) {
     this._dashboardId = value;
@@ -24,7 +26,7 @@ export class EmbeddedIframeComponent implements OnInit {
   error: boolean = false;
   constructor(private httpClient: HttpClient) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {console.log(this.quotedPriceId)}
 
   private embed() {
     this.error = false;
@@ -46,6 +48,7 @@ export class EmbeddedIframeComponent implements OnInit {
           expanded: false,
           visible: false,
         },
+        urlParams: this.quotedPriceId ? this.quotedPriceId : {},
       },
     })
       .catch((error) => {
