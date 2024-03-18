@@ -749,18 +749,19 @@ export class ListComponent implements OnInit, OnDestroy {
 
     if (conditions && conditions.length > 0) {
       conditions.forEach((condition: any, index: number) => {
+        condition.attributeId = condition.attributeId === '1234' ? condition.parentAttributeId : condition.attributeId;
         tooltipConditionText += index !== 0 ? this.getIndent(3) : "";
         let attribute = this.attributes.find(
           (item: any) => item.id === condition.attributeId
         );
-        attribute = !!attribute
-          ? attribute
-          : { name: "code", displayName: "Code", id: "1234" };
+        // attribute = !!attribute
+        //   ? attribute
+        //   : { name: "code", displayName: "Code", id: "1234" };
         if (
           (attribute && attribute.name.includes("_")) ||
           condition?.operatorType.includes("_")
         ) {
-          attribute.name = attribute?.name.replace(/_/g, " ");
+          // attribute.name = attribute?.name.replace(/_/g, " ");
           condition.operatorType = condition?.operatorType.replace(/_/g, " ");
         }
         const conditionType =
@@ -773,7 +774,7 @@ export class ListComponent implements OnInit, OnDestroy {
           operand = this.attributes.find(
             (item: any) => item.id === condition.operand
           );
-          operand = operand?.name;
+          operand = operand?.displayName;
         } else if (
           ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute?.dataType) &&
           condition.operandType === "CONSTANT" &&
@@ -796,7 +797,7 @@ export class ListComponent implements OnInit, OnDestroy {
             ? `to ${operand}`
             : "";
 
-        tooltipConditionText += `${conditionType} ${attribute?.name.toLowerCase()}  
+        tooltipConditionText += `${conditionType} ${attribute?.displayName}  
         ${condition?.operatorType.toLowerCase()} ${operand}`;
 
         if (condition.subConditions && condition.subConditions.length > 0) {
@@ -825,18 +826,19 @@ export class ListComponent implements OnInit, OnDestroy {
 
     if (subConditions && subConditions.length > 0) {
       subConditions.forEach((condition: any, index: number) => {
+        condition.attributeId = condition.attributeId === '1234' ? condition.parentAttributeId : condition.attributeId;
         subConditionText += index !== 0 ? this.getIndent(1) : "";
         let attribute = this.attributes.find(
           (item: any) => item.id === condition.attributeId
         );
-        attribute = !!attribute
-          ? attribute
-          : { name: "code", displayName: "Code", id: "1234" };
+        // attribute = !!attribute
+        //   ? attribute
+        //   : { name: "code", displayName: "Code", id: "1234" };
         if (
           (attribute && attribute.name.includes("_")) ||
           condition.operatorType.includes("_")
         ) {
-          attribute.name = attribute?.name.replace(/_/g, " ");
+          // attribute.name = attribute?.name.replace(/_/g, " ");
           condition.operatorType = condition?.operatorType.replace(/_/g, " ");
         }
         const conditionType =
@@ -849,7 +851,7 @@ export class ListComponent implements OnInit, OnDestroy {
           operand = this.attributes.find(
             (item: any) => item.id === condition.operand
           );
-          operand = operand?.name;
+          operand = operand?.displayName;
         } else if (
           ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute?.dataType) &&
           condition.operandType === "CONSTANT" &&
@@ -934,26 +936,27 @@ export class ListComponent implements OnInit, OnDestroy {
 
     if (actions && actions.length > 0) {
       actions.forEach((action: any, index: number) => {
+        action.attributeId = action.attributeId === '1234' ? action.parentAttributeId : action.attributeId;
         tooltipActionConditionsText += index !== 0 ? this.getIndent(3) : "";
         operand = action?.operand !== "" ? action?.operand : "Blank";
         let attribute = this.attributes.find(
           (item: any) => item.id === action.attributeId
         );
-        attribute = !!attribute
-          ? attribute
-          : { name: "code", displayName: "Code", id: "1234" };
+        // attribute = !!attribute
+        //   ? attribute
+        //   : { name: "code", displayName: "Code", id: "1234" };
         if (
           (attribute && attribute.name.includes("_")) ||
           action.actionType.includes("_")
         ) {
-          attribute.name = attribute?.name.replace(/_/g, " ");
+          // attribute.name = attribute?.name.replace(/_/g, " ");
           action.actionType = action?.actionType.replace(/_/g, " ");
         }
         if (action.operandType === "ATTRIBUTE") {
           operand = this.attributes.find(
             (item: any) => item.id === action.operand
           );
-          operand = operand?.name;
+          operand = operand?.displayName;
         } else if (
           ["DATE", "TIME_STAMP", "DATE_TIME"].includes(attribute?.dataType) &&
           action?.operandType === "CONSTANT" &&
@@ -987,7 +990,7 @@ export class ListComponent implements OnInit, OnDestroy {
             ? ` " "`
             : "";
         tooltipActionConditionsText += `${
-          attribute.name
+          attribute.displayName
         } ${action.actionType.toLowerCase()} ${operand}`;
         const lastAction = actions.length - 1;
         lastAction != index ? (tooltipActionConditionsText += "<br>") : "";
