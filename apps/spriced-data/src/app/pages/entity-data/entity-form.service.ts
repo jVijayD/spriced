@@ -28,16 +28,19 @@ export class EntityFormService {
   }
 
   setSelectedFields(selectedColumns: any, array: any) {
-    return array.filter((elem: any) => {
-      return selectedColumns.some((ele: any) => {
-        if (elem.name == "comment") {
-          return elem;
-        } else {
-          return ele === elem.name?.toLowerCase();
-        }
-      });
+    selectedColumns.push('comment')
+    array.filter((item: any) => {
+      if (!selectedColumns.includes(item.name) || item.name=='id') {
+        item.visible=false
+        console.log(item.name)
+      }
+      else
+      {
+        item.visible=true
+      }
     });
-  }
+    return array
+     }
 
   public extractFormFieldsOnly(selectedItem: any, value: any) {
     let extractedFields: any = {};
@@ -242,7 +245,9 @@ export class EntityFormService {
       validations.push({
         name: `pattern`,
         message: `Maximum decimal is ${attr.size}`,
-        validator: Validators.pattern(`^-?[0-9]{0,131072}.[0-9]{0,${attr.size}}$`),
+        validator: Validators.pattern(
+          `^-?[0-9]{0,131072}.[0-9]{0,${attr.size}}$`
+        ),
       });
     }
     return validations;
