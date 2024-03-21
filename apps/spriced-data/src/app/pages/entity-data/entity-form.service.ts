@@ -32,7 +32,6 @@ export class EntityFormService {
     array.filter((item: any) => {
       if (!selectedColumns.includes(item.name) || item.name=='id') {
         item.visible=false
-        console.log(item.name)
       }
       else
       {
