@@ -27,6 +27,11 @@ export class AppComponent {
       path: "/spriced-data/",
       active: true,
     },
+    {
+      name: "Notifications",
+      path: "/spriced-data/notification",
+      active: true,
+    },
     // {
     //   name: "Settings",
     //   path: "/spriced-data/settings",

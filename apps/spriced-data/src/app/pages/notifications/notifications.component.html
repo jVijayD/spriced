@@ -1,0 +1,29 @@
+<sp-one-col>
+    <!-- <query-builder [(ngModel)]="query" [config]="config"></query-builder> -->
+    <sp-data-grid
+      class="w-full h-full"
+      #dataGrid
+      title="Notifications"
+      [enableRowIndex]="false"
+      [isArray]="false"
+      [virtualScroll]="false"
+      [headers]="headers"
+      [rows]="rows"
+      [rowHeight]="30"
+      [headerHeight]="30"
+      [footerHeight]="30"
+      [columnMode]="columnMode"
+      [virtualScroll]="false"
+      [selectionType]="selectionType"
+      [limit]="limit"
+      [isExternalPaging]="true"
+      [isExternalSorting]="false"
+      [sortType]="sortType"
+      [count]="totalElements"
+      (paginate)="onPaginate($event)"
+      (itemSelected)="onItemSelected($event)"
+      [selected]="!!selectedItem ? [selectedItem] : []"
+      (sort)="onSort($event)"
+    >
+    </sp-data-grid>
+    </sp-one-col>
