@@ -818,12 +818,13 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         entity,
         this.globalSettings?.settingsData?.displayFormat || this.defaultCodeSetting
       );
-      if (this.selectedColumns && this.selectedColumns?.length !== 0) {
+      if (this.selectedColumns && this.selectedColumns?.length !== 0 && this.selectedColumns!=null) {
         formFields = this.entityFormService.setSelectedFields(
           this.selectedColumns,
           formFields
         );
       }
+      console.log(formFields)
       this.disableSubmit = !entity.attributes.reduce((prev, current) => {
         return prev || current.permission === "UPDATE";
       }, false);
@@ -922,18 +923,15 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   private loadEntityData(entity: Entity, criteria: Criteria) {
-    const filterApplied = !!this.query;
     this.currentCriteria = criteria;
     const enrichedCriteria = this.setDefaultCriteria(criteria, this.lastId);
     if (entity) {
       this.applyEntitySettings(entity);
       this.subscriptions.push(
         this.entityDataService
-          .loadEntityDataFilter(
+          .loadEntityData(
             entity.id,
             enrichedCriteria,
-            this.selectedColumns,
-            filterApplied
           )
           .pipe(first())
           .subscribe({

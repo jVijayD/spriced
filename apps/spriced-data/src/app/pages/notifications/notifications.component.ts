@@ -35,13 +35,13 @@ export class NotificationsComponent {
       isSortable: true,
       width: 100,
     },
-    {
-      column: "status",
-      name: "Status",
-      canAutoResize: true,
-      isSortable: true,
-      width: 100,
-    },
+    // {
+    //   column: "status",
+    //   name: "Status",
+    //   canAutoResize: true,
+    //   isSortable: true,
+    //   width: 100,
+    // },
     // {
     //   column: "action",
     //   name: "Action",
