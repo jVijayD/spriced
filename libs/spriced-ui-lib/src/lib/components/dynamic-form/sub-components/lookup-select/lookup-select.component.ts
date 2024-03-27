@@ -97,6 +97,7 @@ export class LookupSelectComponent
         this.totalCount = this.count
         }
         this.loading = false;
+        this.pageSize=2
         if (this.totalCount > this.pageSize && !this.dialogReference) {
           this.openPopup();
         }
@@ -215,7 +216,8 @@ export class LookupSelectComponent
           )}`;
     }, "-##");
   }
-  openPopup(): void {  
+  openPopup(): void {
+    const lookup=this._control as LookupSelectControl  
     const dialogRef = this.dialog.open(LookupDialogComponent, {
       width: "700px",
       height: "620px",
@@ -223,7 +225,8 @@ export class LookupSelectComponent
         value: this.source,
         total: this.totalCount,
         pageSize: this.pageSize,
-        selectedItem:this.selectedItem
+        selectedItem:this.selectedItem,
+        lookupId:lookup.eventValue,
       },
       hasBackdrop: false,
     });
