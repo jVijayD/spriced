@@ -97,7 +97,6 @@ export class LookupSelectComponent
         this.totalCount = this.count
         }
         this.loading = false;
-        this.pageSize=2
         if (this.totalCount > this.pageSize && !this.dialogReference) {
           this.openPopup();
         }
