@@ -59,7 +59,7 @@ export class NotificationsComponent {
       width: 100,
     },
     {
-      column: "updated_byUpdated By",
+      column: "updated_by",
       name: "Updated By",
       canAutoResize: true,
       isSortable: true,
