@@ -929,7 +929,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.applyEntitySettings(entity);
       this.subscriptions.push(
         this.entityDataService
-          .loadEntityData(
+          .loadEntityDataFilter(
             entity.id,
             enrichedCriteria,
           )
