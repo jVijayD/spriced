@@ -23,6 +23,7 @@ import {
   TwoColThreeForthComponent,
   HeaderComponentWrapperComponent,
   GridConstants,
+  TwoColThreeForthExpandableComponent,
 } from "@spriced-frontend/spriced-ui-lib";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
@@ -91,7 +92,7 @@ const TIMER_CONST = 300;
     HeaderActionComponent,
     MatButtonModule,
     MatIconModule,
-    TwoColThreeForthComponent,
+    TwoColThreeForthExpandableComponent,
     SnackbarModule,
     EntitySelectComponent,
     MatExpansionModule,

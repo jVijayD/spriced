@@ -1,0 +1,17 @@
+.col-height {
+  @apply flex flex-row flex-grow w-full space-x-2;
+  height: 100%;
+}
+
+.col-left {
+  @apply h-full rounded-t-lg shadow-md shadow-black p-0;
+  height: 100%;
+  //overflow-y: auto;
+}
+
+.col-right {
+  @apply  h-full rounded-t-lg shadow-md shadow-black p-0;
+  height: 100%;
+  min-width: 300px;
+  overflow-y: hidden;
+}

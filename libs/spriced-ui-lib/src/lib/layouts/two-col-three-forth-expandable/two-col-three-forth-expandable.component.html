@@ -1,0 +1,15 @@
+<div class="col-height">
+  <as-split direction="horizontal" (dragEnd)="onDrag($event)">
+    <as-split-area [size]="singleColumn ? 100 : 79">
+      <div class="col-left">
+        <ng-content select="[left]"></ng-content>
+      </div>
+    </as-split-area>
+
+    <as-split-area *ngIf="!singleColumn" [size]="21">
+      <div class="col-right" *ngIf="!singleColumn">
+        <ng-content select="[right]"></ng-content>
+      </div>
+    </as-split-area>
+  </as-split>
+</div>

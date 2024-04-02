@@ -4,8 +4,8 @@
 
 .grid-container {
   @apply h-full w-full;
-  //overflow-y: hidden;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .grid-height {
