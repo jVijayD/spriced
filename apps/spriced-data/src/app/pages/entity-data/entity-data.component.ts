@@ -78,6 +78,7 @@ import { AddFilterlistComponent } from "../../components/filter-list/add-filterl
 import { EntityExportDataService } from "../../services/entity-export.service";
 import { DownloadsDialogueComponent } from "../../components/downloads-dialogue/downloads-dialogue.component";
 import { FilterListService } from "../../components/filter-list/services/filter-list.service";
+import { FailedValidationPopupComponent } from "../../components/failed-validation-popup/failed-validation-popup.component";
 
 const TIMER_CONST = 300;
 @Component({
@@ -149,7 +150,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   dataGrid!: DataGridComponent;
   pageNumber: number = 0;
   relatedEntity: any;
-  ValidationMessage: any = [];
   public showTooltip: boolean = false;
 
   defaultCodeSetting = "namecode";
@@ -884,10 +884,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
           isSortable: false,
           width: 80,
           tooltip: true,
-          tooltipTemplate: (row: any) => this.getErrorTooltip(row),
           imgsrc: (row: any) => this.getImage(row),
-          showtooltip: (row: any) =>
-            !row.is_valid && this.ValidationMessage.length !== 0,
+          showtooltip: false,
           className: "grid-image-icon",
         },
       ];
@@ -900,22 +898,6 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.columns = this.headers;
       this.loadEntityData(entity, criteria);
     }
-  }
-  getErrorTooltip(row: any) {
-    // this.entityDataService.loadValidationMessage(item) .subscribe((val) => {
-    // console.log(val)
-    // });
-    // this.ValidationMessage=[
-    //   {
-    //       "rule": "rule 1",
-    //       "message": " rule failed   "
-    //   },
-    //   {
-    //       "rule": "rule 2",
-    //       "message": " rule passed   "
-    //   }
-    //  ]
-    return this.ValidationMessage;
   }
   getImage(row: any) {
     return row.is_valid
@@ -1126,6 +1108,14 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.loadEntityData(
       this.currentSelectedEntity as Entity,
       this.currentCriteria
+    );
+  }
+  validationMessage(event: any) {
+    const dialogReference = this.dialogService.openDialog(
+      FailedValidationPopupComponent,
+      {
+        data:{entityId:this.currentSelectedEntity?.id,rowId:event.id}
+      }
     );
   }
 }

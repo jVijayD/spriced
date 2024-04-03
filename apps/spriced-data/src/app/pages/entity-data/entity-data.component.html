@@ -32,7 +32,7 @@
         [offset]="pageNumber"
         *ngIf="!hide"
         page="explorer"
-        [validationMessage]="ValidationMessage"
+        (validationMessage)="validationMessage($event)"
       >
         <ng-container>
           <!-- <sp-header-action

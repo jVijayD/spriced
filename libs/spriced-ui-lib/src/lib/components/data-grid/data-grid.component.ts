@@ -114,9 +114,6 @@ export class DataGridComponent implements AfterViewInit {
   @Input()
   page: any;
 
-  @Input()
-  validationMessage: any;
-
   @Output()
   action: EventEmitter<any> = new EventEmitter<any>();
 
@@ -137,6 +134,9 @@ export class DataGridComponent implements AfterViewInit {
 
   @Output()
   sort: EventEmitter<any> = new EventEmitter<any>();
+
+  @Output()
+  validationMessage: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(private exportService: ExportFileService) {
     this.resizeTable.pipe(debounceTime(400)).subscribe(() => {

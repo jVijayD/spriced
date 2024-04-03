@@ -98,13 +98,10 @@
 
             <ng-container *ngIf="header?.tooltip">
               <img
+                (click)="row.is_valid ? '' : validationMessage.emit(row)"
                 class="w-7 h-7 cursor-pointer"
                 spToolTipRenderer
-                [showToolTip]="
-                  page == 'explorer'
-                    ? header?.showtooltip(row)
-                    : header?.showtooltip
-                "
+                [showToolTip]="header?.showtooltip"
                 [contentTemplate]="template"
                 [src]="
                   page == 'explorer' ? header?.imgsrc(row) : header?.imgsrc
