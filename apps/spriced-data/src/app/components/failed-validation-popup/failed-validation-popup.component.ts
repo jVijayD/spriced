@@ -23,8 +23,8 @@ export class FailedValidationPopupComponent {
   ) {
     this.validationService
       .getFailedValidation(data.entityId, data.rowId)
-      .subscribe((result: any) => {
-        this.rows = result.filter((element: any) => {
+      .subscribe((res: any) => {
+        this.rows = res.result.filter((element: any) => {
           return element.success == false;
         });
       });
