@@ -139,6 +139,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     settingsData: {
       displayFormat: "namecode",
       showsystem: false,
+      timezone:'null'
     },
     type: "global",
   };
@@ -184,13 +185,10 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   {
     this.settings.getGlobalSettings().subscribe((results:any)=>
      {
-      if(results?.settingsData)
-      {
-       return results
-      }
-      else
-      {
-        return {settingsData:{displayFormat:"namecode",showSytem:false},type:'global'}
+      if (results?.settingsData) {
+        return results;
+      } else {
+        return {settingsData:{displayFormat:"namecode",showSytem:false,timezone:'null'},type:'global'}
       }
      })
   }

@@ -13,7 +13,7 @@ import { BaseComponent } from "../../base.component";
 import { DateControl, GenericControl } from "../../dynamic-form.types";
 import { DynamicFormService } from "../../service/dynamic-form.service";
 import { unixTimeStamp } from "@spriced-frontend/spriced-common-lib";
-
+import * as moment from "moment-timezone";
 @Component({
   selector: "sp-date-picker",
   templateUrl: "./date-picker.component.html",
@@ -68,7 +68,11 @@ export class DatePickerComponent
   // HANDLE THIS FUNCTION FOR CHANGE THE TIME STAMP
   public changeTimeStamp(date: any) {
     if (!!date) {
-      this.value = unixTimeStamp(date);
+      let timezone = localStorage.getItem("timezone") as string || 'null';
+      if (timezone !== "null") {
+        this.value = moment(this.value as string).tz(timezone);
+      }
+        this.value = unixTimeStamp(date);
     }
   }
 }

@@ -59,7 +59,7 @@ export class SettingsPopUpComponent implements OnInit {
   @ViewChild("all") private all!: MatOption;
   initialData: any;
   globalSettings: any = {
-    settingsData: { displayFormat: "namecode", showSystem: false },
+    settingsData: { displayFormat: "namecode", showSystem: false ,timezone:'null'},
   };
   currentSettings: any = {
     settingsData: {
@@ -202,6 +202,7 @@ export class SettingsPopUpComponent implements OnInit {
         settingsData: {
           displayFormat: this.displayFormat,
           showSystem: this.showSystem,
+          timezone:this.globalSettings.settingsData.timezone
         },
         type: "global",
       };
@@ -220,6 +221,7 @@ export class SettingsPopUpComponent implements OnInit {
         settingsData: {
           displayFormat: this.displayFormat,
           showSystem: this.showSystem,
+          timezone:this.globalSettings.settingsData.timezone
         },
         type: "global",
       };

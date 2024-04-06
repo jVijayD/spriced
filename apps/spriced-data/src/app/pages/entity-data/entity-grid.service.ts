@@ -46,7 +46,7 @@ export class EntityGridService {
                 : `${attr.name}_name,${attr.name}_code`
               : attr.name,
           name: attr.displayName || attr.name,
-          selectColumn:attr.name,
+          selectColumn: attr.name,
           canAutoResize: true,
           isSortable: true,
           isFilterable: true,
@@ -54,7 +54,7 @@ export class EntityGridService {
           options: this.getOptions(attr),
           width: attr.width || 0,
           formType: attr.type,
-          systemAttribute:attr.systemAttribute,
+          systemAttribute: attr.systemAttribute,
           referencedTableId: attr?.referencedTableId || null,
           pipe: (data: any) => {
             return this.getTransform(data, attr);
@@ -67,7 +67,10 @@ export class EntityGridService {
   setSelectedColumns(selectedColumns: any, array: any) {
     return array.filter((elem: any) => {
       return selectedColumns.some((ele: any) => {
-        if (elem.column == "validation_status" || elem.systemAttribute == true) {
+        if (
+          elem.column == "validation_status" ||
+          elem.systemAttribute == true
+        ) {
           return elem;
         } else {
           return ele === elem.selectColumn?.toLowerCase();
@@ -124,7 +127,15 @@ export class EntityGridService {
     } else if (attr.dataType === "TIME_STAMP" && data !== null) {
       let formattedData = data;
       try {
-        formattedData = moment(data).format(attr.formatter || "MM/DD/YYYY");
+        let timezone = localStorage.getItem("timezone") as string || 'null';
+        if (timezone !== "null") {
+          const moment = require("moment-timezone");
+          formattedData = moment(data)
+            .tz(timezone)
+            .format(attr.formatter || "MM/DD/YYYY");
+        } else {
+          formattedData = moment(data).format(attr.formatter || "MM/DD/YYYY");
+        }
       } catch (err) {
         console.error(err);
       }
