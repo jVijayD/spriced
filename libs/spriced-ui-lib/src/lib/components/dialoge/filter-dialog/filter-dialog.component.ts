@@ -316,7 +316,8 @@ if (item === "is_valid") {
         value: field.options,
         total: field.count,
         pageSize: this.pageSize,
-        selectedItem: rule.selectedItem
+        selectedItem: rule.selectedItem,
+        lookupId:field.entity
       },
       hasBackdrop: false,
     });
