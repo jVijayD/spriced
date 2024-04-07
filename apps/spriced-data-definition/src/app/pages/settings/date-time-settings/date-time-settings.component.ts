@@ -8,6 +8,10 @@ import { MatSelectModule } from "@angular/material/select";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 import { GlobalSettingService } from "@spriced-frontend/spriced-common-lib";
 import { MatButtonModule } from "@angular/material/button";
+import {
+  DialogService,
+  SnackBarService,
+} from "@spriced-frontend/spriced-ui-lib";
 
 @Component({
   selector: "sp-date-time-settings",
@@ -21,10 +25,11 @@ import { MatButtonModule } from "@angular/material/button";
     NgxMatSelectSearchModule,
     ReactiveFormsModule,
     FormsModule,
-    MatButtonModule
+    MatButtonModule,
   ],
   templateUrl: "./date-time-settings.component.html",
   styleUrls: ["./date-time-settings.component.scss"],
+  providers: [DialogService, SnackBarService],
 })
 export class DateTimeSettingsComponent {
   zoneList = [
@@ -378,28 +383,47 @@ export class DateTimeSettingsComponent {
     "Africa/Johannesburg",
   ];
   data: any;
-  filterZoneList=this.zoneList;
-  constructor(public settings: GlobalSettingService) {
+  filterZoneList = this.zoneList;
+  cancelData: any;
+  constructor(
+    public settings: GlobalSettingService,
+    private snackbarService: SnackBarService,
+    private dialogService: DialogService
+  ) {
     this.settings.getGlobalSettings().subscribe((item) => {
       this.data = item;
-      if (this.data.settingsData.timezone == null) {
-        this.data.settingsData.timezone = 'null';
+      this.cancelData=this.data.settingsData?.timezone || 'null'
+      if (this.data.settingsData?.timezone == null) {
+        this.data.settingsData.timezone = "null";
       }
     });
   }
   filterZone(text: string) {
     this.zoneList = this.filterZoneList.filter((item: any) => {
-      return (
-        item
-          .trim()
-          .toLowerCase()
-          .indexOf(text.trim().toLowerCase()) != -1
-      );
+      return item.trim().toLowerCase().indexOf(text.trim().toLowerCase()) != -1;
     });
   }
-  onCancel() {}
+  onCancel() {
+    const dialogRef = this.dialogService.openConfirmDialoge({
+      message: "Are you sure you want to discard the changes?",
+      title: "Cancel",
+      icon: "cancel",
+    });
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result == true) {
+        this.data.settingsData.timezone = this.cancelData;
+      }
+    });
+  }
   onSave() {
-    this.settings.setTimezone(this.data.settingsData.timezone)
-    this.settings.setSettings(this.data).subscribe((item) => {});
+    this.settings.setTimezone(this.data.settingsData.timezone);
+    this.settings.setSettings(this.data).subscribe({
+      next: (result) => {
+        this.snackbarService.success("Succesfully Added");
+      },
+      error: (err) => {
+        this.snackbarService.error("Timezone Change Failed");
+      },
+    });
   }
 }
