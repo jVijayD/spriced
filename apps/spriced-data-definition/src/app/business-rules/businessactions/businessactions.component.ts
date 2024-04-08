@@ -338,8 +338,8 @@ export class BusinessactionsComponent implements OnInit {
         this.loadLookupData(item?.referencedTableId)
         parentAtt = item;
         item = {
-          displayName: 'Code',
-          name: 'code',
+          displayName: 'Id',
+          name: 'id',
           id: '1234'
         }
       }
@@ -388,12 +388,12 @@ export class BusinessactionsComponent implements OnInit {
     const operend = this.findAttributeById(operand);
     const parentOperand = this.findAttributeById(parentOperandId);
 
-    if (attribute?.name === 'code' && attribute?.id === '1234' || (!attribute && parentAttribute?.referencedTableId)) {
+    if (attribute?.name === 'id' && attribute?.id === '1234' || (!attribute && parentAttribute?.referencedTableId)) {
       this.lookupInput = true;
       this.loadLookupData(parentAttribute?.referencedTableId);
       attribute = {
-        name: 'code',
-        displayName: 'Code',
+        name: 'id',
+        displayName: 'Id',
         id: '1234'
       }
     }
