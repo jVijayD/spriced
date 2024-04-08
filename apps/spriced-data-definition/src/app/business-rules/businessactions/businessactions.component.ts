@@ -249,6 +249,7 @@ export class BusinessactionsComponent implements OnInit {
  */
   public handleValue(event: any, text?: string) {
     this.valueConstant = ['CONSTANT', 'BLANK'].includes(event);
+    this.editAttributeValue(event);
     const valueControl = this.actionForm?.get('operand');
     this.isFieldDisabled = event === 'BLANK';
     this.selectedOperand = '';
@@ -317,9 +318,37 @@ export class BusinessactionsComponent implements OnInit {
     })
   }
 
+  public editAttributeValue(operandType?: any)
+  {
+   let item = {
+      displayName: 'Id',
+      name: 'id',
+      id: '1234'
+    }
+    if(operandType === "CONSTANT")
+    {
+      item = {
+        displayName: 'Code',
+        name: 'code',
+        id: '1234'
+      }
+    }
+    const parentAtt = this.actionForm?.get('parentAttributeId')?.value;
+    if(!['', null, undefined].includes(parentAtt)){
+      this.actionForm?.get('attributeId')?.setValue(item?.id);
+      this.actionForm?.get('attributeDisplayName')?.setValue(item?.displayName);
+      this.actionForm?.get('attributeName')?.setValue(item?.name);
+    }
+  }
+
   public selectAttribute(item: any, parent?: any, type?: string) {
     this.lookupInput = false;
     if (type === 'operand') {
+      const val = this.actionForm?.get('attributeId')?.value;
+      if(val === '1234')
+      {
+      this.editAttributeValue();
+      }
       const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
       this.selectedOperand = value;
       this.actionForm?.get('operand')?.setValue(item.id);
@@ -338,8 +367,8 @@ export class BusinessactionsComponent implements OnInit {
         this.loadLookupData(item?.referencedTableId)
         parentAtt = item;
         item = {
-          displayName: 'Id',
-          name: 'id',
+          displayName: 'Code',
+          name: 'code',
           id: '1234'
         }
       }
@@ -388,12 +417,12 @@ export class BusinessactionsComponent implements OnInit {
     const operend = this.findAttributeById(operand);
     const parentOperand = this.findAttributeById(parentOperandId);
 
-    if (attribute?.name === 'id' && attribute?.id === '1234' || (!attribute && parentAttribute?.referencedTableId)) {
+    if (attribute?.name === 'code' && attribute?.id === '1234' || (!attribute && parentAttribute?.referencedTableId)) {
       this.lookupInput = true;
       this.loadLookupData(parentAttribute?.referencedTableId);
       attribute = {
-        name: 'id',
-        displayName: 'Id',
+        name: 'code',
+        displayName: 'Code',
         id: '1234'
       }
     }
