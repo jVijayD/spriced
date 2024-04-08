@@ -68,11 +68,12 @@ export class DatePickerComponent
   // HANDLE THIS FUNCTION FOR CHANGE THE TIME STAMP
   public changeTimeStamp(date: any) {
     if (!!date) {
-      let timezone = localStorage.getItem("timezone") as string || 'null';
+      let timezone = (localStorage.getItem("timezone") as string) || "null";
       if (timezone !== "null") {
         this.value = moment(this.value as string).tz(timezone);
-      }
+      } else {
         this.value = unixTimeStamp(date);
+      }
     }
   }
 }
