@@ -29,7 +29,7 @@ export class HomeComponent implements OnInit {
     this.reports = [
       {
         name: "EBU CTT Part Price Comparison",
-        id: "e56a008b-896f-4b51-8cfe-b9fe38ffdcf2",
+        id: "c6ca61c6-f32d-4aac-98ed-2c715b626718",
       },
       {
         name: "Base File Price List",
@@ -37,15 +37,15 @@ export class HomeComponent implements OnInit {
       },
       {
         name: "Brazil Parts Price List from Price Lists",
-        id: "16627743-0290-422a-85c9-fba2ec6bbeeb",
+        id: "10839d07-9093-4551-b051-48c4dbd133f7",
       },
       {
         name: "Segment Entity Audit Report",
-        id: "d6bb3a14-43d5-490d-806d-b664cdfaa35e",
+        id: "d8f840b8-691c-4092-b0c9-466ce1c0fefc",
       },
       {
         name: "OEM Pricing App Missing Base Prices",
-        id: "300f3c04-af5e-49c1-85d5-2fc01d44bd50",
+        id: "2c2c91bf-72fb-4c28-a11a-4ae454c4c41a",
       },
       {
         name: "Entity Audit Report",
@@ -53,15 +53,15 @@ export class HomeComponent implements OnInit {
       },
       {
         name: "DN Pricing Percent Change",
-        id: "0c71fb8b-1532-40d9-ba41-b0f7bf198ffc",
+        id: "593af37a-03f0-47c5-9cd0-09ae0baaff08",
       },
       {
         name: "Pricing Action DN Pricing Summary",
-        id: "3cc3cd99-4866-422d-9991-59a1bc1aacee",
+        id: "ab0ae856-5de1-4cd5-8635-cf35fa0ae7c6",
       },
       {
         name: "DN Pricing Entity Audit Report",
-        id: "7f3404c4-620c-4e8d-91e4-6425f41ab1e3",
+        id: "dad070de-48e8-4304-9a11-312c307b017a",
       },
       {
         name: "Brazil OEM PL From Price List",
@@ -69,7 +69,7 @@ export class HomeComponent implements OnInit {
       },
       {
         name: "MDS Arbitrage Report",
-        id: "268047c0-3e26-498a-9eeb-f109ae83fcc1",
+        id: "3138e511-99fe-465d-956a-c628a39c8a56",
       },
       {
         name: "Brazil Parts Price List from Calculations",
@@ -77,15 +77,15 @@ export class HomeComponent implements OnInit {
       },
       {
         name: "GOMS Kit Configuration Suggestions",
-        id: "d2b10da3-517d-4234-8cfa-8d6bcf6f1330",
+        id: "c597ae7d-d944-4a91-aa14-f65b76da7311",
       },
       {
         name: "Base Price Outbound",
-        id: "130ad012-7a70-4976-b5d5-189f62328024",
+        id: "406cdda9-85ec-44a3-b663-3608b201e27c",
       },
       {
         name: "PVC Outbound",
-        id: "2068e27f-bdea-40ed-ad01-e84d69d813dd",
+        id: "46d13e77-062d-4cd6-a00c-304ddf6b0c93",
       },
       {
         name: "Pricing Action History",
@@ -97,15 +97,15 @@ export class HomeComponent implements OnInit {
       },
       {
         name: "Suggestion Report",
-        id: "46f0d17d-d4fb-4d81-9e1c-c248f9c895aa",
+        id: "def9a6a4-17e3-4237-a7bd-b2fd431c2ccb",
       },
       {
         name: "New RX NX Core Details",
-        id: "391db3b6-7250-476a-a3e9-dded0a14dbec",
+        id: "97206f23-b48b-479a-a96b-3b28e752eb8d",
       },
       {
         name: "Suggested Transit Unique Parts",
-        id: "73682193-2d83-4baf-8f62-9fe9c9fdb481",
+        id: "259aa56b-a2af-4e91-89f9-e027dd1e0dec",
       },
       {
         name: "PC1.2_APM837_Job Failure List",
@@ -133,20 +133,25 @@ export class HomeComponent implements OnInit {
       },
       {
         name: "Core xRef",
-        id: "e2b2f162-328a-46b6-9526-1a9d4c49d40b",
+        id: "6d7da0d4-2a2a-4c15-9edd-f85154bbe3da",
       },
       {
         name: "Resulting Cost History",
-        id: "0fa29ccd-25e6-49e1-aab7-3d201d0ba4d6",
+        id: "cc05e151-caed-4acb-b2f8-35411804649d",
       },
       {
         name: "Part Entity Audit Report",
-        id: "3f03816c-f38d-43ca-9f13-7774613e84e2",
+        id: "6598b267-b3f2-43db-ab01-9e77c99a72ca",
       },
       {
         name: "Price List Outbound",
         id: "e61dae3b-1650-48f7-88e0-bc96a5672c0e",
       },
+      {
+        name: "Quote Impact Analysis",
+        id: "ad696a7d-4def-4b84-a046-abcec12e4948",
+      },
+      
     ];
   }
 }
