@@ -149,7 +149,6 @@ export class EntityExportDataService {
   }
 
   private onMessage(value: any, response: any, name: string) {
-    debugger;
     const user = this.keycloakService.getUsername();
     const subscriberId = name + "_" + user;
     const subjectMapValue = this.sseDataSubjectMap.get(subscriberId);
@@ -168,24 +167,46 @@ export class EntityExportDataService {
     return subjectMapValue ? subjectMapValue.subject.asObservable() : null;
   }
 
+  public setDownloadFileData(name: string, value: any) {
+    debugger;
+    const user = this.keycloakService.getUsername();
+    const subscriberId = name + "_" + user;
+    var downloadFile = this.downloadsMap.get(subscriberId);
+    if (downloadFile) {
+      this.downloadsMap.set(subscriberId, {
+        ...downloadFile,
+        ...{
+          progressPercentage: value.progressPercentage,
+          processCompleted: value.processCompleted,
+        },
+      });
+    }
+  }
+
   public getAllDownloads() {
     this.sseDataSubjectMap.forEach((value, key) => {
-      this.downloadsMap.set(key, {
-        name: value.name,
-        fileName: value.fileName,
-        progressPercentage: 0,
-        processCompleted: false,
-        fileCompleted: false,
-        id: value.id,
-      });
-    });
-    this.downloadsMap.forEach((value: any, key) => {
-      if (!this.sseDataSubjectMap.get(key)) {
-        value.progressPercentage = 100;
-        value.processCompleted = true;
-        value.fileCompleted = true;
+      if (this.downloadsMap.get(key) != null) {
+        //Set logic for already present items
+      } else {
+        this.downloadsMap.set(key, {
+          name: value.name,
+          fileName: value.fileName,
+          progressPercentage: 0,
+          processCompleted: false,
+          fileCompleted: false,
+          id: value.id,
+        });
       }
     });
+
+    // this.downloadsMap.forEach((value: any, key) => {
+    //   debugger;
+    //   if (!this.sseDataSubjectMap.get(key)) {
+    //     value.progressPercentage = 100;
+    //     value.processCompleted = true;
+    //     value.fileCompleted = true;
+    //   }
+    // });
     return this.downloadsMap;
   }
 
@@ -242,6 +263,7 @@ export class EntityExportDataService {
         criteria,
         controller
       ).catch((err) => {
+        this.clearSseDataSubject(name);
         console.log(err);
       });
     }
@@ -252,9 +274,8 @@ export class EntityExportDataService {
     filename: string,
     displayFormat: string,
     criteria: Criteria,
-    selectedColumns:any
+    selectedColumns: any
   ) {
-    
     let url;
     if (selectedColumns.length == 0) {
       url = `${this.api_url}/entity/${id}/export/excel?displayFormat=${displayFormat}`;
@@ -262,7 +283,7 @@ export class EntityExportDataService {
       url = `${this.api_url}/entity/${id}/export/excel?displayFormat=${displayFormat}&filterAttributes=${selectedColumns}`;
     }
     return this.http
-      .post(url,criteria,{
+      .post(url, criteria, {
         responseType: "blob",
       })
       .subscribe((blob) => {
@@ -280,7 +301,7 @@ export class EntityExportDataService {
     displayFormat: any,
     criteria: Criteria,
     isAsync: boolean,
-    selectedColumns:any
+    selectedColumns: any
   ) {
     if (isAsync) {
       await this.exportToExcelAsync(
@@ -291,7 +312,13 @@ export class EntityExportDataService {
         criteria
       );
     } else {
-      this.exportToExcel(id, fileName, displayFormat, criteria,selectedColumns);
+      this.exportToExcel(
+        id,
+        fileName,
+        displayFormat,
+        criteria,
+        selectedColumns
+      );
     }
   }
 
