@@ -4,6 +4,7 @@ import {
   HttpErrorResponse,
   HttpEvent,
   HttpHandler,
+  HttpHeaders,
   HttpInterceptor,
   HttpRequest,
 } from "@angular/common/http";
@@ -18,22 +19,28 @@ import { KeycloakService } from "keycloak-angular";
 
 @Injectable()
 export class ErrorCatchingInterceptor implements HttpInterceptor {
-  user:any
+  user: any;
   api_url = process.env["NX_API_DATA_URL"] as string;
-  constructor(private statusPannelService: AppDataService,private httpClient: HttpClient,private keycloakService:KeycloakService) {}
+  constructor(
+    private statusPannelService: AppDataService,
+    private httpClient: HttpClient,
+    private keycloakService: KeycloakService
+  ) {}
   intercept(
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    
     return next.handle(request).pipe(
       map((res) => {
         return res;
       }),
       catchError((error: HttpErrorResponse) => {
-        if (error.url !== `${this.api_url}/error` && process.env["NX_handleError"]=='true') {
-          this.handleError(request, error);
-        }
+        // if (
+        //   error.url !== `${this.api_url}/error` &&
+        //   process.env["NX_handleError"] == "true"
+        // ) {
+        //   this.handleError(request, error);
+        // }
         let errorMsg = "";
         if (error.error instanceof ErrorEvent) {
           errorMsg = `Error: ${error.error.message}`;
@@ -54,25 +61,26 @@ export class ErrorCatchingInterceptor implements HttpInterceptor {
       })
     );
   }
-  handleError(request:HttpRequest<unknown>,error:HttpErrorResponse)
-  {
+  handleError(request: HttpRequest<unknown>, error: HttpErrorResponse) {
     this.user = this.keycloakService.getKeycloakInstance();
     html2canvas(document.documentElement).then((canvas) => {
       let errorReport = {
         userName: this.keycloakService.getUsername(),
-        userDisplayName:this.user.profile?.firstName + " " + this.user.profile?.lastName,
+        userDisplayName:
+          this.user.profile?.firstName + " " + this.user.profile?.lastName,
         userRole: this.user.tokenParsed?.realm_access?.roles?.join(","),
         browserScreenShot: canvas.toDataURL("image/png"),
         stackTrace: JSON.stringify(error),
-        apiInput:request.body,
-        apiEndPoint:error.url,
-        apiOutput:{output:error.error}
+        apiInput: request.body,
+        apiEndPoint: error.url,
+        apiOutput: { output: error.error },
       };
+      let headers = new HttpHeaders({
+        "no-loader": "true",
+      });
       this.httpClient
-        .post(`${this.api_url}/error`, errorReport)
-        .subscribe((data) => {
-        });
+        .post(`${this.api_url}/error`, errorReport, { headers: headers })
+        .subscribe((data) => {});
     });
   }
-  }
-
+}

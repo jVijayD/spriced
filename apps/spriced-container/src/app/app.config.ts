@@ -37,10 +37,10 @@ export const appConfig: ApplicationConfig = {
       useClass: KeycloakBearerInterceptor,
       multi: true,
     },
-    {
-      provide: ErrorHandler,
-      useClass: GlobalErrorHandler
-    },
+    // {
+    //   provide: ErrorHandler,
+    //   useClass: GlobalErrorHandler
+    // },
     AuthGuard,
     {
       provide: HTTP_INTERCEPTORS,
