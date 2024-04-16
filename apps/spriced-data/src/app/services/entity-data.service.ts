@@ -203,7 +203,7 @@ export class EntityDataService {
     };
     const headers = new HttpHeaders().set("no-loader", "true");
     const url = this.requestUtility.addCriteria(
-      `${this.api_url}/entity/${id}/data?lookup=true`,
+      `${this.api_url}/entity/${id}/data/lookup?`,
       criteria,
       false
     );
