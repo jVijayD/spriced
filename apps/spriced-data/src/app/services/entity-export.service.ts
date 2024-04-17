@@ -6,7 +6,7 @@ import {
   SseUtilityService,
 } from "@spriced-frontend/spriced-common-lib";
 import { KeycloakService } from "keycloak-angular";
-import { Observable, Subject } from "rxjs";
+import { BehaviorSubject, Observable, Subject } from "rxjs";
 import {
   EventStreamContentType,
   fetchEventSource,
@@ -18,7 +18,7 @@ export class EntityExportDataService {
   private sseDataSubjectMap: Map<
     string,
     {
-      subject: Subject<any>;
+      subject: BehaviorSubject<any>;
       controller: AbortController;
       id: string | number;
       name: string;
@@ -152,6 +152,8 @@ export class EntityExportDataService {
     const user = this.keycloakService.getUsername();
     const subscriberId = name + "_" + user;
     const subjectMapValue = this.sseDataSubjectMap.get(subscriberId);
+    debugger;
+    this.setDownloadFileData(name, value);
     subjectMapValue?.subject?.next(value);
   }
 
@@ -168,7 +170,6 @@ export class EntityExportDataService {
   }
 
   public setDownloadFileData(name: string, value: any) {
-    debugger;
     const user = this.keycloakService.getUsername();
     const subscriberId = name + "_" + user;
     var downloadFile = this.downloadsMap.get(subscriberId);
@@ -178,6 +179,18 @@ export class EntityExportDataService {
         ...{
           progressPercentage: value.progressPercentage,
           processCompleted: value.processCompleted,
+        },
+      });
+    } else {
+      debugger;
+      this.downloadsMap.set(subscriberId, {
+        ...this.sseDataSubjectMap.get(subscriberId),
+        ...{
+          fileCompleted: value.Stage == "excel_file_creation_completed",
+          progressPercentage: Number.parseInt(value.Percentage),
+          processCompleted:
+            value.Stage == "excel_data_processing_completed" ||
+            value.Stage == "excel_file_creation_completed",
         },
       });
     }
@@ -244,7 +257,7 @@ export class EntityExportDataService {
 
     let subjectMapValue = this.sseDataSubjectMap.get(subscriberId);
     if (!subjectMapValue) {
-      const subject = new Subject();
+      const subject = new BehaviorSubject(null);
       const controller = new AbortController();
       this.sseDataSubjectMap.set(subscriberId, {
         subject: subject,
