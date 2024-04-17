@@ -64,6 +64,10 @@ export class DownloadsDialogueComponent implements OnInit, OnDestroy {
             data.Stage == "excel_file_creation_completed";
 
           downloadItem.progressPercentage = Number.parseInt(data.Percentage);
+          this.entityExportService.setDownloadFileData(
+            value.name,
+            downloadItem
+          );
         }
       });
       if (subscription) {
@@ -77,7 +81,6 @@ export class DownloadsDialogueComponent implements OnInit, OnDestroy {
   }
 
   private initDownload() {
-    debugger;
     this.entityExportService.getAllDownloads().forEach((item: any, value) => {
       this.downloadItemMap.set(value, {
         entityName: item.name,
@@ -100,11 +103,14 @@ export class DownloadsDialogueComponent implements OnInit, OnDestroy {
     if (item) {
       item.cancelled = true;
     }
+
+    this.downloadItemMap.delete(subscriberId);
   }
 
   onDownload(id: string | number, filename: string, name: string) {
     this.entityExportService.downloadFile(id, filename, name);
     this.entityExportService.removeFromDownloadList(name);
+    this.entityExportService.clearSseDataSubject(name);
   }
 
   onNoClick(): void {

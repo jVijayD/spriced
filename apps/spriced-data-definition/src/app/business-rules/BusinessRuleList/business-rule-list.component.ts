@@ -223,9 +223,37 @@ export class BusinessRuleListComponent
     })
   }
 
+  public editAttributeValue(operator?: any, operandType?: any)
+  {
+    let item = {
+      displayName: 'Id',
+      name: 'id',
+      id: '1234'
+    }
+    if(['IS_NULL', 'IS_NOT_NULL', 'HAS_CHANGED'].includes(operator) || operandType === "CONSTANT")
+    {
+      item = {
+        displayName: 'Code',
+        name: 'code',
+        id: '1234'
+      }
+    }
+    const parentAtt = this.conditionForm?.get('parentAttributeId')?.value;
+    if(!['', null, undefined].includes(parentAtt)){
+      this.conditionForm?.get('attributeId')?.setValue(item?.id);
+      this.conditionForm?.get('attributeDisplayName')?.setValue(item?.displayName);
+      this.conditionForm?.get('attributeName')?.setValue(item?.name);
+    }
+  }
+
   public selectAttribute(item: any, parent?: any, type?: string) {
     this.lookupInput = false;
     if (type === 'operand') {
+      const val = this.conditionForm?.get('attributeId')?.value;
+      if(val === '1234')
+      {
+      this.editAttributeValue();
+      }
       const value = parent && parent !== '' ? `${parent?.displayName.trim()}.${item.displayName}` : item?.displayName;
       this.selectedOperand = value;
       this.conditionForm?.get('operand')?.setValue(item.id);
@@ -275,6 +303,8 @@ export class BusinessRuleListComponent
    */
   public handleValue(event: any, text?: string) {
     this.valueConstant = ['CONSTANT', 'BLANK'].includes(event);
+    const operatorType = this.conditionForm?.get('operandType')?.value;
+    this.editAttributeValue(operatorType, event);
     const attributeId = this.conditionForm?.get('attributeId').value;
     this.setValidatorsPattern(attributeId, this.dataType);
     // this.isFieldDisabled = event === 'BLANK';
@@ -329,6 +359,7 @@ export class BusinessRuleListComponent
     }
     else if (['IS_NULL', 'IS_NOT_NULL', 'HAS_CHANGED'].includes(value)) {
       // const operandType = this.conditionForm?.get('operandType')?.value;
+      this.editAttributeValue(value)
       this.conditionForm?.get('operandType').setValue('CONSTANT');
       this.valueConstant = true;
       this.disableFormControl();
@@ -417,7 +448,7 @@ export class BusinessRuleListComponent
     const parentAttribute = this.findAttributeById(parentAttributeId);
     const operend = this.findAttributeById(operand);
     const parentOperand = this.findAttributeById(parentOperandId);
-    if (attribute?.name === 'code' && attribute?.id === '1234' || (!attribute && parentAttribute?.referencedTableId)) {
+    if (attribute?.id === '1234' || (!attribute && parentAttribute?.referencedTableId)) {
       this.lookupInput = true;
       this.loadLookupData(parentAttribute?.referencedTableId);
       attribute = {

@@ -158,7 +158,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   savedFilter: any;
   selectedColumns: any = [];
   columns: any;
-  freeze: number=0;
+  freeze: number = 0;
 
   constructor(
     private snackbarService: SnackBarService,
@@ -176,7 +176,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     private filterListService: FilterListService,
     private globalSetting: GlobalSettingService
   ) {
-    this.globalSettings=this.getSettingsData() 
+    this.globalSettings = this.getSettingsData();
     this.setFormData("", []);
     this.subscribeToFormEvents();
   }
@@ -271,7 +271,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach((item) => item.unsubscribe());
-    localStorage.removeItem('explorerStorage');
+    localStorage.removeItem("explorerStorage");
   }
 
   onPaginate(e: Paginate) {
@@ -352,7 +352,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       persistValueOnFieldChange: true,
       columns: this.entityGridService.getFilterColumns(headers),
       emptyMessage: "Please select filter criteria.",
-      displayFormat: this.globalSettings?.settingsData?.displayFormat || 'namecode',
+      displayFormat:
+        this.globalSettings?.settingsData?.displayFormat || "namecode",
       config: null,
       query: JSON.parse(JSON.stringify(this.query)),
       save: true,
@@ -608,19 +609,23 @@ export class EntityDataComponent implements OnDestroy, OnInit {
 
   onSettings() {
     const dialogResult = this.dialog.open(SettingsPopUpComponent, {
-      data: { entity: this.currentSelectedEntity, header: this.columns,global:this.globalSettings },
+      data: {
+        entity: this.currentSelectedEntity,
+        header: this.columns,
+        global: this.globalSettings,
+      },
     });
 
     dialogResult.afterClosed().subscribe((val) => {
       if (val.event == "ok") {
-        this.globalSettings =val.global
-        this.selectedColumns=val.current.settingsData.columns || [];
-        this.limit =val.current.settingsData.noOfRecords;
-        this.freeze=val.current.settingsData.freeze;
+        this.globalSettings = val.global;
+        this.selectedColumns = val.current.settingsData.columns || [];
+        this.limit = val.current.settingsData.noOfRecords;
+        this.freeze = val.current.settingsData.freeze;
         this.currentCriteria.pager = {
           pageNumber: this.pageNumber,
           pageSize: this.limit,
-        }
+        };
         this.createDynamicGrid(
           this.currentSelectedEntity as Entity,
           this.currentCriteria,
@@ -666,9 +671,9 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.dataGrid.table._internalColumns = [...[]];
     this.currentSelectedEntity = entity === "" ? undefined : (entity as Entity);
     this.clearCriteria();
-    this.selectedColumns=[]
-    this.freeze=0
-    this.limit=GridConstants.LIMIT
+    this.selectedColumns = [];
+    this.freeze = 0;
+    this.limit = GridConstants.LIMIT;
     this.settings
       .getCurrentSettings(entity)
       .subscribe((entitySettings: any) => {
@@ -686,8 +691,11 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         );
         this.createDynamicUIMapping(entity as Entity);
       });
-    const currentStorage = {modelId: this.currentSelectedEntity?.groupId, entityId: this.currentSelectedEntity?.id};
-    this.globalSetting.setCurrentStorage('explorerStorage', currentStorage);
+    const currentStorage = {
+      modelId: this.currentSelectedEntity?.groupId,
+      entityId: this.currentSelectedEntity?.id,
+    };
+    this.globalSetting.setCurrentStorage("explorerStorage", currentStorage);
     this.lastId = 0;
     this.loadRelatedEntity();
   }
@@ -732,7 +740,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     //   this.currentSelectedEntity?.displayName as string
     // );
     let limit = process.env["NX_DOWNLOAD_LIMIT"] as unknown as number;
-    let limitAsync = 20000;
+    let limitAsync = 100;
     if (this.totalElements > limit) {
       this.dialogService.openInfoDialog({
         message:
@@ -756,7 +764,8 @@ export class EntityDataComponent implements OnDestroy, OnInit {
             this.currentSelectedEntity?.id as number,
             this.currentSelectedEntity?.name as string,
             `${this.currentSelectedEntity?.displayName}.xlsx`,
-            this.globalSettings?.settingsData?.displayFormat || this.defaultCodeSetting,
+            this.globalSettings?.settingsData?.displayFormat ||
+              this.defaultCodeSetting,
             this.currentCriteria,
             this.totalElements > limitAsync,
             this.selectedColumns
@@ -815,15 +824,20 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     if (entity) {
       formFields = this.entityFormService.getFormFieldControls(
         entity,
-        this.globalSettings?.settingsData?.displayFormat || this.defaultCodeSetting
+        this.globalSettings?.settingsData?.displayFormat ||
+          this.defaultCodeSetting
       );
-      if (this.selectedColumns && this.selectedColumns?.length !== 0 && this.selectedColumns!=null) {
+      if (
+        this.selectedColumns &&
+        this.selectedColumns?.length !== 0 &&
+        this.selectedColumns != null
+      ) {
         formFields = this.entityFormService.setSelectedFields(
           this.selectedColumns,
           formFields
         );
       }
-      console.log(formFields)
+      console.log(formFields);
       this.disableSubmit = !entity.attributes.reduce((prev, current) => {
         return prev || current.permission === "UPDATE";
       }, false);
@@ -910,10 +924,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       this.applyEntitySettings(entity);
       this.subscriptions.push(
         this.entityDataService
-          .loadEntityDataFilter(
-            entity.id,
-            enrichedCriteria,
-          )
+          .loadEntityDataFilter(entity.id, enrichedCriteria)
           .pipe(first())
           .subscribe({
             next: (page) => {
@@ -969,19 +980,19 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   }
 
   private applyEntitySettings(entity: Entity) {
-      if (this.selectedColumns && this.selectedColumns?.length !== 0) {
-        this.headers = this.entityGridService.setSelectedColumns(
-          this.selectedColumns,
-          this.columns
-        );
-      }
-      this.headers.forEach((item, index) => {
-        item.pinned = undefined;
-        if (index < this.freeze) {
-          item.pinned = "left";
-        }
-      });
+    if (this.selectedColumns && this.selectedColumns?.length !== 0) {
+      this.headers = this.entityGridService.setSelectedColumns(
+        this.selectedColumns,
+        this.columns
+      );
     }
+    this.headers.forEach((item, index) => {
+      item.pinned = undefined;
+      if (index < this.freeze) {
+        item.pinned = "left";
+      }
+    });
+  }
 
   // private removeNull(data: any) {
   //   let finalData: any = {};
@@ -1112,7 +1123,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     const dialogReference = this.dialogService.openDialog(
       FailedValidationPopupComponent,
       {
-        data:{entityId:this.currentSelectedEntity?.id,rowId:event.id}
+        data: { entityId: this.currentSelectedEntity?.id, rowId: event.id },
       }
     );
   }
