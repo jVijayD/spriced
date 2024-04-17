@@ -1,13 +1,30 @@
-  <mat-drawer-container style="height:calc(100vh - 4rem - 13px);" >
-    <mat-drawer mode="side" opened class="drawer">
-      <div >
-        <span class="font-bold">Settings</span>
-        <button onclick="menuChanged('entityOrder')" class="flex justify-items-center menu mt-2">
-          <mat-icon class="mr-1">table_chart</mat-icon><span class="mt-1">Entity Settings</span>
-        </button>
-      </div>
-    </mat-drawer>
-    <mat-drawer-content class="pl-2"
-      ><sp-entity-settings></sp-entity-settings
-        ></mat-drawer-content>
-  </mat-drawer-container>
+<mat-drawer-container style="height: calc(100vh - 4rem - 13px)">
+  <mat-drawer mode="side" opened class="drawer">
+    <div>
+      <span class="font-bold">Settings</span>
+      <button
+        (click)="menuChanged('entityOrder')"
+        class="flex justify-items-center menu mt-2"
+        [ngClass]="{'selected': menuItem === 'entityOrder'}"
+      >
+        <mat-icon class="mr-1">table_chart</mat-icon
+        ><span class="mt-1">Entity Settings</span>
+      </button>
+      <button
+        (click)="menuChanged('dateTime')"
+        class="flex justify-items-center menu mt-2"
+        [ngClass]="{'selected': menuItem === 'dateTime'}"
+      >
+        <mat-icon class="mr-1">access_time</mat-icon
+        ><span class="mt-1">Date Time</span>
+      </button>
+    </div>
+  </mat-drawer>
+  <mat-drawer-content class="pl-2">
+    <div *ngIf="menuItem=='entityOrder'">
+      <sp-entity-settings></sp-entity-settings>
+    </div>
+    <div *ngIf="menuItem=='dateTime'">
+      <sp-date-time-settings></sp-date-time-settings></div
+  ></mat-drawer-content>
+</mat-drawer-container>
