@@ -46,6 +46,7 @@ export class DownloadsDialogueComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.downloadItemMap.forEach((value) => {
+      debugger;
       this.data.push(value);
       let observable = this.entityExportService.getDownloadObservable(
         value.entityName
@@ -64,10 +65,10 @@ export class DownloadsDialogueComponent implements OnInit, OnDestroy {
             data.Stage == "excel_file_creation_completed";
 
           downloadItem.progressPercentage = Number.parseInt(data.Percentage);
-          this.entityExportService.setDownloadFileData(
-            value.name,
-            downloadItem
-          );
+          // this.entityExportService.setDownloadFileData(
+          //   value.name,
+          //   downloadItem
+          // );
         }
       });
       if (subscription) {
