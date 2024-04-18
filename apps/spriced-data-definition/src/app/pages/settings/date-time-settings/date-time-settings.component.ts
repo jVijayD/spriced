@@ -392,8 +392,8 @@ export class DateTimeSettingsComponent {
   ) {
     this.settings.getGlobalSettings().subscribe((item) => {
       this.data = item;
-      this.cancelData=this.data.settingsData?.timezone || 'null'
-      if (this.data.settingsData?.timezone == null) {
+      this.cancelData=this.data?.settingsData?.timezone || 'null'
+      if (this.data?.settingsData?.timezone == null) {
         this.data.settingsData.timezone = "null";
       }
     });
