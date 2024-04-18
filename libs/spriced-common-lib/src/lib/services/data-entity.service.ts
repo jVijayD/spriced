@@ -143,7 +143,7 @@ export class DataEntityService {
     };
     const headers = new HttpHeaders().set("no-loader", "true");
     const url = this.requestUtility.addCriteria(
-      `${this.api_url}/entity/${id}/data?lookup=true`,
+      `${this.api_url}/entity/${id}/data/lookup?lookup=true`,
       criteria,
       false
     );
