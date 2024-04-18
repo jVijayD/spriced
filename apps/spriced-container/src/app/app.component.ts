@@ -76,7 +76,7 @@ export class AppComponent implements OnDestroy, OnInit {
     this.init();
     this.subscriptions.push(
       this.settings.getGlobalSettings().subscribe((res:any) => {
-        if(res.settingsData?.timezone!==null)
+        if(res && res?.settingsData?.timezone!==null)
           {
             this.settings.setTimezone(res.settingsData?.timezone)
           }
