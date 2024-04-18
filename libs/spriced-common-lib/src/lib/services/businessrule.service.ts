@@ -165,7 +165,7 @@ export class BusinessruleService {
     const headers = new HttpHeaders().set("no-loader", "true");
 
     const url = this.requestUtility.addCriteria(
-      `${this.data_url}/entity/${id}/data?lookup=true`,
+      `${this.data_url}/entity/${id}/data/lookup?lookup=true`,
       criteria,
       false
     );
