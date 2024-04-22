@@ -319,9 +319,13 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   onReset() {
     const extractedFormFields = this.entityFormService.extractFormFieldsOnly(
       this.selectedItem,
-      this.dynamicFormService.getFormValues()
+      this.dynamicFormService.getFormRowValues()
     );
-    this.dynamicFormService.setFormValues(null, extractedFormFields);
+    const extraData = this.entityFormService.extractExtraData(
+      this.selectedItem,
+      this.currentSelectedEntity as Entity
+    );
+    this.dynamicFormService.setFormValues(extraData, extractedFormFields);
   }
   onDelete() {
     const dialog = this.dialogService.openConfirmDialoge({
