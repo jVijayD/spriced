@@ -6,7 +6,7 @@
   <sp-top-menu [menuData]="menuData"></sp-top-menu>
 
   <!-- Right elements -->
-  <div class="flex">
+  <div class="flex ml-auto">
     <span class="text-white mt-1">Hi, {{ user.profile?.firstName || user.profile?.username }} {{ user.profile?.lastName || '' }}  </span>
     <div class="vl"></div>
     <button mat-icon-button class="btn" aria-label="" routerLink="/">
