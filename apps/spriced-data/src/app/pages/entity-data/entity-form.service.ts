@@ -127,6 +127,7 @@ export class EntityFormService {
             label: attr.displayName || attr.name,
             validations: this.getValidations(attr),
             readOnly: attr.permission === "READ" ? true : false,
+            maxLength:attr.size?attr.size:50
           };
         case "INTEGER":
           return {
