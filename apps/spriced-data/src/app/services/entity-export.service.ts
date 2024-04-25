@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import {
   Criteria,
@@ -6,7 +6,7 @@ import {
   SseUtilityService,
 } from "@spriced-frontend/spriced-common-lib";
 import { KeycloakService } from "keycloak-angular";
-import { BehaviorSubject, Observable, Subject } from "rxjs";
+import { BehaviorSubject, Observable, Subject, map } from "rxjs";
 import {
   EventStreamContentType,
   fetchEventSource,
@@ -223,6 +223,25 @@ export class EntityExportDataService {
     return this.downloadsMap;
   }
 
+  public getAllDownloadsWithStatus() {
+    // this.sseDataSubjectMap.forEach((value, key) => {
+    //   if (this.downloadsMap.get(key) != null) {
+    //     //Set logic for already present items
+    //   } else {
+    //     this.downloadsMap.set(key, {
+    //       name: value.name,
+    //       fileName: value.fileName,
+    //       progressPercentage: 0,
+    //       processCompleted: false,
+    //       fileCompleted: false,
+    //       id: value.id,
+    //     });
+    //   }
+    // });
+
+    return this.downloadsMap;
+  }
+
   public removeFromDownloadList(name: string) {
     const user = this.keycloakService.getUsername();
     const subscriberId = name + "_" + user;
@@ -237,6 +256,53 @@ export class EntityExportDataService {
       subjectMapValue.controller.abort();
       this.clearSseDataSubject(name);
     }
+  }
+
+  public async exportToExcelWithStatusAsync(
+    id: number,
+    name: string,
+    fileName: string,
+    displayFormat: any,
+    criteria: Criteria
+  ) {
+    const token = await this.keycloakService.getToken();
+    const user = this.keycloakService.getUsername();
+    const subscriberId = name + "_" + user;
+
+    const url = `${this.api_url}/entity/${id}/export/excel/create?displayFormat=${displayFormat}&subscriberId=${subscriberId}`;
+    return this.http.post(url, criteria).subscribe(() => {
+      this.downloadsMap.set(subscriberId, {
+        name: name,
+        fileName: fileName,
+        progressPercentage: 0,
+        processCompleted: false,
+        fileCompleted: false,
+        id: id,
+      });
+      console.log("download initiated");
+    });
+  }
+
+  public getExcelCreationStatus(id: number, name: string, fileName: string) {
+    const user = this.keycloakService.getUsername();
+    const subscriberId = name + "_" + user;
+    const url = `${this.api_url}/entity/${id}/export/excel/create/${subscriberId}`;
+    let headers = new HttpHeaders({
+      "no-loader": "true",
+    });
+    return this.http
+      .get(url, {
+        headers: headers,
+      })
+      .pipe(
+        map((response: any) => ({
+          id: id,
+          subscriberId: subscriberId,
+          fileName: fileName,
+          percentage: Number(response.Percentage),
+          stage: response.Stage,
+        }))
+      );
   }
 
   public async exportToExcelAsync(
@@ -317,7 +383,14 @@ export class EntityExportDataService {
     selectedColumns: any
   ) {
     if (isAsync) {
-      await this.exportToExcelAsync(
+      // await this.exportToExcelAsync(
+      //   id,
+      //   name,
+      //   fileName,
+      //   displayFormat,
+      //   criteria
+      // );
+      await this.exportToExcelWithStatusAsync(
         id,
         name,
         fileName,
