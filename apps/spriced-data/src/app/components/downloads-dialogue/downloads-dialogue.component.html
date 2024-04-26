@@ -38,7 +38,7 @@
     </button>
     <button
       (click)="onCancel(item.name, item.subscriberId, item.id)"
-      [disabled]="item.progressPercentage == 100 || item.cancelled"
+      [disabled]="item.cancelled"
     >
       <mat-icon class="cursor">close</mat-icon>
     </button>

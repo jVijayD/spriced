@@ -4,9 +4,10 @@ import { HeaderActionComponent } from "@spriced-frontend/spriced-ui-lib";
 import { MatDialogRef } from "@angular/material/dialog";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatIconModule } from "@angular/material/icon";
-import { Subscription, take } from "rxjs";
+import { Subscription, switchMap, take, takeUntil, timer } from "rxjs";
 import { EntityExportDataService } from "../../services/entity-export.service";
 
+const pollingInterval = 3000;
 @Component({
   selector: "sp-downloads-dialogue",
   standalone: true,
@@ -21,7 +22,7 @@ import { EntityExportDataService } from "../../services/entity-export.service";
 })
 export class DownloadsDialogueComponent implements OnInit, OnDestroy {
   private subscriptionList: Subscription[] = [];
-  private recursiveSubscriptionListMap: Map<any, Subscription> = new Map();
+  private timerSubscriptionMap: Map<any, Subscription> = new Map();
   private downloadItemMap: Map<
     string,
     {
@@ -77,9 +78,7 @@ export class DownloadsDialogueComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptionList.forEach((item) => item.unsubscribe());
-    this.recursiveSubscriptionListMap.forEach((item) => {
-      item.unsubscribe();
-    });
+    this.timerSubscriptionMap.forEach((item) => item?.unsubscribe());
   }
 
   private initDownload() {
@@ -101,21 +100,18 @@ export class DownloadsDialogueComponent implements OnInit, OnDestroy {
   }
 
   private reload() {
-    this.downloadItemMap.forEach((item: any, value) => {
-      this.data.push(item);
-      setInterval(() => {
-        if (item.progressPercentage !== 100) {
-          let downloadSubscription = this.recursiveSubscriptionListMap.get(
-            item.id
-          );
-          if (downloadSubscription) {
-            downloadSubscription.unsubscribe();
-          }
-
-          this.recursiveSubscriptionListMap.set(
-            item.id,
-            this.entityExportService
-              .getExcelCreationStatus(item.id, item.name, item.fileName)
+    this.downloadItemMap.forEach((mapItem: any, value) => {
+      this.data.push(mapItem);
+      this.timerSubscriptionMap.set(
+        mapItem.id,
+        timer(0, pollingInterval).subscribe(() => {
+          if (mapItem.stage != "excel_data_processing_completed") {
+            var downloadProgressSubscription = this.entityExportService
+              .getExcelCreationStatus(
+                mapItem.id,
+                mapItem.name,
+                mapItem.fileName
+              )
               .pipe(take(1))
               .subscribe((item: any) => {
                 let downloadFileData = this.data.find(
@@ -123,15 +119,51 @@ export class DownloadsDialogueComponent implements OnInit, OnDestroy {
                 );
                 if (downloadFileData) {
                   downloadFileData.progressPercentage = item.percentage;
-                  downloadFileData.fileCompleted = item.percentage == 100;
-                  downloadFileData.processCompleted = item.percentage == 100;
+                  downloadFileData.fileCompleted =
+                    item.percentage == 100 &&
+                    item.stage == "excel_data_processing_completed";
+                  downloadFileData.processCompleted =
+                    item.stage == "excel_data_processing_completed";
+                  downloadFileData.stage = item.stage;
                   console.log(item);
                   console.log(downloadFileData);
                 }
-              })
-          );
-        }
-      }, 3000);
+                downloadProgressSubscription.unsubscribe();
+              });
+          }
+        })
+      );
+
+      // intervalSource.subscribe(() => {
+      //   if (item.progressPercentage !== 100) {
+      //     let downloadSubscription = this.recursiveSubscriptionListMap.get(
+      //       item.id
+      //     );
+      //     if (downloadSubscription) {
+      //       downloadSubscription.unsubscribe();
+      //     }
+
+      //     this.recursiveSubscriptionListMap.set(
+      //       item.id,
+      //       this.entityExportService
+      //         .getExcelCreationStatus(item.id, item.name, item.fileName)
+      //         .pipe(take(1))
+      //         .subscribe((item: any) => {
+      //           let downloadFileData = this.data.find(
+      //             (download) => download.id == item.id
+      //           );
+      //           if (downloadFileData) {
+      //             downloadFileData.progressPercentage = item.percentage;
+      //             downloadFileData.fileCompleted = item.percentage == 100;
+      //             downloadFileData.processCompleted = item.percentage == 100;
+      //             console.log(item);
+      //             console.log(downloadFileData);
+      //           }
+      //         })
+      //     );
+      //   }
+      // });
+      // //setInterval(, 3000);
     });
   }
   onCancel(name: string, subscriberId: string, id: number) {
@@ -145,8 +177,9 @@ export class DownloadsDialogueComponent implements OnInit, OnDestroy {
   }
 
   removeItem(id: string | number, name: string) {
-    this.recursiveSubscriptionListMap.get(id)?.unsubscribe();
-    this.entityExportService.removeFromDownloadList(name);
+    this.timerSubscriptionMap.get(id)?.unsubscribe();
+    this.timerSubscriptionMap.delete(id);
+    this.entityExportService.removeFromDownloadList(name, id);
     this.data = this.data.filter((item) => item.id != id);
   }
 
