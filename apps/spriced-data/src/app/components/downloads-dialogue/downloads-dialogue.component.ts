@@ -101,11 +101,14 @@ export class DownloadsDialogueComponent implements OnInit, OnDestroy {
 
   private reload() {
     this.downloadItemMap.forEach((mapItem: any, value) => {
+      console.log("*******");
+      console.log(mapItem);
+      console.log("********");
       this.data.push(mapItem);
       this.timerSubscriptionMap.set(
         mapItem.id,
         timer(0, pollingInterval).subscribe(() => {
-          if (mapItem.stage != "excel_data_processing_completed") {
+          if (mapItem.stage != "excel_file_creation_completed") {
             var downloadProgressSubscription = this.entityExportService
               .getExcelCreationStatus(
                 mapItem.id,
@@ -121,9 +124,9 @@ export class DownloadsDialogueComponent implements OnInit, OnDestroy {
                   downloadFileData.progressPercentage = item.percentage;
                   downloadFileData.fileCompleted =
                     item.percentage == 100 &&
-                    item.stage == "excel_data_processing_completed";
+                    item.stage == "excel_file_creation_completed";
                   downloadFileData.processCompleted =
-                    item.stage == "excel_data_processing_completed";
+                    item.stage == "excel_file_creation_completed";
                   downloadFileData.stage = item.stage;
                   console.log(item);
                   console.log(downloadFileData);
