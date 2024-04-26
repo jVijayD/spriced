@@ -6,7 +6,7 @@ import {
   SseUtilityService,
 } from "@spriced-frontend/spriced-common-lib";
 import { KeycloakService } from "keycloak-angular";
-import { BehaviorSubject, Observable, Subject, map } from "rxjs";
+import { BehaviorSubject, Observable, Subject, map, take } from "rxjs";
 import {
   EventStreamContentType,
   fetchEventSource,
@@ -242,10 +242,17 @@ export class EntityExportDataService {
     return this.downloadsMap;
   }
 
-  public removeFromDownloadList(name: string) {
+  public removeFromDownloadList(name: string, id: string | number) {
     const user = this.keycloakService.getUsername();
     const subscriberId = name + "_" + user;
     this.downloadsMap.delete(subscriberId);
+    const url = `${this.api_url}/entity/${id}/export/excel/create/${subscriberId}`;
+    return this.http
+      .delete(url)
+      .pipe(take(1))
+      .subscribe(() => {
+        console.log("cancelled");
+      });
   }
 
   public cancelDownload(name: string) {
