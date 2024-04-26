@@ -139,7 +139,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     settingsData: {
       displayFormat: "namecode",
       showsystem: false,
-      timezone:'null'
+      timezone: "null",
     },
     type: "global",
   };
@@ -181,16 +181,21 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     this.subscribeToFormEvents();
   }
 
-  getSettingsData()
-  {
-    this.settings.getGlobalSettings().subscribe((results:any)=>
-     {
+  getSettingsData() {
+    this.settings.getGlobalSettings().subscribe((results: any) => {
       if (results?.settingsData) {
         return results;
       } else {
-        return {settingsData:{displayFormat:"namecode",showSytem:false,timezone:'null'},type:'global'}
+        return {
+          settingsData: {
+            displayFormat: "namecode",
+            showSytem: false,
+            timezone: "null",
+          },
+          type: "global",
+        };
       }
-     })
+    });
   }
   ngOnInit(): void {
     this.subscribeToEntityDataLoadEvents();
@@ -474,6 +479,27 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     return updatedHeaders;
   }
 
+  private getDataType(
+    columns: any,
+    name: string
+  ): "string" | "number" | "date" | "boolean" | "category" {
+    let dataType: "string" | "number" | "date" | "boolean" | "category" =
+      "string";
+    const col = columns?.find((item: any) => item.name === name);
+    dataType = col?.type ? col?.type : "string";
+    return dataType;
+  }
+  
+  formatDate(value: any) {
+    let timezone = (localStorage.getItem("timezone") as string) || "null";
+    if (timezone !== "null") {
+      const moment = require("moment-timezone");
+      return (value = moment(value).tz(timezone).format("MM/DD/YYYY"));
+    } else {
+      return (value = moment(value).format("MM/DD/YYYY"));
+    }
+  }
+
   public getToolTipTemplate(conditions: any): string {
     this.showTooltip = !!conditions;
     if (!conditions || conditions.length === 0) {
@@ -491,7 +517,14 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         let item = items.rules[index + 1];
         if (!rule.condition && !rule.rules) {
           const field = rule?.displayName;
-          const value = !!rule?.value ? rule?.value : "";
+          const dataType = this.getDataType(
+            rule.filteredItems,
+            rule.displayName
+          );
+          let value = !!rule?.value ? rule?.value : "";
+          if (dataType == "date" && value !== "") {
+            value = this.formatDate(value);
+          }
           const condition =
             lastItem !== index && !item?.rules
               ? items.condition
@@ -523,7 +556,14 @@ export class EntityDataComponent implements OnDestroy, OnInit {
         if (!rule.condition && !rule.rules) {
           type = lastItem === index ? parentItem : "";
           const field = rule?.displayName;
-          const value = !!rule?.value ? rule?.value : "";
+          const dataType = this.getDataType(
+            rule.filteredItems,
+            rule.displayName
+          );
+          let value = !!rule?.value ? rule?.value : "";
+          if (dataType == "date" && value !== "") {
+            value = this.formatDate(value);
+          }
           const condition =
             lastItem !== index && !item?.rules
               ? items.condition

@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dial
 import { FormGroup, FormBuilder } from "@angular/forms";
 import { DataEntityService, unixTimeStamp } from "@spriced-frontend/spriced-common-lib";
 import { LookupDialogComponent } from "../../dynamic-form/sub-components/lookup-select/lookup-dialog/lookup-dialog/lookup-dialog.component";
+import * as moment from "moment";
 @Component({
   selector: "sp-filter",
   templateUrl: "./filter-dialog.component.html",
@@ -435,8 +436,13 @@ if (item === "is_valid") {
   }
   public changeTimeStamp(date: any)
   {
-   return unixTimeStamp(date)
-}
+    let timezone = (localStorage.getItem("timezone") as string) || "null";
+    if (timezone !== "null") {
+    return moment(date as string).tz(timezone);
+    } else {
+      return unixTimeStamp(date);
+    }
+  }
 }
 export interface FilterData {
   config: QueryBuilderConfig | null;
