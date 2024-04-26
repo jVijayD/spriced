@@ -242,17 +242,23 @@ export class EntityExportDataService {
     return this.downloadsMap;
   }
 
-  public removeFromDownloadList(name: string, id: string | number) {
+  public removeFromDownloadList(
+    name: string,
+    id: string | number,
+    isDownload: boolean
+  ) {
     const user = this.keycloakService.getUsername();
     const subscriberId = name + "_" + user;
     this.downloadsMap.delete(subscriberId);
-    const url = `${this.api_url}/entity/${id}/export/excel/create/${subscriberId}`;
-    return this.http
-      .delete(url)
-      .pipe(take(1))
-      .subscribe(() => {
-        console.log("cancelled");
-      });
+    if (!isDownload) {
+      const url = `${this.api_url}/entity/${id}/export/excel/create/${subscriberId}`;
+      this.http
+        .delete(url)
+        .pipe(take(1))
+        .subscribe(() => {
+          console.log("cancelled");
+        });
+    }
   }
 
   public cancelDownload(name: string) {

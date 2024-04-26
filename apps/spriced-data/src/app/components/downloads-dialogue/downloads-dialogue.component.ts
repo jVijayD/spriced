@@ -173,13 +173,13 @@ export class DownloadsDialogueComponent implements OnInit, OnDestroy {
     // if (item) {
     //   item.cancelled = true;
     // }
-    this.removeItem(id, name);
+    this.removeItem(id, name, false);
   }
 
-  removeItem(id: string | number, name: string) {
+  removeItem(id: string | number, name: string, isDownload: boolean) {
     this.timerSubscriptionMap.get(id)?.unsubscribe();
     this.timerSubscriptionMap.delete(id);
-    this.entityExportService.removeFromDownloadList(name, id);
+    this.entityExportService.removeFromDownloadList(name, id, isDownload);
     this.data = this.data.filter((item) => item.id != id);
   }
 
@@ -187,7 +187,7 @@ export class DownloadsDialogueComponent implements OnInit, OnDestroy {
     this.entityExportService.downloadFile(id, filename, name);
 
     //this.entityExportService.clearSseDataSubject(name);
-    this.removeItem(id, name);
+    this.removeItem(id, name, true);
   }
 
   onNoClick(): void {
