@@ -174,7 +174,7 @@ compareValues(a:any,b:any)
         filterType: item.rules
           ? FilterType.CONDITIONGROUP
           : FilterType.CONDITION,
-        joinType: index == 0 ? JoinType.NONE : this.getJoinType(conditionType),
+        joinType: item.rules ? filters[0].joinType: this.getJoinType(conditionType),
         operatorType: operatorType,
         key: item.field,
         value: item.value ? item.value : this.getDefaultValue(dataTypeType),
@@ -183,7 +183,7 @@ compareValues(a:any,b:any)
       };
       filters.push(filter);
     });
-
+    
     return filters;
   }
 
