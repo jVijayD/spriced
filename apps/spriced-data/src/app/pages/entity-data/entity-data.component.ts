@@ -526,7 +526,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
             value = this.formatDate(value);
           }
           const condition =
-            lastItem !== index && !item?.rules
+            lastItem !== index 
               ? items.condition
               : !!item && item?.rules
               ? item.condition
@@ -565,7 +565,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
             value = this.formatDate(value);
           }
           const condition =
-            lastItem !== index && !item?.rules
+            lastItem !== index
               ? items.condition
               : !!item && item?.rules
               ? item.condition
