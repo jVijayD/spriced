@@ -82,7 +82,7 @@ export class EntityFormService {
             onLoad: false,
             isFixed: true,
             method: "loadLookupData",
-            params: [attr.referencedTableId, 0, LOOKUP_PAGE_SIZE],
+            params: [attr.referencedTableId, 0, LOOKUP_PAGE_SIZE,[],[{direction: "ASC", property: "code"}]],
             provider: FORM_DATA_SERVICE,
           },
         },

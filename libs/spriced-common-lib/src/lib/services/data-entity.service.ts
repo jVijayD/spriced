@@ -8,7 +8,7 @@ import {
 import { BehaviorSubject, Observable, map, of, tap } from "rxjs";
 import { saveAs } from "file-saver";
 import { LRUCache } from "typescript-lru-cache";
-const DEFAULT_LOOKUP_PAGE_SIZE = 50;
+const DEFAULT_LOOKUP_PAGE_SIZE = 100;
 const cacheOptions = {
   maxSize: 500,
   entryExpirationTimeInMS: 60 * 1000 * 30,
@@ -132,7 +132,8 @@ export class DataEntityService {
     id: string | number,
     pageNumber: number = 0,
     pageSize: number = DEFAULT_LOOKUP_PAGE_SIZE,
-    filters: any
+    filters: any,
+    sorters:any
   ): Observable<PageData> {
     const criteria: Criteria = {
       pager: {
@@ -140,6 +141,7 @@ export class DataEntityService {
         pageNumber,
       },
       filters: filters,
+      sorters:sorters
     };
     const headers = new HttpHeaders().set("no-loader", "true");
     const url = this.requestUtility.addCriteria(
