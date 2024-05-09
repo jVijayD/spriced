@@ -8,7 +8,7 @@ import {
   IValidator,
 } from "./dynamic-form.types";
 import * as moment from "moment";
-const LOOKUP_PAGE_SIZE = 50;
+const LOOKUP_PAGE_SIZE = 100;
 @Injectable()
 export class EntityFormService {
   public getFormFieldControls(

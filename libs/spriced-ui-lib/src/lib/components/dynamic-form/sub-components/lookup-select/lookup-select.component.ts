@@ -23,7 +23,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { LookupDialogComponent } from "./lookup-dialog/lookup-dialog/lookup-dialog.component";
 import { Subscription } from "rxjs";
 
-const LOOKUP_PAGE_SIZE = 50;
+const LOOKUP_PAGE_SIZE = 100;
 @Component({
   selector: "sp-lookup-select",
   templateUrl: "./lookup-select.component.html",
