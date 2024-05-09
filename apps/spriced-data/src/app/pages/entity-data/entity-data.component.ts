@@ -137,7 +137,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   currentCriteria!: Criteria;
   globalSettings: any = {
     settingsData: {
-      displayFormat: "namecode",
+      displayFormat: "codename",
       showsystem: false,
       timezone: "null",
     },
@@ -153,7 +153,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   relatedEntity: any;
   public showTooltip: boolean = false;
 
-  defaultCodeSetting = "namecode";
+  defaultCodeSetting = "codename";
   edit = false;
   savedFilter: any;
   selectedColumns: any = [];
@@ -188,7 +188,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       } else {
         return {
           settingsData: {
-            displayFormat: "namecode",
+            displayFormat: "codename",
             showSytem: false,
             timezone: "null",
           },
@@ -362,7 +362,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       columns: this.entityGridService.getFilterColumns(headers),
       emptyMessage: "Please select filter criteria.",
       displayFormat:
-        this.globalSettings?.settingsData?.displayFormat || "namecode",
+        this.globalSettings?.settingsData?.displayFormat || "codename",
       config: null,
       query: JSON.parse(JSON.stringify(this.query)),
       save: true,

@@ -51,7 +51,7 @@ export class SettingsPopUpComponent implements OnInit {
   settingsdata: any;
   noOfRecords = GridConstants.LIMIT;
   freeze = 0;
-  displayFormat = "namecode";
+  displayFormat = "codename";
   showSystem = false;
   filteredlList: any = [];
   columnForm!: FormGroup;
@@ -59,7 +59,7 @@ export class SettingsPopUpComponent implements OnInit {
   @ViewChild("all") private all!: MatOption;
   initialData: any;
   globalSettings: any = {
-    settingsData: { displayFormat: "namecode", showSystem: false ,timezone:'null'},
+    settingsData: { displayFormat: "codename", showSystem: false ,timezone:'null'},
   };
   currentSettings: any = {
     settingsData: {
@@ -82,7 +82,7 @@ export class SettingsPopUpComponent implements OnInit {
       if (results?.settingsData) {
         this.globalSettings = results;
         this.displayFormat =
-          this.globalSettings.settingsData.displayFormat || "namecode";
+          this.globalSettings.settingsData.displayFormat || "codename";
         this.showSystem = this.globalSettings.settingsData.showSystem || false;
       }
     });

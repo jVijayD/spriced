@@ -15,7 +15,7 @@ export class GlobalSettingService {
     let ent: any = localStorage.getItem("all_entity");
     return ent
       ? JSON.parse(ent)
-      : { displayFormat: "namecode", showSystem: false };
+      : { displayFormat: "codename", showSystem: false };
   }
 
   getCurrentSettings(entity: string) {
