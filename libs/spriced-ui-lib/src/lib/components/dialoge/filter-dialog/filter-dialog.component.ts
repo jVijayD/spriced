@@ -158,7 +158,7 @@ compareValues(a:any,b:any)
 
   public convertToFilters(query: any) {
     let filters: Filter[] = [];
-    //debugger;
+    let parentCondition = query.parentCondition ? query.parentCondition : query.condition
     query.rules.forEach((item: any, index: number) => {
       const operatorType = this.getOperatorType(item.operator);
       const dataTypeType = this.getDataType(this.data.columns, item.field);
@@ -167,6 +167,7 @@ compareValues(a:any,b:any)
         ? this.convertToFilters({
           rules: item.rules,
           condition: item.condition,
+          parentCondition: query.condition
         })
         : undefined;
       const conditionType = !!item.condition ? item.condition : query.condition;
@@ -174,7 +175,7 @@ compareValues(a:any,b:any)
         filterType: item.rules
           ? FilterType.CONDITIONGROUP
           : FilterType.CONDITION,
-        joinType: item.rules ? filters[0].joinType: this.getJoinType(conditionType),
+        joinType: item.rules ? this.getJoinType(parentCondition): this.getJoinType(conditionType),
         operatorType: operatorType,
         key: item.field,
         value: item.value ? item.value : this.getDefaultValue(dataTypeType),
