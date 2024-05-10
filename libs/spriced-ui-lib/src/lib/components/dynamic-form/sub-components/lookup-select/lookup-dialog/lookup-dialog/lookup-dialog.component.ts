@@ -1,8 +1,8 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject, ViewChild } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { Attribute, EntityService } from "@spriced-frontend/spriced-common-lib";
+import { Attribute, Criteria, EntityService } from "@spriced-frontend/spriced-common-lib";
 import { ColumnMode, SelectionType, SortType } from "@swimlane/ngx-datatable";
-import { Header } from "libs/spriced-ui-lib/src/lib/components/data-grid/data-grid.component";
+import {  Header } from "libs/spriced-ui-lib/src/lib/components/data-grid/data-grid.component";
 import { DialogService } from "libs/spriced-ui-lib/src/lib/components/dialoge/dialog.service";
 import { QueryColumns } from "libs/spriced-ui-lib/src/lib/components/dialoge/filter-dialog/filter-dialog.component";
 import { Subject, timer } from "rxjs";
@@ -59,7 +59,7 @@ export class LookupDialogComponent {
       width: 200,
     },
   ];
-
+  sort: any = [{ direction: "ASC", property: "code" }];
   ngOnInit() {
     const selectionTimer = timer(TIMER_CONST);
     if (this.data) {
@@ -84,13 +84,15 @@ export class LookupDialogComponent {
   }
   public onSubmit() {
     this.dialogRef.close({ event: "Update", data: this.selectedItem });
-    this.dialogEventSubject.next({ pageNubmer: this.pageNumber, filters: [] });
+    this.dialogEventSubject.next({ pageNubmer: this.pageNumber, filters: [],sorters:this.sort
+    });
   }
   onPage(e: any) {
     this.pageNumber = e.offset;
     this.dialogEventSubject.next({
       pageNumber: this.pageNumber,
       filters: this.filters,
+      sorters:this.sort
     });
   }
   upDatedData(newData: any) {
@@ -114,6 +116,7 @@ export class LookupDialogComponent {
       this.dialogEventSubject.next({
         pageNubmer: this.pageNumber,
         filters: this.filters,
+        sorters:this.sort
       });
     });
   }
@@ -124,6 +127,7 @@ export class LookupDialogComponent {
     this.dialogEventSubject.next({
       pageNubmer: this.pageNumber,
       filters: this.filters,
+      sorters:this.sort
     });
   }
 
@@ -163,4 +167,21 @@ export class LookupDialogComponent {
         return "string";
     }
   }
+  onSort(e: any) {
+    const sorters = e.sorts.map((sort: any) => {
+      const props: string[] = sort.prop.split(",");
+      let prop: any = props.length === 1 ? props[0] : [];
+      if (props.length > 1) {
+        prop = props.find((item) => item.endsWith("_code"));
+      }
+      return { direction: sort.dir.toUpperCase(), property: prop };
+    });
+    this.dialogEventSubject.next({
+      pageNubmer: this.pageNumber,
+      filters: this.filters,
+      sorters: sorters
+    });
+  }
+
+
 }

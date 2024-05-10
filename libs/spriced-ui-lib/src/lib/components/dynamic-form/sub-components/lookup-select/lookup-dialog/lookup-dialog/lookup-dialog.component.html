@@ -38,6 +38,7 @@
     [limit]="pageSize"
     [scrollbarV]="true" 
     [externalPaging]="true"
+    [externalSorting]="true"
     [virtualization]="false"
     [selectionType]="SelectionType.single"
     [count]="count" 
@@ -46,6 +47,7 @@
     [selected]="!!selectedItem?[selectedItem]:[]"
     (page)="onPage($event)"
     (select)='onItemSelected($event)'
+    (sort)="onSort($event)"
     >
    
     <!-- <ngx-datatable-column name="Id" prop="id"  [sortable]="true" [width]="100"></ngx-datatable-column> -->

@@ -192,7 +192,8 @@ export class EntityDataService {
     id: string | number,
     pageNumber: number = 0,
     pageSize: number = DEFAULT_LOOKUP_PAGE_SIZE,
-    filters: any
+    filters: any,
+    sorters:any
   ): Observable<PageData> {
     const criteria: Criteria = {
       pager: {
@@ -200,6 +201,7 @@ export class EntityDataService {
         pageNumber,
       },
       filters: filters,
+      sorters:sorters
     };
     const headers = new HttpHeaders().set("no-loader", "true");
     const url = this.requestUtility.addCriteria(

@@ -151,7 +151,7 @@ export class AuditDataComponent implements OnInit, OnDestroy {
     sorters:[{direction:"DESC",property:"updated_date"}]
   };
   subscriptions: any[] = [];
-  defaultCodeSetting = "namecode";
+  defaultCodeSetting = "codename";
   globalSettings!: any;
   title = "View Transactions for ";
   name:string=''

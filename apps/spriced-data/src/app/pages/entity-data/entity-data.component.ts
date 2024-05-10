@@ -135,14 +135,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   //Dynamic Form
   appForm!: AppForm;
   currentCriteria!: Criteria;
-  globalSettings: any = {
-    settingsData: {
-      displayFormat: "namecode",
-      showsystem: false,
-      timezone: "null",
-    },
-    type: "global",
-  };
+  globalSettings: any;
   query?: any;
   lastId = 0;
   entityDataLoadCompleted$ = new Subject();
@@ -153,7 +146,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   relatedEntity: any;
   public showTooltip: boolean = false;
 
-  defaultCodeSetting = "namecode";
+  defaultCodeSetting = "codename";
   edit = false;
   savedFilter: any;
   selectedColumns: any = [];
@@ -176,7 +169,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
     private filterListService: FilterListService,
     private globalSetting: GlobalSettingService
   ) {
-    this.globalSettings = this.getSettingsData();
+    this.getSettingsData();
     this.setFormData("", []);
     this.subscribeToFormEvents();
   }
@@ -184,11 +177,11 @@ export class EntityDataComponent implements OnDestroy, OnInit {
   getSettingsData() {
     this.settings.getGlobalSettings().subscribe((results: any) => {
       if (results?.settingsData) {
-        return results;
+        this.globalSettings =results;
       } else {
-        return {
+        this.globalSettings =  {
           settingsData: {
-            displayFormat: "namecode",
+            displayFormat: this.defaultCodeSetting,
             showSytem: false,
             timezone: "null",
           },
@@ -362,7 +355,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       columns: this.entityGridService.getFilterColumns(headers),
       emptyMessage: "Please select filter criteria.",
       displayFormat:
-        this.globalSettings?.settingsData?.displayFormat || "namecode",
+        this.globalSettings?.settingsData?.displayFormat || this.defaultCodeSetting,
       config: null,
       query: JSON.parse(JSON.stringify(this.query)),
       save: true,

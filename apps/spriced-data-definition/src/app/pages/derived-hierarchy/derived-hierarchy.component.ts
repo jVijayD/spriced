@@ -109,7 +109,7 @@ export class DerivedHierarchyComponent {
   relatedEntity: any;
   public showTooltip: boolean = false;
   public entity: any;
-  defaultCodeSetting = "namecode";
+  defaultCodeSetting = "codename";
   hierarchyData: any;
 
 
