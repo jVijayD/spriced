@@ -126,7 +126,7 @@ export class UploadErrorComponent implements OnDestroy, OnInit {
   relatedEntity: any;
   public showTooltip: boolean = false;
 
-  defaultCodeSetting = "namecode";
+  defaultCodeSetting = "codename";
 
   constructor(
     private snackbarService: SnackBarService,
