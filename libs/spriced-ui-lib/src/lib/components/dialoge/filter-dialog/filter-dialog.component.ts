@@ -55,8 +55,14 @@ export class FilterDialogComponent implements OnInit {
           condition: "and",
           rules: [],
         };
+        data.columns?.forEach((itm: any, i: number) => {
+          if (itm.name === "code") {
+            data.columns?.splice(i, 1);
+            data.columns?.unshift(itm);
+          }
+        });
     this.config =
-      data && data.config ? data.config : this.createConfig(data.columns || []);
+      data && data.config ? data.config : this.createConfig(data.columns || [])
 
     if (data.query.rules.length > 0) {
       this.addLookupData(data.query.rules);
