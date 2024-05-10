@@ -36,7 +36,7 @@ export abstract class BaseDataComponent extends BaseComponent {
 
   private _getDataSource(controlData: IData) {
     if (this.visible) {
-      //debugger;
+      console.log(controlData.api?.params)
       const observable$: any = this.dynamicFormService?.execFun(
         controlData.api?.method as string,
         controlData.api?.params || []

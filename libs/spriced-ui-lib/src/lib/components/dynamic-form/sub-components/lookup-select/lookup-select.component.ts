@@ -23,7 +23,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { LookupDialogComponent } from "./lookup-dialog/lookup-dialog/lookup-dialog.component";
 import { Subscription } from "rxjs";
 
-const LOOKUP_PAGE_SIZE = 50;
+const LOOKUP_PAGE_SIZE = 100;
 @Component({
   selector: "sp-lookup-select",
   templateUrl: "./lookup-select.component.html",
@@ -240,7 +240,7 @@ export class LookupSelectComponent
       this.dialogReference = null;
     });
     dialogRef.componentInstance.dialogEvent$.subscribe((event: any) => {
-      this.nextPage(event.pageNumber, dialogRef, this.pageSize, event.filters);
+      this.nextPage(event.pageNumber, dialogRef, this.pageSize, event.filters,event.sorters);
     });
   }
 
@@ -248,12 +248,13 @@ export class LookupSelectComponent
     pageNumber: number = 0,
     dialogRef: any,
     pageSize: number,
-    filters: any
+    filters: any,
+    sorters:any
   ) {
     let controlData = this.control as DataControl;
     const [id] = controlData.data.api?.params;
     controlData.data.api &&
-      (controlData.data.api.params = [id, pageNumber, pageSize, filters]);
+      (controlData.data.api.params = [id, pageNumber, pageSize, filters,sorters]);
       this.source = [];
       this.populateSourceOnDemand();
   }

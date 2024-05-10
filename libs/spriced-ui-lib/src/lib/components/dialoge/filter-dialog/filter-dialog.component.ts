@@ -20,7 +20,7 @@ export class FilterDialogComponent implements OnInit {
   dialogReference: any = null;
   maxCount: number = 50;
   count!: number;
-  pageSize: number = 50;
+  pageSize: number = 100;
   source: any;
   status: any[] = [
     {
@@ -34,7 +34,7 @@ export class FilterDialogComponent implements OnInit {
   ];
   initialQuery: any;
   edited=false;
-
+  sort: any = [{ direction: "ASC", property: "code" }];
   constructor(
     private dialog: MatDialog,
     public fb: FormBuilder,
@@ -288,12 +288,12 @@ if (item === "is_valid") {
       field.filteredOptions = this.status;
     }
     if (field?.type === 'LOOKUP' && !!field?.entity) {
-      this.loadLookupData(field.entity, 0, [], item);
+      this.loadLookupData(field.entity, 0, [], item,this.sort);
     }
   }
 
-  loadLookupData(id: string | number, pageNumber: number, filters: any, rule?: any) {
-    this.entityService.loadLookupData(id, pageNumber, this.pageSize, filters).subscribe((res: any) => {
+  loadLookupData(id: string | number, pageNumber: number, filters: any, rule?: any,sort?:any) {
+    this.entityService.loadLookupData(id, pageNumber, this.pageSize, filters,sort).subscribe((res: any) => {
       if (rule) {
         let field: any = this.config.fields[rule];
         field.options = res?.content;
@@ -336,7 +336,8 @@ if (item === "is_valid") {
       }
     });
     dialogRef.componentInstance.dialogEvent$.subscribe((event: any) => {
-      this.loadLookupData(field.entity, event.pageNumber, event.filters);
+      console.log(event)
+      this.loadLookupData(field.entity, event.pageNumber, event.filters,undefined,event.sorters);
     });
   }
   public handleSerch(value: any, item: any, text?: string) {
