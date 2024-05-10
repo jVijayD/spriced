@@ -215,15 +215,15 @@ export class EntityFormService {
       });
     }
 
-    if (attr.dataType === "LINK") {
-      validations.push({
-        name: `${attr.name}_pattern`,
-        message: `Invalid pattern for link`.toLowerCase(),
-        validator: Validators.pattern(
-          "(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?"
-        ),
-      });
-    }
+    // if (attr.dataType === "LINK") {
+    //   validations.push({
+    //     name: `${attr.name}_pattern`,
+    //     message: `Invalid pattern for link`.toLowerCase(),
+    //     validator: Validators.pattern(
+    //       "(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?"
+    //     ),
+    //   });
+    // }
     if (attr.dataType === "INTEGER") {
       validations.push({
         name: `max`,
