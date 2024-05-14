@@ -81,6 +81,6 @@ export class GlobalSettingService {
   }
   setTimezone(data: any) {
     localStorage.setItem("timezone", data);
-    if (data !== "normal") { moment.tz.setDefault() } else { moment.tz.setDefault() };
+    if (data !== "normal") { moment.tz.setDefault(data) } else { moment.tz.setDefault() };
   }
 }
