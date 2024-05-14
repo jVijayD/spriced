@@ -11,6 +11,7 @@ export class ReportService {
     this.api_url = process.env["NX_API_DEFINITION_URL"] as string;
   }
   public getReports(): Observable<any> {
-    return this.http.get(`assets/data/reports.json`);
+    const file=process.env["NX_REPORT_FILE"] as string
+    return this.http.get(`assets/data/${file}`);
   }
 }
