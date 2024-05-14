@@ -1,0 +1,122 @@
+[
+    {
+      "name": "EBU CTT Part Price Comparison",
+      "id": "cadf2c22-4995-433d-a783-63493f1281e4"
+    },
+    {
+      "name": "Base File Price List",
+      "id": "13c08fc3-130c-4032-a648-d78f82e9ca04"
+    },
+    {
+      "name": "Brazil Parts Price List from Price Lists",
+      "id": "1e48a6b5-7518-4c6b-ba3c-92859373dc80"
+    },
+    {
+      "name": "Segment Entity Audit Report",
+      "id": "5a5f0212-f120-4153-b6b8-d5c3c97793a3"
+    },
+    {
+      "name": "OEM Pricing App Missing Base Prices",
+      "id": "300f3c04-af5e-49c1-85d5-2fc01d44bd50"
+    },
+    {
+      "name": "Entity Audit Report",
+      "id": "37de99dd-7954-4240-a247-1addaf62015b"
+    },
+    {
+      "name": "DN Pricing Percent Change",
+      "id": "489b969f-16f9-462d-901b-eb491a38eb00"
+    },
+    {
+      "name": "Pricing Action DN Pricing Summary",
+      "id": "09272d2e-35da-4e6f-8cc0-348734083d91"
+    },
+    {
+      "name": "DN Pricing Entity Audit Report",
+      "id": "d66b2300-9547-45d2-bdb6-b1c16a244bbe"
+    },
+    {
+      "name": "Brazil OEM PL From Price List",
+      "id": "1362d9b1-a8ad-450b-b3ab-0333824f9187"
+    },
+    {
+      "name": "MDS Arbitrage Report",
+      "id": "dd3a1362-482a-4ba0-a988-fa6b63a788a7"
+    },
+    {
+      "name": "Brazil Parts Price List from Calculations",
+      "id": "847d77a9-b9ae-4ebe-b9c4-ca855f67e535"
+    },
+    {
+      "name": "GOMS Kit Configuration Suggestions",
+      "id": "746759c9-fc25-413c-830e-9f1ab953fd7f"
+    },
+    {
+      "name": "Base Price Outbound",
+      "id": "ac3aaa34-377c-4865-807e-ef292958482f"
+    },
+    {
+      "name": "PVC Outbound",
+      "id": "87c4ae2d-2916-4c65-b3e3-48a295b951df"
+    },
+    {
+      "name": "Pricing Action History",
+      "id": "28c886dd-f695-456c-87a4-8976224562f1"
+    },
+    {
+      "name": "IMS (CPIF) Kit Components Where Used",
+      "id": "99a40dfc-f7b3-446e-840c-241e421a8a3f"
+    },
+    {
+      "name": "Suggestion Report",
+      "id": "46f0d17d-d4fb-4d81-9e1c-c248f9c895aa"
+    },
+    {
+      "name": "New RX NX Core Details",
+      "id": "7d38e437-3927-415f-bfe6-7ebe661ec033"
+    },
+    {
+      "name": "Suggested Transit Unique Parts",
+      "id": "73682193-2d83-4baf-8f62-9fe9c9fdb481"
+    },
+    {
+      "name": "PC1.2_APM837_Job Failure List",
+      "id": "0f55ca12-e5a4-4e4e-9567-45700b572341"
+    },
+    {
+      "name": "CC3.3_APM837_System Data Change Listing",
+      "id": "e7db046e-154c-41d3-9a05-cc12a40dc99c"
+    },
+    {
+      "name": "MDS USER LIST",
+      "id": "21b45a63-2b5f-4d75-92d9-180d4f7a6f22"
+    },
+    {
+      "name": "CC33_323",
+      "id": "abc9bb46-26ba-487f-87a4-7907612df9d1"
+    },
+    {
+      "name": "MDS Transaction Log",
+      "id": "2453b852-5128-4e13-8085-726f26e20af5"
+    },
+    {
+      "name": "IMS (CPIF) Kit Components Prices and Costs",
+      "id": "b6bd64ec-2d06-4034-985c-e9922a17053e"
+    },
+    {
+      "name": "Core xRef",
+      "id": "4352c1d6-b2e0-4491-85c0-75872aa5e858"
+    },
+    {
+      "name": "Resulting Cost History",
+      "id": "0fa29ccd-25e6-49e1-aab7-3d201d0ba4d6"
+    },
+    {
+      "name": "Part Entity Audit Report",
+      "id": "3f03816c-f38d-43ca-9f13-7774613e84e2"
+    },
+    {
+      "name": "Price List Outbound",
+      "id": "af9d6b8f-9a57-4830-a391-ba9e771ec853"
+    }
+  ]
