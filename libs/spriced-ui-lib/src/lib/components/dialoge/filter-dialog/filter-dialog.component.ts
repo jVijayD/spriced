@@ -442,12 +442,18 @@ if (item === "is_valid") {
     }
     return [];
   }
-  public changeTimeStamp(date: any)
-  {
+  public changeTimeStamp(date: any) {
     let timezone = (localStorage.getItem("timezone") as string) || "null";
-    if (timezone !== "null") {
-    return moment(date as string).tz(timezone);
-    } else {
+    if (timezone !== "null" && timezone !== "normal") {
+      return moment(date as string).tz(timezone);
+    }
+    if (timezone == "normal") {
+      var m = moment(date as string).utcOffset(0);
+      m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
+      m.format()
+      return m
+    }
+    else {
       return unixTimeStamp(date);
     }
   }

@@ -70,20 +70,17 @@ export class GlobalSettingService {
     localStorage.setItem(key, JSON.stringify(currentObject));
   }
   setSettings(value: any) {
-    if(value.id)
-    {
-    return this.http.put(`${this.api_url}/settings`, value);
-    }
-    else{
+    if (value.id) {
+      return this.http.put(`${this.api_url}/settings`, value);
+    } else {
       return this.http.post(`${this.api_url}/settings`, value);
     }
   }
   putSettings(value: string) {
     return this.http.put(`${this.api_url}/settings`, value);
   }
-  setTimezone(data:any)
-  {
-    localStorage.setItem("timezone",data)
-    moment.tz.setDefault(data);
+  setTimezone(data: any) {
+    localStorage.setItem("timezone", data);
+    if (data !== "normal") { moment.tz.setDefault(data) } else { moment.tz.setDefault() };
   }
 }

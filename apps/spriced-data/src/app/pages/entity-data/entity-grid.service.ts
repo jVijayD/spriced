@@ -128,11 +128,14 @@ export class EntityGridService {
       let formattedData = data;
       try {
         let timezone = localStorage.getItem("timezone") as string || 'null';
-        if (timezone !== "null") {
+        if (timezone !== "null" && timezone !== "normal") {
           const moment = require("moment-timezone");
           formattedData = moment(data)
             .tz(timezone)
             .format(attr.formatter || "MM/DD/YYYY");
+        }   if (timezone == "normal") {
+          var m = moment(data).utcOffset(0).set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).format(attr.formatter || "MM/DD/YYYY")
+          formattedData=m;
         } else {
           formattedData = moment(data).format(attr.formatter || "MM/DD/YYYY");
         }

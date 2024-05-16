@@ -69,8 +69,14 @@ export class DatePickerComponent
   public changeTimeStamp(date: any) {
     if (!!date) {
       let timezone = (localStorage.getItem("timezone") as string) || "null";
-      if (timezone !== "null") {
+      if (timezone !== "null" && timezone !== "normal") {
         this.value = moment(this.value as string).tz(timezone);
+      } if (timezone == "normal") {
+        var m = unixTimeStamp(date)
+        m=moment(m).utcOffset(0)
+        m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
+        m.format()
+        this.value = m
       } else {
         this.value = unixTimeStamp(date);
       }
