@@ -390,8 +390,19 @@ export class DateTimeSettingsComponent {
     private snackbarService: SnackBarService,
     private dialogService: DialogService
   ) {
-    this.settings.getGlobalSettings().subscribe((item) => {
-      this.data = item;
+    this.settings.getGlobalSettings().subscribe((item:any) => {
+      if (item?.settingsData) {
+        this.data =item;
+      } else {
+        this.data =  {
+          settingsData: {
+            displayFormat: 'codename',
+            showSytem: false,
+            timezone: "null",
+          },
+          type: "global",
+        };
+      }
       this.cancelData=this.data?.settingsData?.timezone || 'null'
       if (this.data?.settingsData?.timezone == null) {
         this.data.settingsData.timezone = "null";
