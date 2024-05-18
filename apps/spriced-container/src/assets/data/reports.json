@@ -118,5 +118,9 @@
   {
     "name": "Price List Outbound",
     "id": "af9d6b8f-9a57-4830-a391-ba9e771ec853"
+  },
+  {
+    "name": "Quote Impact Analysis ",
+    "id": "20c48f71-1a22-45c3-b145-9f9beb904a73"
   }
 ]
