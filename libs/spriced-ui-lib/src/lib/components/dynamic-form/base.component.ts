@@ -12,6 +12,7 @@ import { Engine as RuleEngine } from "json-rules-engine";
 import { Subject, Subscription } from "rxjs";
 import { GenericControl, IRule } from "./dynamic-form.types";
 import { DynamicFormService } from "./service/dynamic-form.service";
+import * as moment from "moment";
 
 export abstract class BaseComponent implements ControlValueAccessor {
   private _value: unknown;
@@ -85,7 +86,14 @@ export abstract class BaseComponent implements ControlValueAccessor {
   }
 
   writeValue(obj: unknown): void {
-    this.value = obj;
+    let timezone = localStorage.getItem("timezone") as string || 'null';
+    if (this._control.type == 'date' && timezone == 'normal') {
+      this.value = moment(obj as string).parseZone();
+    }
+    else {
+      this.value = obj;
+    }
+
   }
 
   registerOnChange(fn: (value: unknown) => void): void {
