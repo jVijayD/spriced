@@ -72,11 +72,14 @@ export class DatePickerComponent
       if (timezone !== "null" && timezone !== "normal") {
         this.value = moment(this.value as string).tz(timezone);
       } if (timezone == "normal") {
-        var m = moment(this.value as string).parseZone()
-        m=moment(m).utcOffset(0)
-        m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
-        m.format()
-        this.value = m
+        // this.value = moment(this.value as string).parseZone();
+        // var m = moment(this.value as string).utcOffset(0);
+        // m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
+        // m.format()
+        // console.log(m)
+        // this.value = m
+        this.value=moment(this.value as string).format("YYYY-MM-DD 00:00:00")
+        this.value=moment(this.value as string).parseZone()
       } else {
         this.value = unixTimeStamp(date);
       }
