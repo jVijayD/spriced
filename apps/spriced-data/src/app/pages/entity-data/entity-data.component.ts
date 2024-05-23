@@ -811,6 +811,27 @@ export class EntityDataComponent implements OnDestroy, OnInit {
       });
     }
   }
+  onExportCSV() {
+      const dialog = this.dialogService.openConfirmDialoge({
+        message: "Do you want to download " + this.totalElements + " records ?",
+        title: "Download",
+        icon: "cloud_download",
+      });
+      dialog.afterClosed().subscribe(async (result) => {
+        if (result) {
+          await this.entityExportService.exportCSV(
+            this.currentSelectedEntity?.id as number,
+            this.currentSelectedEntity?.name as string,
+            `${this.currentSelectedEntity?.displayName}.csv`,
+            this.globalSettings?.settingsData?.displayFormat ||
+              this.defaultCodeSetting,
+            this.currentCriteria,
+            false,
+            this.selectedColumns
+          );
+        }
+      });
+  }
 
   private deleteEntityData(entityDataId: number) {
     return this.entityDataService

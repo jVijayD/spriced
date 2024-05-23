@@ -361,6 +361,30 @@ export class EntityExportDataService {
     }
   }
 
+  public exportToCSV(
+    id: string | number,
+    filename: string,
+    displayFormat: string,
+    criteria: Criteria,
+    selectedColumns: any
+  ) {
+    let url;
+    if (selectedColumns.length == 0) {
+      url = `${this.api_url}/entity/${id}/data/generateCsv?displayFormat=${displayFormat}`;
+    } else {
+      url = `${this.api_url}/entity/${id}/data/generateCsv?displayFormat=${displayFormat}&filterAttributes=${selectedColumns}`;
+    }
+    return this.http
+      .post(url, criteria, {
+        responseType: "blob",
+      })
+      .subscribe((blob) => {
+        let data = new Blob([blob], {
+          type: "text/csv",
+        });
+        saveAs(data, filename);
+      });
+  }
   public exportToExcel(
     id: string | number,
     filename: string,
@@ -412,6 +436,40 @@ export class EntityExportDataService {
       );
     } else {
       this.exportToExcel(
+        id,
+        fileName,
+        displayFormat,
+        criteria,
+        selectedColumns
+      );
+    }
+  }
+  public async exportCSV(
+    id: number,
+    name: string,
+    fileName: string,
+    displayFormat: any,
+    criteria: Criteria,
+    isAsync: boolean,
+    selectedColumns: any
+  ) {
+    if (isAsync) {
+      // await this.exportToExcelAsync(
+      //   id,
+      //   name,
+      //   fileName,
+      //   displayFormat,
+      //   criteria
+      // );
+      await this.exportToExcelWithStatusAsync(
+        id,
+        name,
+        fileName,
+        displayFormat,
+        criteria
+      );
+    } else {
+      this.exportToCSV(
         id,
         fileName,
         displayFormat,
