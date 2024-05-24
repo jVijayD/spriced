@@ -10,7 +10,7 @@ export class EntityGridService {
       .filter((item) => item.isFilterable)
       .map((col: any) => {
         return {
-          name: col.column,
+          name: col.formType=="LOOKUP" ? col.selectColumn:col.column,
           displayName: col.name,
           formType: col.formType,
           referencedTableId: col.referencedTableId,

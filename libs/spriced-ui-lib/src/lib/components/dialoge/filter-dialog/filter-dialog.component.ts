@@ -211,7 +211,7 @@ compareValues(a:any,b:any)
     let dataType: "string" | "number" | "date" | "boolean" | "category" =
       "string";
     const col = columns?.find((item) => item.name === name);
-    dataType = col?.dataType && col?.formType !== 'LOOKUP' ? col?.dataType : "string";
+    dataType = col?.dataType? col?.dataType : "string";
     dataType = dataType === "category" ? "boolean" : dataType;
     return dataType;
   }
@@ -334,18 +334,26 @@ if (item === "is_valid") {
       if (result && result.data) {
         const { data } = result;
         rule.selectedItem = data;
-        rule.value = data.code;
+        rule.value = data.id;
         rule.valueName = this.getDisplayProp(data);
+        rule.displayName=field.name;
         if (!!onChange) {
-          onChange(data.code, rule);
+          onChange(data.id, rule);
         }
       }
     });
     dialogRef.componentInstance.dialogEvent$.subscribe((event: any) => {
-      console.log(event)
       this.loadLookupData(field.entity, event.pageNumber, event.filters,undefined,event.sorters);
     });
   }
+
+  addLookupInfo(rule:any,field:any,event:any)
+  {
+    rule.displayName=field.name;
+    let data=field.filteredOptions.find((el: any) => el.id === event);
+    rule.valueName = this.getDisplayProp(data);
+  }
+
   public handleSerch(value: any, item: any, text?: string) {
     if (text === 'fieldSearch') {
       console.log(this.config, this.data.columns);
