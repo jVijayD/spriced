@@ -514,7 +514,7 @@ export class EntityDataComponent implements OnDestroy, OnInit {
             rule.filteredItems,
             rule.displayName
           );
-          let value = !!rule?.value ? rule?.value : "";
+          let value = !!rule?.value ? rule?.valueName? rule.valueName:rule.value : "";
           if (dataType == "date" && value !== "") {
             value = this.formatDate(value);
           }

@@ -67,13 +67,13 @@
           <ng-container *ngIf="field?.count <= pageSize">
             <mat-form-field appearance="outline">
               <mat-select [ngModelOptions]="{standalone:true}" [(ngModel)]="rule.value"
-                (ngModelChange)="onChange($event, rule)">
+                (ngModelChange)="onChange($event, rule)" (valueChange)="addLookupInfo(rule, field,$event)">
                 <mat-option>
                   <ngx-mat-select-search placeholderLabel="Search" [ngModelOptions]="{standalone:true}" ngModel
                     (ngModelChange)="handleSerch($event, rule)"></ngx-mat-select-search>
                 </mat-option>
                 <mat-option value="" class="option">--Select--</mat-option>
-                <mat-option *ngFor="let opt of field?.filteredOptions" [value]="opt.code">
+                <mat-option *ngFor="let opt of field?.filteredOptions" [value]="opt.id">
                   {{getDisplayProp(opt)}}
                 </mat-option>
               </mat-select>
