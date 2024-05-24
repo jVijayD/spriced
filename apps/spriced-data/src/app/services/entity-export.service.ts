@@ -369,6 +369,7 @@ export class EntityExportDataService {
     selectedColumns: any
   ) {
     let url;
+    criteria.pager?.pageSize?criteria.pager.pageSize=0:"";
     if (selectedColumns.length == 0) {
       url = `${this.api_url}/entity/${id}/data/generateCsv?displayFormat=${displayFormat}`;
     } else {
