@@ -155,13 +155,13 @@
               (actionClick)="onSavedFilter()"
             ></sp-header-action>
 
-            <sp-header-action
+            <!-- <sp-header-action
               icon="cloud_upload"
               text="Upload"
               title="Bulk Upload"
               (actionClick)="onUpload()"
               [disabled]="this.headers.length === 0"
-            ></sp-header-action>
+            ></sp-header-action> -->
 
             <sp-header-action
               [context]="true"
@@ -170,17 +170,17 @@
               title="Export"
               [disabled]="this.headers.length === 0"
             >
-              <button mat-menu-item (click)="onExportCSV()">
-                <mat-icon class="mt-auto">cloud_download</mat-icon>
-                <span class="text-xs self-end file-excel fontawesomeicon"
+              <button mat-menu-item (click)="onExportCSV()" class="flex">
+                <mat-icon>cloud_download</mat-icon>
+                <span class="text-xs self-end file-excel fontawesomeicon ml-1"
                   >Download csv file.</span>
               </button>
-              <button mat-menu-item (click)="onExport('xlsx')">
+              <!-- <button mat-menu-item (click)="onExport('xlsx')">
                 <mat-icon class="mt-auto">cloud_download</mat-icon>
                 <span class="text-xs self-end file-excel fontawesomeicon"
                   >Download excel file.</span
                 >
-              </button>
+              </button> -->
             </sp-header-action>
 
             <sp-header-action
