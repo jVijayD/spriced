@@ -456,10 +456,9 @@ if (item === "is_valid") {
       return moment(date as string).tz(timezone);
     }
     if (timezone == "normal") {
-      var m = moment(date as string).utcOffset(0);
-      m.set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
-      m.format()
-      return m
+      date=moment(date as string).format("YYYY-MM-DD 00:00:00")
+      date=moment(date as string).parseZone()
+      return date;
     }
     else {
       return unixTimeStamp(date);
