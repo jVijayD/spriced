@@ -1,0 +1,50 @@
+name: Frontend - Develop
+
+on:
+  pull_request:
+    branches: 
+     - develop
+    types:
+      - closed
+      
+jobs:
+  build:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Code Checkout 
+      uses: actions/checkout@v4
+
+    - name: Set up NodeJS
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+    
+    - name: Build Application
+      run: |
+        npm install
+        npx nx run-many --targets=build --all
+
+    - name: Copy App Files
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.REMOTE_SERVER_HOST }}
+        username: ${{ secrets.REMOTE_SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.REMOTE_SERVER_PORT }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        source: "/dist/apps/*"
+        target: ~/Work/downloads/spriced_sample/apps
+    
+    - name: Reload Nginx
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.REMOTE_SERVER_HOST }}
+        username: ${{ secrets.REMOTE_SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.REMOTE_SERVER_PORT }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        script: |
+          sudo cp -r ~/Work/downloads/spriced_sample/apps /var/www/dev_spriced
+          sudo nginx -s reload
