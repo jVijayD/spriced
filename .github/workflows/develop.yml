@@ -61,4 +61,4 @@ jobs:
         script: |
           cd Work/downloads/spriced_sample/dist/apps
           cp -r * /var/www/dev_spriced
-          sudo nginx -s reload
+          echo ${{ secrets.REMOTE_SERVER_PASSWORD }} | sudo -S nginx -s reload
