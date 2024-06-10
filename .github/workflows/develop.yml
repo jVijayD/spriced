@@ -27,6 +27,18 @@ jobs:
         npm install
         npx nx run-many --targets=build --all
 
+    - name: Cleanup destination target folder
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.REMOTE_SERVER_HOST }}
+        username: ${{ secrets.REMOTE_SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.REMOTE_SERVER_PORT }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        script: |
+          cd Work/downloads/spriced_sample
+          rm -rf ./*
+
     - name: Copy App Files
       uses: appleboy/scp-action@v0.1.7
       with:
@@ -36,4 +48,17 @@ jobs:
         port: ${{ secrets.REMOTE_SERVER_PORT }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         source: "dist/apps/**"
-        target: Work/downloads/ronak_github
+        target: Work/downloads/spriced_sample
+        
+    - name: Reload Nginx
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.REMOTE_SERVER_HOST }}
+        username: ${{ secrets.REMOTE_SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.REMOTE_SERVER_PORT }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        script: |
+          cd Work/downloads/spriced_sample/dist/apps
+          cp -r * /var/www/dev_spriced
+          sudo nginx -s reload
