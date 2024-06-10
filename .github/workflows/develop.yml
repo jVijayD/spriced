@@ -27,6 +27,18 @@ jobs:
         npm install
         npx nx run-many --targets=build --all
 
+    - name: Cleanup destination target folder
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.REMOTE_SERVER_HOST }}
+        username: ${{ secrets.REMOTE_SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.REMOTE_SERVER_PORT }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        script: |
+          cd /Work/downloads/spriced_sample/apps
+          rm -rf ./*
+
     - name: Copy App Files
       uses: appleboy/scp-action@v0.1.7
       with:
@@ -35,7 +47,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.REMOTE_SERVER_PORT }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        source: "/dist/apps/*"
+        source: "dist/apps/spriced-container/*,dist/apps/spriced-data/*,dist/apps/spriced-data-definition/*,dist/apps/spriced-reports/*,dist/apps/spriced-user-management/*"
         target: /Work/downloads/spriced_sample/apps
     
     - name: Reload Nginx
