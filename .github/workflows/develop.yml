@@ -60,5 +60,7 @@ jobs:
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         script: |
           cd Work/downloads/spriced_sample/dist/apps
-          echo ${{ secrets.REMOTE_SERVER_PASSWORD }} | sudo cp -r * /var/www/dev_spriced
-          echo ${{ secrets.REMOTE_SERVER_PASSWORD }} | sudo -S nginx -s reload
+          echo ${{ secrets.REMOTE_SERVER_PASSWORD }} | sudo -S su - <<EOF
+          cp -r * /var/www/dev_spriced
+          nginx -s reload
+          EOF
